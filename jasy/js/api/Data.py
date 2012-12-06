@@ -92,8 +92,8 @@ class ApiData():
             if not self.__processTree(tree):
                 self.main["errornous"] = True
                 
-        except UserError as UserError:
-            raise UserError
+        except UserError as myError:
+            raise myError
                 
         except Exception as error:
             self.main["errors"] = ({
