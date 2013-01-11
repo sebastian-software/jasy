@@ -569,7 +569,12 @@ class Session():
         """
 
         fields = self.__fields
-        values = { key:fields[key]["values"] for key in fields if "values" in fields[key] }
+        values = {}
+        for key in fields:
+            if "values" in fields[key]:
+                values[key] = fields[key]["values"]
+            elif "default" in fields[key] and not "detect" in fields[key]:
+                values[key] = [fields[key]["default"]]
 
         # Thanks to eumiro via http://stackoverflow.com/questions/3873654/combinations-from-dictionary-with-list-values-using-python
         names = sorted(values)
