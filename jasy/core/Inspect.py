@@ -11,7 +11,7 @@ def highlightArgs(value, inClassOrObject=False):
 
     argsspec = inspect.getfullargspec(value)     
 
-    if inClassOrObject:
+    if inClassOrObject and argsspec.args and argsspec.args[0] == "self":
         del argsspec.args[0]
 
     argmsg = "(%s" % ", ".join(argsspec.args)
