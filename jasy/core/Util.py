@@ -8,18 +8,19 @@ import re, os, hashlib, tempfile, subprocess, sys, shlex
 import jasy.core.Console as Console
 
 
-def executeCommand(args, failmsg=None, path=None):
+def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     """
-    Executes the given process and outputs failmsg when errors happen.
-    Returns the combined shell output (stdout and strerr combined).
+    Executes the given process and outputs failMessage when errors happen.
 
     :param args: 
     :type args: str or list
-    :param failmsg: Message for exception when command fails
-    :type failmsg: str
+    :param failMessage: Message for exception when command fails
+    :type failMessage: str
     :param path: Directory path where the command should be executed
     :type path: str
     :raise Exception: Raises an exception whenever the shell command fails in execution
+    :type wrapOutput: bool
+    :param wrapOutput: Whether shell output should be wrapped and returned (and passed through to Console.debug())
     """
 
     if type(args) == str:
@@ -36,21 +37,27 @@ def executeCommand(args, failmsg=None, path=None):
     Console.indent()
     
     # Using shell on Windows to resolve binaries like "git"
-    output = tempfile.TemporaryFile(mode="w+t")
-    returnValue = subprocess.call(args, stdout=output, stderr=output, shell=sys.platform == "win32")
-        
-    output.seek(0)
-    result = output.read().strip("\n\r")
-    output.close()
+    if not wrapOutput:
+        returnValue = subprocess.call(args, shell=sys.platform == "win32")
+        result = returnValue
+
+    else:
+        output = tempfile.TemporaryFile(mode="w+t")
+        returnValue = subprocess.call(args, stdout=output, stderr=output, shell=sys.platform == "win32")
+            
+        output.seek(0)
+        result = output.read().strip("\n\r")
+        output.close()
 
     # Change back to previous path
     os.chdir(prevpath)
 
-    if returnValue != 0:
-        raise Exception("Error during executing shell command: %s (%s)" % (failmsg, result))
+    if returnValue != 0 and failMessage:
+        raise Exception("Error during executing shell command: %s (%s)" % (failMessage, result))
     
-    for line in result.splitlines():
-        Console.debug(line)
+    if wrapOutput:
+        for line in result.splitlines():
+            Console.debug(line)
     
     Console.outdent()
     
