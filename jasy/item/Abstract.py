@@ -13,11 +13,12 @@ class AbstractItem:
     id = None
     project = None
     kind = "item"
+    mtime = None
 
     __path = None
     __cache = None
-    mtime = None
-    
+    __text = None
+
     def __init__(self, project, id=None):
         self.id = id
         self.project = project
@@ -66,9 +67,16 @@ class AbstractItem:
         """Returns last modification time of the class"""
         return self.mtime
 
+    def setText(self, text):
+        """Stores text from custom reader"""
+        self.__text = text
+
     def getText(self, encoding="utf-8"):
         """Reads the file (as UTF-8) and returns the text"""
         
+        if self.__text is not None:
+            return self.__text
+
         if self.__path is None:
             return None
         
