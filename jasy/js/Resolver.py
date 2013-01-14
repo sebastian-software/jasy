@@ -5,6 +5,7 @@
 
 import jasy.js.Sorter as Sorter
 import jasy.core.Console as Console
+import jasy.item.Class as Class
 
 __all__ = ["Resolver"]
 
@@ -43,11 +44,35 @@ class Resolver():
         Console.debug("Adding class: %s", className)
         self.__required.append(self.__classes[className])
         
+        # Clear generated include list
         del self.__included[:]
         
         return self
-            
-            
+
+
+    def addInlineClass(self, className, text):
+
+        import zlib
+        checksum = zlib.adler32(text.encode("utf-8"))
+
+        # Tweak class name by content checksum to make all results of the
+        # same content being cachable by the normal infrastructure.
+        className = "%s-%s" % (className, checksum)
+
+        project = self.__session.getMain()
+        
+        classItem = Class.ClassItem(project, className)
+        classItem.setText(text)
+
+        Console.debug("Adding inline class: %s", className)
+        self.__required.append(classItem)
+        
+        # Clear generated include list
+        del self.__included[:]
+        
+        return self
+
+
     def removeClassName(self, className):
         """ Removes a class name from dependencies """
         

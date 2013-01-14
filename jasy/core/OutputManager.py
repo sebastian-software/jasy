@@ -127,7 +127,11 @@ class OutputManager:
             resolver.addClassName(className)
 
         # Jasy client side classes to hold data
-        resolver.addClassName("jasy.Env")
+        # resolver.addClassName("jasy.Env")
+
+        # Inject field configuration
+        resolver.addInlineClass("jasy.Fields", "jasy.Env.setFields(%s);" % self.__session.exportFields())
+
         resolver.addClassName("jasy.Asset")
         resolver.addClassName("jasy.Translate")
 
@@ -135,19 +139,14 @@ class OutputManager:
         resolver.addClassName("core.io.Script")
         resolver.addClassName("core.io.Queue")
 
+        # Post pone custom classes after all kernel classes
         if classes:
             for className in classes:
                 resolver.addClassName(className)
 
-        # Generate boot code 
-        bootCode = "jasy.Env.setFields(%s);" % self.__session.exportFields()
-
-        if self.__compressGeneratedCode:
-            bootCode = packCode(bootCode)
-
         # Sort resulting class list
         sortedClasses = resolver.getSortedClasses()
-        self.storeCompressed(sortedClasses, fileName, bootCode)
+        self.storeCompressed(sortedClasses, fileName)
         
         # Remember classes for filtering in storeLoader/storeCompressed
         self.__kernelClasses = set(sortedClasses)
