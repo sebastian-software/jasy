@@ -49,6 +49,7 @@ class Cache:
             
             self.clear()
 
+            self.__shelve = shelve.open(self.__file, flag="n")
             self.__shelve["jasy-version"] = jasy.__version__
             self.__shelve["jasy-host"] = hostId
             
@@ -78,7 +79,7 @@ class Cache:
     
     def clear(self):
         """
-        Clears the cache file through re-creation of the file
+        Clears the cache file(s)
         """
         
         if self.__shelve != None:
@@ -87,13 +88,10 @@ class Cache:
             self.__shelve.close()
             self.__shelve = None
 
-        Console.debug("Clearing cache file %s..." % self.__file)
-        
-        self.__shelve = shelve.open(self.__file, flag="n")
+        for fileName in glob.glob("%s*" % self.__file):
+            Console.debug("Clearing cache file %s..." % fileName)
+            os.remove(fileName)
 
-        self.__shelve["jasy-version"] = jasy.__version__
-        self.__shelve["jasy-host"] = hostId
-        
         
     def read(self, key, timestamp=None, inMemory=True):
         """ 
