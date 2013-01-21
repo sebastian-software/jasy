@@ -3,6 +3,8 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
+import os, zlib
+
 import jasy.js.Sorter as Sorter
 import jasy.core.Console as Console
 import jasy.item.Class as Class
@@ -50,19 +52,33 @@ class Resolver():
         return self
 
 
-    def addInlineClass(self, className, text):
+    def addVirtualClass(self, className, text):
+        """
+        Adds a virtual aka generated class to the resolver with
+        the given className and text. 
 
-        import zlib
-        checksum = zlib.adler32(text.encode("utf-8"))
+        Please note: The file name is modified to 
+        contain a checksum of the content as a postfix. This keeps
+        caches in-tact when using different contents for the same
+        file name aka different sets of assets, translations, etc.
+        The classname itself (which is modified here as said) is not
+        so much of relevance because of the situation that the virtual
+        class object is automatically added to the resolver (and sorter).
+        """
 
         # Tweak class name by content checksum to make all results of the
         # same content being cachable by the normal infrastructure.
+        checksum = zlib.adler32(text.encode("utf-8"))
         className = "%s-%s" % (className, checksum)
 
-        project = self.__session.getMain()
-        
-        classItem = Class.ClassItem(project, className)
-        classItem.setText(text)
+        # Generate path from class name
+        virtual = self.__session.getVirtualProject()
+        path = os.path.join(virtual.getPath(), "src", className.replace(".", os.sep)) + ".js"
+
+        # Create a class dynamically and add it to both, 
+        # the virtual project and our requirements list.
+        classItem = Class.ClassItem(virtual, className)
+        classItem.saveText(text, path) 
 
         Console.debug("Adding inline class: %s", className)
         self.__required.append(classItem)
