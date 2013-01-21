@@ -300,7 +300,7 @@ class Server:
                 "log.screen" : False,
                 "server.socket_port": port,
                 "server.socket_host": host,
-                "engine.autoreload_on" : False
+                "engine.autoreload.on" : False
             },
             
             "/" : {
