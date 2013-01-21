@@ -99,7 +99,7 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeKernel(self, fileName, classes=None, debug=False):
+    def storeKernel(self, fileName, classes=None, debug=False, bootCode=""):
         """
         Writes a so-called kernel script to the given location. This script contains
         data about possible permutations based on current session values. It optionally
@@ -111,42 +111,98 @@ class OutputManager:
         This method returns the classes which are included by the script so you can 
         exclude it from the real other generated output files.
         """
-        
+
         Console.info("Storing kernel...")
         Console.indent()
+
+
         
+        #
+        # Block 1: Build relevant classes for asset list
+        # Add asset data as late as possible to have all relevant classes in class list
+        #
+
+        Console.info("Preparing configuration...")
+        Console.indent()
+
         # Use a new permutation based on debug settings and statically configured fields
         self.__session.setStaticPermutation(debug=debug)
 
-        # Build resolver
         # We need the permutation here because the field configuration might rely on detection classes
         resolver = Resolver(self.__session)
 
-        detectionClasses = self.__session.getFieldDetectionClasses()
-        for className in detectionClasses:
-            resolver.addClassName(className)
-
-        # Jasy client side classes to hold data
-        # resolver.addClassName("jasy.Env")
-
-        # Inject field configuration
-        resolver.addInlineClass("jasy.Fields", "jasy.Env.setFields(%s);" % self.__session.exportFields())
-
-        resolver.addClassName("jasy.Asset")
-        resolver.addClassName("jasy.Translate")
-
-        # Allow kernel level mass loading of scripts (required for source, useful for build)
-        resolver.addClassName("core.io.Script")
-        resolver.addClassName("core.io.Queue")
-
-        # Post pone custom classes after all kernel classes
         if classes:
             for className in classes:
                 resolver.addClassName(className)
 
-        # Sort resulting class list
+        if bootCode:
+            resolver.addVirtualClass("jasy.export.BootCode", "(function(){%s})();" % bootCode)
+
+        fieldData = self.__session.exportFields()
+        if fieldData:
+            resolver.addVirtualClass("jasy.export.FieldData", "jasy.Env.setFields(%s);" % fieldData)
+
+        assetData = self.__assetManager.export(resolver.getIncludedClasses())
+        if assetData:
+            resolver.addVirtualClass("jasy.export.AssetData", "jasy.Asset.addData(%s);" % assetData)
+
+        Console.outdent()
+
+
+
+        #
+        # Block 2: Build relevant list for compressed kernel
+        # Include fields first, then assets, and then user classes 
+        # This is to make user classes able to use all other stuff directly
+        #
+
+        Console.info("Generating kernel class list...")
+        Console.indent()
+
+        # We need the permutation here because the field configuration might rely on detection classes
+        resolver = Resolver(self.__session)
+
+        if fieldData:
+            resolver.addVirtualClass("jasy.export.FieldData", "jasy.Env.setFields(%s);" % fieldData)
+
+        if assetData:
+            resolver.addVirtualClass("jasy.export.AssetData", "jasy.Asset.addData(%s);" % assetData)
+
+        if classes:
+            for className in classes:
+                resolver.addClassName(className)
+
+        if bootCode:
+            resolver.addVirtualClass("jasy.export.BootCode", "(function(){%s})();" % bootCode)
+
         sortedClasses = resolver.getSortedClasses()
-        self.storeCompressed(sortedClasses, fileName)
+        Console.info("Compressing %s classes...", len(sortedClasses))
+        Console.indent()
+        result = []
+
+        try:
+            for classObj in sortedClasses:
+                result.append(classObj.getCompressed(
+                    self.__session.getCurrentPermutation(), 
+                    self.__session.getCurrentTranslationBundle(), 
+                    self.__scriptOptimization, 
+                    self.__scriptFormatting)
+                )
+                
+        except ClassError as error:
+            raise UserError("Error during class compression! %s" % error)
+
+        Console.outdent()
+
+
+        if self.__compressGeneratedCode:
+            compressedCode = "".join(result)
+        else:
+            compressedCode = "\n\n".join(result)
+
+        self.__fileManager.writeFile(fileName, compressedCode)
+
+
         
         # Remember classes for filtering in storeLoader/storeCompressed
         self.__kernelClasses = set(sortedClasses)
@@ -155,6 +211,8 @@ class OutputManager:
         self.__session.resetCurrentPermutation()
 
         Console.outdent()
+
+
 
 
     def storeCompressed(self, classes, fileName, bootCode=None):
