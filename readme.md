@@ -41,15 +41,10 @@ For details have a look at [the official documentation](https://github.com/zynga
 * [Jasy Top Level Skeleton](https://github.com/zynga/jasy-toplevelskeleton): Demonstrating how a standalone skeleton might look like.
 
 
-## Authors
-
-Jasy was initially developed by [Sebastian Werner](mailto:info@sebastian-werner.net)
-and is now continued as an official Zynga OpenSource project.
-
-
 ## License
 
 Copyright (c) 2011-2012 Zynga Inc. http://zynga.com/
+Copyright (c) 2012-2013 Sebastian Werner http://sebastian-werner.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
