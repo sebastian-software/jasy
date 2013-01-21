@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import shelve, time, os, os.path, sys, pickle, dbm, uuid, hashlib, atexit
+import shelve, time, os, os.path, sys, pickle, dbm, uuid, hashlib, atexit, glob
 
 import jasy
 import jasy.core.Util
