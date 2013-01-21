@@ -48,14 +48,23 @@ def rmdir(name):
     """Removes a directory (works recursively)"""
     return shutil.rmtree(name)
 
-def write(dst, content):
+def read(name, encoding="utf-8"):
+    """Read the given file. Returns None when file could not be found/opended"""
+
+    handle = open(name, mode="r", encoding=encoding)
+    content = handle.read()
+    handle.close()
+
+    return content    
+
+def write(dst, content, encoding="utf-8"):
     """Writes the content to the destination file name"""
     
     # First test for existance of destination directory
     mkdir(os.path.dirname(dst))
     
     # Open file handle and write
-    handle = open(dst, mode="w", encoding="utf-8")
+    handle = open(dst, mode="w", encoding=encoding)
     handle.write(content)
     handle.close()
 
