@@ -434,6 +434,6 @@ class AssetManager:
             "assets" : self.__structurize(result),
             "profiles" : self.__profiles,
             "sprites" : self.__sprites
-        }, indent=2)
+        }, indent=2, sort_keys=True)
         
 
