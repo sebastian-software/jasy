@@ -4,7 +4,7 @@
 #
 
 import jasy.core.Console as Console
-from distutils.version import StrictVersion
+from distutils.version import StrictVersion, LooseVersion
 
 try:
     import pip
@@ -131,8 +131,8 @@ def doInitializationDoctor():
 
     def checkSingleInstallation(keys, versions, packageName, minVersion, installPath, updatePath):
         if packageName.lower() in keys:
-            if StrictVersion(minVersion) > StrictVersion("0.0"):
-                if StrictVersion(versions[packageName.lower()]) < StrictVersion(minVersion):
+            if LooseVersion(minVersion) > LooseVersion("0.0"):
+                if LooseVersion(versions[packageName.lower()]) < LooseVersion(minVersion):
                     Console.info(Console.colorize(Console.colorize('Jasy requirement error: "%s"' % packageName, "red"), "bold"))
                     Console.indent()
                     Console.info(Console.colorize(Console.colorize('Version is NOT OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
