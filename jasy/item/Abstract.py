@@ -71,6 +71,24 @@ class AbstractItem:
         """Stores text from custom reader"""
         self.__text = text
 
+
+    def saveText(self, text, path, encoding="utf-8"):
+        """
+        Saves the given text under the given path and stores both for future access
+
+        This is mainly useful for "virtual" files which are not edited by the developer
+        but which are created dynamically during runtime.
+        """
+
+        self.__text = text
+        self.__path = path
+
+        if not File.exists(path) or File.read(path) != text:
+            File.write(path, text)
+
+        self.mtime = os.stat(path).st_mtime
+
+
     def getText(self, encoding="utf-8"):
         """Reads the file (as UTF-8) and returns the text"""
         
