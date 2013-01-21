@@ -396,23 +396,6 @@ class Session():
             entry["detect"] = detect
         
         
-    def getFieldDetectionClasses(self):
-        """
-        Returns all JavaScript classes relevant by current field setups to detect all 
-        relevant values for the given fields.
-        """
-
-        result = set()
-
-        fields = self.__fields
-        for name in fields:
-            value = fields[name]
-            if "detect" in value:
-                result.add(value["detect"])
-
-        return result
-
-
     def exportFields(self):
         """
         Converts data from values to a compact data structure for being used to 
