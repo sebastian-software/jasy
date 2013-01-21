@@ -44,8 +44,8 @@ class Resolver():
         Console.debug("Adding class: %s", className)
         self.__required.append(self.__classes[className])
         
-        # Clear generated include list
-        del self.__included[:]
+        # Invalidate included list
+        self.__included = None
         
         return self
 
@@ -67,8 +67,8 @@ class Resolver():
         Console.debug("Adding inline class: %s", className)
         self.__required.append(classItem)
         
-        # Clear generated include list
-        del self.__included[:]
+        # Invalidate included list
+        self.__included = None
         
         return self
 
