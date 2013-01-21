@@ -33,6 +33,7 @@ class Session():
     __translationBundles = None
     __updateRepositories = True
     __scriptEnvironment = None
+    __virtualProject = None
 
 
     #
@@ -281,6 +282,31 @@ class Session():
             return None
 
 
+    def getVirtualProject(self):
+        """
+        Returns the virtual project for this application. The project
+        offers storage for dynamically created JavaScript classes and
+        other files. Storage is kept intact between different Jasy sessions.
+        """
+
+        # Create only once per session
+        if self.__virtualProject:
+            return self.__virtualProject
+
+        # Place virtual project in application's ".jasy" folder
+        path = os.path.abspath(os.path.join(".jasy", "virtual"))
+
+        # Set package to empty string to allow for all kind of namespaces in this virtual project
+        jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: virtual\npackage: ""\n')
+
+        # Generate project instance from path, store and return
+        project = jasy.core.Project.getProjectFromPath(path)
+        self.__virtualProject = project
+        self.__projects.append(project)
+
+        return project
+
+
 
     #
     # Support for fields
@@ -464,7 +490,7 @@ class Session():
             export.append("[%s]" % ", ".join(content))
             
         if export:
-            return "[%s]" % ", ".join(export)
+            return "[\n  %s\n]" % ",\n  ".join(export)
 
         return None
     
