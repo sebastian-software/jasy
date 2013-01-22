@@ -300,7 +300,9 @@ class Server:
                 "log.screen" : False,
                 "server.socket_port": port,
                 "server.socket_host": host,
-                "engine.autoreload.on" : False
+                "engine.autoreload.on" : False,
+                "tools.encode.on" : True,
+                "tools.encode.encoding" : "utf-8"
             },
             
             "/" : {
