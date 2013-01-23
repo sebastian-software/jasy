@@ -33,7 +33,7 @@ if uses == "distribute":
     "install_requires" : [ 
       "Pygments>=1.5", 
       "polib>=1.0", 
-      "requests>=0.13", 
+      "requests>=1.1", 
       "CherryPy>=3.2", 
       "PyYAML>=3" 
     ],
