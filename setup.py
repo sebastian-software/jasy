@@ -66,13 +66,13 @@ setup(
   name = 'jasy',
   version = jasy.__version__,
 
-  author = 'Zynga Inc.',
-  author_email = 'germany@zynga.com',
+  author = 'Sebastian Software',
+  author_email = 'team@sebastian-software.de',
 
-  maintainer = 'Zynga Inc.',
-  maintainer_email = 'germany@zynga.com',
+  maintainer = 'Sebastian Software',
+  maintainer_email = 'team@sebastian-software.de',
 
-  url = 'http://github.com/zynga/jasy',
+  url = 'http://github.com/sebastian-software/jasy',
   download_url = "http://pypi.python.org/packages/source/j/jasy/jasy-%s.zip" % jasy.__version__,
 
   license = "MIT",
