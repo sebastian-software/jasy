@@ -416,7 +416,7 @@ class Session():
 
         # Store class which is responsible for detection (overrides data from project)
         if detect:
-            if not self.getClass(detect):
+            if not self.getClassByName(detect):
                 raise Exception("Could not permutate field: %s! Unknown detect class %s." % detect)
                 
             entry["detect"] = detect
