@@ -17,32 +17,32 @@ needs = [
     {
         "packageName": "Pygments",
         "minVersion": "1.5",
-        "installPath": "'pip install Pygments'",
-        "updatePath": "'pip install --upgrade pygments'"
+        "installPath": "'pip3 install Pygments'",
+        "updatePath": "'pip3 install --upgrade pygments'"
     },
     {
         "packageName": "polib",
         "minVersion": "1.0.1",
-        "installPath": "'pip install polib'",
-        "updatePath": "'pip install --upgrade polib'"
+        "installPath": "'pip3 install polib'",
+        "updatePath": "'pip3 install --upgrade polib'"
     },
     {
         "packageName": "requests",
         "minVersion": "0.14",
-        "installPath": "'pip install requests'",
-        "updatePath": "'pip install --upgrade requests'"
+        "installPath": "'pip3 install requests'",
+        "updatePath": "'pip3 install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
         "minVersion": "3.2",
         "installPath": "'pip install CherryPy'",
-        "updatePath": "'pip install --upgrade CherryPy'"
+        "updatePath": "'pip3 install --upgrade CherryPy'"
     },
     {
         "packageName": "PyYAML",
         "minVersion": "3.1",
         "installPath": "'pip install PyYAML'",
-        "updatePath": "'pip install --upgrade PyYAML'"
+        "updatePath": "'pip3 install --upgrade PyYAML'"
     }
 ]
 
@@ -50,25 +50,19 @@ optionals = [
     {
         "packageName": "misaka",
         "minVersion": "1.0",
-        "installPath": "'pip install misaka'",
+        "installPath": "'pip3 install misaka'",
         "updatePath": ""
     },
     {
         "packageName": "sphinx",
         "minVersion": "1.1",
-        "installPath": "'pip install sphinx'",
-        "updatePath": ""
-    },    
-    {
-        "packageName": "watchdog",
-        "minVersion": "0.0",
-        "installPath": "'pip install git+https://github.com/wpbasti/watchdog'",
+        "installPath": "'pip3 install sphinx'",
         "updatePath": ""
     },
     {
-        "packageName": "pil",
-        "minVersion": "1.0",
-        "installPath": "'pip install git+https://github.com/zynga/pil-py3k'",
+        "packageName": "pillow",
+        "minVersion": "1.7.8",
+        "installPath": "'pip3 install git+https://github.com/python-imaging/Pillow.git'",
         "updatePath": ""
     }
 ]
@@ -104,7 +98,7 @@ def doCompleteDoctor():
 
 
     # Required packages
-    Console.info(Console.colorize("Required Packages:", "bold"))
+    Console.info("Required Packages:")
     Console.indent()
     for entry in needs:
         checkSingleInstallation(keys, versions, entry["packageName"], entry["minVersion"], entry["installPath"], entry["updatePath"])
@@ -112,7 +106,7 @@ def doCompleteDoctor():
 
     # Optional packages
     Console.info("")
-    Console.info(Console.colorize("Optional Packages:", "bold"))
+    Console.info("Optional Packages:")
     Console.indent()
     for entry in optionals:
         checkSingleInstallation(keys, versions, entry["packageName"], entry["minVersion"], entry["installPath"], entry["updatePath"])
