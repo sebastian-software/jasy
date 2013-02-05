@@ -22,13 +22,13 @@ needs = [
     },
     {
         "packageName": "polib",
-        "minVersion": "1.0.1",
+        "minVersion": "1.0.2",
         "installPath": "'pip3 install polib'",
         "updatePath": "'pip3 install --upgrade polib'"
     },
     {
         "packageName": "requests",
-        "minVersion": "0.14",
+        "minVersion": "1.1",
         "installPath": "'pip3 install requests'",
         "updatePath": "'pip3 install --upgrade requests'"
     },
@@ -40,7 +40,7 @@ needs = [
     },
     {
         "packageName": "PyYAML",
-        "minVersion": "3.1",
+        "minVersion": "3.10",
         "installPath": "'pip install PyYAML'",
         "updatePath": "'pip3 install --upgrade PyYAML'"
     }
