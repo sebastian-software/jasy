@@ -91,8 +91,8 @@ def doCompleteDoctor():
         Console.indent()
         if packageName.lower() in keys:
             Console.info(Console.colorize('Found installation', "green"))
-            if StrictVersion(minVersion) > StrictVersion("0.0"):
-                if StrictVersion(versions[packageName.lower()]) >= StrictVersion(minVersion):
+            if LooseVersion(minVersion) > LooseVersion("0.0"):
+                if LooseVersion(versions[packageName.lower()]) >= LooseVersion(minVersion):
                     Console.info(Console.colorize('Version is OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "green"))
                 else:
                     Console.info(Console.colorize(Console.colorize('- Version is NOT OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
