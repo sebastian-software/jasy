@@ -41,7 +41,7 @@ if uses == "distribute":
     "extras_require" : {
       "jsdoc" : ["misaka"],
       "daemon" : ["watchdog"],
-      "sprites" : ["pil"],
+      "sprites" : ["Pillow"],
       "doc" : ["sphinx"]
     }
 
