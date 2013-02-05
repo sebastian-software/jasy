@@ -9,8 +9,17 @@ import jasy.core.Console as Console
 # Make PIL (native module) optional
 try:
     import Image, ImageDraw
-except ImportError as err:
-    Image = None
+    Console.debug("Using classic PIL")
+
+except ImportError as err1:
+    try:
+        from PIL import Image
+        from PIL import ImageDraw
+        Console.debug("Using Pillow")
+    except ImportError as err2:
+        Image = None
+        ImageDraw = None
+        Console.debug("No support for either PIL or Pillow!")
 
 class SpriteSheet():
 
