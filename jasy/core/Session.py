@@ -422,9 +422,32 @@ class Session():
             entry["detect"] = detect
         
         
-    def exportFields(self):
+    def exportFieldDetects(self):
+        detects = {}
+
+        for key in sorted(self.__fields):
+            source = self.__fields[key]
+            if "values" in source:
+                values = source["values"]
+                if "detect" in source and len(values) > 1:
+                    detects[key] = source["detect"]
+                else:
+                    detects[key] = None
+
+            # Has no relevance for permutation, just insert the test
+            else:
+                if "detect" in source:
+                    detects[key] = source["detect"]
+                elif "default" in source:
+                    detects[key] = None
+                
+        return detects
+    
+    
+
+    def exportField(self, field):
         """
-        Converts data from values to a compact data structure for being used to 
+        Converts data for the given field into a compact data structure for being used to 
         compute a checksum in JavaScript.
 
         Export structures:
@@ -433,69 +456,62 @@ class Session():
         3. [ name, 3, test, default? ]
         """
 
-        export = []
-        for key in sorted(self.__fields):
-            source = self.__fields[key]
+        source = self.__fields[field]
             
-            content = []
-            content.append("'%s'" % key)
-            
-            # We have available values to permutate for
-            if "values" in source:
-                values = source["values"]
-                if "detect" in source and len(values) > 1:
-                    # EXPORT STRUCT 1
-                    content.append("1")
-                    content.append(source["detect"])
+        content = []
+        content.append("'%s'" % field)
+        
+        # We have available values to permutate for
+        if "values" in source:
+            values = source["values"]
+            if "detect" in source and len(values) > 1:
+                # EXPORT STRUCT 1
+                content.append("1")
+                content.append(source["detect"])
 
-                    if "default" in source:
-                        # Make sure that default value is first in
-                        values = values[:]
-                        values.remove(source["default"])
-                        values.insert(0, source["default"])
-                    
-                    content.append(json.dumps(values))
-            
-                else:
-                    # EXPORT STRUCT 2
-                    content.append("2")
-
-                    if "default" in source:
-                        content.append(json.dumps(source["default"]))
-                    else:
-                        content.append(json.dumps(values[0]))
-
-            # Has no relevance for permutation, just insert the test
+                if "default" in source:
+                    # Make sure that default value is first in
+                    values = values[:]
+                    values.remove(source["default"])
+                    values.insert(0, source["default"])
+                
+                content.append(json.dumps(values))
+        
             else:
-                if "detect" in source:
-                    # EXPORT STRUCT 3
-                    content.append("3")
+                # EXPORT STRUCT 2
+                content.append("2")
 
-                    # Add detection class
-                    content.append(source["detect"])
-                    
-                    # Add default value if available
-                    if "default" in source:
-                        content.append(json.dumps(source["default"]))
-                
-                elif "default" in source:
-                    # EXPORT STRUCT 2
-                    content.append("2")
+                if "default" in source:
                     content.append(json.dumps(source["default"]))
-
                 else:
-                    # Has no detection and no permutation. Ignore it completely
-                    continue
-                
-            export.append("[%s]" % ", ".join(content))
-            
-        if export:
-            return "[\n  %s\n]" % ",\n  ".join(export)
+                    content.append(json.dumps(values[0]))
 
-        return None
-    
-    
-    
+        # Has no relevance for permutation, just insert the test
+        else:
+            if "detect" in source:
+                # EXPORT STRUCT 3
+                content.append("3")
+
+                # Add detection class
+                content.append(source["detect"])
+
+                # Add default value if available
+                if "default" in source:
+                    content.append(json.dumps(source["default"]))
+            
+            elif "default" in source:
+                # EXPORT STRUCT 2
+                content.append("2")
+                content.append(json.dumps(source["default"]))
+
+            else:
+                # Has no detection and no permutation. Ignore it completely
+                pass
+            
+        return "[%s]" % ", ".join(content)
+
+
+
     
     #
     # Translation Support

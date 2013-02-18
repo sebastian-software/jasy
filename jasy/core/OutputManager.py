@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 import os
@@ -99,6 +100,43 @@ class OutputManager:
         Console.outdent()
 
 
+    def generateFieldCodeBlocks(self):
+        """
+
+        """
+
+        Console.info("Analysing configured fields...")
+        Console.indent()
+
+        weight = {}
+
+        detects = self.__session.exportFieldDetects()
+        for field in detects:
+            entry = detects[field]
+            if entry is None:
+                weight[field] = 0
+                continue
+
+            resolver = Resolver(self.__session)
+            resolver.addClassName(entry)
+            includedClasses = resolver.getSortedClasses()
+            usedFields = set()
+            for classItem in includedClasses:
+                usedFields.update(classItem.getFields())
+
+            weight[field] = len(usedFields) * 10000 + len(includedClasses)
+
+        # Sort fields by their weight. Place fields with low weight in front.
+        sortedFields = sorted(detects, key=lambda field: weight[field])
+
+        # Generate client side code for every field
+        codeBlocks = [ self.__session.exportField(field) for field in sortedFields ]
+
+        Console.outdent()
+
+        return codeBlocks
+
+
     def storeKernel(self, fileName, classes=None, debug=False, bootCode=""):
         """
         Writes a so-called kernel script to the given location. This script contains
@@ -112,10 +150,11 @@ class OutputManager:
         exclude it from the real other generated output files.
         """
 
+        # Use a new permutation based on debug settings and statically configured fields
+        self.__session.setStaticPermutation(debug=debug)
+
         Console.info("Storing kernel...")
         Console.indent()
-
-
         
         #
         # Block 1: Build relevant classes for asset list
@@ -125,9 +164,6 @@ class OutputManager:
         Console.info("Preparing configuration...")
         Console.indent()
 
-        # Use a new permutation based on debug settings and statically configured fields
-        self.__session.setStaticPermutation(debug=debug)
-
         # We need the permutation here because the field configuration might rely on detection classes
         resolver = Resolver(self.__session)
 
@@ -136,15 +172,13 @@ class OutputManager:
                 resolver.addClassName(className)
 
         if bootCode:
-            resolver.addVirtualClass("jasy.export.BootCode", "(function(){%s})();" % bootCode)
+            resolver.addVirtualClass("jasy.generated.BootCode", "(function(){%s})();" % bootCode)
 
-        fieldData = self.__session.exportFields()
-        if fieldData:
-            resolver.addVirtualClass("jasy.export.FieldData", "jasy.Env.setFields(%s);" % fieldData)
+        fieldCodeBlocks = self.generateFieldCodeBlocks()
+        for fieldCode in fieldCodeBlocks:
+            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldCode)
 
         assetData = self.__assetManager.export(resolver.getIncludedClasses())
-        if assetData:
-            resolver.addVirtualClass("jasy.export.AssetData", "jasy.Asset.addData(%s);" % assetData)
 
         Console.outdent()
 
@@ -162,18 +196,19 @@ class OutputManager:
         # We need the permutation here because the field configuration might rely on detection classes
         resolver = Resolver(self.__session)
 
-        if fieldData:
-            resolver.addVirtualClass("jasy.export.FieldData", "jasy.Env.setFields(%s);" % fieldData)
+        fieldCodeBlocks = self.generateFieldCodeBlocks()
+        for fieldCode in fieldCodeBlocks:
+            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldCode)
 
         if assetData:
-            resolver.addVirtualClass("jasy.export.AssetData", "jasy.Asset.addData(%s);" % assetData)
+            resolver.addVirtualClass("jasy.generated.AssetData", "jasy.Asset.addData(%s);" % assetData)
 
         if classes:
             for className in classes:
                 resolver.addClassName(className)
 
         if bootCode:
-            resolver.addVirtualClass("jasy.export.BootCode", "(function(){%s})();" % bootCode)
+            resolver.addVirtualClass("jasy.generated.BootCode", "(function(){%s})();" % bootCode)
 
         sortedClasses = resolver.getSortedClasses()
         Console.info("Compressing %s classes...", len(sortedClasses))
@@ -182,6 +217,7 @@ class OutputManager:
 
         try:
             for classObj in sortedClasses:
+                print("- %s" % classObj)
                 result.append(classObj.getCompressed(
                     self.__session.getCurrentPermutation(), 
                     self.__session.getCurrentTranslationBundle(), 
