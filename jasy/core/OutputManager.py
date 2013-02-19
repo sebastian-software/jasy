@@ -217,7 +217,6 @@ class OutputManager:
 
         try:
             for classObj in sortedClasses:
-                print("- %s" % classObj)
                 result.append(classObj.getCompressed(
                     self.__session.getCurrentPermutation(), 
                     self.__session.getCurrentTranslationBundle(), 
