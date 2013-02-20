@@ -44,8 +44,8 @@ class OutputManager:
 
         Console.info("Initializing OutputManager...")
         Console.indent()
-        Console.info("Formatting Level: %s", formattingLevel)
-        Console.info("Compression Level: %s", compressionLevel)
+        Console.debug("Formatting Level: %s", formattingLevel)
+        Console.debug("Compression Level: %s", compressionLevel)
 
         self.__session = session
 
@@ -100,7 +100,7 @@ class OutputManager:
         Console.outdent()
 
 
-    def generateFieldCodeBlocks(self):
+    def collectFieldData(self):
         """
 
         """
@@ -155,6 +155,8 @@ class OutputManager:
 
         Console.info("Storing kernel...")
         Console.indent()
+
+
         
         #
         # Block 1: Build relevant classes for asset list
@@ -167,16 +169,16 @@ class OutputManager:
         # We need the permutation here because the field configuration might rely on detection classes
         resolver = Resolver(self.__session)
 
+        allFieldData = self.collectFieldData()
+        for fieldData in allFieldData:
+            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldData)
+
         if classes:
             for className in classes:
                 resolver.addClassName(className)
 
         if bootCode:
             resolver.addVirtualClass("jasy.generated.BootCode", "(function(){%s})();" % bootCode)
-
-        fieldCodeBlocks = self.generateFieldCodeBlocks()
-        for fieldCode in fieldCodeBlocks:
-            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldCode)
 
         assetData = self.__assetManager.export(resolver.getIncludedClasses())
 
@@ -196,9 +198,8 @@ class OutputManager:
         # We need the permutation here because the field configuration might rely on detection classes
         resolver = Resolver(self.__session)
 
-        fieldCodeBlocks = self.generateFieldCodeBlocks()
-        for fieldCode in fieldCodeBlocks:
-            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldCode)
+        for fieldData in allFieldData:
+            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldData)
 
         if assetData:
             resolver.addVirtualClass("jasy.generated.AssetData", "jasy.Asset.addData(%s);" % assetData)
@@ -273,6 +274,9 @@ class OutputManager:
 
         if self.__assetManager:
             assetData = self.__assetManager.export(filtered)
+
+            resolver.addVirtualClass("jasy.generated.AssetData", "jasy.Asset.addData(%s);" % assetData)
+
             if assetData:
                 assetCode = "jasy.Asset.addData(%s);" % assetData
                 if self.__compressGeneratedCode:

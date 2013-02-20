@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import itertools, time, atexit, json, os
+import itertools, time, atexit, json, os, zlib
 
 import jasy.core.Locale
 import jasy.core.Config
@@ -308,6 +308,27 @@ class Session():
 
 
 
+    def getVirtualItem(self, baseName, itemClass, text, extension):
+        virtualProject = self.getVirtualProject()
+
+        # Tweak name by content checksum to make all results of the
+        # same content being cachable by the normal infrastructure.
+        checksum = zlib.adler32(text.encode("utf-8"))
+        fileId = "%s-%s" % (baseName, checksum)
+
+        # Generate path from file ID.
+        # Put file into "src" folder
+        filePath = os.path.join(virtualProject.getPath(), "src", fileId.replace(".", os.sep)) + extension
+
+        # Create a class dynamically and add it to both, 
+        # the virtual project and our requirements list.
+        item = itemClass(virtualProject, fileId)
+        item.saveText(text, filePath)
+
+        return item   
+
+
+
     #
     # Support for fields
     # Fields allow to inject data from the build into the running application
@@ -423,6 +444,11 @@ class Session():
         
         
     def exportFieldDetects(self):
+        """
+        Returns a dict where the field points to the detection class
+        which is being used to figure out the value on the client.
+        """
+        
         detects = {}
 
         for key in sorted(self.__fields):
