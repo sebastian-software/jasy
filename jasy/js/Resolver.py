@@ -3,8 +3,6 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import os, zlib
-
 import jasy.js.Sorter as Sorter
 import jasy.core.Console as Console
 import jasy.item.Class as Class
