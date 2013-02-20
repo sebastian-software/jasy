@@ -90,7 +90,7 @@ class Resolver():
 
         classItem = self.__session.getVirtualItem(className, Class.ClassItem, text, ".js")
 
-        Console.debug("Adding virtual class: %s", className)
+        Console.debug("Adding virtual class: %s", classItem.getId())
         self.__required.append(classItem)
 
         # Invalidate included list
