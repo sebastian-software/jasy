@@ -15,10 +15,11 @@ class CircularDependency(Exception):
 
 class Sorter:
     def __init__(self, resolver, session):
-        # Keep classes/permutation reference
+        # Keep classes/permutation/fields reference
         # Classes is set(classObj, ...)
         self.__resolver = resolver
         self.__permutation = session.getCurrentPermutation()
+        self.__fields = session.exportFieldDetects()
         
         classes = self.__resolver.getIncludedClasses()
 
@@ -112,7 +113,7 @@ class Sorter:
     
         stack.append(classObj)
 
-        classDeps = classObj.getDependencies(self.__permutation, classes=self.__names, warnings=False)
+        classDeps = classObj.getDependencies(self.__permutation, classes=self.__names, fields=self.__fields, warnings=False)
         classMeta = classObj.getMetaData(self.__permutation)
         
         result = set()

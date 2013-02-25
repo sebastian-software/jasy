@@ -122,10 +122,11 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
-    def getDependencies(self, permutation=None, classes=None, warnings=True):
+    def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
         """ 
         Returns a set of dependencies seen through the given list of known 
-        classes (ignoring all unknown items in original set). This method
+        classes (ignoring all unknown items in original set) and configured fields 
+        with their individual detection classes. This method also
         makes use of the meta data (see core/MetaData.py) and the variable data 
         (see parse/ScopeData.py).
         """
@@ -134,9 +135,24 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         meta = self.getMetaData(permutation)
         scope = self.getScopeData(permutation)
-        
+
         result = set()
-        
+
+        # Match fields with current permutation and give detection classes
+        # Add detection classes of fields which are accessed but not permutated
+        # to the list of dependencies for this class.
+        if fields:
+            accessedFields = self.getFields()
+            if accessedFields:
+                for fieldName in accessedFields:
+                    if permutation is None or not permutation.has(fieldName):
+                        if fieldName in fields:
+                            fieldDetection = fields[fieldName]
+                            if fieldDetection in classes:
+                                result.add(classes[fieldDetection])
+                            elif warnings:
+                                Console.warn("Missing class (field detection): %s in %s", name, self.id)
+
         # Manually defined names/classes
         for name in meta.requires:
             if name != self.id and name in classes and classes[name].kind == "class":
@@ -148,7 +164,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                         if reobj.match(className):
                             result.add(classes[className])
             elif warnings:
-                Console.warn("- Missing class (required): %s in %s", name, self.id)
+                Console.warn("Missing class (required): %s in %s", name, self.id)
 
         # Globally modified names (mostly relevant when working without namespaces)
         for name in scope.shared:
@@ -185,7 +201,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             if name != self.id and name in classes and classes[name].kind == "class":
                 result.remove(classes[name])
             elif warnings:
-                Console.warn("- Missing class (optional): %s in %s", name, self.id)
+                Console.warn("Missing class (optional): %s in %s", name, self.id)
 
         return result
         

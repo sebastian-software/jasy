@@ -20,6 +20,9 @@ class Resolver():
         # Keep permutation reference
         self.__permutation = session.getCurrentPermutation()
 
+        # Keep fields data locally
+        self.__fields = session.exportFieldDetects()
+
         # Required classes by the user
         self.__required = []
 
@@ -34,33 +37,55 @@ class Resolver():
         for project in session.getProjects():
             self.__classes.update(project.getClasses())
         
-        
-    def addClassName(self, className):
-        """ Adds a class to the initial dependencies """
-        
-        if not className in self.__classes:
-            raise Exception("Unknown Class: %s" % className)
-            
-        Console.debug("Adding class: %s", className)
-        self.__required.append(self.__classes[className])
+
+    def addClass(self, classNameOrItem, prepend=False):
+        """
+        Adds a class by its name or via the ClassItem instance
+        """
+
+        if type(classNameOrItem) is str:
+            if not classNameOrItem in self.__classes:
+                raise Exception("Unknown Class: %s" % classNameOrItem)
+
+            # Replace variable with ClassItem instance
+            classNameOrItem = self.__classes[classNameOrItem]
+
+        elif not isinstance(classNameOrItem, Class.ClassItem):
+            raise Exception("Invalid class item: %s" % classNameOrItem)
+
+        if prepend:
+            self.__required.insert(0, classNameOrItem)
+        else:
+            self.__required.append(classNameOrItem)
         
         # Invalidate included list
         self.__included = None
         
         return self
 
-
-    def removeClassName(self, className):
-        """ Removes a class name from dependencies """
         
+    def addClassName(self, className):
+        """ Adds a class to the initial dependencies """
+        
+        return self.addClass(className)
+
+
+    def removeClass(self, classNameOrItem):
         for classObj in self.__required:
-            if classObj.getId() == className:
+            if classObj is classNameOrItem or classObj.getId() == classNameOrItem:
                 self.__required.remove(classObj)
                 if self.__included:
                     self.__included = []
                 return True
                 
         return False
+
+
+
+    def removeClassName(self, className):
+        """ Removes a class name from dependencies """
+        
+        return self.removeClass(className)
 
 
     def excludeClasses(self, classObjects):
@@ -89,14 +114,7 @@ class Resolver():
         """
 
         classItem = self.__session.getVirtualItem(className, Class.ClassItem, text, ".js")
-
-        Console.debug("Adding virtual class: %s", classItem.getId())
-        self.__required.append(classItem)
-
-        # Invalidate included list
-        self.__included = None
-        
-        return self        
+        return self.addClass(classItem)
 
 
     def getRequiredClasses(self):
@@ -142,7 +160,7 @@ class Resolver():
         """ Internal resolver engine which works recursively through all dependencies """
         
         collection.add(classObj)
-        dependencies = classObj.getDependencies(self.__permutation, classes=self.__classes)
+        dependencies = classObj.getDependencies(self.__permutation, classes=self.__classes, fields=self.__fields)
         
         for depObj in dependencies:
             if not depObj in collection:
