@@ -156,228 +156,70 @@ class OutputManager:
 
 
 
+    def compressClasses(self, classes, dividers=True):
+        try:
+            session = self.__session
+            result = []
 
+            for classObj in classes:
+                compressed = classObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
 
+                if dividers:
+                    result.append("%s\n%s\n\n" % (classObj.getId(), compressed))
+                else:
+                    result.append(compressed)
+                
+        except ClassError as error:
+            raise UserError("Error during class compression! %s" % error)
+
+        return "\n".join(result)
 
 
     def storeKernel2(self, fileName, bootCode=""):
-
-        session = self.__session
 
         # Export all field data for the kernel
         classes = []
         allFieldData = self.collectFieldData()
         for fieldData in allFieldData:
-            classItem = session.getVirtualItem("jasy.generated.FieldData", ClassItem, "jasy.Env.addField(%s);" % fieldData, ".js")
+            classItem = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem, "jasy.Env.addField(%s);" % fieldData, ".js")
             classes.append(classItem)
 
         # Transfer all hard-wired fields into a permutation
-        session.setStaticPermutation()
+        self.__session.setStaticPermutation()
 
-        # Compress kernel into
+        # Sort and compress
+        sortedClasses = self.buildClassList(classes, bootCode)
+        compressedCode = self.compressClasses(sortedClasses)
+
+        # Write file to disk
+        self.__fileManager.writeFile(fileName, compressedCode)
+
+        # Remember kernel level classes
+        self.__kernelClasses = sortedClasses
+
+
+
+    def storeLoader2(self, classes, fileName, bootCode=""):
+
+        session = self.__session
+
+        print("ORIGINAL LENGTH: %s" % len(classes))
+
         sortedClasses = self.buildClassList(classes, bootCode)
 
-        try:
-            result = []
-            for classObj in sortedClasses:
-                result.append(classObj.getCompressed(
-                    session.getCurrentPermutation(), 
-                    session.getCurrentTranslationBundle(), 
-                    self.__scriptOptimization, 
-                    self.__scriptFormatting)
-                )
-                
-        except ClassError as error:
-            raise UserError("Error during class compression! %s" % error)
+        print("SORTED LENGTH WITH ASSETS AND BOOTCODE: %s" % len(sortedClasses))
 
-        if self.__compressGeneratedCode:
-            compressedCode = "".join(result)
-        else:
-            compressedCode = "\n\n".join(result)
 
-        self.__fileManager.writeFile(fileName, compressedCode)
+        sortedFilteredClasses = []
+        for className in sortedClasses:
+            if not className in self.__kernelClasses:
+                sortedFilteredClasses.append(className)
+            
+        print("FILTERED CLASSES: %s" % len(sortedFilteredClasses))
 
 
 
-
-
-
-    def storeKernel(self, fileName, classes=None, debug=False, bootCode=""):
-        """
-        Writes a so-called kernel script to the given location. This script contains
-        data about possible permutations based on current session values. It optionally
-        might include asset data (useful when boot phase requires some assets) and 
-        localization data (if only one locale is built).
-        
-        Optimization of the script is auto-enabled when no other information is given.
-        
-        This method returns the classes which are included by the script so you can 
-        exclude it from the real other generated output files.
-        """
-
-        # Use a new permutation based on debug settings and statically configured fields
-        self.__session.setStaticPermutation(debug=debug)
-
-        Console.info("Storing kernel...")
-        Console.indent()
-
-
-        
-        #
-        # Block 1: Build relevant classes for asset list
-        # Add asset data as late as possible to have all relevant classes in class list
-        #
-
-        Console.info("Preparing configuration...")
-        Console.indent()
-
-        # We need the permutation here because the field configuration might rely on detection classes
-        resolver = Resolver(self.__session)
-
-        allFieldData = self.collectFieldData()
-        for fieldData in allFieldData:
-            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldData)
-
-        if classes:
-            for className in classes:
-                resolver.addClassName(className)
-
-        if bootCode:
-            resolver.addVirtualClass("jasy.generated.BootCode", "(function(){%s})();" % bootCode)
-
-        assetData = self.__assetManager.export(resolver.getIncludedClasses())
-
-        Console.outdent()
-
-
-
-        #
-        # Block 2: Build relevant list for compressed kernel
-        # Include fields first, then assets, and then user classes 
-        # This is to make user classes able to use all other stuff directly
-        #
-
-        Console.info("Generating kernel class list...")
-        Console.indent()
-
-        # We need the permutation here because the field configuration might rely on detection classes
-        resolver = Resolver(self.__session)
-
-        for fieldData in allFieldData:
-            resolver.addVirtualClass("jasy.generated.FieldData", "jasy.Env.addField(%s);" % fieldData)
-
-        if assetData:
-            resolver.addVirtualClass("jasy.generated.AssetData", "jasy.Asset.addData(%s);" % assetData)
-
-        if classes:
-            for className in classes:
-                resolver.addClassName(className)
-
-        if bootCode:
-            resolver.addVirtualClass("jasy.generated.BootCode", "(function(){%s})();" % bootCode)
-
-        sortedClasses = resolver.getSortedClasses()
-        Console.info("Compressing %s classes...", len(sortedClasses))
-        Console.indent()
-        result = []
-
-        try:
-            for classObj in sortedClasses:
-                result.append(classObj.getCompressed(
-                    self.__session.getCurrentPermutation(), 
-                    self.__session.getCurrentTranslationBundle(), 
-                    self.__scriptOptimization, 
-                    self.__scriptFormatting)
-                )
-                
-        except ClassError as error:
-            raise UserError("Error during class compression! %s" % error)
-
-        Console.outdent()
-
-
-        if self.__compressGeneratedCode:
-            compressedCode = "".join(result)
-        else:
-            compressedCode = "\n\n".join(result)
-
-        self.__fileManager.writeFile(fileName, compressedCode)
-
-
-        
-        # Remember classes for filtering in storeLoader/storeCompressed
-        self.__kernelClasses = set(sortedClasses)
-
-        # Reset static permutation
-        self.__session.resetCurrentPermutation()
-
-        Console.outdent()
-
-
-
-
-    def storeCompressed(self, classes, fileName, bootCode=None):
-        """
-        Combines the compressed result of the stored class list
-        
-        :param classes: List of sorted classes to compress
-        :type classes: list
-        :param fileName: Filename to write result to
-        :type fileName: string
-        :param bootCode: Code to execute once all the classes are loaded
-        :type bootCode: string
-        """
-
-        if self.__kernelClasses:
-            filtered = [ classObj for classObj in classes if not classObj in self.__kernelClasses ]
-        else:
-            filtered = classes
-
-        Console.info("Compressing %s classes...", len(filtered))
-        Console.indent()
-        result = []
-
-        if self.__assetManager:
-            assetData = self.__assetManager.export(filtered)
-
-            resolver.addVirtualClass("jasy.generated.AssetData", "jasy.Asset.addData(%s);" % assetData)
-
-            if assetData:
-                assetCode = "jasy.Asset.addData(%s);" % assetData
-                if self.__compressGeneratedCode:
-                    result.append(packCode(assetCode))
-                else:
-                    result.append(assetCode)
-
-        permutation = self.__session.getCurrentPermutation()
-
-        try:
-            for classObj in filtered:
-                result.append(classObj.getCompressed(permutation, 
-                    self.__session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting))
-                
-        except ClassError as error:
-            raise UserError("Error during class compression! %s" % error)
-
-        Console.outdent()
-
-        if bootCode:
-            bootCode = "(function(){%s})();" % bootCode
-
-            if self.__compressGeneratedCode:
-                result.append(packCode(bootCode))
-            else:
-                result.append(bootCode)
-
-        if self.__compressGeneratedCode:
-            compressedCode = "".join(result)
-        else:
-            compressedCode = "\n\n".join(result)
-
-        self.__fileManager.writeFile(fileName, compressedCode)
-
-
-    def storeLoader(self, classes, fileName, bootCode="", urlPrefix=""):
+    def storeLoaderOld(self, classes, fileName, bootCode="", urlPrefix=""):
         """
         Generates a source loader which is basically a file which loads the original JavaScript files.
         This is super useful during development of a project as it supports pretty fast workflows
