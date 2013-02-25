@@ -120,7 +120,7 @@ class OutputManager:
 
 
 
-    def compressClasses2(self, classes, bootCode=None):
+    def buildClassList(self, classes, bootCode=None):
 
         Console.info("Compressing classes...")
 
@@ -152,9 +152,7 @@ class OutputManager:
 
         # 5. Sorting classes
         sortedClasses = resolver.getSortedClasses()
-        for classItem in sortedClasses:
-            print("- %s" % classItem)
-
+        return sortedClasses
 
 
 
@@ -164,14 +162,10 @@ class OutputManager:
 
     def storeKernel2(self, fileName, bootCode=""):
 
-        print("===========================================")
-        print("KERNEL")
-        print("===========================================")
-
-        # We need the permutation here because the field configuration might rely on detection classes
         session = self.__session
-        classes = []
 
+        # Export all field data for the kernel
+        classes = []
         allFieldData = self.collectFieldData()
         for fieldData in allFieldData:
             classItem = session.getVirtualItem("jasy.generated.FieldData", ClassItem, "jasy.Env.addField(%s);" % fieldData, ".js")
@@ -180,13 +174,32 @@ class OutputManager:
         # Transfer all hard-wired fields into a permutation
         session.setStaticPermutation()
 
-        # 
-        self.compressClasses2(classes, bootCode)
+        # Compress kernel into
+        sortedClasses = self.buildClassList(classes, bootCode)
+
+        try:
+            result = []
+            for classObj in sortedClasses:
+                result.append(classObj.getCompressed(
+                    session.getCurrentPermutation(), 
+                    session.getCurrentTranslationBundle(), 
+                    self.__scriptOptimization, 
+                    self.__scriptFormatting)
+                )
+                
+        except ClassError as error:
+            raise UserError("Error during class compression! %s" % error)
+
+        if self.__compressGeneratedCode:
+            compressedCode = "".join(result)
+        else:
+            compressedCode = "\n\n".join(result)
+
+        self.__fileManager.writeFile(fileName, compressedCode)
 
 
-        print("===========================================")
-        print()
-        print()
+
+
 
 
     def storeKernel(self, fileName, classes=None, debug=False, bootCode=""):
