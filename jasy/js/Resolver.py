@@ -134,7 +134,7 @@ class Resolver():
         
         collection = set()
         for classObj in self.__required:
-            Console.info("Adding: %s" % classObj)
+            # Console.info("Adding: %s" % classObj)
             self.__resolveDependencies(classObj, collection)
             
         # Filter excluded classes

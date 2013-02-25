@@ -9,7 +9,7 @@ import os
 import jasy.core.Console as Console
 
 from jasy.core.Permutation import getPermutation
-from jasy.item.Class import ClassError
+from jasy.item.Class import ClassError, ClassItem
 from jasy.js.Resolver import Resolver
 from jasy.js.Sorter import Sorter
 from jasy.js.parse.Parser import parse
@@ -108,33 +108,85 @@ class OutputManager:
         Console.info("Analysing configured fields...")
         Console.indent()
 
-        weight = {}
-
-        detects = self.__session.exportFieldDetects()
-        for field in detects:
-            entry = detects[field]
-            if entry is None:
-                weight[field] = 0
-                continue
-
-            resolver = Resolver(self.__session)
-            resolver.addClassName(entry)
-            includedClasses = resolver.getSortedClasses()
-            usedFields = set()
-            for classItem in includedClasses:
-                usedFields.update(classItem.getFields())
-
-            weight[field] = len(usedFields) * 10000 + len(includedClasses)
-
-        # Sort fields by their weight. Place fields with low weight in front.
-        sortedFields = sorted(detects, key=lambda field: weight[field])
-
         # Generate client side code for every field
-        codeBlocks = [ self.__session.exportField(field) for field in sortedFields ]
+        detects = self.__session.exportFieldDetects()
+        codeBlocks = [ self.__session.exportField(field) for field in detects ]
 
         Console.outdent()
 
         return codeBlocks
+
+
+
+
+
+    def compressClasses2(self, classes, bootCode=None):
+
+        Console.info("Compressing classes...")
+
+        session = self.__session
+
+        # 1. Add given set of classes
+        resolver = Resolver(session)
+        for classItem in classes:
+            resolver.addClass(classItem)
+
+        # 2. Add optional boot code
+        if bootCode:
+            bootClassItem = session.getVirtualItem("jasy.generated.BootCode", ClassItem, "(function(){%s})();" % bootCode, ".js")
+            resolver.addClass(bootClassItem)
+
+        # 3. Check for usage assets
+        includedClasses = resolver.getIncludedClasses()
+        usesAssets = False
+        for classItem in includedClasses:
+            if classItem.getId() == "jasy.Asset":
+                usesAssets = True
+                break
+
+        # 4. Add asset data
+        if usesAssets:
+            assetData = self.__assetManager.export(includedClasses)
+            assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
+            resolver.addClass(assetClassItem, prepend=True)
+
+        # 5. Sorting classes
+        sortedClasses = resolver.getSortedClasses()
+        for classItem in sortedClasses:
+            print("- %s" % classItem)
+
+
+
+
+
+
+
+
+    def storeKernel2(self, fileName, bootCode=""):
+
+        print("===========================================")
+        print("KERNEL")
+        print("===========================================")
+
+        # We need the permutation here because the field configuration might rely on detection classes
+        session = self.__session
+        classes = []
+
+        allFieldData = self.collectFieldData()
+        for fieldData in allFieldData:
+            classItem = session.getVirtualItem("jasy.generated.FieldData", ClassItem, "jasy.Env.addField(%s);" % fieldData, ".js")
+            classes.append(classItem)
+
+        # Transfer all hard-wired fields into a permutation
+        session.setStaticPermutation()
+
+        # 
+        self.compressClasses2(classes, bootCode)
+
+
+        print("===========================================")
+        print()
+        print()
 
 
     def storeKernel(self, fileName, classes=None, debug=False, bootCode=""):
