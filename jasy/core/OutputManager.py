@@ -42,11 +42,6 @@ class OutputManager:
 
     def __init__(self, session, assetManager=None, compressionLevel=1, formattingLevel=0):
 
-        Console.info("Initializing OutputManager...")
-        Console.indent()
-        Console.debug("Formatting Level: %s", formattingLevel)
-        Console.debug("Compression Level: %s", compressionLevel)
-
         self.__session = session
 
         self.__assetManager = assetManager
@@ -73,8 +68,6 @@ class OutputManager:
         if formattingLevel > 0:
             self.__scriptFormatting.enable("semicolon")
             self.__scriptFormatting.enable("comma")
-
-        Console.outdent()
 
 
     def deployAssets(self, classes, assetFolder=None):
@@ -117,10 +110,7 @@ class OutputManager:
         return codeBlocks
 
 
-
-
-
-    def buildClassList(self, classes, bootCode=None, filterBy=None):
+    def buildClassList(self, classes, bootCode=None, filterBy=None, inlineTranslations=False):
 
         session = self.__session
 
@@ -148,10 +138,19 @@ class OutputManager:
             assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
             resolver.addClass(assetClassItem, prepend=True)
 
-        # 5. Sorting classes
+        # 5. Add translation data
+        if not inlineTranslations:
+            translationBundle = self.__session.getCurrentTranslationBundle()
+            if translationBundle:
+                translationData = translationBundle.export(filtered)
+                if translationData:
+                    translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
+                    resolver.addClass(translationClassItem, prepend=True)
+
+        # 6. Sorting classes
         sortedClasses = resolver.getSortedClasses()
 
-        # 6. Apply filter
+        # 7. Apply filter
         if filterBy:
             filteredClasses = []
             for classObj in sortedClasses:
@@ -161,7 +160,6 @@ class OutputManager:
             sortedClasses = filteredClasses
 
         return sortedClasses
-
 
 
     def compressClasses(self, classes, dividers=True):
@@ -231,21 +229,16 @@ class OutputManager:
             else:
                 files.append(main.toRelativeUrl(path, urlPrefix))        
 
-        if dividers:
+        if not dividers:
             loaderList = '"%s"' % '","'.join(files)
         else:
             loaderList = '"%s"' % '",\n"'.join(files)
 
         code += 'core.io.Queue.load([%s], null, null, true);' % loaderList
-
-
-
         return code
 
 
-
-
-    def storeKernel2(self, fileName, bootCode=""):
+    def storeKernel(self, fileName, bootCode=""):
 
         Console.info("Storing kernel...")
         Console.indent()
@@ -275,8 +268,7 @@ class OutputManager:
         Console.outdent()
 
 
-
-    def storeLoader2(self, classes, fileName, bootCode=""):
+    def storeLoader(self, classes, fileName, bootCode=""):
 
         Console.info("Storing loader...")
         Console.indent()
@@ -292,89 +284,3 @@ class OutputManager:
         self.__fileManager.writeFile(fileName, loaderCode)
 
         Console.outdent()
-
-
-
-
-
-
-    def storeLoaderOld(self, classes, fileName, bootCode="", urlPrefix=""):
-        """
-        Generates a source loader which is basically a file which loads the original JavaScript files.
-        This is super useful during development of a project as it supports pretty fast workflows
-        where most often a simple reload in the browser is enough to get the newest sources.
-        
-        :param classes: List of sorted classes to compress
-        :type classes: list
-        :param fileName: Filename to write result to
-        :type fileName: string
-        :param bootCode: Code to execute once all classes have been loaded
-        :type bootCode: string
-        :param urlPrefix: Prepends the given URL prefix to all class URLs to load
-        :type urlPrefix: string
-        """
-        
-        if self.__kernelClasses:
-            filtered = [ classObj for classObj in classes if not classObj in self.__kernelClasses ]
-        else:
-            filtered = classes
-
-        Console.info("Generating loader for %s classes...", len(classes))
-        Console.indent()
-        
-        main = self.__session.getMain()
-        files = []
-        for classObj in filtered:
-            path = classObj.getPath()
-
-            # Support for multi path classes 
-            # (typically in projects with custom layout/structure e.g. 3rd party)
-            if type(path) is list:
-                for singleFileName in path:
-                    files.append(main.toRelativeUrl(singleFileName, urlPrefix))
-            
-            else:
-                files.append(main.toRelativeUrl(path, urlPrefix))
-        
-        result = []
-        Console.outdent()
-        
-        if self.__assetManager:
-            assetData = self.__assetManager.export(filtered)
-            if assetData:
-                assetCode = "jasy.Asset.addData(%s);" % assetData
-                if self.__compressGeneratedCode:
-                    result.append(packCode(assetCode))
-                else:
-                    result.append(assetCode)
-
-        translationBundle = self.__session.getCurrentTranslationBundle()
-        if translationBundle:
-            translationData = translationBundle.export(filtered)
-            if translationData:
-                translationCode = 'jasy.Translate.addData(%s);' % translationData
-                if self.__compressGeneratedCode:
-                    result.append(packCode(translationCode))        
-                else:
-                    result.append(translationCode)
-
-        if self.__compressGeneratedCode:
-            loaderList = '"%s"' % '","'.join(files)
-        else:
-            loaderList = '"%s"' % '",\n"'.join(files)
-
-        wrappedBootCode = "function(){ %s }" % bootCode if bootCode else "null"
-        loaderCode = 'core.io.Queue.load([%s], %s, null, true);' % (loaderList, wrappedBootCode)
-
-        if self.__compressGeneratedCode:
-            result.append(packCode(loaderCode))
-        else:
-            result.append(loaderCode)
-
-        if self.__compressGeneratedCode:
-            loaderCode = "".join(result)
-        else:
-            loaderCode = "\n\n".join(result)
-
-        self.__fileManager.writeFile(fileName, loaderCode)
-

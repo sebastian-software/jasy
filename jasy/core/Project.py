@@ -248,7 +248,7 @@ class Project():
 
         # Print out
         if summary:
-            Console.info("Done %s: %s" % (Console.colorize("[%s]" % self.kind, "grey"), Console.colorize(", ".join(summary), "green")))
+            Console.info("Content: %s" % (Console.colorize(", ".join(summary), "green")))
         else:
             Console.error("Project is empty!")
 
