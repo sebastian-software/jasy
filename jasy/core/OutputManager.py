@@ -107,7 +107,7 @@ class OutputManager:
         if not inlineTranslations:
             translationBundle = self.__session.getCurrentTranslationBundle()
             if translationBundle:
-                translationData = translationBundle.export(filtered)
+                translationData = translationBundle.export(includedClasses)
                 if translationData:
                     translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
                     resolver.addClass(translationClassItem, prepend=True)
