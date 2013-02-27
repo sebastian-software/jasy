@@ -75,23 +75,6 @@ class OutputManager:
         Console.outdent()
 
 
-    def collectFieldData(self):
-        """
-
-        """
-
-        Console.info("Analysing configured fields...")
-        Console.indent()
-
-        # Generate client side code for every field
-        detects = self.__session.exportFieldDetects()
-        codeBlocks = [ self.__session.exportField(field) for field in detects ]
-
-        Console.outdent()
-
-        return codeBlocks
-
-
     def buildClassList(self, classes, bootCode=None, filterBy=None, inlineTranslations=False):
 
         session = self.__session
@@ -227,10 +210,9 @@ class OutputManager:
 
         # Export all field data for the kernel
         classes = []
-        allFieldData = self.collectFieldData()
-        for fieldData in allFieldData:
-            classItem = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem, "jasy.Env.addField(%s);" % fieldData, ".js")
-            classes.append(classItem)
+        fieldSetupClasses = self.__session.getFieldSetupClasses()
+        for fieldName in fieldSetupClasses:
+            classes.append(fieldSetupClasses[fieldName])
 
         # Transfer all hard-wired fields into a permutation
         self.__session.setStaticPermutation()
