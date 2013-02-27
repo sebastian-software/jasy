@@ -128,13 +128,9 @@ class Resolver():
 
         if self.__included:
             return self.__included
-        
-        Console.info("Detecting dependencies...")
-        Console.indent()
-        
+                
         collection = set()
         for classObj in self.__required:
-            # Console.info("Adding: %s" % classObj)
             self.__resolveDependencies(classObj, collection)
             
         # Filter excluded classes
@@ -144,9 +140,6 @@ class Resolver():
         
         self.__included = collection
 
-        Console.outdent()
-        Console.debug("Including %s classes", len(collection))
-        
         return self.__included
         
         

@@ -122,8 +122,6 @@ class OutputManager:
 
     def buildClassList(self, classes, bootCode=None, filterBy=None):
 
-        Console.info("Compressing classes...")
-
         session = self.__session
 
         # 1. Add given set of classes
@@ -249,6 +247,9 @@ class OutputManager:
 
     def storeKernel2(self, fileName, bootCode=""):
 
+        Console.info("Storing kernel...")
+        Console.indent()
+
         # Export all field data for the kernel
         classes = []
         allFieldData = self.collectFieldData()
@@ -261,6 +262,8 @@ class OutputManager:
 
         # Sort and compress
         sortedClasses = self.buildClassList(classes, bootCode)
+        
+        Console.info("Compressing %s classes...", len(sortedClasses))
         compressedCode = self.compressClasses(sortedClasses)
 
         # Write file to disk
@@ -269,18 +272,28 @@ class OutputManager:
         # Remember kernel level classes
         self.__kernelClasses = sortedClasses
 
+        Console.outdent()
+
 
 
     def storeLoader2(self, classes, fileName, bootCode=""):
+
+        Console.info("Storing loader...")
+        Console.indent()
 
         # Build class list
         sortedClasses = self.buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
             
         # Compress code
+        Console.info("Including %s classes...", len(sortedClasses))
         loaderCode = self.loadClasses(sortedClasses)
 
         # Write file to disk
         self.__fileManager.writeFile(fileName, loaderCode)
+
+        Console.outdent()
+
+
 
 
 
