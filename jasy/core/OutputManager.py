@@ -120,7 +120,7 @@ class OutputManager:
 
 
 
-    def buildClassList(self, classes, bootCode=None):
+    def buildClassList(self, classes, bootCode=None, filterBy=None):
 
         Console.info("Compressing classes...")
 
@@ -152,6 +152,16 @@ class OutputManager:
 
         # 5. Sorting classes
         sortedClasses = resolver.getSortedClasses()
+
+        # 6. Apply filter
+        if filterBy:
+            filteredClasses = []
+            for classObj in sortedClasses:
+                if not classObj in filterBy:
+                    filteredClasses.append(classObj)
+
+            sortedClasses = filteredClasses
+
         return sortedClasses
 
 
@@ -173,6 +183,68 @@ class OutputManager:
             raise UserError("Error during class compression! %s" % error)
 
         return "\n".join(result)
+
+
+    def loadClasses(self, classes, dividers=True, urlPrefix=None):
+
+        # For loading classes we require core.ui.Queue and core.io.Script 
+        # being available. If they are not part of the kernel, we have to 
+        # prepend them as compressed code into the resulting output.
+
+        hasLoader = False
+        hasQueue = False
+
+        for classObj in self.__kernelClasses:
+            className = classObj.getId()
+            if className == "core.io.Queue":
+                hasQueue = True
+            elif className == "core.io.Script":
+                hasLoader = True
+
+        code = ""
+
+        if not hasQueue or not hasLoader:
+            compress = []
+            if not hasQueue:
+                compress.append("core.io.Queue")
+            if not hasLoader:
+                compress.append("core.io.Script")
+
+            compressedList = self.buildClassList(compress, filterBy=self.__kernelClasses)
+            code += self.compressClasses(compressedList, dividers=dividers)
+
+
+        main = self.__session.getMain()
+        files = []
+
+        for classObj in classes:
+            # Ignore already ompressed classes
+            if classObj.getId() in ("core.io.Script", "core.io.Queue"):
+                continue
+
+            path = classObj.getPath()
+
+            # Support for multi path classes 
+            # (typically in projects with custom layout/structure e.g. 3rd party)
+            if type(path) is list:
+                for singleFileName in path:
+                    files.append(main.toRelativeUrl(singleFileName, urlPrefix))
+            
+            else:
+                files.append(main.toRelativeUrl(path, urlPrefix))        
+
+        if dividers:
+            loaderList = '"%s"' % '","'.join(files)
+        else:
+            loaderList = '"%s"' % '",\n"'.join(files)
+
+        code += 'core.io.Queue.load([%s], null, null, true);' % loaderList
+
+
+
+        return code
+
+
 
 
     def storeKernel2(self, fileName, bootCode=""):
@@ -201,20 +273,14 @@ class OutputManager:
 
     def storeLoader2(self, classes, fileName, bootCode=""):
 
-        session = self.__session
-        sortedClasses = self.buildClassList(classes, bootCode)
-
-        # Filter out kernel classes
-        sortedFilteredClasses = []
-        for className in sortedClasses:
-            if not className in self.__kernelClasses:
-                sortedFilteredClasses.append(className)
+        # Build class list
+        sortedClasses = self.buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
             
         # Compress code
-        compressedCode = self.compressClasses(sortedFilteredClasses)
+        loaderCode = self.loadClasses(sortedClasses)
 
         # Write file to disk
-        self.__fileManager.writeFile(fileName, compressedCode)
+        self.__fileManager.writeFile(fileName, loaderCode)
 
 
 
