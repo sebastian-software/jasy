@@ -165,7 +165,7 @@ class OutputManager:
                 compressed = classObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
 
                 if dividers:
-                    result.append("%s\n%s\n\n" % (classObj.getId(), compressed))
+                    result.append("// FILE ID: %s\n%s\n\n" % (classObj.getId(), compressed))
                 else:
                     result.append(compressed)
                 
@@ -202,20 +202,20 @@ class OutputManager:
     def storeLoader2(self, classes, fileName, bootCode=""):
 
         session = self.__session
-
-        print("ORIGINAL LENGTH: %s" % len(classes))
-
         sortedClasses = self.buildClassList(classes, bootCode)
 
-        print("SORTED LENGTH WITH ASSETS AND BOOTCODE: %s" % len(sortedClasses))
-
-
+        # Filter out kernel classes
         sortedFilteredClasses = []
         for className in sortedClasses:
             if not className in self.__kernelClasses:
                 sortedFilteredClasses.append(className)
             
-        print("FILTERED CLASSES: %s" % len(sortedFilteredClasses))
+        # Compress code
+        compressedCode = self.compressClasses(sortedFilteredClasses)
+
+        # Write file to disk
+        self.__fileManager.writeFile(fileName, compressedCode)
+
 
 
 
