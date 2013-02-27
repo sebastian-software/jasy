@@ -21,7 +21,7 @@ class Resolver():
         self.__permutation = session.getCurrentPermutation()
 
         # Keep fields data locally
-        self.__fields = session.exportFieldDetects()
+        self.__fields = session.getFieldSetupClasses()
 
         # Required classes by the user
         self.__required = []

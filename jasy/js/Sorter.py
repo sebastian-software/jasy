@@ -19,7 +19,7 @@ class Sorter:
         # Classes is set(classObj, ...)
         self.__resolver = resolver
         self.__permutation = session.getCurrentPermutation()
-        self.__fields = session.exportFieldDetects()
+        self.__fields = session.getFieldSetupClasses()
         
         classes = self.__resolver.getIncludedClasses()
 

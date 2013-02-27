@@ -12,6 +12,7 @@ import jasy.core.Permutation
 
 import jasy.asset.Manager
 import jasy.item.Translation
+import jasy.item.Class
 
 from jasy import UserError
 import jasy.core.Console as Console
@@ -316,6 +317,11 @@ class Session():
         checksum = zlib.adler32(text.encode("utf-8"))
         fileId = "%s-%s" % (baseName, checksum)
 
+        # Try to reuse existing item e.g. from previous run
+        item = virtualProject.getClassByName(fileId)
+        if item:
+            return item
+
         # Generate path from file ID.
         # Put file into "src" folder
         filePath = os.path.join(virtualProject.getPath(), "src", fileId.replace(".", os.sep)) + extension
@@ -469,6 +475,20 @@ class Session():
                 
         return detects
     
+
+    def getFieldSetupClasses(self):
+
+        setups = {}
+        detects = self.exportFieldDetects()
+        
+        for fieldName in detects:
+            fieldSetup = "jasy.Env.addField(%s);" % self.exportField(fieldName)
+            fieldSetupClass = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+            setups[fieldName] = fieldSetupClass
+
+        return setups
+
+        
     
 
     def exportField(self, field):

@@ -147,11 +147,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 for fieldName in accessedFields:
                     if permutation is None or not permutation.has(fieldName):
                         if fieldName in fields:
-                            fieldDetection = fields[fieldName]
-                            if fieldDetection in classes:
-                                result.add(classes[fieldDetection])
-                            elif warnings:
-                                Console.warn("Missing class (field detection): %s in %s", name, self.id)
+                            result.add(fields[fieldName])
 
         # Manually defined names/classes
         for name in meta.requires:
