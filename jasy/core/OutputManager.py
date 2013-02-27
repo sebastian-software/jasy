@@ -11,31 +11,13 @@ import jasy.core.Console as Console
 from jasy.core.Permutation import getPermutation
 from jasy.item.Class import ClassError, ClassItem
 from jasy.js.Resolver import Resolver
-from jasy.js.Sorter import Sorter
-from jasy.js.parse.Parser import parse
-from jasy.js.output.Compressor import Compressor
+
 from jasy import UserError
 
 from jasy.js.output.Optimization import Optimization
 from jasy.js.output.Formatting import Formatting
 
 from jasy.core.FileManager import FileManager
-
-compressor = Compressor()
-packCache = {}
-
-
-def packCode(code):
-    """Packs the given code by passing it to the compression engine"""
-    
-    if code in packCache:
-       return packCache[code]
-    
-    packed = compressor.compress(parse(code))
-    packCache[code] = packed
-    
-    return packed
-
 
 
 class OutputManager:
