@@ -28,26 +28,22 @@ class OutputManager:
 
         self.__assetManager = assetManager
         self.__fileManager = FileManager(session)
+        self.__kernelClasses = []
 
         self.__scriptOptimization = Optimization()
-        
-        self.__compressGeneratedCode = False
+        self.__scriptFormatting = Formatting()
 
-        self.__kernelClasses = []
+        self.__addDividers = formattingLevel > 0
 
         if compressionLevel > 0:
             self.__scriptOptimization.enable("variables")
             self.__scriptOptimization.enable("declarations")
             
-            self.__compressGeneratedCode = True
-
         if compressionLevel > 1:
             self.__scriptOptimization.enable("blocks")
             self.__scriptOptimization.enable("privates")
 
-        self.__scriptFormatting = Formatting()
-
-        if formattingLevel > 0:
+        if formattingLevel > 1:
             self.__scriptFormatting.enable("semicolon")
             self.__scriptFormatting.enable("comma")
 
@@ -127,7 +123,7 @@ class OutputManager:
         return sortedClasses
 
 
-    def compressClasses(self, classes, dividers=True):
+    def compressClasses(self, classes):
         try:
             session = self.__session
             result = []
@@ -135,7 +131,7 @@ class OutputManager:
             for classObj in classes:
                 compressed = classObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
 
-                if dividers:
+                if self.__addDividers:
                     result.append("// FILE ID: %s\n%s\n\n" % (classObj.getId(), compressed))
                 else:
                     result.append(compressed)
@@ -143,10 +139,10 @@ class OutputManager:
         except ClassError as error:
             raise UserError("Error during class compression! %s" % error)
 
-        return "\n".join(result)
+        return "".join(result)
 
 
-    def loadClasses(self, classes, dividers=True, urlPrefix=None):
+    def loadClasses(self, classes, urlPrefix=None):
 
         # For loading classes we require core.ui.Queue and core.io.Script 
         # being available. If they are not part of the kernel, we have to 
@@ -172,7 +168,7 @@ class OutputManager:
                 compress.append("core.io.Script")
 
             compressedList = self.buildClassList(compress, filterBy=self.__kernelClasses)
-            code += self.compressClasses(compressedList, dividers=dividers)
+            code += self.compressClasses(compressedList)
 
 
         main = self.__session.getMain()
@@ -194,10 +190,10 @@ class OutputManager:
             else:
                 files.append(main.toRelativeUrl(path, urlPrefix))        
 
-        if not dividers:
-            loaderList = '"%s"' % '","'.join(files)
-        else:
+        if self.__addDividers:
             loaderList = '"%s"' % '",\n"'.join(files)
+        else:
+            loaderList = '"%s"' % '","'.join(files)
 
         code += 'core.io.Queue.load([%s], null, null, true);' % loaderList
         return code
@@ -232,7 +228,7 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeLoader(self, classes, fileName, bootCode=""):
+    def storeLoader(self, classes, fileName, bootCode="", urlPrefix=None):
 
         Console.info("Storing loader...")
         Console.indent()
@@ -242,9 +238,28 @@ class OutputManager:
             
         # Compress code
         Console.info("Including %s classes...", len(sortedClasses))
-        loaderCode = self.loadClasses(sortedClasses)
+        loaderCode = self.loadClasses(sortedClasses, urlPrefix=urlPrefix)
 
         # Write file to disk
         self.__fileManager.writeFile(fileName, loaderCode)
 
         Console.outdent()
+
+
+    def storeCompressed(self, classes, fileName, bootCode=""):
+
+        Console.info("Storing compressed...")
+        Console.indent()
+
+        # Build class list
+        sortedClasses = self.buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
+            
+        # Compress code
+        Console.info("Including %s classes...", len(sortedClasses))
+        compressedCode = self.compressClasses(sortedClasses)
+
+        # Write file to disk
+        self.__fileManager.writeFile(fileName, compressedCode)
+
+        Console.outdent()        
+
