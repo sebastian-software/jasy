@@ -194,35 +194,6 @@ def add(number):
             self.assertTrue(True)
 
 
-    def test_field(self):
-        session = Session.Session()
-        session.addProject(self.createProject([]))
-
-        self.assertEqual(session.exportFields(),'[\n  [\'debug\', 2, false],\n  [\'engine\', 2, "trident"]\n]')
-
-    
-    def test_set_field(self):
-        session = Session.Session()
-        session.addProject(self.createProject([]))
-
-        session.setField("debug", True)
-        self.assertEqual(session.exportFields(),'[\n  [\'debug\', 2, true],\n  [\'engine\', 2, "trident"]\n]')
-
-    
-    def test_set_permutation(self):
-        session = Session.Session()
-        session.addProject(self.createProject([]))
-
-        session.permutateField("debug", values=[False, True], detect=None, default=True)
-        session.permutateField("engine", values=["webkit", "gecko", "trident", "presto"], detect=None, default="gecko")
-
-        self.assertEqual(session.exportFields(),'[\n  [\'debug\', 2, true],\n  [\'engine\', 2, "gecko"]\n]')  
-
-        session.permutateField("engine", values=["webkit"], detect=None, default="webkit")
-
-        self.assertEqual(session.exportFields(),'[\n  [\'debug\', 2, true],\n  [\'engine\', 2, "webkit"]\n]')  
-
-    
     def test_permutate(self):
         session = Session.Session()
         session.addProject(self.createProject([]))
