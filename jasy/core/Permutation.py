@@ -45,9 +45,9 @@ class Permutation:
             
             # Basic translation like in JavaScript frontend
             # We don't have a special threadment for strings, numbers, etc.
-            if isinstance(value, bool) and value == True:
+            if value is True:
                 value = "true"
-            elif isinstance(value, bool) and value == False:
+            elif value is False:
                 value = "false"
             elif value == None:
                 value = "null"
