@@ -138,7 +138,7 @@ class LocaleParser():
         while True:
             filename = "%s.xml" % os.path.join(main, locale)
             if os.path.isfile(filename):
-                files.append("%s.xml" % os.path.join(main, locale))
+                files.append(filename)
             
             if "_" in locale:
                 locale = locale[:locale.rindex("_")]
