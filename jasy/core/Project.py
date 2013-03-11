@@ -73,6 +73,7 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
                 result.append(requiredProject)
             else:
                 Console.debug("Blocking: %s %s (via %s)", requiredName, requiredProject.version, project.getName())
+                requiredProject.pause()
 
         # Process all requirements of added projects
         for requiredProject in requires:
