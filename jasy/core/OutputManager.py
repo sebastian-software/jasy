@@ -71,7 +71,7 @@ class OutputManager:
         Console.outdent()
 
 
-    def buildClassList(self, classes, bootCode=None, filterBy=None, inlineTranslations=False):
+    def __buildClassList(self, classes, bootCode=None, filterBy=None, inlineTranslations=False):
 
         session = self.__session
 
@@ -123,7 +123,7 @@ class OutputManager:
         return sortedClasses
 
 
-    def compressClasses(self, classes):
+    def __compressClasses(self, classes):
         try:
             session = self.__session
             result = []
@@ -167,8 +167,8 @@ class OutputManager:
             if not hasLoader:
                 compress.append("core.io.Script")
 
-            compressedList = self.buildClassList(compress, filterBy=self.__kernelClasses)
-            code += self.compressClasses(compressedList)
+            compressedList = self.__buildClassList(compress, filterBy=self.__kernelClasses)
+            code += self.__compressClasses(compressedList)
 
 
         main = self.__session.getMain()
@@ -214,10 +214,10 @@ class OutputManager:
         self.__session.setStaticPermutation()
 
         # Sort and compress
-        sortedClasses = self.buildClassList(classes, bootCode)
+        sortedClasses = self.__buildClassList(classes, bootCode, inlineTranslations=True)
         
         Console.info("Compressing %s classes...", len(sortedClasses))
-        compressedCode = self.compressClasses(sortedClasses)
+        compressedCode = self.__compressClasses(sortedClasses)
 
         # Write file to disk
         self.__fileManager.writeFile(fileName, compressedCode)
@@ -234,7 +234,7 @@ class OutputManager:
         Console.indent()
 
         # Build class list
-        sortedClasses = self.buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
+        sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
             
         # Compress code
         Console.info("Including %s classes...", len(sortedClasses))
@@ -252,11 +252,11 @@ class OutputManager:
         Console.indent()
 
         # Build class list
-        sortedClasses = self.buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
+        sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses, inlineTranslations=True)
             
         # Compress code
         Console.info("Including %s classes...", len(sortedClasses))
-        compressedCode = self.compressClasses(sortedClasses)
+        compressedCode = self.__compressClasses(sortedClasses)
 
         # Write file to disk
         self.__fileManager.writeFile(fileName, compressedCode)
