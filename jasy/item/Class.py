@@ -122,6 +122,29 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
+    def getBreaks(self, permutation=None, classes=None):
+        """
+        Returns all down-priorized dependencies. This are dependencies which are
+        required to make the module run, but are not required being available at load time.
+        """
+
+        meta = self.getMetaData(permutation)
+
+        result = set()
+
+        for name in meta.breaks:
+            if name != self.id and name in classes and classes[name].kind == "class":
+                result.add(classes[name])
+            elif "*" in name:
+                reobj = re.compile(fnmatch.translate(name))
+                for className in classes:
+                    if className != self.id:
+                        if reobj.match(className):
+                            result.add(classes[className])
+
+        return result
+
+
     def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
         """ 
         Returns a set of dependencies seen through the given list of known 

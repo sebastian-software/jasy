@@ -47,7 +47,7 @@ class Sorter:
             requiredClasses = self.__resolver.getRequiredClasses()
             for classObj in requiredClasses:
                 if not classObj in result:
-                    Console.debug("Start adding with: %s", classObj)
+                    # Console.debug("Start adding with: %s", classObj)
                     self.__addSorted(classObj, result)
 
             Console.outdent()
@@ -68,7 +68,7 @@ class Sorter:
         if classObj in result:
             return
             
-        # debug("Adding class: %s", classObj)
+        # Console.debug("Adding class: %s", classObj)
         result.append(classObj)
 
         # Insert circular dependencies as soon as possible
@@ -114,7 +114,7 @@ class Sorter:
         stack.append(classObj)
 
         classDeps = classObj.getDependencies(self.__permutation, classes=self.__names, fields=self.__fields, warnings=False)
-        classMeta = classObj.getMetaData(self.__permutation)
+        classBreaks = classObj.getBreaks(self.__permutation, classes=self.__names)
         
         result = set()
         circular = set()
@@ -122,9 +122,9 @@ class Sorter:
         # Respect manually defined breaks
         # Breaks are dependencies which are down-priorized to break
         # circular dependencies between classes.
-        for breakName in classMeta.breaks:
-            if breakName in self.__names:
-                circular.add(self.__names[breakName])
+        for breakObj in classBreaks:
+            if breakObj.getId() in self.__names:
+                circular.add(breakObj)
 
         # Now process the deps of the given class
         loadDeps = self.__loadDeps
@@ -134,7 +134,7 @@ class Sorter:
             
             depName = depObj.getId()
             
-            if depName in classMeta.breaks:
+            if depObj in classBreaks:
                 Console.debug("Manual Break: %s => %s" % (classObj, depObj))
                 pass
             
