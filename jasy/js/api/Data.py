@@ -205,6 +205,10 @@ class ApiData():
                         elif sectionName == "implement":
                             self.implements = [valueToString(entry) for entry in sectionValue]
 
+                        elif sectionName == "pooling":
+                            # TODO
+                            pass
+
                         else:
                             self.warn('Invalid core.Class section "%s"' % sectionName, propertyInit.line)
                             
@@ -323,50 +327,50 @@ class ApiData():
         #
         # core.Main.addStatics
         #
-        addStatics = findCall(tree, "core.Main.addStatics")
-        if addStatics:
-            target = getParameterFromCall(addStatics, 0)
-            staticsMap = getParameterFromCall(addStatics, 1)
-            
-            if target and staticsMap and target.type == "string" and staticsMap.type == "object_init":
-            
-                if self.main["type"] == "Unsupported":
-                    self.setMain("core.Main", addStatics.parent, target.value)
-            
-                success = True
-                if not hasattr(self, "statics"):
-                    self.statics = {}
-                    
-                for staticsEntry in staticsMap:
-                    self.addEntry(staticsEntry[0].value, staticsEntry[1], staticsEntry, self.statics)
-                        
-            else:
-                self.warn("Invalid core.Main.addStatics()")
+        # addStatics = findCall(tree, "core.Main.addStatics")
+        # if addStatics:
+        #     target = getParameterFromCall(addStatics, 0)
+        #     staticsMap = getParameterFromCall(addStatics, 1)
+        #     
+        #     if target and staticsMap and target.type == "string" and staticsMap.type == "object_init":
+        #     
+        #         if self.main["type"] == "Unsupported":
+        #             self.setMain("core.Main", addStatics.parent, target.value)
+        #     
+        #         success = True
+        #         if not hasattr(self, "statics"):
+        #             self.statics = {}
+        #             
+        #         for staticsEntry in staticsMap:
+        #             self.addEntry(staticsEntry[0].value, staticsEntry[1], staticsEntry, self.statics)
+        #                 
+        #     else:
+        #         self.warn("Invalid core.Main.addStatics()")
         
         
         #
         # core.Main.addMembers
         #
-        addMembers = findCall(tree, "core.Main.addMembers")
-        if addMembers:
-            target = getParameterFromCall(addMembers, 0)
-            membersMap = getParameterFromCall(addMembers, 1)
-
-            if target and membersMap and target.type == "string" and membersMap.type == "object_init":
-                
-                if self.main["type"] == "Unsupported":
-                    self.setMain("core.Main", addMembers.parent, target.value)
-
-                success = True
-                if not hasattr(self, "members"):
-                    self.members = {}
-
-                for membersEntry in membersMap:
-                    self.addEntry(membersEntry[0].value, membersEntry[1], membersEntry, self.members)                    
-                        
-            else:
-                self.warn("Invalid core.Main.addMembers()")
-
+        # addMembers = findCall(tree, "core.Main.addMembers")
+        # if addMembers:
+        #     target = getParameterFromCall(addMembers, 0)
+        #     membersMap = getParameterFromCall(addMembers, 1)
+        # 
+        #     if target and membersMap and target.type == "string" and membersMap.type == "object_init":
+        #         
+        #         if self.main["type"] == "Unsupported":
+        #             self.setMain("core.Main", addMembers.parent, target.value)
+        # 
+        #         success = True
+        #         if not hasattr(self, "members"):
+        #             self.members = {}
+        # 
+        #         for membersEntry in membersMap:
+        #             self.addEntry(membersEntry[0].value, membersEntry[1], membersEntry, self.members)                    
+        #                 
+        #     else:
+        #         self.warn("Invalid core.Main.addMembers()")
+        # 
 
         return success
         

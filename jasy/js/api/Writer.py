@@ -330,8 +330,12 @@ class ApiWriter():
         
         apiData = {}
         highlightedCode = {}
+        virtualProject = self.__session.getVirtualProject()
         
         for project in self.__session.getProjects():
+            if project is virtualProject:
+                continue
+
             classes = project.getClasses()
             Console.info("Loading API of project %s: %s...", Console.colorize(project.getName(), "bold"), Console.colorize("%s classes" % len(classes), "cyan"))
             Console.indent()
