@@ -73,13 +73,13 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
                 names[requiredName] = True
                 result.append(requiredProject)
                 childProjects.append(requiredProject)
-            else:
+            elif not requiredProject in result:
                 Console.debug("Blocking: %s %s (via %s)", requiredName, requiredProject.version, project.getName())
                 requiredProject.pause()
 
         # Process all requirements of added projects
         for requiredProject in childProjects:
-            if requiredProject.getName() and requiredProject.hasRequires():
+            if requiredProject.hasRequires():
                 __resolve(requiredProject)
 
         Console.outdent()
@@ -568,6 +568,10 @@ class Project():
         """Resumes the paused project"""
         
         self.__cache.open()
+
+
+    def isReady(self):
+        return self.__cache is not None
 
 
 
