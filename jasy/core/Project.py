@@ -455,6 +455,8 @@ class Project():
                     path = os.path.join(self.__path, source)
                 else:
                     path = os.path.abspath(os.path.expanduser(source))
+
+                path = os.path.normpath(path)
             
             if path in projects:
                 project = projects[path]
