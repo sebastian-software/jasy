@@ -78,7 +78,7 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
                 requiredProject.pause()
 
         # Process all requirements of added projects
-        for requiredProject in childProjects:
+        for requiredProject in reversed(childProjects):
             if requiredProject.hasRequires():
                 __resolve(requiredProject)
 
