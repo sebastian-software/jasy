@@ -65,19 +65,21 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
 
         # Adding all project in reverse order.
         # Adding all local ones first before going down to their requirements
+        childProjects = []
         for requiredProject in reversed(requires):
             requiredName = requiredProject.getName()
             if not requiredName in names:
                 Console.debug("Adding: %s %s (via %s)", requiredName, requiredProject.version, project.getName())
                 names[requiredName] = True
                 result.append(requiredProject)
+                childProjects.append(requiredProject)
             else:
                 Console.debug("Blocking: %s %s (via %s)", requiredName, requiredProject.version, project.getName())
                 requiredProject.pause()
 
         # Process all requirements of added projects
-        for requiredProject in requires:
-            if requiredProject.hasRequires():
+        for requiredProject in childProjects:
+            if requiredProject.getName() and requiredProject.hasRequires():
                 __resolve(requiredProject)
 
         Console.outdent()
