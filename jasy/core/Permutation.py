@@ -44,10 +44,10 @@ class Permutation:
 
         # Alternative hashing method using SIP keys:
         # https://github.com/majek/pysiphash
-        if SIPHASH_SUPPORTED:
-            sipkey = ("JASY" * 4).encode("ascii")
-            self.__checksum2 = siphash.SipHash_2_4(sipkey).update(self.__key.encode("ascii")).hexdigest()
-            print("SIP Checksum: %s" % self.__checksum2.decode("ascii"))
+        # if SIPHASH_SUPPORTED:
+        #     sipkey = ("JASY" * 4).encode("ascii")
+        #     self.__checksum2 = siphash.SipHash_2_4(sipkey).update(self.__key.encode("ascii")).hexdigest()
+        #     print("SIP Checksum: %s" % self.__checksum2.decode("ascii"))
         
         self.__checksum = hashlib.sha1(self.__key.encode("ascii")).hexdigest()
         
