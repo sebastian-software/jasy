@@ -61,7 +61,7 @@ optionals = [
     },
     {
         "packageName": "pillow",
-        "minVersion": "1.7.8",
+        "minVersion": "2.0.0",
         "installPath": "'pip3 install git+https://github.com/python-imaging/Pillow.git'",
         "updatePath": ""
     }
