@@ -522,7 +522,7 @@ class ApiWriter():
         
         Console.info("Checking Links...")
         
-        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element")
+        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element", "Class", "Exception")
         
         def checkInternalLink(link, className):
             match = internalLinkParse.match(link)
