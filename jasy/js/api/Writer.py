@@ -522,7 +522,7 @@ class ApiWriter():
         
         Console.info("Checking Links...")
         
-        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element", "Class", "Exception")
+        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element", "Class", "Exception", "Uri")
         
         def checkInternalLink(link, className):
             match = internalLinkParse.match(link)
@@ -599,7 +599,7 @@ class ApiWriter():
                             if not "pseudo" in returnTypeEntry and returnTypeEntry["name"] in knownClasses:
                                 returnTypeEntry["linkable"] = True
                             
-                elif not item["type"] in builtinTypes and not item["type"] in pseudoTypes and not item["type"] in additionalTypes:
+                elif not item["type"] in knownClasses and not item["type"] in builtinTypes and not item["type"] in pseudoTypes and not item["type"] in additionalTypes:
                     item["errornous"] = True
                     Console.error('Invalid type "%s" in %s' % (item["type"], className))
             
