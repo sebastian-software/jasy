@@ -97,7 +97,7 @@ def __optimize(node, compressor):
         node.parent.replace(node, node[0])
 
     # Pre-combine last with last (special case e.g.: somevar + "hello" + "world")
-    elif node.type == "plus" and node[0].type == "plus" and node[0][1].type in ("number", "string") and node[1].type in ("number", "string"):
+    elif node.type == "plus" and node[0].type == "plus" and node[0][1].type in ("number", "string") and node[1].type in ("number", "string") and node[0][1].type == node[1].type:
         node[1].value = "%s%s" % (node[0][1].value, node[1].value)
         node[1].type = "string"
 

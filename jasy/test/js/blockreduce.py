@@ -40,6 +40,12 @@ class Tests(unittest.TestCase):
     def test_combine_inner_out(self):
         self.assertEqual(self.process('var s=x+"foo"+"bar"'), 'var s=x+"foobar";')
 
+    def test_combine_inner_out_parens(self):
+        self.assertEqual(self.process('var s=(x+"bar")+"foo"'), 'var s=x+"barfoo";')
+
+    def test_combine_inner_out_parens_mix(self):
+        self.assertEqual(self.process('var s=(x+35)+"px"'), 'var s=(x+35)+"px";')
+
     def test_elseinline_return(self):
         self.assertEqual(self.process(
             '''
