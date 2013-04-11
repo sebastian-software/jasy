@@ -84,7 +84,7 @@ def isErrornous(data):
 
 
 def mergeMixin(className, mixinName, classApi, mixinApi):
-    Console.info("Merging %s into %s", mixinName, className)
+    Console.debug("Merging %s into %s", mixinName, className)
 
     sectionLink = ["member", "property", "event"]
     
@@ -522,7 +522,7 @@ class ApiWriter():
         
         Console.info("Checking Links...")
         
-        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element")
+        additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element", "Class", "Exception", "Uri")
         
         def checkInternalLink(link, className):
             match = internalLinkParse.match(link)
@@ -599,7 +599,7 @@ class ApiWriter():
                             if not "pseudo" in returnTypeEntry and returnTypeEntry["name"] in knownClasses:
                                 returnTypeEntry["linkable"] = True
                             
-                elif not item["type"] in builtinTypes and not item["type"] in pseudoTypes and not item["type"] in additionalTypes:
+                elif not item["type"] in knownClasses and not item["type"] in builtinTypes and not item["type"] in pseudoTypes and not item["type"] in additionalTypes:
                     item["errornous"] = True
                     Console.error('Invalid type "%s" in %s' % (item["type"], className))
             
@@ -796,65 +796,6 @@ class ApiWriter():
 
             apiData[className].uses = cleanUses
 
-        
-        
-        #
-        # Collecting errors
-        #
-        
-        Console.info("Collecting Errors...")
-        Console.indent()
-        
-        for className in sorted(apiData):
-            classApi = apiData[className]
-            errors = []
-
-            if isErrornous(classApi.main):
-                errors.append({
-                    "kind": "Main",
-                    "name": None,
-                    "line": 1
-                })
-            
-            if hasattr(classApi, "construct"):
-                if isErrornous(classApi.construct):
-                    errors.append({
-                        "kind": "Constructor",
-                        "name": None,
-                        "line": classApi.construct["line"]
-                    })
-            
-            for section in ("statics", "members", "properties", "events"):
-                items = getattr(classApi, section, {})
-                for itemName in items:
-                    item = items[itemName]
-                    if isErrornous(item):
-                        errors.append({
-                            "kind": itemMap[section],
-                            "name": itemName,
-                            "line": item["line"]
-                        })
-                        
-            if errors:
-                if printErrors:
-                    Console.warn("Found errors in %s", className)
-                    
-                errorsSorted = sorted(errors, key=lambda entry: entry["line"])
-                
-                if printErrors:
-                    Console.indent()
-                    for entry in errorsSorted:
-                        if entry["name"]:
-                            Console.warn("%s: %s (line %s)", entry["kind"], entry["name"], entry["line"])
-                        else:
-                            Console.warn("%s (line %s)", entry["kind"], entry["line"])
-                
-                    Console.outdent()
-                    
-                classApi.errors = errorsSorted
-                
-        Console.outdent()
-        
         
         
         #
