@@ -482,6 +482,16 @@ class Session():
 
         setups = {}
         detects = self.exportFieldDetects()
+
+        # Add special field buildTime to have information about this 
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,"%s"' % self.__timeStamp)
+        setups["jasy.build.time"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.id",4,"%s"' % "abc12345")
+        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+
+        # TODO
+        # Git.getBranch() + "-" + Git.getRevision()[0:6]
         
         for fieldName in detects:
             fieldSetup = "jasy.Env.addField(%s);" % self.exportField(fieldName)
