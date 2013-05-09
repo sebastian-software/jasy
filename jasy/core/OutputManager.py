@@ -85,7 +85,7 @@ class OutputManager:
             bootClassItem = session.getVirtualItem("jasy.generated.BootCode", ClassItem, "(function(){%s})();" % bootCode, ".js")
             resolver.addClass(bootClassItem)
 
-        # 3. Check for usage assets
+        # 3. Check for asset usage
         includedClasses = resolver.getIncludedClasses()
         usesAssets = False
         for classItem in includedClasses:
@@ -93,7 +93,7 @@ class OutputManager:
                 usesAssets = True
                 break
 
-        # 4. Add asset data
+        # 4. Add asset data if needed
         if usesAssets:
             assetData = self.__assetManager.export(includedClasses)
             assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
