@@ -54,7 +54,7 @@ class OutputManager:
 
         :param classes: List of classes to deploy assets for
         :type classes: list
-        :param assetFolder: Destination folder of assets (defaults to $prefix/asset)
+        :param assetFolder: Destination folder of assets (defaults to {{prefix}}/asset)
         :type assetFolder: string
         """
 

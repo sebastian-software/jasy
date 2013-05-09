@@ -366,7 +366,7 @@ class AssetManager:
         # Sometimes it's called with explicit None - we want to fill the default
         # in that case as well.
         if assetFolder is None:
-            assetFolder = "$prefix/asset"
+            assetFolder = "{{prefix}}/asset"
 
         assets = self.__assets
         projects = self.__session.getProjects()

@@ -781,20 +781,20 @@ class Session():
 
         These are the currently supported placeholders:
 
-        - $prefix: Current prefix of task
-        - $permutation: SHA1 checksum of current permutation
-        - $locale: Name of current locale e.g. de_DE
+        - {{prefix}}: Current prefix of task
+        - {{permutation}}: SHA1 checksum of current permutation
+        - {{locale}}: Name of current locale e.g. de_DE
         """
 
         if self.__currentPrefix:
-            fileName = fileName.replace("$prefix", self.__currentPrefix)
+            fileName = fileName.replace("{{prefix}}", self.__currentPrefix)
 
         if self.__currentPermutation:
-            fileName = fileName.replace("$permutation", self.__currentPermutation.getChecksum())
+            fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
 
             locale = self.__currentPermutation.get("locale")
             if locale:
-                fileName = fileName.replace("$locale", locale)
+                fileName = fileName.replace("{{locale}}", locale)
 
         return fileName
 
