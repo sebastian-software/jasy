@@ -255,7 +255,7 @@ class AssetManager:
 
 
 
-    def addBuildProfile(self, urlPrefix="asset", override=False):
+    def addBuildProfile(self, urlPrefix="asset", override=False, hashNames=False):
         """
         Adds a profile to include assets as being available in build tasks.
         
@@ -283,6 +283,9 @@ class AssetManager:
                 
             if override or not "p" in data[fileId]:
                 data[fileId]["p"] = profileId
+
+            if hashNames:
+                data[fileId]["h"] = assets[fileId].getChecksum()
 
         return self
 
@@ -357,7 +360,7 @@ class AssetManager:
         
         
         
-    def deploy(self, classes, assetFolder=None):
+    def deploy(self, classes, assetFolder=None, hashNames=False):
         """
         Deploys all asset files to the destination asset folder. This merges
         assets from different projects into one destination folder.
@@ -385,7 +388,12 @@ class AssetManager:
                 continue
 
             srcFile = assets[fileId].getPath()
-            dstFile = os.path.join(copyAssetFolder, fileId.replace("/", os.sep))
+
+            # Support for hashed file names instead of real names
+            if hashNames:
+                dstFile = os.path.join(copyAssetFolder, "%s%s" % (assets[fileId].getChecksum(), assets[fileId].extension))
+            else:
+                dstFile = os.path.join(copyAssetFolder, fileId.replace("/", os.sep))
             
             if jasy.core.File.syncfile(srcFile, dstFile):
                 counter += 1

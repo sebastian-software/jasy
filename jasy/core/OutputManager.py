@@ -48,7 +48,7 @@ class OutputManager:
             self.__scriptFormatting.enable("comma")
 
 
-    def deployAssets(self, classes, assetFolder=None):
+    def deployAssets(self, classes, assetFolder=None, hashNames=False):
         """
         Deploys assets for the given classes and all their dependencies
 
@@ -66,7 +66,7 @@ class OutputManager:
         for className in classes:
             resolver.addClassName(className)
 
-        self.__assetManager.deploy(resolver.getIncludedClasses(), assetFolder=assetFolder)
+        self.__assetManager.deploy(resolver.getIncludedClasses(), assetFolder=assetFolder, hashNames=hashNames)
 
         Console.outdent()
 
