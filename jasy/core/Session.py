@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import itertools, time, atexit, json, os, zlib
+import itertools, time, atexit, json, os, zlib, hashlib
 
 import jasy.core.Locale
 import jasy.core.Config
@@ -28,7 +28,8 @@ class Session():
     __currentTranslationBundle = None
     __currentPrefix = None
     
-    __timestamp = None
+    __timeStamp = None
+    __timeHash = None
     __projects = None
     __fields = None
     __translationBundles = None
@@ -45,7 +46,8 @@ class Session():
 
         atexit.register(self.close)
 
-        self.__timestamp = time.time()
+        self.__timeStamp = time.time()
+        self.__timeHash = hashlib.sha1(str(self.__timeStamp).encode("ascii")).hexdigest()
 
         self.__projects = []
         self.__fields = {}
@@ -784,17 +786,31 @@ class Session():
         - {{prefix}}: Current prefix of task
         - {{permutation}}: SHA1 checksum of current permutation
         - {{locale}}: Name of current locale e.g. de_DE
+        - {{time}}: Timestamp as SHA1
+        - {{hash}}: SHA1 checksum based on permutation and time
         """
+
+        fileName = fileName.replace("{{time}}", self.__timeHash)
 
         if self.__currentPrefix:
             fileName = fileName.replace("{{prefix}}", self.__currentPrefix)
 
         if self.__currentPermutation:
-            fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
+            if "{{permutation}}" in fileName:
+                fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
+
+            if "{{hash}}" in fileName:
+                timePermutationKey = "%s-%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
+                timePermutationHash = hashlib.sha1(timePermutationKey.encode("ascii")).hexdigest()
+    
+                fileName = fileName.replace("{{hash}}", timePermutationHash)            
 
             locale = self.__currentPermutation.get("locale")
             if locale:
                 fileName = fileName.replace("{{locale}}", locale)
+
+        else:
+            fileName = fileName.replace("{{hash}}", self.__timeHash)
 
         return fileName
 
