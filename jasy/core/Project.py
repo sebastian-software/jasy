@@ -528,17 +528,12 @@ class Project():
             
         return relpath.replace(os.sep, "/")
 
-    def getBuildId(self):
+    def getRevision(self):
         """
-        Returns a build ID based on environment variables and state 
+        Returns the current revision of the project
         """
 
-        hostName = socket.gethostname()
-        hostId = uuid.getnode()
-        userName = getpass.getuser()
-        revision = Repository.getRevision(self.__path)
-
-        return "host:%s|id:%s|user:%s|rev:%s" % (hostName, hostId, userName, revision)
+        return Repository.getRevision(self.__path)
 
 
 

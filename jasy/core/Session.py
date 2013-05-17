@@ -479,6 +479,18 @@ class Session():
                     detects[key] = None
                 
         return detects
+
+
+    def __getEnvironmentId(self):
+        """
+        Returns a build ID based on environment variables and state 
+        """
+
+        hostName = socket.gethostname()
+        hostId = uuid.getnode()
+        userName = getpass.getuser()
+
+        return "host:%s|id:%s|user:%s" % (hostName, hostId, userName)        
     
 
     def getFieldSetupClasses(self):
@@ -489,11 +501,14 @@ class Session():
         setups = {}
 
         # Add special field buildTime to have information about this 
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.env",4,"%s"' % self.__getEnvironmentId())
+        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.revision",4,"%s"' % self.getMain().getRevision())
+        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
         setups["jasy.build.time"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
-
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.id",4,"%s"' % self.getMain().getBuildId())
-        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
         detects = self.__exportFieldDetects()
         for fieldName in detects:
@@ -796,13 +811,10 @@ class Session():
         These are the currently supported placeholders:
 
         - {{prefix}}: Current prefix of task
-        - {{permutation}}: SHA1 checksum of current permutation
         - {{locale}}: Name of current locale e.g. de_DE
-        - {{time}}: Timestamp as SHA1
-        - {{hash}}: SHA1 checksum based on permutation and time
+        - {{permutation}}: SHA1 checksum of current permutation
+        - {{id}}: SHA1 checksum based on permutation and repository branch/revision
         """
-
-        fileName = fileName.replace("{{time}}", self.__timeHash)
 
         if self.__currentPrefix:
             fileName = fileName.replace("{{prefix}}", self.__currentPrefix)
@@ -811,17 +823,17 @@ class Session():
             if "{{permutation}}" in fileName:
                 fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
 
-            if "{{hash}}" in fileName:
-                timePermutationKey = "%s@%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
-                timePermutationHash = Util.generateChecksum(timePermutationKey)
-                fileName = fileName.replace("{{hash}}", timePermutationHash)            
+            if "{{id}}" in fileName:
+                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.getMain().getRevision() or "unknown")
+                buildHash = Util.generateChecksum(buildId)
+                fileName = fileName.replace("{{id}}", buildHash)            
 
-            locale = self.__currentPermutation.get("locale")
-            if locale:
+            if "{{locale}}" in fileName:
+                locale = self.__currentPermutation.get("locale")
                 fileName = fileName.replace("{{locale}}", locale)
 
-        elif "{{hash}}" in fileName:
-            fileName = fileName.replace("{{hash}}", self.__timeHash)
+        elif "{{id}}" in fileName:
+            fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision() or "unknown"))
 
         return fileName
 
