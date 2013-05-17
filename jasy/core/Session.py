@@ -4,6 +4,7 @@
 #
 
 import itertools, time, atexit, json, os, zlib
+import socket, uuid, getpass
 
 import jasy.core.Locale
 import jasy.core.Config
@@ -50,7 +51,6 @@ class Session():
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
-        #hashlib.sha1(str(self.__timeStamp).encode("ascii")).hexdigest()
 
         self.__projects = []
         self.__fields = {}
@@ -502,9 +502,9 @@ class Session():
 
         # Add special field buildTime to have information about this 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.env",4,"%s"' % self.__getEnvironmentId())
-        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+        setups["jasy.build.env"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.revision",4,"%s"' % self.getMain().getRevision())
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.rev",4,"%s"' % self.getMain().getRevision())
         setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
