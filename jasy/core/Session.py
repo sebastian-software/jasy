@@ -454,7 +454,7 @@ class Session():
             entry["detect"] = detect
         
         
-    def exportFieldDetects(self):
+    def __exportFieldDetects(self):
         """
         Returns a dict where the field points to the detection class
         which is being used to figure out the value on the client.
@@ -482,9 +482,11 @@ class Session():
     
 
     def getFieldSetupClasses(self):
+        """
+        Returns a list of (virtual) classes which are relevant for initial setup.
+        """
 
         setups = {}
-        detects = self.exportFieldDetects()
 
         # Add special field buildTime to have information about this 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
@@ -496,14 +498,13 @@ class Session():
         # TODO
         # Git.getBranch() + "-" + Git.getRevision()[0:6]
         
+        detects = self.__exportFieldDetects()
         for fieldName in detects:
             fieldSetup = "jasy.Env.addField(%s);" % self.exportField(fieldName)
             fieldSetupClass = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
             setups[fieldName] = fieldSetupClass
 
         return setups
-
-        
     
 
     def exportField(self, field):
