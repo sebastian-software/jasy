@@ -136,9 +136,15 @@ def getBranch(path=None):
 
 
 def getRevision(path=None):
-    """Returns the last revision/hash of the git."""
+    """Returns the last revision/hash of the git repository."""
 
-    return executeCommand("git rev-parse --abbrev-ref HEAD", "Could not figure out git revision. Is there a valid Git repository?", path=path)
+    return executeCommand("git rev-parse HEAD", "Could not figure out git revision. Is there a valid Git repository?", path=path)
+
+
+def getShortRevision(path=None):
+    """Returns the last shortened revision/hash of the git repository"""
+
+    return executeCommand("git rev-parse --short HEAD", "Could not figure out git revision. Is there a valid Git repository?", path=path)
 
 
 def isUrl(url):

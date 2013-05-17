@@ -8,6 +8,7 @@ import hashlib, os
 import jasy.core.Console as Console
 import jasy.core.Util as Util
 import jasy.vcs.Git as Git
+import jasy.vcs.Svn as Svn
 
 
 def isUrl(url):
@@ -79,6 +80,26 @@ def update(url, version=None, path=None, update=True):
         revision = Git.update(url, version, path, update)
 
     return revision
+
+
+
+def getRevision(path):
+    """
+    Returns the current revision of the repository in the given path
+    """
+
+    old = os.getcwd()
+    revision = None
+
+    if os.path.exists(".git"):
+        revision = Git.getBranch() + "-" + Git.getShortRevision()
+
+    elif os.path.exists(".svn"):
+        revision = svnversion
+        
+    os.chdir(old)
+    return revision
+
 
 
 def clean(path=None):

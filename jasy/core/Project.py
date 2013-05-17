@@ -1,9 +1,7 @@
 #
-# Jasy - Web Tooling Framework
-# Copyright 2010-2012 Zynga Inc.
 #
 
-import os, re
+import os, re, socket, uuid, getpass
 
 import jasy.core.Cache
 import jasy.core.Config as Config
@@ -529,6 +527,19 @@ class Project():
             relpath = os.path.normpath(prefix + relpath)
             
         return relpath.replace(os.sep, "/")
+
+    def getBuildId(self):
+        """
+        Returns a build ID based on environment variables and state 
+        """
+
+        hostName = socket.gethostname()
+        hostId = uuid.getnode()
+        userName = getpass.getuser()
+        revision = Repository.getRevision(self.__path)
+
+        return "host:%s|id:%s|user:%s|rev:%s" % (hostName, hostId, userName, revision)
+
 
 
 
