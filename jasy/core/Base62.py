@@ -20,13 +20,13 @@ def encodeArrayOfBytes(arr):
     # A special case is if the 6 bits represents 60, 61, 62 or 63. In this case one more bit is used to
     # reduce 6 bit (= 64 different values) by two values.
     result = []
-    charLength = arr.length
+    charLength = len(arr)
     bitLength = charLength * 8
     bitPos = 0
-    specialBit = null
+    specialBit = None
 
     while bitPos < bitLength:
-        charOffset = bitPos / 8 | 0
+        charOffset = int(bitPos / 8)
         bitOffset = bitPos % 8
     
         if charOffset + 1 >= charLength:
@@ -43,14 +43,24 @@ def encodeArrayOfBytes(arr):
         
         else:
             leftoverBits = bitOffset - 2
-            extractedBits = (( (arr[charOffset] << bitOffset) & bitMask[bitOffset] ) + ( (arr[charOffset+1] & bitMask[8-leftoverBits]) >> (6-leftoverBits) )) >> 2
+            # print("LEFT-OVER-BITS: %s" % leftoverBits)
+
+            if (8-leftoverBits) >= 0 and (8-leftoverBits) < 8:
+                bitMaskValue = bitMask[8-leftoverBits]
+            else:
+                bitMaskValue = 0
+
+            extractedBits = (
+                ( (arr[charOffset] << bitOffset) & bitMask[bitOffset] ) + 
+                ( (arr[charOffset+1] & bitMaskValue) >> (6-leftoverBits) )
+            ) >> 2
     
         if (extractedBits & 62) == 60:
-            extractedBits = 61
+            extractedBits = 60
             bitPos -= 1
 
         elif (extractedBits & 62) == 62:
-            extractedBits = 62
+            extractedBits = 61
             bitPos -= 1
         
         result.append(extractedBits)
@@ -119,7 +129,7 @@ def encodeArrayToString(arr):
     result = encodeArrayOfBytes(arr)
 
     i = 0
-    ii = result.length
+    ii = len(result)
     while i < ii:
         result[i] = base62Table[result[i]]
         i += 1
@@ -137,4 +147,20 @@ def decodeStringToArray(str):
         i += 1
 
     return decodeToArrayOfBytes(byteArray)
+
+
+def encode(str):
+    return encodeArrayToString(bytearray(str, "utf-8"))
+
+
+def decode(str):
+    result = decodeStringToArray(str)
+    i = 0
+    ii = len(result)
+
+    while i < ii:
+        result[i] = String.fromCharCode(result[i])
+        i += 1
+    
+    return "".join(result)
 

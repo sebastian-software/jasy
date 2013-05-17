@@ -9,6 +9,7 @@ import jasy.core.Locale
 import jasy.core.Config
 import jasy.core.Project
 import jasy.core.Permutation
+import jasy.core.Base62 as Base62
 
 import jasy.asset.Manager
 import jasy.item.Translation
@@ -812,7 +813,13 @@ class Session():
 
             if "{{hash}}" in fileName:
                 timePermutationKey = "%s@%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
+                print("KEY: %s" % timePermutationKey)
+
                 timePermutationHash = hashlib.sha1(timePermutationKey.encode("ascii")).hexdigest()
+                print("HASH (Hex): %s" % timePermutationHash)
+
+                timePermutationHash2 = Base62.encodeArrayToString(hashlib.sha1(timePermutationKey.encode("ascii")).digest())
+                print("HASH (Base62): %s" % timePermutationHash2)
     
                 fileName = fileName.replace("{{hash}}", timePermutationHash)            
 
