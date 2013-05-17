@@ -487,7 +487,7 @@ class Session():
         detects = self.exportFieldDetects()
 
         # Add special field buildTime to have information about this 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,"%s"' % self.__timeStamp)
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
         setups["jasy.build.time"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.id",4,"%s"' % "abc12345")
@@ -815,18 +815,6 @@ class Session():
             if "{{hash}}" in fileName:
                 timePermutationKey = "%s@%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
                 timePermutationHash = Util.generateChecksum(timePermutationKey)
-
-                # Base62.encodeArrayToString(hashlib.sha1(timePermutationKey.encode("ascii")).digest())
-
-                timePermutationHashHex = Util.generateChecksum(timePermutationKey, method="hex")
-
-                print("")
-                print("Key: %s" % timePermutationKey)
-                print("Hex: %s" % (timePermutationHashHex))
-                print("Base62: %s" % (timePermutationHash))
-                print("")
-
-
                 fileName = fileName.replace("{{hash}}", timePermutationHash)            
 
             locale = self.__currentPermutation.get("locale")
