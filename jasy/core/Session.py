@@ -46,7 +46,8 @@ class Session():
 
         atexit.register(self.close)
 
-        self.__timeStamp = time.time()
+        # Behaves like Date.now() in JavaScript: UTC date in milliseconds
+        self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = hashlib.sha1(str(self.__timeStamp).encode("ascii")).hexdigest()
 
         self.__projects = []
@@ -810,7 +811,7 @@ class Session():
                 fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
 
             if "{{hash}}" in fileName:
-                timePermutationKey = "%s-%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
+                timePermutationKey = "%s@%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
                 timePermutationHash = hashlib.sha1(timePermutationKey.encode("ascii")).hexdigest()
     
                 fileName = fileName.replace("{{hash}}", timePermutationHash)            
@@ -819,7 +820,7 @@ class Session():
             if locale:
                 fileName = fileName.replace("{{locale}}", locale)
 
-        else:
+        elif "{{hash}}" in fileName:
             fileName = fileName.replace("{{hash}}", self.__timeHash)
 
         return fileName
