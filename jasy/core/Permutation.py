@@ -4,15 +4,7 @@
 #
 
 import jasy
-import hashlib
-
-SIPHASH_SUPPORTED = False
-try:
-    import siphash
-    SIPHASH_SUPPORTED = True
-except:
-    pass
-
+import jasy.core.Util as Util
 
 __all__ = ["Permutation", "getPermutation"]
 
@@ -41,18 +33,7 @@ class Permutation:
         
         self.__combination = combination
         self.__key = self.__buildKey(combination)
-
-        # Alternative hashing method using SIP keys:
-        #
-        # https://github.com/majek/pysiphash (Python library)
-        # https://github.com/jedisct1/siphash-js (Node/JS library - for Core)
-        #
-        # if SIPHASH_SUPPORTED:
-        #     sipkey = ("JASY" * 4).encode("ascii")
-        #     self.__checksum2 = siphash.SipHash_2_4(sipkey).update(self.__key.encode("ascii")).hexdigest()
-        #     print("SIP Checksum: %s" % self.__checksum2.decode("ascii"))
-        
-        self.__checksum = hashlib.sha1(self.__key.encode("ascii")).hexdigest()
+        self.__checksum = Util.generateChecksum(self.__key)
         
         
     def __buildKey(self, combination):

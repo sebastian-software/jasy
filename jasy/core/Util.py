@@ -6,6 +6,7 @@
 import re, os, hashlib, tempfile, subprocess, sys, shlex
 
 import jasy.core.Console as Console
+import jasy.core.Base62 as Base62
 
 
 def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
@@ -62,6 +63,42 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     Console.outdent()
     
     return result
+
+
+SIPHASH_SUPPORTED = False
+try:
+    import siphash
+    SIPHASH_SUPPORTED = True
+except:
+    pass
+
+
+def generateChecksum(key, method="base62"):
+    """
+    Generates a unique SHA1 based hash/checksum encoded
+    as Base62 or Hex depending on the given parameters.
+
+    :param key: 
+    :type key: str
+    :param method: 
+    :type method: str
+    """
+
+    # Alternative hashing method using SIP keys:
+    #
+    # https://github.com/majek/pysiphash (Python library)
+    # https://github.com/jedisct1/siphash-js (Node/JS library - for Core)
+    #
+    # if SIPHASH_SUPPORTED:
+    #     sipkey = ("JASY" * 4).encode("ascii")
+    #     self.__checksum2 = siphash.SipHash_2_4(sipkey).update(self.__key.encode("ascii")).hexdigest()
+    #     print("SIP Checksum: %s" % self.__checksum2.decode("ascii"))
+
+    sha1 = hashlib.sha1(key.encode("ascii"))
+    if method == "base62":
+        return Base62.encodeArrayToString(sha1.digest())
+    else:
+        return sha1.hexdigest()    
 
 
 def getKey(data, key, default=None):

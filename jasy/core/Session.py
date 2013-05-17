@@ -3,13 +3,13 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import itertools, time, atexit, json, os, zlib, hashlib
+import itertools, time, atexit, json, os, zlib
 
 import jasy.core.Locale
 import jasy.core.Config
 import jasy.core.Project
 import jasy.core.Permutation
-import jasy.core.Base62 as Base62
+import jasy.core.Util as Util
 
 import jasy.asset.Manager
 import jasy.item.Translation
@@ -49,7 +49,8 @@ class Session():
 
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
-        self.__timeHash = hashlib.sha1(str(self.__timeStamp).encode("ascii")).hexdigest()
+        self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
+        #hashlib.sha1(str(self.__timeStamp).encode("ascii")).hexdigest()
 
         self.__projects = []
         self.__fields = {}
@@ -813,14 +814,19 @@ class Session():
 
             if "{{hash}}" in fileName:
                 timePermutationKey = "%s@%s" % (self.__currentPermutation.getKey(), self.__timeStamp)
-                print("KEY: %s" % timePermutationKey)
+                timePermutationHash = Util.generateChecksum(timePermutationKey)
 
-                timePermutationHash = hashlib.sha1(timePermutationKey.encode("ascii")).hexdigest()
-                print("HASH (Hex): %s" % timePermutationHash)
+                # Base62.encodeArrayToString(hashlib.sha1(timePermutationKey.encode("ascii")).digest())
 
-                timePermutationHash2 = Base62.encodeArrayToString(hashlib.sha1(timePermutationKey.encode("ascii")).digest())
-                print("HASH (Base62): %s" % timePermutationHash2)
-    
+                timePermutationHashHex = Util.generateChecksum(timePermutationKey, method="hex")
+
+                print("")
+                print("Key: %s" % timePermutationKey)
+                print("Hex: %s" % (timePermutationHashHex))
+                print("Base62: %s" % (timePermutationHash))
+                print("")
+
+
                 fileName = fileName.replace("{{hash}}", timePermutationHash)            
 
             locale = self.__currentPermutation.get("locale")
