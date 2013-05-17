@@ -74,16 +74,16 @@ def decodeToArrayOfBytes(arr):
     current = 0
     bitOffset = 0
     charOffset = 0
-    charLength = arr.length
+    charLength = len(arr)
 
     charOffset=0
     while charOffset < charLength:
         char = arr[charOffset]
     
         bitsNeeded = 8 - bitOffset
-        if char == 61 or char == 62:
+        if char == 60 or char == 61:
 
-            correctBits = 30 if char == 61 else 31
+            correctBits = 30 if char == 60 else 31
 
             if bitsNeeded <= 5:
                 current = ((current << bitsNeeded) + (correctBits >> (5-bitsNeeded))) & 255
@@ -138,12 +138,12 @@ def encodeArrayToString(arr):
 
 
 def decodeStringToArray(str):
-    len = len(str)
+    ii = len(str)
     byteArray = []
 
     i = 0
-    while i<len:
-        byteArray[i] = base62InvertedTable[str[i]]
+    while i<ii:
+        byteArray.append(base62InvertedTable[str[i]])
         i += 1
 
     return decodeToArrayOfBytes(byteArray)
@@ -152,15 +152,6 @@ def decodeStringToArray(str):
 def encode(str):
     return encodeArrayToString(bytearray(str, "utf-8"))
 
-
 def decode(str):
-    result = decodeStringToArray(str)
-    i = 0
-    ii = len(result)
-
-    while i < ii:
-        result[i] = String.fromCharCode(result[i])
-        i += 1
-    
-    return "".join(result)
+    return bytearray(decodeStringToArray(str)).decode()
 
