@@ -9,6 +9,7 @@ A module consisting of some often used file system actions in easy to use unix t
 
 import shutil, os, hashlib
 from jasy import UserError
+import jasy.core.Base62 as Base62
 
 def cp(src, dst):
     """Copies a file"""
@@ -102,5 +103,5 @@ def sha1(fileOrPath, block_size=2**20):
             break
         sha1res.update(data)
 
-    return sha1res.hexdigest()
+    return Base62.encodeArrayToString(sha1res.digest())
 
