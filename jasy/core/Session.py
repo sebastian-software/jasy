@@ -505,7 +505,7 @@ class Session():
         setups["jasy.build.env"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.rev",4,"%s"' % self.getMain().getRevision())
-        setups["jasy.build.id"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+        setups["jasy.build.rev"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
         setups["jasy.build.time"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
@@ -824,7 +824,7 @@ class Session():
                 fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
 
             if "{{id}}" in fileName:
-                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.getMain().getRevision() or "unknown")
+                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.getMain().getRevision())
                 buildHash = Util.generateChecksum(buildId)
                 fileName = fileName.replace("{{id}}", buildHash)            
 
@@ -833,7 +833,7 @@ class Session():
                 fileName = fileName.replace("{{locale}}", locale)
 
         elif "{{id}}" in fileName:
-            fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision() or "unknown"))
+            fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision()))
 
         return fileName
 

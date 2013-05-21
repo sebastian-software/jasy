@@ -536,7 +536,7 @@ class Project():
         Returns the current revision of the project
         """
 
-        return Repository.getRevision(self.__path)
+        return Repository.getRevision(self.__path) or "unknown"
 
 
 
