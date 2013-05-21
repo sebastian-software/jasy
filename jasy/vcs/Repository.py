@@ -91,11 +91,17 @@ def getRevision(path):
     old = os.getcwd()
     revision = None
 
-    if os.path.exists(".git"):
-        revision = Git.getBranch() + "-" + Git.getShortRevision()
+    while True:
 
-    elif os.path.exists(".svn"):
-        revision = svnversion
+        if os.path.exists(".git"):
+            revision = Git.getBranch() + "-" + Git.getShortRevision()
+            break
+
+        elif os.path.exists(".svn"):
+            revision = svnversion
+            break
+
+        os.chdir(os.pardir)
         
     os.chdir(old)
     return revision
