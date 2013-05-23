@@ -101,7 +101,10 @@ def getRevision(path):
             revision = svnversion
             break
 
+        cur = os.getcwd()
         os.chdir(os.pardir)
+        if (cur == os.getcwd()):
+            break
         
     os.chdir(old)
     return revision
