@@ -214,7 +214,7 @@ def main():
 
             Task.executeTask(entry["task"], **entry["params"])
 
-            duration = '{0:.2g}'.format(time.time() - start)
+            duration = '{:.2f}'.format(time.time() - start)
             Console.info("Task completed in %ss", duration)
 
     except UserError as errobj:
