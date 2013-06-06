@@ -83,7 +83,7 @@ def update(url, version=None, path=None, update=True):
 
 
 
-def getRevision(path):
+def getRevision(path=None):
     """
     Returns the current revision of the repository in the given path
     """
@@ -91,22 +91,27 @@ def getRevision(path):
     old = os.getcwd()
     revision = None
 
+    if path is not None:
+        os.chdir(path)
+
     while True:
 
         if os.path.exists(".git"):
-            revision = Git.getBranch() + "-" + Git.getShortRevision()
+            revision = Git.getBranch(path) + "-" + Git.getShortRevision(path)
             break
 
         elif os.path.exists(".svn"):
-            revision = svnversion
+            revision = Svn.getBranch(path) + "-" + Svn.getRevision(path)
             break
 
         cur = os.getcwd()
         os.chdir(os.pardir)
-        if (cur == os.getcwd()):
+
+        if cur == os.getcwd():
             break
         
     os.chdir(old)
+
     return revision
 
 
