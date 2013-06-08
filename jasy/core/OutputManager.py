@@ -10,12 +10,15 @@ import jasy.core.Console as Console
 
 from jasy.core.Permutation import getPermutation
 from jasy.item.Class import ClassError, ClassItem
+from jasy.item.Style import StyleError, StyleItem
 from jasy.js.Resolver import Resolver
 
 from jasy import UserError
 
-from jasy.js.output.Optimization import Optimization
-from jasy.js.output.Formatting import Formatting
+from jasy.js.output.Optimization import ScriptOptimization
+from jasy.js.output.Formatting import ScriptFormatting
+
+from jasy.style.output.Formatting import StyleFormatting
 
 from jasy.core.FileManager import FileManager
 
@@ -30,8 +33,10 @@ class OutputManager:
         self.__fileManager = FileManager(session)
         self.__kernelClasses = []
 
-        self.__scriptOptimization = Optimization()
-        self.__scriptFormatting = Formatting()
+        self.__scriptOptimization = ScriptOptimization()
+        self.__scriptFormatting = ScriptFormatting()
+
+        self.__styleFormatting = StyleFormatting()
 
         self.__addDividers = formattingLevel > 0
 
@@ -43,9 +48,13 @@ class OutputManager:
             self.__scriptOptimization.enable("blocks")
             self.__scriptOptimization.enable("privates")
 
+        if formattingLevel > 0:
+            self.__styleFormatting.enable("selector")
+
         if formattingLevel > 1:
             self.__scriptFormatting.enable("semicolon")
             self.__scriptFormatting.enable("comma")
+            self.__styleFormatting.enable("rule")
 
 
     def deployAssets(self, classes, assetFolder=None, hashNames=False):
