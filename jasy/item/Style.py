@@ -8,14 +8,12 @@ import os, copy, zlib, fnmatch, re
 import jasy.style.parse.Parser as Parser
 import jasy.style.clean.Permutate
 import jasy.style.output.Optimization
-import jasy.core.Permutation
-import jasy.item.Abstract
-
-from jasy.style.MetaData import MetaData
 from jasy.style.output.Compressor import Compressor
 
+import jasy.core.Permutation
 import jasy.core.Console as Console 
 
+import jasy.item.Abstract
 
 defaultOptimization = jasy.style.output.Optimization.Optimization()
 defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
@@ -99,11 +97,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
         """ 
-        Returns a set of dependencies seen through the given list of known 
-        classes (ignoring all unknown items in original set) and configured fields 
-        with their individual detection classes. This method also
-        makes use of the meta data (see core/MetaData.py) and the variable data 
-        (see parse/ScopeData.py).
+        Returns a set of dependencies
         """
 
         permutation = self.filterPermutation(permutation)

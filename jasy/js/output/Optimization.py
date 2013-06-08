@@ -3,14 +3,13 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
+import jasy.core.FlagSet as FlagSet
+
 import jasy.js.optimize.CryptPrivates as CryptPrivates
 import jasy.js.optimize.BlockReducer as BlockReducer
 import jasy.js.optimize.LocalVariables as LocalVariables
 import jasy.js.optimize.CombineDeclarations as CombineDeclarations
 import jasy.js.optimize.ClosureWrapper as ClosureWrapper
-
-
-__all__ = ["Error", "Optimization"]
 
 
 class Error(Exception):
@@ -26,39 +25,12 @@ class Error(Exception):
 
 
 
-class Optimization:
+class Optimization(FlagSet.FlagSet):
     """
     Configures an optimization object which can be used to compress classes afterwards.
     The optimization set is frozen after initialization which also generates the unique
     key based on the given optimizations.
-    """
-    
-    __key = None
-    
-    def __init__(self, *args):
-        self.__optimizations = set()
-        
-        for flag in args:
-            self.__optimizations.add(flag)
-
-
-    def has(self, flag):
-        """
-        Whether the given optimization is enabled.
-        """
-        
-        return flag in self.__optimizations
-
-
-    def enable(self, flag):
-        self.__optimizations.add(flag)
-        self.__key = None
-        
-        
-    def disable(self, flag):
-        self.__optimizations.remove(flag)
-        self.__key = None
-        
+    """ 
 
     def apply(self, tree):
         """
@@ -98,19 +70,4 @@ class Optimization:
                 CryptPrivates.optimize(tree, tree.fileId)
             except CryptPrivates.Error as err:
                 raise Error(err)
-                
-                
-    def getKey(self):
-        """
-        Returns a unique key to identify this optimization set
-        """
-        
-        if self.__key is None:
-            self.__key = "+".join(sorted(self.__optimizations))
-        
-        return self.__key
-        
-        
-    # Map Python built-ins
-    __repr__ = getKey
-    __str__ = getKey        
+     

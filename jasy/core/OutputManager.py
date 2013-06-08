@@ -15,10 +15,10 @@ from jasy.js.Resolver import Resolver
 
 from jasy import UserError
 
-from jasy.js.output.Optimization import ScriptOptimization
-from jasy.js.output.Formatting import ScriptFormatting
+import jasy.js.output.Optimization as ScriptOptimization
+import jasy.js.output.Formatting as ScriptFormatting
 
-from jasy.style.output.Formatting import StyleFormatting
+import jasy.style.output.Formatting as StyleFormatting
 
 from jasy.core.FileManager import FileManager
 
@@ -33,10 +33,11 @@ class OutputManager:
         self.__fileManager = FileManager(session)
         self.__kernelClasses = []
 
-        self.__scriptOptimization = ScriptOptimization()
-        self.__scriptFormatting = ScriptFormatting()
+        self.__scriptOptimization = ScriptOptimization.Optimization()
+        self.__scriptFormatting = ScriptOptimization.Formatting()
 
-        self.__styleFormatting = StyleFormatting()
+        self.__styleOptimization = StyleOptimization.Optimization()
+        self.__styleFormatting = StyleFormatting.Formatting()
 
         self.__addDividers = formattingLevel > 0
 
