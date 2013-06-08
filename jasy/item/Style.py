@@ -48,6 +48,11 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     kind = "style"
     
+
+    def getTree(self):
+        return self.__getTree()
+
+
     def __getTree(self, context=None):
         
         field = "tree[%s]" % self.id
