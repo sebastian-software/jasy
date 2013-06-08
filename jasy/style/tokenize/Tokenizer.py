@@ -4,9 +4,6 @@
 #
 
 import re, copy
-
-import jasy.js.tokenize.Lang as Lang
-import jasy.js.api.Comment as Comment
 import jasy.core.Console as Console
 
 __all__ = [ "Tokenizer" ]
@@ -24,13 +21,7 @@ operatorNames = {
     '!='  : 'ne', 
     '!'   : 'not', 
     '=='  : 'eq', 
-    '===' : 'strict_eq', 
-    '!==' : 'strict_ne', 
 
-    '>>'  : 'rsh', 
-    '<<'  : 'lsh',
-    '>>>' : 'ursh', 
-     
     '+'   : 'plus', 
     '*'   : 'mul', 
     '-'   : 'minus', 
@@ -46,25 +37,17 @@ operatorNames = {
     '&&'  : 'and', 
     '||'  : 'or', 
 
-    '++'  : 'increment', 
-    '--'  : 'decrement', 
-
     ')'   : 'right_paren', 
     '('   : 'left_paren', 
     '['   : 'left_bracket', 
     ']'   : 'right_bracket', 
     '{'   : 'left_curly', 
-    '}'   : 'right_curly', 
-
-    '&'   : 'bitwise_and', 
-    '^'   : 'bitwise_xor', 
-    '|'   : 'bitwise_or', 
-    '~'   : 'bitwise_not'
+    '}'   : 'right_curly'
 }
 
 
 # Assignment operators
-assignOperators = ["|", "^", "&", "<<", ">>", ">>>", "+", "-", "*", "/", "%"]
+assignOperators = ["+", "-", "*", "/", "%"]
 
 
 
