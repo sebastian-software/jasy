@@ -241,34 +241,6 @@ class Tokenizer(object):
                 return
 
 
-    # Lexes the exponential part of a number, if present. Returns True if an
-    # exponential part was found.
-    def lexExponent(self):
-        input = self.source
-        next = input[self.cursor]
-        if next == "e" or next == "E":
-            self.cursor += 1
-            ch = input[self.cursor]
-            self.cursor += 1
-            if ch == "+" or ch == "-":
-                ch = input[self.cursor]
-                self.cursor += 1
-
-            if ch < "0" or ch > "9":
-                raise ParseError("Missing exponent", self.fileId, self.line)
-
-            while(True):
-                ch = input[self.cursor]
-                self.cursor += 1
-                if not (ch >= "0" and ch <= "9"):
-                    break
-                
-            self.cursor -= 1
-            return True
-
-        return False
-
-
     def lexZeroNumber(self, ch):
         token = self.token
         input = self.source
@@ -284,7 +256,6 @@ class Tokenizer(object):
                     break
                 
             self.cursor -= 1
-            self.lexExponent()
             token.value = input[token.start:self.cursor]
             
         elif ch == "x" or ch == "X":
@@ -309,7 +280,6 @@ class Tokenizer(object):
 
         else:
             self.cursor -= 1
-            self.lexExponent()     # 0E1, &c.
             token.value = 0
     
 
@@ -356,7 +326,6 @@ class Tokenizer(object):
                     break
 
             self.cursor -= 1
-            self.lexExponent()
 
             token.type = "number"
             token.value = input[token.start:self.cursor]
@@ -386,48 +355,6 @@ class Tokenizer(object):
             token.value = eval(input[token.start:self.cursor])
         else:
             token.value = input[token.start+1:self.cursor-1]
-
-
-    def lexRegExp(self, ch):
-        token = self.token
-        input = self.source
-        token.type = "regexp"
-
-        while (True):
-            try:
-                ch = input[self.cursor]
-                self.cursor += 1
-            except IndexError:
-                raise ParseError("Unterminated regex", self.fileId, self.line)
-
-            if ch == "\\":
-                self.cursor += 1
-                
-            elif ch == "[":
-                while (True):
-                    if ch == "\\":
-                        self.cursor += 1
-
-                    try:
-                        ch = input[self.cursor]
-                        self.cursor += 1
-                    except IndexError:
-                        raise ParseError("Unterminated character class", self.fileId, self.line)
-                    
-                    if ch == "]":
-                        break
-                    
-            if ch == "/":
-                break
-
-        while(True):
-            ch = input[self.cursor]
-            self.cursor += 1
-            if not (ch >= "a" and ch <= "z"):
-                break
-
-        self.cursor -= 1
-        token.value = input[token.start:self.cursor]
     
 
     def lexOp(self, ch):
@@ -463,8 +390,6 @@ class Tokenizer(object):
             token.assignOp = None
 
 
-    # FIXME: Unicode escape sequences
-    # FIXME: Unicode identifiers
     def lexIdent(self, ch):
         token = self.token
         input = self.source
@@ -523,9 +448,6 @@ class Tokenizer(object):
         
         if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "_":
             self.lexIdent(ch)
-        
-        elif scanOperand and ch == "/":
-            self.lexRegExp(ch)
         
         elif ch == ".":
             self.lexDot(ch)
