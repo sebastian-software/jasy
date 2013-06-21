@@ -40,9 +40,6 @@ operatorNames = {
     '&&'  : 'and', 
     '||'  : 'or', 
 
-    # style specific
-    #'@'   : 'expression',
-
     ')'   : 'right_paren', 
     '('   : 'left_paren', 
     '['   : 'left_bracket', 
