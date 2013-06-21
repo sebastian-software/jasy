@@ -125,6 +125,7 @@ setup(
     'jasy.js.parse',
     'jasy.js.tokenize',
     'jasy.js.util',
+    'jasy.parse',
     'jasy.style',
     'jasy.style.output',
     'jasy.style.parse',
