@@ -41,7 +41,7 @@ operatorNames = {
     '||'  : 'or', 
 
     # style specific
-    '@'   : 'expression',
+    #'@'   : 'expression',
 
     ')'   : 'right_paren', 
     '('   : 'left_paren', 
@@ -434,8 +434,15 @@ class Tokenizer(object):
         self.cursor -= 1
 
         identifier = input[token.start:self.cursor]
-        token.type = "identifier"
-        token.value = identifier
+        if identifier[0] == "@":
+            token.type = "command"
+            token.value = identifier[1:]
+        elif identifier[0] == "$":
+            token.type = "variable"
+            token.value = identifier[1:]
+        else:
+            token.type = "identifier"
+            token.value = identifier
 
 
     def get(self, scanOperand=False):
@@ -467,7 +474,7 @@ class Tokenizer(object):
         ch = input[self.cursor]
         self.cursor += 1
         
-        if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "_":
+        if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "@" or ch == "_":
             self.lexIdent(ch)
         
         elif ch == ".":
