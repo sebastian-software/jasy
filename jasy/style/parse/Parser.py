@@ -93,8 +93,10 @@ def Statement(tokenizer, staticContext):
     """Parses a Statement."""
 
     tokenType = tokenizer.get(True)
+    tokenValue = getattr(tokenizer.token, "value", "")
     
-    print("TOKEN-TYPE: %s" % tokenType)
+    print("TOKEN-TYPE: %s: %s" % (tokenType, tokenValue))
+
 
 
 

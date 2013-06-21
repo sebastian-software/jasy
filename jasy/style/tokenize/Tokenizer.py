@@ -41,7 +41,6 @@ operatorNames = {
     '||'  : 'or', 
 
     # style specific
-    '#'   : 'hex',
     '@'   : 'expression',
 
     ')'   : 'right_paren', 
@@ -319,6 +318,25 @@ class Tokenizer(object):
             token.value = int(segment)
 
 
+    def lexHex(self, ch):
+        token = self.token
+        input = self.source
+        token.type = "hex"
+
+        while(True):
+            ch = input[self.cursor]
+            self.cursor += 1
+                            
+            if not ((ch >= "0" and ch <= "9") or (ch >= "a" and ch <= "f") or (ch >= "A" and ch <= "F")):
+                break
+
+        self.cursor -= 1
+
+        segment = input[token.start:self.cursor]
+        
+        token.value = segment
+
+
     def lexDot(self, ch):
         token = self.token
         input = self.source
@@ -462,6 +480,9 @@ class Tokenizer(object):
         elif ch in operatorNames:
             self.lexOp(ch)
         
+        elif ch == "#":
+            self.lexHex(ch)
+
         elif ch >= "1" and ch <= "9":
             self.lexNumber(ch)
         
