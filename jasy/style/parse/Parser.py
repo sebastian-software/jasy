@@ -231,14 +231,21 @@ def MultiplyExpression(tokenizer, staticContext):
 def UnaryExpression(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
 
-    if tokenType in ["delete", "void", "typeof", "not", "bitwise_not", "plus", "minus"]:
-        node = builder.UNARY_build(tokenizer)
-        builder.UNARY_addOperand(node, UnaryExpression(tokenizer, staticContext))
+    print("XXX: %s" % tokenType)
+
+    if tokenType in ["typeof", "not", "plus", "minus"]:
+        if tokenType == "plus":
+            tokenType = "unary_plus"
+        elif tokenType == "minus":
+            tokenType = "unary_minus"
+            
+        node = Node.Node(tokenizer, tokenType)
+        node.append(UnaryExpression(tokenizer, staticContext))
     
     elif tokenType == "increment" or tokenType == "decrement":
         # Prefix increment/decrement.
-        node = builder.UNARY_build(tokenizer)
-        builder.UNARY_addOperand(node, MemberExpression(tokenizer, staticContext, True))
+        node = Node.Node(tokenizer, tokenType)
+        node.append(MemberExpression(tokenizer, staticContext, True))
 
     else:
         tokenizer.unget()
@@ -247,10 +254,9 @@ def UnaryExpression(tokenizer, staticContext):
         # Don't look across a newline boundary for a postfix {in,de}crement.
         if tokenizer.tokens[(tokenizer.tokenIndex + tokenizer.lookahead - 1) & 3].line == tokenizer.line:
             if tokenizer.match("increment") or tokenizer.match("decrement"):
-                childNode = builder.UNARY_build(tokenizer)
-                builder.UNARY_setPostfix(childNode)
-                builder.UNARY_finish(node)
-                builder.UNARY_addOperand(childNode, node)
+                childNode = Node.Node(tokenizer, tokenType)
+                childNode.postfix = True
+                childNode.append(node)
                 node = childNode
 
     return node
