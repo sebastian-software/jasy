@@ -5,8 +5,8 @@
 
 import re, copy
 
-import jasy.style.tokenize.Lang as Lang
 import jasy.core.Console as Console
+import jasy.js.api.Comment as Comment
 
 
 __all__ = [ "Tokenizer" ]
@@ -39,6 +39,10 @@ operatorNames = {
 
     '&&'  : 'and', 
     '||'  : 'or', 
+
+    # style specific
+    '#'   : 'hex',
+    '@'   : 'expression',
 
     ')'   : 'right_paren', 
     '('   : 'left_paren', 
@@ -306,11 +310,10 @@ class Tokenizer(object):
 
         self.cursor -= 1
 
-        exponent = self.lexExponent()
         segment = input[token.start:self.cursor]
         
         # Protect float or exponent numbers
-        if floating or exponent:
+        if floating:
             token.value = segment
         else:
             token.value = int(segment)
