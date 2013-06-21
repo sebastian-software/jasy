@@ -3,13 +3,14 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import jasy.style.tokenize.Tokenizer
+import jasy.style.tokenize.Tokenizer as Tokenizer
+import jasy.style.parse.Node as Node
 
 __all__ = [ "parse" ]
 
 
 def parse(source, fileId=None, line=1):    
-    tokenizer = jasy.style.tokenize.Tokenizer.Tokenizer(source, fileId, line)
+    tokenizer = Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext(False)
     node = Sheet(tokenizer, staticContext)
     
@@ -72,7 +73,7 @@ def Sheet(tokenizer, staticContext):
 def Statements(tokenizer, staticContext):
     """Parses a list of Statements."""
 
-    node = jasy.js.parse.Node.Node(tokenizer, "block")
+    node = Node.Node(tokenizer, "block")
     staticContext.blockId += 1
     staticContext.statementStack.append(node)
 
@@ -96,6 +97,45 @@ def Statement(tokenizer, staticContext):
     tokenValue = getattr(tokenizer.token, "value", "")
     
     print("TOKEN-TYPE: %s: %s" % (tokenType, tokenValue))
+
+    if tokenType == "variable":
+        node = Variable(tokenizer, staticContext)
+        return node
+
+
+
+
+
+def Variable(tokenizer, staticContext):
+    
+    if tokenizer.peek() == "assign":
+        node = Node.Node(tokenizer, "definition")
+
+
+    else:
+        node = Node.Node(tokenizer, "variable")
+        
+
+
+    print("XXX")
+    print(node)
+    #node.name = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
