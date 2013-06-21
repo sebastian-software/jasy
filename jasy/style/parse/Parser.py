@@ -182,10 +182,9 @@ def EqualityExpression(tokenizer, staticContext):
     node = RelationalExpression(tokenizer, staticContext)
     
     while tokenizer.match("eq") or tokenizer.match("ne") or tokenizer.match("strict_eq") or tokenizer.match("strict_ne"):
-        childNode = builder.EQUALITY_build(tokenizer)
-        builder.EQUALITY_addOperand(childNode, node)
-        builder.EQUALITY_addOperand(childNode, RelationalExpression(tokenizer, staticContext))
-        builder.EQUALITY_finish(childNode)
+        childNode = Node.Node(tokenizer)
+        childNode.append(node)
+        childNode.append(RelationalExpression(tokenizer, staticContext))
         node = childNode
 
     return node
@@ -197,10 +196,9 @@ def RelationalExpression(tokenizer, staticContext):
     node = AddExpression(tokenizer, staticContext)
 
     while tokenizer.match("lt") or tokenizer.match("le") or tokenizer.match("ge") or tokenizer.match("gt"):
-        childNode = builder.RELATIONAL_build(tokenizer)
-        builder.RELATIONAL_addOperand(childNode, node)
-        builder.RELATIONAL_addOperand(childNode, AddExpression(tokenizer, staticContext))
-        builder.RELATIONAL_finish(childNode)
+        childNode = Node.Node(tokenizer)
+        childNode.append(node)
+        childNode.append(AddExpression(tokenizer, staticContext))
         node = childNode
     
     return node
@@ -210,10 +208,9 @@ def AddExpression(tokenizer, staticContext):
     node = MultiplyExpression(tokenizer, staticContext)
     
     while tokenizer.match("plus") or tokenizer.match("minus"):
-        childNode = builder.ADD_build(tokenizer)
-        builder.ADD_addOperand(childNode, node)
-        builder.ADD_addOperand(childNode, MultiplyExpression(tokenizer, staticContext))
-        builder.ADD_finish(childNode)
+        childNode = Node.Node(tokenizer)
+        childNode.append(node)
+        childNode.append(MultiplyExpression(tokenizer, staticContext))
         node = childNode
 
     return node
@@ -223,10 +220,9 @@ def MultiplyExpression(tokenizer, staticContext):
     node = UnaryExpression(tokenizer, staticContext)
     
     while tokenizer.match("mul") or tokenizer.match("div") or tokenizer.match("mod"):
-        childNode = builder.MULTIPLY_build(tokenizer)
-        builder.MULTIPLY_addOperand(childNode, node)
-        builder.MULTIPLY_addOperand(childNode, UnaryExpression(tokenizer, staticContext))
-        builder.MULTIPLY_finish(childNode)
+        childNode = Node.Node(tokenizer)
+        childNode.append(node)
+        childNode.append(UnaryExpression(tokenizer, staticContext))
         node = childNode
 
     return node
@@ -393,6 +389,10 @@ def PrimaryExpression(tokenizer, staticContext):
         tokenizer.unget()
         node = ParenExpression(tokenizer, staticContext)
         node.parenthesized = True
+
+    elif tokenType == "variable":
+        node = Node.Node(tokenizer, tokenType)
+        node.name = tokenizer.token.value
 
     elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string", "hex"]:
         node = Node.Node(tokenizer, tokenType)
