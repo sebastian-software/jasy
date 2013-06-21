@@ -1,3 +1,30 @@
+Jasy 1.1.0
+==========
+
+## New:
+
+- Completely revamped integration of asset data. This data is now part of each individual build file and lays the ground for splitted builds (e.g. generate more than one output script for large applications) without adding all asset data to the kernel script.
+- Completely revamped integration of permutations and their dependending detection classes. The new system is unbelievable smart. Fields can now depend on other fields and could use them in their detection logic as well. Jasy is capable of integration all the field info and detection automatically.
+- Integrated Base62 API based on Sebastian Fastners JavaScript implementation
+- Added support for hashed asset names (SHA1/Base62 of content based)
+- Changed placeholder fields in jasyscript.py from `$name` to `{{name}}` which makes them safer to parse and easier to see
+- Added basic Subversion support (figuring out current revision/branch)
+- Added support for time/revision based output names e.g. for all generated JavaScript files. Changes to the revision (new commit) automatically produces different output files now.
+- Added support for so-called virtual projects (projects which are generated on-the-fly to contain specific generated classes (e.g. field configuration, asset data, translation data, ...). This allows for using the standard cache procedures in Jasy and makes things in OutputManager way cleaner than before.
+- Integrate environment ID generation which contains the hostname, host ID and username. This info will be passed through the kernel.js to the running application. This way it's easy to figure out where and from whom the current application was built.
+
+## Changes/Fixes:
+
+- Fixed task runtime calculation for tasks where the duration is longer than 10 seconds.
+- Improved wrapper around PIL/Pillow integration (image sprite support)
+- Improves cache handling
+- Updated versions of dependencies to newer versions
+- Using LooseVersion for every version check in Doctor
+- Cleanup of old error handling in API system. This was pretty much broken recently and will be implemented better later on.
+- Minor bugfixes (compiler, optimizer, build logic, ...)
+- Updated some links from zynga to sebastian-software
+
+
 Jasy 1.0.2
 ==========
 
