@@ -4,7 +4,10 @@
 #
 
 import re, copy
+
+import jasy.style.tokenize.Lang as Lang
 import jasy.core.Console as Console
+
 
 __all__ = [ "Tokenizer" ]
 
@@ -410,11 +413,8 @@ class Tokenizer(object):
         self.cursor -= 1
 
         identifier = input[token.start:self.cursor]
-        if identifier in Lang.keywords:
-            token.type = identifier
-        else:
-            token.type = "identifier"
-            token.value = identifier
+        token.type = "identifier"
+        token.value = identifier
 
 
     def get(self, scanOperand=False):
