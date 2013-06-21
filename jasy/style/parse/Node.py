@@ -16,7 +16,7 @@ class Node(list):
         
         # node type specific
         "value", "expression", "body", "functionForm", "parenthesized", "fileId", "params", 
-        "name", "readOnly", "initializer", "condition", "isLoop", "isEach", "object", "assignOp",
+        "name", "initializer", "condition", "isLoop", "isEach", "object", "assignOp",
         "iterator", "thenPart", "elsePart", "setup", "postfix", "update",
         "block", "discriminant", "label", "statements", 
         "statement", "variables", "names", "for", "tail"

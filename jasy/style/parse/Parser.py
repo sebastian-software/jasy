@@ -109,12 +109,19 @@ def Statement(tokenizer, staticContext):
 def Variable(tokenizer, staticContext):
     
     if tokenizer.peek() == "assign":
-        node = Node.Node(tokenizer, "definition")
+        node = Node.Node(tokenizer, "declaration")
+        node.name = tokenizer.token.value
+        
+        # Jump over assign
+        tokenizer.get()
 
+        # Process value
+        expression = AssignExpression(tokenizer, staticContext)
+        node.append(expression, "initializer")
 
     else:
         node = Node.Node(tokenizer, "variable")
-        
+        node.name = tokenizer.token.value
 
 
     print("XXX")
@@ -123,7 +130,9 @@ def Variable(tokenizer, staticContext):
 
 
 
-
+def AssignExpression(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "expression")
+    return node
 
 
 
