@@ -105,8 +105,6 @@ def Statement(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
     tokenValue = getattr(tokenizer.token, "value", "")
     
-    print("TOKEN-TYPE: %s: %s" % (tokenType, tokenValue))
-
     if tokenType == "variable":
         node = Variable(tokenizer, staticContext)
         return node
@@ -114,7 +112,6 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "left_curly":
         node = Statements(tokenizer, staticContext)
         tokenizer.mustMatch("right_curly")
-        
         return node
 
     elif tokenType == "command":
@@ -134,15 +131,14 @@ def Statement(tokenizer, staticContext):
                 node.append(elsePart, "elsePart")
 
             staticContext.statementStack.pop()
-            
-            print("--- NODE XML ---")
-            print(node)
-                
+
             return node
 
         else:
             print("Unknown command: %s" % tokenValue)
 
+    else:
+        print("Unknown statement: %s" % tokenType)
 
 
 def Variable(tokenizer, staticContext):
@@ -162,8 +158,7 @@ def Variable(tokenizer, staticContext):
         node = Node.Node(tokenizer, "variable")
         node.name = tokenizer.token.value
 
-    print("--- NODE XML ---")
-    print(node)
+    return node
 
 
 
@@ -288,8 +283,6 @@ def MultiplyExpression(tokenizer, staticContext):
 def UnaryExpression(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
 
-    print("XXX: %s" % tokenType)
-
     if tokenType in ["typeof", "not", "plus", "minus"]:
         if tokenType == "plus":
             tokenType = "unary_plus"
@@ -311,7 +304,7 @@ def UnaryExpression(tokenizer, staticContext):
         # Don't look across a newline boundary for a postfix {in,de}crement.
         if tokenizer.tokens[(tokenizer.tokenIndex + tokenizer.lookahead - 1) & 3].line == tokenizer.line:
             if tokenizer.match("increment") or tokenizer.match("decrement"):
-                childNode = Node.Node(tokenizer, tokenType)
+                childNode = Node.Node(tokenizer)
                 childNode.postfix = True
                 childNode.append(node)
                 node = childNode

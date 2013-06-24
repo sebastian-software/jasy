@@ -63,10 +63,38 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Console.indent()
             tree = Parser.parse(self.getText(), self.id)
             Console.outdent()
+
+            print("")
+            print("")
+            print("TREE:")
+            print("----------------------------------------------------")
+            print(tree)
             
             self.project.getCache().store(field, tree, self.mtime, True)
         
         return tree
+
+
+    def getTokens(self, context=None):
+        import jasy.style.tokenize.Tokenizer as Tokenizer
+
+        tokenizer = Tokenizer.Tokenizer(self.getText(), self.id, 0)
+        indent = 0
+        while tokenizer.get() and not tokenizer.done():
+            tokenType = tokenizer.token.type 
+            tokenValue = getattr(tokenizer.token, "value", None)
+            if tokenType == "left_curly":
+                indent += 1
+                continue
+            elif tokenType == "right_curly":
+                indent -= 1
+                continue
+
+            if tokenValue is not None:
+                print("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
+            else:
+                print("%s%s" % (indent * "  ", tokenType))
+        
     
     
     def __getOptimizedTree(self, permutation=None, context=None):
