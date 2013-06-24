@@ -144,8 +144,29 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
+        # e.g. h1 {...
         elif tokenizer.peek() == "left_curly":
             node = Selector(tokenizer, staticContext)
+            return node
+
+        # e.g. background-color
+        elif tokenizer.peek() == "minus":
+            node = Property(tokenizer, staticContext)
+            return node
+
+        elif tokenizer.peek() == "left_paren":
+            # Member expression does own identifier creation/mapping so we unget first
+            tokenizer.unget()
+            node = MemberExpression(tokenizer, staticContext, True)
+            if tokenizer.match("left_curly"):
+                # Block handling does match left_curly, we unget to allow it
+                tokenizer.unget()
+
+                # Update type of node from call to mixin
+                node.type = "mixin"
+
+                node.append(Block(tokenizer, staticContext), "rules")
+
             return node
 
         else:
@@ -171,9 +192,21 @@ def Statement(tokenizer, staticContext):
             print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
 
 
+    elif tokenType == "minus":
+        # e.g. background-color
+        if tokenizer.peek() == "minus":
+            node = Property(tokenizer, staticContext)
+            return node
+
+        else:
+            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
+
+
 
     else:
-        print("Unknown statement: %s" % tokenType)
+        node = Node.Node(tokenizer, "unknown")
+        node.token = tokenizer.token.type
+        return node
 
 
 
@@ -181,6 +214,12 @@ def Property(tokenizer, staticContext):
     node = Node.Node(tokenizer, "property")
     node.name = tokenizer.token.value
     
+    while tokenizer.get() != "colon":
+        if tokenizer.token.type == "minus":
+            node.name += "-"
+
+
+    tokenizer.unget()
     if not tokenizer.mustMatch("colon"):
         raise SyntaxError("Invalid property definition", tokenizer)
 
@@ -238,6 +277,12 @@ def Variable(tokenizer, staticContext):
     return node
 
 
+def ParenExpression(tokenizer, staticContext):
+    tokenizer.mustMatch("left_paren")
+    node = Expression(tokenizer, staticContext)
+    tokenizer.mustMatch("right_paren")
+
+    return node
 
 
 def Expression(tokenizer, staticContext):
@@ -394,25 +439,25 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
 
     while True:
         tokenType = tokenizer.get()
+        print("MEMBER NEXT: %s" % tokenType, tokenizer.token.line)
+
         if tokenType == "end":
             break
         
         if tokenType == "dot":
-            childNode = builder.MEMBER_build(tokenizer)
-            builder.MEMBER_addOperand(childNode, node)
+            childNode = Node.Node(tokenizer)
+            childNode.append(node)
+            
             tokenizer.mustMatch("identifier")
-            builder.MEMBER_addOperand(childNode, builder.MEMBER_build(tokenizer))
 
-        elif tokenType == "left_bracket":
-            childNode = builder.MEMBER_build(tokenizer, "index")
-            builder.MEMBER_addOperand(childNode, node)
-            builder.MEMBER_addOperand(childNode, Expression(tokenizer, staticContext))
-            tokenizer.mustMatch("right_bracket")
+            idenNode = Node.Node(tokenizer, tokenType)
+            idenNode.value = tokenizer.token.value
+            childNode.append(idenNode)
 
         elif tokenType == "left_paren" and allowCallSyntax:
-            childNode = builder.MEMBER_build(tokenizer, "call")
-            builder.MEMBER_addOperand(childNode, node)
-            builder.MEMBER_addOperand(childNode, ArgumentList(tokenizer, staticContext))
+            childNode = Node.Node(tokenizer, "call")
+            childNode.append(node)
+            childNode.append(ArgumentList(tokenizer, staticContext))
 
         else:
             tokenizer.unget()
@@ -421,6 +466,24 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
         node = childNode
 
     return node
+
+
+def ArgumentList(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "list")
+    
+    if tokenizer.match("right_paren", True):
+        return node
+    
+    while True:    
+        childNode = AssignExpression(tokenizer, staticContext)
+        node.append(childNode)
+        if not tokenizer.match("comma"):
+            break
+
+    tokenizer.mustMatch("right_paren")
+
+    return node
+
 
 
 def PrimaryExpression(tokenizer, staticContext):
