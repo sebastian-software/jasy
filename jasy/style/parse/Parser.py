@@ -90,6 +90,15 @@ def Statements(tokenizer, staticContext):
 
 
 
+def Block(tokenizer, staticContext):
+    tokenizer.mustMatch("left_curly")
+    node = Statements(tokenizer, staticContext)
+    tokenizer.mustMatch("right_curly")
+    
+    return node
+
+
+
 def Statement(tokenizer, staticContext):
     """Parses a Statement."""
 
@@ -102,7 +111,37 @@ def Statement(tokenizer, staticContext):
         node = Variable(tokenizer, staticContext)
         return node
 
+    elif tokenType == "left_curly":
+        node = Statements(tokenizer, staticContext)
+        tokenizer.mustMatch("right_curly")
+        
+        return node
 
+    elif tokenType == "command":
+
+        if tokenValue == "if":
+            node = Node.Node(tokenizer, "if")
+            node.append(Expression(tokenizer, staticContext), "condition")
+            staticContext.statementStack.append(node)
+            node.append(Statement(tokenizer, staticContext), "thenPart")
+
+            tokenValue = getattr(tokenizer.token, "value", "")
+
+            if tokenizer.match("command") and tokenValue == "else":
+                comments = tokenizer.getComments()
+                elsePart = Statement(tokenizer, staticContext)
+                addComments(elsePart, node, comments)
+                node.append(elsePart, "elsePart")
+
+            staticContext.statementStack.pop()
+            
+            print("--- NODE XML ---")
+            print(node)
+                
+            return node
+
+        else:
+            print("Unknown command: %s" % tokenValue)
 
 
 
@@ -128,6 +167,24 @@ def Variable(tokenizer, staticContext):
 
 
 
+
+def Expression(tokenizer, staticContext):
+    """Top-down expression parser matched against SpiderMonkey."""
+    node = AssignExpression(tokenizer, staticContext)
+
+    if tokenizer.match("comma"):
+        childNode = Node.Node(tokenizer, "comma")
+        childNode.append(node)
+        node = childNode
+
+        while True:
+            childNode = node[len(node)-1]
+            node.append(AssignExpression(tokenizer, staticContext))
+            
+            if not tokenizer.match("comma"):
+                break
+                
+    return node
 
 
 
