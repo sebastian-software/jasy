@@ -137,8 +137,59 @@ def Statement(tokenizer, staticContext):
         else:
             print("Unknown command: %s" % tokenValue)
 
+    elif tokenType == "identifier":
+        print("SEL HANDLER?")
+
+        # e.g. background: 
+        if tokenizer.peek() == "colon":
+            node = Property(tokenizer, staticContext)
+            return node
+
+        else:
+            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
+
+
+
+    # Generated content or pseudo selector
+    elif tokenType == "colon":
+
+        # e.g. ::after, ...
+        if tokenizer.peek() == "colon":
+            node = Selector(tokenizer, staticContext)
+            return node
+
+        # e.g. :last-child, ...
+        elif tokenizer.peek() == "identifier":
+            node = Selector(tokenizer, staticContext)
+            return node
+
+
+        else:
+            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
+
+
+
     else:
         print("Unknown statement: %s" % tokenType)
+
+
+
+def Property(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "property")
+    node.name = tokenizer.token.value
+    
+    if not tokenizer.mustMatch("colon"):
+        raise SyntaxError("Invalid property definition", tokenizer)
+
+    node.append(Expression(tokenizer, staticContext), "value")
+
+    return node
+
+
+def Selector(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "selector")
+    return node
+
 
 
 def Variable(tokenizer, staticContext):
