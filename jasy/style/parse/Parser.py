@@ -27,6 +27,7 @@ def parse(source, fileId=None, line=1):
     #     builder.COMMENTS_add(node, None, tokenizer.getComments())
     
     if not tokenizer.done():
+        print("TOKENIZER AT: %s at line %s" % (tokenizer.token.type, tokenizer.token.line))
         raise SyntaxError("Unexpected end of file", tokenizer)
 
     return node
@@ -138,8 +139,6 @@ def Statement(tokenizer, staticContext):
             print("Unknown command: %s" % tokenValue)
 
     elif tokenType == "identifier":
-        print("SEL HANDLER?")
-
         # e.g. background: 
         if tokenizer.peek() == "colon":
             node = Property(tokenizer, staticContext)
@@ -188,6 +187,29 @@ def Property(tokenizer, staticContext):
 
 def Selector(tokenizer, staticContext):
     node = Node.Node(tokenizer, "selector")
+
+    tokenType = tokenizer.token.type
+    selector = ""
+
+    while tokenType != "left_curly":
+        if tokenType == "identifier":
+            selector += tokenizer.token.value
+
+        elif tokenType == "colon":
+            selector += ":"
+
+        elif tokenType == "comma":
+            selector += ", "
+
+        tokenType = tokenizer.get()
+
+    node.name = selector
+
+    # Next process content of selector
+    tokenizer.unget()
+    childNode = Block(tokenizer, staticContext)
+    node.append(childNode, "rules")
+
     return node
 
 

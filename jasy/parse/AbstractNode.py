@@ -18,7 +18,7 @@ class AbstractNode(list):
         "value", "parenthesized", "fileId", "params", 
         "name", "initializer", "condition", "assignOp",
         "thenPart", "elsePart", "statements",
-        "statement", "variables", "names"
+        "statement", "variables", "names", "postfix"
     ]
     
     
