@@ -144,6 +144,10 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
+        elif tokenizer.peek() == "left_curly":
+            node = Selector(tokenizer, staticContext)
+            return node
+
         else:
             print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
 
