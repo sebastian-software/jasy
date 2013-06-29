@@ -274,16 +274,6 @@ class Tokenizer(object):
             self.cursor -= 1
             token.value = input[token.start:self.cursor]
 
-        elif ch >= "0" and ch <= "7":
-            while(True):
-                ch = input[self.cursor]
-                self.cursor += 1
-                if not (ch >= "0" and ch <= "7"):
-                    break
-                    
-            self.cursor -= 1
-            token.value = input[token.start:self.cursor]
-
         else:
             self.cursor -= 1
             token.value = 0
