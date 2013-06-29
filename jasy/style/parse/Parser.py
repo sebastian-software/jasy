@@ -430,7 +430,7 @@ def MultiplyExpression(tokenizer, staticContext):
     node = UnaryExpression(tokenizer, staticContext)
     if node.type == "identifier":
         return node
-    
+
     while tokenizer.match("mul") or tokenizer.match("div") or tokenizer.match("mod"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)

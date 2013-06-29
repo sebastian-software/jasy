@@ -370,6 +370,10 @@ class Tokenizer(object):
             token.type = "number"
             token.value = input[token.start:self.cursor]
 
+            unit = self.lexUnit()
+            if unit:
+                token.unit = unit
+
         else:
             token.type = "dot"
 
