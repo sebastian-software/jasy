@@ -139,38 +139,25 @@ def Statement(tokenizer, staticContext):
             print("Unknown command: %s" % tokenValue)
 
     elif tokenType == "identifier":
+        nextTokenType = tokenizer.peek()
+
         # e.g. background: 
-        if tokenizer.peek() == "colon":
+        if nextTokenType == "colon":
             node = Property(tokenizer, staticContext)
             return node
 
         # e.g. h1 {...
-        elif tokenizer.peek() == "left_curly":
+        elif nextTokenType == "left_curly":
             node = Selector(tokenizer, staticContext)
             return node
 
         # e.g. background-color
-        elif tokenizer.peek() == "minus":
+        elif nextTokenType == "minus":
             node = Property(tokenizer, staticContext)
             return node
 
-        # e.g. foo() or foo(a,b) or foo(a,b){}
-        elif tokenizer.peek() == "left_paren":
-
-            node = Node.Node(tokenizer, "call")
-            node.name = tokenizer.token.value
-
-            if tokenizer.mustMatch("left_paren"):
-                node.append(ArgumentList(tokenizer, staticContext), "params")
-
-            if tokenizer.peek() == "left_curly":
-                node.type = "mixin"
-                node.append(Block(tokenizer, staticContext), "rules")
-
-            return node
-
         else:
-            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
 
@@ -259,6 +246,7 @@ def Selector(tokenizer, staticContext):
 
 def Variable(tokenizer, staticContext):
     
+    # e.g. $foo = 1
     if tokenizer.peek() == "assign":
         node = Node.Node(tokenizer, "declaration")
         node.name = tokenizer.token.value
@@ -270,10 +258,25 @@ def Variable(tokenizer, staticContext):
             initializerNode = AssignExpression(tokenizer, staticContext)
             node.append(initializerNode, "initializer")        
 
+    # e.g. $foo {}
     elif tokenizer.peek() == "left_curly":
         node = Node.Node(tokenizer, "mixin")
         node.name = tokenizer.token.value
         node.append(Block(tokenizer, staticContext), "rules")
+
+    # e.g. $foo() or $foo(a,b) or $foo(a,b) {}
+    elif tokenizer.peek() == "left_paren":
+        node = Node.Node(tokenizer, "call")
+        node.name = tokenizer.token.value
+
+        if tokenizer.mustMatch("left_paren"):
+            node.append(ArgumentList(tokenizer, staticContext), "params")
+
+        if tokenizer.peek() == "left_curly":
+            node.type = "mixin"
+            node.append(Block(tokenizer, staticContext), "rules")
+
+        return node        
 
     else:
         node = Node.Node(tokenizer, "variable")
