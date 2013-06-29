@@ -82,7 +82,11 @@ def Statements(tokenizer, staticContext):
     while not tokenizer.done() and tokenizer.peek(True) != "right_curly":
         comments = tokenizer.getComments()
         childNode = Statement(tokenizer, staticContext)
-        node.append(childNode)
+
+        # Ignore semicolons in AST
+        if childNode.type != "semicolon":
+            node.append(childNode)
+
         prevNode = childNode
 
     staticContext.statementStack.pop()
@@ -217,10 +221,6 @@ def Property(tokenizer, staticContext):
     # Add all values until we find a semicolon or right curly
     while tokenizer.peek() not in ("semicolon", "right_curly"):
         node.append(Expression(tokenizer, staticContext))    
-
-    # Ignore all directly following semicolons
-    while tokenizer.peek() == "semicolon":
-        tokenizer.get()
 
     return node
 
