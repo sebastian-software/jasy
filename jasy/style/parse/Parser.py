@@ -129,7 +129,7 @@ def Statement(tokenizer, staticContext):
 
             tokenValue = getattr(tokenizer.token, "value", "")
 
-            if tokenizer.match("command") and tokenValue == "else":
+            if tokenizer.match("command") and tokenizer.token.value == "else":
                 comments = tokenizer.getComments()
                 elsePart = Statement(tokenizer, staticContext)
                 addComments(elsePart, node, comments)
