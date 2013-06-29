@@ -246,10 +246,18 @@ def Selector(tokenizer, staticContext):
 
 def Variable(tokenizer, staticContext):
     
+    name = tokenizer.token.value
+
+    # e.g. $foo.css
+    while tokenizer.peek() == "dot":
+        tokenizer.get()
+        if tokenizer.mustMatch("identifier"):
+            name += ".%s" % tokenizer.token.value 
+
     # e.g. $foo = 1
     if tokenizer.peek() == "assign":
         node = Node.Node(tokenizer, "declaration")
-        node.name = tokenizer.token.value
+        node.name = name
 
         if tokenizer.match("assign"):
             if tokenizer.token.assignOp:
@@ -261,13 +269,13 @@ def Variable(tokenizer, staticContext):
     # e.g. $foo {}
     elif tokenizer.peek() == "left_curly":
         node = Node.Node(tokenizer, "mixin")
-        node.name = tokenizer.token.value
+        node.name = name
         node.append(Block(tokenizer, staticContext), "rules")
 
     # e.g. $foo() or $foo(a,b) or $foo(a,b) {}
     elif tokenizer.peek() == "left_paren":
         node = Node.Node(tokenizer, "call")
-        node.name = tokenizer.token.value
+        node.name = name
 
         if tokenizer.mustMatch("left_paren"):
             node.append(ArgumentList(tokenizer, staticContext), "params")
@@ -280,7 +288,7 @@ def Variable(tokenizer, staticContext):
 
     else:
         node = Node.Node(tokenizer, "variable")
-        node.name = tokenizer.token.value
+        node.name = name
 
     return node
 
