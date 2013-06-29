@@ -20,6 +20,6 @@ class Node(AbstractNode.AbstractNode):
         "statement", "variables", "names",
 
         # style specific
-        "rules", "token"
+        "rules", "token", "unit"
     ]
 

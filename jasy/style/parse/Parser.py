@@ -636,6 +636,8 @@ def PrimaryExpression(tokenizer, staticContext):
         node = Node.Node(tokenizer, tokenType)
         if tokenType in ("identifier", "string", "hex", "number"):
             node.value = tokenizer.token.value
+        if tokenType == "number" and hasattr(tokenizer.token, "unit"):
+            node.unit = tokenizer.token.unit
 
     else:
         raise SyntaxError("Missing operand. Found type: %s" % tokenType, tokenizer)

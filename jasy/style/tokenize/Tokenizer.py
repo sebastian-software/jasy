@@ -63,7 +63,7 @@ assignOperators = ["+", "-", "*", "/", "%"]
 #
 
 class Token: 
-    __slots__ = ["type", "start", "line", "assignOp", "end", "value"]
+    __slots__ = ["type", "start", "line", "assignOp", "end", "value", "unit"]
 
 
 class ParseError(Exception):
@@ -287,6 +287,10 @@ class Tokenizer(object):
         else:
             self.cursor -= 1
             token.value = 0
+
+        unit = self.lexUnit()
+        if unit:
+            token.unit = unit            
     
 
     def lexNumber(self, ch):
@@ -310,12 +314,34 @@ class Tokenizer(object):
         self.cursor -= 1
 
         segment = input[token.start:self.cursor]
-        
+
         # Protect float or exponent numbers
         if floating:
             token.value = segment
         else:
             token.value = int(segment)
+
+        unit = self.lexUnit()
+        if unit:
+            token.unit = unit
+
+
+    def lexUnit(self):
+        """Parses units like %, cm, inch, px, etc. """
+
+        start = self.cursor
+        input = self.source
+
+        while(True):
+            ch = input[self.cursor]
+            self.cursor += 1
+            if not ((ch >= "a" and ch <= "z") or ch == "%"):
+                break
+
+        self.cursor -= 1
+
+        segment = input[start:self.cursor]
+        return segment
 
 
     def lexHex(self, ch):
