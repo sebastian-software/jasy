@@ -200,27 +200,16 @@ def Statement(tokenizer, staticContext):
 
 def Property(tokenizer, staticContext):
     node = Node.Node(tokenizer, "property")
-    name = ""
+    node.name = tokenizer.token.value
 
-    # Loop through and start with first
-    tokenizer.unget()
-    while tokenizer.get() != "colon":
-        if tokenizer.token.type == "minus":
-            name += "-"
-        elif tokenizer.token.type == "identifier":
-            name += tokenizer.token.value
-        else:
-            raise SyntaxError("Invalid property declaration!", tokenizer)
-
-    node.name = name
-
-    tokenizer.unget()
     if not tokenizer.mustMatch("colon"):
         raise SyntaxError("Invalid property definition", tokenizer)
 
     # Add all values until we find a semicolon or right curly
     while tokenizer.peek() not in ("semicolon", "right_curly"):
-        node.append(Expression(tokenizer, staticContext))    
+        childNode = Expression(tokenizer, staticContext)
+
+        node.append(childNode)    
 
     return node
 
@@ -380,11 +369,18 @@ def AndExpression(tokenizer, staticContext):
 
 def EqualityExpression(tokenizer, staticContext):
     node = RelationalExpression(tokenizer, staticContext)
+    if node.type == "identifier":
+        return node
     
-    while tokenizer.match("eq") or tokenizer.match("ne") or tokenizer.match("strict_eq") or tokenizer.match("strict_ne"):
+    while tokenizer.match("eq") or tokenizer.match("ne"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)
-        childNode.append(RelationalExpression(tokenizer, staticContext))
+
+        express = RelationalExpression(tokenizer, staticContext)
+        if express.type == "identifier":
+            raise SyntaxError("Invalid expression", tokenizer)
+
+        childNode.append(express)
         node = childNode
 
     return node
@@ -394,11 +390,18 @@ def RelationalExpression(tokenizer, staticContext):
     # Uses of the in operator in shiftExprs are always unambiguous,
     # so unset the flag that prohibits recognizing it.
     node = AddExpression(tokenizer, staticContext)
+    if node.type == "identifier":
+        return node
 
     while tokenizer.match("lt") or tokenizer.match("le") or tokenizer.match("ge") or tokenizer.match("gt"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)
-        childNode.append(AddExpression(tokenizer, staticContext))
+
+        express = AddExpression(tokenizer, staticContext)
+        if express.type == "identifier":
+            raise SyntaxError("Invalid expression", tokenizer)
+
+        childNode.append(express)
         node = childNode
     
     return node
@@ -406,11 +409,18 @@ def RelationalExpression(tokenizer, staticContext):
 
 def AddExpression(tokenizer, staticContext):
     node = MultiplyExpression(tokenizer, staticContext)
+    if node.type == "identifier":
+        return node
     
     while tokenizer.match("plus") or tokenizer.match("minus"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)
-        childNode.append(MultiplyExpression(tokenizer, staticContext))
+
+        express = MultiplyExpression(tokenizer, staticContext)
+        if express.type == "identifier":
+            raise SyntaxError("Invalid expression", tokenizer)
+
+        childNode.append(express)
         node = childNode
 
     return node
@@ -418,11 +428,18 @@ def AddExpression(tokenizer, staticContext):
 
 def MultiplyExpression(tokenizer, staticContext):
     node = UnaryExpression(tokenizer, staticContext)
+    if node.type == "identifier":
+        return node
     
     while tokenizer.match("mul") or tokenizer.match("div") or tokenizer.match("mod"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)
-        childNode.append(UnaryExpression(tokenizer, staticContext))
+
+        express = UnaryExpression(tokenizer, staticContext)
+        if express.type == "identifier":
+            raise SyntaxError("Invalid expression", tokenizer)
+
+        childNode.append(express)
         node = childNode
 
     return node

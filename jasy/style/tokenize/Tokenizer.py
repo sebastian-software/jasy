@@ -422,8 +422,8 @@ class Tokenizer(object):
             while True:
                 ch = input[self.cursor]
                 self.cursor += 1
-            
-                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "$" or ch == "_"):
+
+                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-"):
                     break
                     
         except IndexError:
@@ -434,6 +434,7 @@ class Tokenizer(object):
         self.cursor -= 1
 
         identifier = input[token.start:self.cursor]
+
         if identifier[0] == "@":
             token.type = "command"
             token.value = identifier[1:]
@@ -473,10 +474,20 @@ class Tokenizer(object):
 
         ch = input[self.cursor]
         self.cursor += 1
-        
+
+        # Peek to next character
+        if ch == "-" and len(input) > self.cursor:
+            nextCh = input[self.cursor]
+        else:
+            nextCh = None
+
         if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "@" or ch == "_":
             self.lexIdent(ch)
-        
+
+        # Identifier with leading "-" (minus) e.g. -webkit-transition
+        elif ch == "-" and nextCh and ((nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z")):
+            self.lexIdent(ch)            
+
         elif ch == ".":
             self.lexDot(ch)
 
