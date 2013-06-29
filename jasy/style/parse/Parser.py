@@ -183,6 +183,9 @@ def Statement(tokenizer, staticContext):
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
+    elif tokenType == "semicolon":
+        node = Node.Node(tokenizer, "semicolon")
+        return node
 
     else:
         node = Node.Node(tokenizer, "unknown")
@@ -198,7 +201,6 @@ def Property(tokenizer, staticContext):
     # Loop through and start with first
     tokenizer.unget()
     while tokenizer.get() != "colon":
-        print("PROP: %s" % tokenizer.token.type)
         if tokenizer.token.type == "minus":
             name += "-"
         elif tokenizer.token.type == "identifier":
@@ -212,7 +214,13 @@ def Property(tokenizer, staticContext):
     if not tokenizer.mustMatch("colon"):
         raise SyntaxError("Invalid property definition", tokenizer)
 
-    node.append(Expression(tokenizer, staticContext), "value")
+    # Add all values until we find a semicolon or right curly
+    while tokenizer.peek() not in ("semicolon", "right_curly"):
+        node.append(Expression(tokenizer, staticContext))    
+
+    # Ignore all directly following semicolons
+    while tokenizer.peek() == "semicolon":
+        tokenizer.get()
 
     return node
 
@@ -457,7 +465,6 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
 
     while True:
         tokenType = tokenizer.get()
-        print("MEMBER NEXT: %s" % tokenType, tokenizer.token.line)
 
         if tokenType == "end":
             break
