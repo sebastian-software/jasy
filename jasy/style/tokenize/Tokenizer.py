@@ -438,12 +438,16 @@ class Tokenizer(object):
         token = self.token
         input = self.source
 
+        # Variables/Commands should support packaged/namespaced names e.g. "foo.bar"
+        isVariable = input[token.start] == "$"
+        isCommand = input[token.start] == "@"
+
         try:
             while True:
                 ch = input[self.cursor]
                 self.cursor += 1
 
-                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-"):
+                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-" or ((isVariable or isCommand) and ch == ".")):
                     break
                     
         except IndexError:
@@ -455,10 +459,10 @@ class Tokenizer(object):
 
         identifier = input[token.start:self.cursor]
 
-        if identifier[0] == "@":
+        if isCommand:
             token.type = "command"
             token.value = identifier[1:]
-        elif identifier[0] == "$":
+        elif isVariable:
             token.type = "variable"
             token.value = identifier[1:]
         else:

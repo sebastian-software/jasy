@@ -247,12 +247,6 @@ def Variable(tokenizer, staticContext):
     
     name = tokenizer.token.value
 
-    # e.g. $foo.css
-    while tokenizer.peek() == "dot":
-        tokenizer.get()
-        if tokenizer.mustMatch("identifier"):
-            name += ".%s" % tokenizer.token.value 
-
     # e.g. $foo = 1
     if tokenizer.peek() == "assign":
         node = Node.Node(tokenizer, "declaration")
