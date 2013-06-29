@@ -160,34 +160,28 @@ def Statement(tokenizer, staticContext):
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
+    # Vendor prefixed property
+    elif tokenType == "minus":
+        node = Property(tokenizer, staticContext)
+        return node
+
 
     # Generated content or pseudo selector
     elif tokenType == "colon":
+        nextTokenType = tokenizer.peek()
 
         # e.g. ::after, ...
-        if tokenizer.peek() == "colon":
+        if nextTokenType == "colon":
             node = Selector(tokenizer, staticContext)
             return node
 
         # e.g. :last-child, ...
-        elif tokenizer.peek() == "identifier":
+        elif nextTokenType == "identifier":
             node = Selector(tokenizer, staticContext)
             return node
 
-
         else:
-            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
-
-
-    elif tokenType == "minus":
-        # e.g. background-color
-        if tokenizer.peek() == "minus":
-            node = Property(tokenizer, staticContext)
-            return node
-
-        else:
-            print("NEXT-TYPE: %s after %s" % (tokenizer.peek(), tokenType))
-
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     else:
@@ -199,12 +193,20 @@ def Statement(tokenizer, staticContext):
 
 def Property(tokenizer, staticContext):
     node = Node.Node(tokenizer, "property")
-    node.name = tokenizer.token.value
-    
-    while tokenizer.get() != "colon":
-        if tokenizer.token.type == "minus":
-            node.name += "-"
+    name = ""
 
+    # Loop through and start with first
+    tokenizer.unget()
+    while tokenizer.get() != "colon":
+        print("PROP: %s" % tokenizer.token.type)
+        if tokenizer.token.type == "minus":
+            name += "-"
+        elif tokenizer.token.type == "identifier":
+            name += tokenizer.token.value
+        else:
+            raise SyntaxError("Invalid property declaration!", tokenizer)
+
+    node.name = name
 
     tokenizer.unget()
     if not tokenizer.mustMatch("colon"):
