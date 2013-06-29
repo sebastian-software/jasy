@@ -154,17 +154,17 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
+        # e.g. foo() or foo(a,b) or foo(a,b){}
         elif tokenizer.peek() == "left_paren":
-            # Member expression does own identifier creation/mapping so we unget first
-            tokenizer.unget()
-            node = MemberExpression(tokenizer, staticContext, True)
-            if tokenizer.match("left_curly"):
-                # Block handling does match left_curly, we unget to allow it
-                tokenizer.unget()
 
-                # Update type of node from call to mixin
+            node = Node.Node(tokenizer, "call")
+            node.name = tokenizer.token.value
+
+            if tokenizer.mustMatch("left_paren"):
+                node.append(ArgumentList(tokenizer, staticContext), "params")
+
+            if tokenizer.peek() == "left_curly":
                 node.type = "mixin"
-
                 node.append(Block(tokenizer, staticContext), "rules")
 
             return node
@@ -269,6 +269,11 @@ def Variable(tokenizer, staticContext):
 
             initializerNode = AssignExpression(tokenizer, staticContext)
             node.append(initializerNode, "initializer")        
+
+    elif tokenizer.peek() == "left_curly":
+        node = Node.Node(tokenizer, "mixin")
+        node.name = tokenizer.token.value
+        node.append(Block(tokenizer, staticContext), "rules")
 
     else:
         node = Node.Node(tokenizer, "variable")
@@ -457,7 +462,7 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
         elif tokenType == "left_paren" and allowCallSyntax:
             childNode = Node.Node(tokenizer, "call")
             childNode.append(node)
-            childNode.append(ArgumentList(tokenizer, staticContext))
+            childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
         else:
             tokenizer.unget()
