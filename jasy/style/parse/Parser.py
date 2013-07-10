@@ -140,7 +140,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            print("Unknown command: %s" % tokenValue)
+            raise SyntaxError("Unknown command: %s" % tokenValue, tokenizer)
 
     elif tokenType == "identifier":
         nextTokenType = tokenizer.peek()
