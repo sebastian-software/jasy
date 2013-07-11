@@ -259,7 +259,7 @@ additionalContentTypes = {
     "ttf": "application/x-font-ttf",
     "ttc": "application/x-font-ttf",
     "otf": "font/opentype",
-    "woff": "application/x-font-woff",
+    "woff": "application/font-woff",
     "ico": "image/x-icon",
     "webp": "image/webp",
     "appcache": "text/cache-manifest",
