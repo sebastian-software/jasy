@@ -610,20 +610,20 @@ class Project():
         return self.docs
 
     def getClasses(self):
-        """ Returns all project JavaScript classes. Requires all files to have a "js" extension. """
+        """ Returns all project classes. Requires all files to have a "js" extension. """
 
         if not self.scanned:
             self.scan()
 
         return self.classes
 
-    def getAssets(self):
-        """ Returns all project asssets (images, stylesheets, static data, etc.). """
+    def getStyles(self):
+        """ Returns all project style styles. Requires all files to have a "sht" extension. """
 
         if not self.scanned:
             self.scan()
 
-        return self.assets
+        return self.styles        
 
     def getTranslations(self):
         """ Returns all translation objects """
@@ -632,5 +632,13 @@ class Project():
             self.scan()
 
         return self.translations
+
+    def getAssets(self):
+        """ Returns all project asssets (images, stylesheets, static data, etc.). """
+
+        if not self.scanned:
+            self.scan()
+
+        return self.assets
 
         

@@ -161,6 +161,23 @@ class Session():
         return None
 
 
+    def getStyleByName(self, styleName):
+        """
+        Queries all currently registered projects for the given style and returns the style item.
+        Returns None when no matching style item was found.
+
+        :param styleName: Any valid styleName from any of the projects.
+        :type styleName: str
+        """
+
+        for project in self.__projects:
+            styles = project.getStyles()
+            if styleName in styles:
+                return styles[styleName]
+
+        return None        
+
+
     
     
     
