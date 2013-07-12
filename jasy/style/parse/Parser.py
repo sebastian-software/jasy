@@ -167,6 +167,13 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
+        # e.g. jasy.gradient()
+        elif nextTokenType == "dot":
+            tokenizer.unget()
+            node = Expression(tokenizer, staticContext)
+            return node
+
+
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
