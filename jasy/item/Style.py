@@ -19,6 +19,26 @@ defaultOptimization = jasy.style.output.Optimization.Optimization()
 defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
 
 
+
+def resolveIncludes(root, project):
+
+    # Temp
+    def getIncludeTree(name):
+        styleItem = StyleItem(project, name)
+        styleItem.attach("source/style/%s" % name)
+        return styleItem.getTree()        
+
+    def __resolveIncludesRecurser(node):
+        for child in node:
+            if child.type == "include":
+                includeName = child[0].value
+                node.replace(child, getIncludeTree(includeName))
+
+    __resolveIncludesRecurser(root)
+    print(root)
+
+
+
 def collectFields(node, keys=None):
     
     if keys is None:
@@ -41,7 +61,7 @@ class StyleError(Exception):
         self.__inst = inst
         
     def __str__(self):
-        return "Error processing class %s: %s" % (self.__inst, self.__msg)
+        return "Error processing stylesheet %s: %s" % (self.__inst, self.__msg)
 
 
 class StyleItem(jasy.item.Abstract.AbstractItem):
@@ -176,12 +196,24 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if compressed == None:
             tree = self.__getOptimizedTree(permutation, context)
             
-            if optimization:
-                tree = copy.deepcopy(tree)
-                try:
-                    optimization.apply(tree)
-                except jasy.style.output.Optimization.Error as error:
-                    raise StyleError(self, "Could not compress class! %s" % error)
+            # Copying original tree
+            tree = copy.deepcopy(tree)
+
+            # Resolve includes
+            resolveIncludes(tree, self.project)
+
+
+
+            print("PRE-TREE")
+            return
+            
+            #if optimization:
+                # tree = copy.deepcopy(tree)
+
+                #try:
+                #    optimization.apply(tree)
+                #except jasy.style.output.Optimization.Error as error:
+                #    raise StyleError(self, "Could not compress class! %s" % error)
                 
             compressed = Compressor(formatting).compress(tree)
             self.project.getCache().store(field, compressed, self.mtime)
