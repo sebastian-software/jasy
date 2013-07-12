@@ -27,6 +27,7 @@ __all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
 
 
 classExtensions = (".js")
+styleExtensions = (".sht")
 # Gettext .po files + ICU formats (http://userguide.icu-project.org/locale/localizing) (all formats but without .java support)
 translationExtensions = (".po", ".xlf", ".properties", ".txt")
 docFiles = ("package.md", "readme.md")
@@ -137,6 +138,7 @@ class Project():
         
         # Intialize item registries
         self.classes = {}
+        self.styles = {}
         self.assets = {}        
         self.docs = {}
         self.translations = {}
@@ -166,7 +168,7 @@ class Project():
         # Read requires
         self.__requires = self.__config.get("requires", {})
         
-        # Defined whenever no package is defined and classes/assets are not stored in the toplevel structure.
+        # Defined whenever no package is defined and classes/styles/assets are not stored in the toplevel structure.
         self.__package = self.__config.get("package", self.__name if self.__config.has("name") else None)
 
         # Read fields (for injecting data into the project and build permutations)
@@ -222,6 +224,8 @@ class Project():
 
             if self.__hasDir("source/class"):
                 self.__addDir("source/class", "classes")
+            if self.__hasDir("source/style"):
+                self.__addDir("source/style", "styles")
             if self.__hasDir("source/asset"):
                 self.__addDir("source/asset", "assets")
             if self.__hasDir("source/translation"):
@@ -238,6 +242,8 @@ class Project():
 
             if self.__hasDir("class"):
                 self.__addDir("class", "classes")
+            if self.__hasDir("style"):
+                self.__addDir("style", "styles")
             if self.__hasDir("asset"):
                 self.__addDir("asset", "assets")
             if self.__hasDir("translation"):
@@ -245,7 +251,7 @@ class Project():
 
         # Generate summary
         summary = []
-        for section in ["classes", "assets", "translations"]:
+        for section in ["classes", "styles", "translations", "assets"]:
             content = getattr(self, section, None)
             if content:
                 summary.append("%s %s" % (len(content), section))
@@ -304,6 +310,9 @@ class Project():
             if fileExtension in classExtensions:
                 construct = jasy.item.Class.ClassItem
                 dist = self.classes
+            elif fileExtension in styleExtensions:
+                construct = jasy.item.Style.StyleItem
+                dist = self.styles
             elif fileExtension in translationExtensions:
                 construct = jasy.item.Translation.TranslationItem
                 dist = self.translations
@@ -373,6 +382,10 @@ class Project():
             fileId += os.path.splitext(relPath)[0]
             construct = jasy.item.Class.ClassItem
             dist = self.classes
+        elif fileExtension in styleExtensions and distname == "styles":
+            fileId += os.path.splitext(relPath)[0]
+            construct = jasy.item.Style.StyleItem
+            dist = self.styles
         elif fileExtension in translationExtensions and distname == "translations":
             fileId += os.path.splitext(relPath)[0]
             construct = jasy.item.Translation.TranslationItem

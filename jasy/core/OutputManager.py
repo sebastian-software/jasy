@@ -18,6 +18,7 @@ from jasy import UserError
 import jasy.js.output.Optimization as ScriptOptimization
 import jasy.js.output.Formatting as ScriptFormatting
 
+import jasy.style.output.Optimization as StyleOptimization
 import jasy.style.output.Formatting as StyleFormatting
 
 from jasy.core.FileManager import FileManager
@@ -34,7 +35,7 @@ class OutputManager:
         self.__kernelClasses = []
 
         self.__scriptOptimization = ScriptOptimization.Optimization()
-        self.__scriptFormatting = ScriptOptimization.Formatting()
+        self.__scriptFormatting = ScriptFormatting.Formatting()
 
         self.__styleOptimization = StyleOptimization.Optimization()
         self.__styleFormatting = StyleFormatting.Formatting()
