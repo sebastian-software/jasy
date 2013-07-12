@@ -5,11 +5,13 @@
 
 import os, copy, zlib, fnmatch, re
 
+import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Parser as Parser
 import jasy.style.clean.Permutate
 import jasy.style.output.Optimization
 from jasy.style.output.Compressor import Compressor
 from jasy.style.Util import assembleDot
+
 
 import jasy.core.Permutation
 import jasy.core.Console as Console 
@@ -49,9 +51,35 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     kind = "style"
     
+    # Temporary development alias
+    def getTokens(self):
+        return self.__getTokens()
 
+    # Temporary development alias
     def getTree(self):
         return self.__getTree()
+
+
+
+
+    def __getTokens(self, context=None):
+        tokenizer = Tokenizer.Tokenizer(self.getText(), self.id, 0)
+        indent = 0
+
+        while tokenizer.get() and not tokenizer.done():
+            tokenType = tokenizer.token.type 
+            tokenValue = getattr(tokenizer.token, "value", None)
+            if tokenType == "left_curly":
+                indent += 1
+                continue
+            elif tokenType == "right_curly":
+                indent -= 1
+                continue
+
+            if tokenValue is not None:
+                Console.info("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
+            else:
+                Console.info("%s%s" % (indent * "  ", tokenType))
 
 
     def __getTree(self, context=None):
@@ -68,28 +96,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, tree, self.mtime, True)
         
         return tree
-
-
-    def getTokens(self, context=None):
-        import jasy.style.tokenize.Tokenizer as Tokenizer
-
-        tokenizer = Tokenizer.Tokenizer(self.getText(), self.id, 0)
-        indent = 0
-        while tokenizer.get() and not tokenizer.done():
-            tokenType = tokenizer.token.type 
-            tokenValue = getattr(tokenizer.token, "value", None)
-            if tokenType == "left_curly":
-                indent += 1
-                continue
-            elif tokenType == "right_curly":
-                indent -= 1
-                continue
-
-            if tokenValue is not None:
-                print("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
-            else:
-                print("%s%s" % (indent * "  ", tokenType))
-        
     
     
     def __getOptimizedTree(self, permutation=None, context=None):
@@ -121,6 +127,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Console.outdent()
 
         return tree
+
 
 
     def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
@@ -181,13 +188,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     elif valueNode.type == "dot":
                         includeName = assembleDot(valueNode)
                     else:
-                        raise Exception("Invalid include")
+                        raise Exception("Invalid include: %s" % valueNode)
 
                     node.replace(child, session.getStyleByName(includeName).__getOptimizedTree(permutation, "includes"))
 
                 else:
                     resolveIncludesRecurser(child)
-
 
         tree = self.__getOptimizedTree(permutation, "includes")
         resolveIncludesRecurser(tree)
