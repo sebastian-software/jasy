@@ -203,6 +203,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         
     def getCompressed(self, permutation=None, optimization=None, formatting=None, context="compressed"):
+
+        return
+
         permutation = self.filterPermutation(permutation)
         
         field = "compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
@@ -213,21 +216,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             # Copying original tree
             tree = copy.deepcopy(tree)
 
-            # Resolve includes
-            resolveIncludes(tree, self.project)
+            if optimization:
+                tree = copy.deepcopy(tree)
 
-
-
-            print("PRE-TREE")
-            return
-            
-            #if optimization:
-                # tree = copy.deepcopy(tree)
-
-                #try:
-                #    optimization.apply(tree)
-                #except jasy.style.output.Optimization.Error as error:
-                #    raise StyleError(self, "Could not compress class! %s" % error)
+                try:
+                    optimization.apply(tree)
+                except jasy.style.output.Optimization.Error as error:
+                    raise StyleError(self, "Could not compress class! %s" % error)
                 
             compressed = Compressor(formatting).compress(tree)
             self.project.getCache().store(field, compressed, self.mtime)

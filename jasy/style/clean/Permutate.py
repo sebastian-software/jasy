@@ -3,7 +3,7 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import jasy.js.parse.Parser as Parser
+import jasy.style.parse.Parser as Parser
 import jasy.core.Console as Console
 
 from jasy.style.Util import assembleDot
@@ -54,3 +54,4 @@ def patch(node, permutation):
                 modified = True
 
     return modified
+

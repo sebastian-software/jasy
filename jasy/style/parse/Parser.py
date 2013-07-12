@@ -6,7 +6,18 @@
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
 
-__all__ = [ "parse" ]
+__all__ = [ "parse", "parseExpression" ]
+
+
+def parseExpression(source, fileId=None, line=1):
+    # Convert source into expression statement to be friendly to the Tokenizer
+    if not source.endswith(";"):
+        source = source + ";"
+    
+    tokenizer = Tokenizer.Tokenizer(source, fileId, line)
+    staticContext = StaticContext(False)
+    
+    return Expression(tokenizer, staticContext)
 
 
 def parse(source, fileId=None, line=1):    
