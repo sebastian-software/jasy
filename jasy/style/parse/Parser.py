@@ -146,6 +146,11 @@ def Statement(tokenizer, staticContext):
 
             return node
 
+        elif tokenValue == "include":
+            node = Node.Node(tokenizer, "include")
+            node.append(Expression(tokenizer, staticContext))
+            return node
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
