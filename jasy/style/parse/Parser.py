@@ -38,7 +38,6 @@ def parse(source, fileId=None, line=1):
     #     builder.COMMENTS_add(node, None, tokenizer.getComments())
     
     if not tokenizer.done():
-        print("TOKENIZER AT: %s at line %s" % (tokenizer.token.type, tokenizer.token.line))
         raise SyntaxError("Unexpected end of file", tokenizer)
 
     return node
