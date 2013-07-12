@@ -161,7 +161,7 @@ class OutputManager:
 
             for styleObj in styles:
                 
-                styleObj.injectIncludes(session.getCurrentPermutation(), session)
+                styleObj.getMergedTree(session.getCurrentPermutation(), session)
 
                 
 

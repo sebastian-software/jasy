@@ -177,7 +177,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         
 
 
-    def injectIncludes(self, permutation, session):
+    def getMergedTree(self, permutation, session):
+        """
+        Returns the merged (includes resolved) and optimized (permutation values injected) tree.
+        """
 
         def resolveIncludesRecurser(node):
             for child in node:
@@ -190,15 +193,29 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     else:
                         raise Exception("Invalid include: %s" % valueNode)
 
-                    node.replace(child, session.getStyleByName(includeName).__getOptimizedTree(permutation, "includes"))
+                    childStyleItem = session.getStyleByName(includeName)
+
+                    # Use merged tree for children as well...
+                    childRoot = childStyleItem.getMergedTree(permutation, session)
+
+                    # and copy it for being free to modify it
+                    childRoot = copy.deepcopy(childRoot)
+
+                    node.replace(child, childRoot)
 
                 else:
                     resolveIncludesRecurser(child)
 
+        # Work is on base of optimized tree
         tree = self.__getOptimizedTree(permutation, "includes")
+        
+        # Copying original tree
+        tree = copy.deepcopy(tree)
+
+        # Run the actual resolver engine
         resolveIncludesRecurser(tree)
 
-        print(tree)
+        return tree
 
 
         
