@@ -121,26 +121,33 @@ def Statement(tokenizer, staticContext):
 
     elif tokenType == "command":
 
-        if tokenValue == "if":
+        if tokenValue == "if" or tokenValue == "elif":
             node = Node.Node(tokenizer, "if")
             node.append(Expression(tokenizer, staticContext), "condition")
             staticContext.statementStack.append(node)
             node.append(Statement(tokenizer, staticContext), "thenPart")
 
-            tokenValue = getattr(tokenizer.token, "value", "")
+            if tokenizer.match("command"):
+                elseTokenValue = tokenizer.token.value
+                if elseTokenValue == "elif":
 
-            if tokenizer.match("command") and tokenizer.token.value == "else":
-                comments = tokenizer.getComments()
-                elsePart = Statement(tokenizer, staticContext)
-                addComments(elsePart, node, comments)
-                node.append(elsePart, "elsePart")
+                    # Process like an "if" and append as elsePart
+                    tokenizer.unget()
+                    elsePart = Statement(tokenizer, staticContext)
+                    node.append(elsePart, "elsePart")        
+
+                if elseTokenValue == "else":
+                    comments = tokenizer.getComments()
+                    elsePart = Statement(tokenizer, staticContext)
+                    addComments(elsePart, node, comments)
+                    node.append(elsePart, "elsePart")
 
             staticContext.statementStack.pop()
 
             return node
 
         else:
-            raise SyntaxError("Unknown command: %s" % tokenValue, tokenizer)
+            raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
     elif tokenType == "identifier":
         nextTokenType = tokenizer.peek()
