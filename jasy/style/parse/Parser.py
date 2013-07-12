@@ -167,12 +167,11 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
-        # e.g. jasy.gradient()
-        elif nextTokenType == "dot":
+        # e.g. jasy.gradient() or gradient() - process them as expressions
+        elif nextTokenType == "dot" or nextTokenType == "left_paren":
             tokenizer.unget()
             node = Expression(tokenizer, staticContext)
             return node
-
 
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
@@ -281,8 +280,11 @@ def Variable(tokenizer, staticContext):
 
     # e.g. $foo() or $foo(a,b) or $foo(a,b) {}
     elif tokenizer.peek() == "left_paren":
+        variable = Node.Node(tokenizer, "variable")
+        variable.name = name
+
         node = Node.Node(tokenizer, "call")
-        node.name = name
+        node.append(variable)
 
         if tokenizer.mustMatch("left_paren"):
             node.append(ArgumentList(tokenizer, staticContext), "params")
@@ -499,7 +501,7 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
             childNode.append(node)
             
             tokenizer.mustMatch("identifier")
-
+            tokenType = tokenizer.token.type
             idenNode = Node.Node(tokenizer, tokenType)
             idenNode.value = tokenizer.token.value
             childNode.append(idenNode)
