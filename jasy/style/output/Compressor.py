@@ -111,6 +111,17 @@ class Compressor:
         return self.__statements(node)
 
 
+    def type__statements(self, node):
+        return self.__statements(node)
+
+
+
+
+
+    #
+    # Helpers
+    #
+    
     def __statements(self, node):
         result = []
         for child in node:
@@ -118,8 +129,3 @@ class Compressor:
 
         return "".join(result)
 
-
-    def type__statements(self, node):
-        return self.__statements(node)
-
-        
