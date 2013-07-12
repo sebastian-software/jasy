@@ -19,23 +19,27 @@ defaultOptimization = jasy.style.output.Optimization.Optimization()
 defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
 
 
+    
+def assembleDot(node, result=None):
+    """
+    Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
+    """
+    
+    if result == None:
+        result = []
 
-def resolveIncludes(root, project):
+    for child in node:
+        if child.type == "identifier":
+            result.append(child.value)
+        elif child.type == "dot":
+            assembleDot(child, result)
+        else:
+            return None
 
-    # Temp
-    def getIncludeTree(name):
-        styleItem = StyleItem(project, name)
-        styleItem.attach("source/style/%s" % name)
-        return styleItem.getTree()        
+    return ".".join(result)
 
-    def __resolveIncludesRecurser(node):
-        for child in node:
-            if child.type == "include":
-                includeName = child[0].value
-                node.replace(child, getIncludeTree(includeName))
 
-    __resolveIncludesRecurser(root)
-    print(root)
+
 
 
 
@@ -187,6 +191,31 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         return None
         
+
+
+    def injectIncludes(self, permutation, session):
+
+        def resolveIncludesRecurser(node):
+            for child in node:
+                if child.type == "include":
+                    valueNode = child[0]
+                    if valueNode.type in ("string", "identifier"):
+                        includeName = valueNode.value
+                    elif valueNode.type == "dot":
+                        includeName = assembleDot(valueNode)
+                    else:
+                        raise Exception("Invalid include")
+
+                    node.replace(child, session.getStyleByName(includeName))
+
+                else:
+                    resolveIncludesRecurser(child)
+
+
+        tree = self.__getOptimizedTree(permutation, "includes")
+        resolveIncludesRecurser(tree)
+
+
         
     def getCompressed(self, permutation=None, optimization=None, formatting=None, context="compressed"):
         permutation = self.filterPermutation(permutation)

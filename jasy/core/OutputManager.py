@@ -160,7 +160,13 @@ class OutputManager:
             result = []
 
             for styleObj in styles:
-                compressed = styleObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
+                
+                styleObj.injectIncludes(session.getCurrentPermutation(), session)
+
+
+
+
+                # compressed = styleObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
 
                 if self.__addDividers:
                     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
