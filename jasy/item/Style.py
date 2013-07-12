@@ -63,12 +63,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Console.indent()
             tree = Parser.parse(self.getText(), self.id)
             Console.outdent()
-
-            print("")
-            print("")
-            print("TREE:")
-            print("----------------------------------------------------")
-            print(tree)
             
             self.project.getCache().store(field, tree, self.mtime, True)
         
@@ -177,7 +171,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     def getCompressed(self, permutation=None, optimization=None, formatting=None, context="compressed"):
         permutation = self.filterPermutation(permutation)
         
-        field = "compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, optimization, formatting)
+        field = "compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
             tree = self.__getOptimizedTree(permutation, context)
