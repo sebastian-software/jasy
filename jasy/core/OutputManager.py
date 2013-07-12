@@ -161,17 +161,14 @@ class OutputManager:
 
             for styleObj in styles:
                 
-                styleObj.getMergedTree(session.getCurrentPermutation(), session)
-
+                # styleObj.getMergedTree(session.getCurrentPermutation(), session)
                 
+                compressed = styleObj.getCompressed(session, session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
 
-
-                # compressed = styleObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
-
-                # if self.__addDividers:
-                #     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
-                # else:
-                #     result.append(compressed)
+                if self.__addDividers:
+                    result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
+                else:
+                    result.append(compressed)
                 
         except StyleError as error:
             raise UserError("Error during stylesheet compression! %s" % error)

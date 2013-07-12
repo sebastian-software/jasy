@@ -218,8 +218,33 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
+
+
+    def __resolveConditionals(self, tree):
+        print("Resolving conditions...")
+
+
+        def recurser(node):
+            return False
+
+
+
+        while recurser(tree):
+            pass
+
+        return tree
+
+
+
+    def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
+
+        tree = self.getMergedTree(permutation, session)
+
+        self.__resolveConditionals(tree)
+
+
         
-    def getCompressed(self, permutation=None, optimization=None, formatting=None, context="compressed"):
+    def getCompressedOld(self, permutation=None, optimization=None, formatting=None, context="compressed"):
 
         return
 
