@@ -153,6 +153,27 @@ class OutputManager:
         return "".join(result)
 
 
+
+    def __compressStyles(self, styles):
+        try:
+            session = self.__session
+            result = []
+
+            for styleObj in styles:
+                compressed = styleObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
+
+                if self.__addDividers:
+                    result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
+                else:
+                    result.append(compressed)
+                
+        except StyleError as error:
+            raise UserError("Error during stylesheet compression! %s" % error)
+
+        return "".join(result)
+
+
+
     def loadClasses(self, classes, urlPrefix=None):
 
         # For loading classes we require core.ui.Queue and core.io.Script 
@@ -259,7 +280,7 @@ class OutputManager:
 
     def storeCompressed(self, classes, fileName, bootCode=""):
 
-        Console.info("Storing compressed...")
+        Console.info("Storing compressed classes...")
         Console.indent()
 
         # Build class list
@@ -273,4 +294,21 @@ class OutputManager:
         self.__fileManager.writeFile(fileName, compressedCode)
 
         Console.outdent()        
+
+
+    def storeCompressedStyleSheet(self, styles, fileName, bootCode=""):
+
+        Console.info("Storing compressed stylesheet...")
+        Console.indent()
+
+        # Compress code
+        Console.info("Including %s styles...", len(styles))
+        compressedCode = self.__compressStyles(styles)
+
+        # Write file to disk
+        self.__fileManager.writeFile(fileName, compressedCode)
+
+        Console.outdent()
+
+
 
