@@ -251,11 +251,13 @@ class AbstractNode(list):
     def __deepcopy__(self, memo):
         """Used by deepcopy function to clone AbstractNode instances"""
         
+        CurrentClass = self.__class__
+
         # Create copy
         if hasattr(self, "tokenizer"):
-            result = AbstractNode(tokenizer=self.tokenizer)
+            result = CurrentClass(tokenizer=self.tokenizer)
         else:
-            result = AbstractNode(type=self.type)
+            result = CurrentClass(type=self.type)
         
         # Copy children
         for child in self:
@@ -276,7 +278,7 @@ class AbstractNode(list):
                     pass
                 elif type(value) in (bool, int, float, str):
                     setattr(result, name, value)
-                elif type(value) in (list, set, dict, AbstractNode):
+                elif type(value) in (list, set, dict, CurrentClass):
                     setattr(result, name, copy.deepcopy(value, memo))
                 # Scope can be assigned (will be re-created when needed for the copied node)
                 elif name == "scope":
