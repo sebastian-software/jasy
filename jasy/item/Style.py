@@ -9,6 +9,7 @@ import jasy.style.parse.Parser as Parser
 import jasy.style.clean.Permutate
 import jasy.style.output.Optimization
 from jasy.style.output.Compressor import Compressor
+from jasy.style.Util import assembleDot
 
 import jasy.core.Permutation
 import jasy.core.Console as Console 
@@ -17,30 +18,6 @@ import jasy.item.Abstract
 
 defaultOptimization = jasy.style.output.Optimization.Optimization()
 defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
-
-
-    
-def assembleDot(node, result=None):
-    """
-    Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
-    """
-    
-    if result == None:
-        result = []
-
-    for child in node:
-        if child.type == "identifier":
-            result.append(child.value)
-        elif child.type == "dot":
-            assembleDot(child, result)
-        else:
-            return None
-
-    return ".".join(result)
-
-
-
-
 
 
 def collectFields(node, keys=None):
