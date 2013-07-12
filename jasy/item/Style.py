@@ -183,7 +183,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     else:
                         raise Exception("Invalid include")
 
-                    node.replace(child, session.getStyleByName(includeName))
+                    node.replace(child, session.getStyleByName(includeName).__getOptimizedTree(permutation, "includes"))
 
                 else:
                     resolveIncludesRecurser(child)
@@ -191,6 +191,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         tree = self.__getOptimizedTree(permutation, "includes")
         resolveIncludesRecurser(tree)
+
+        print(tree)
 
 
         
