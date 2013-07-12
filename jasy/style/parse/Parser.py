@@ -384,8 +384,6 @@ def AndExpression(tokenizer, staticContext):
 
 def EqualityExpression(tokenizer, staticContext):
     node = RelationalExpression(tokenizer, staticContext)
-    if node.type == "identifier":
-        return node
     
     while tokenizer.match("eq") or tokenizer.match("ne"):
         childNode = Node.Node(tokenizer)
