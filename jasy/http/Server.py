@@ -111,7 +111,7 @@ class Proxy(object):
             
         if cherrypy.request.method in ("POST", "PUT"):
             body = cherrypy.request.body.fp.read()
-         
+
         # Check if we're in forced offline mode
         if self.enableOffline and result is None:
             Console.info("Offline: %s" % url)
@@ -129,7 +129,7 @@ class Proxy(object):
             # Load URL from remote host
             try:
                 if self.enableDebug:
-                    Console.info("Requesting: %s", url)
+                    Console.info("Requesting: %s [%s]", url, cherrypy.request.method)
                     
                 # Apply headers for basic HTTP authentification
                 if "X-Proxy-Authorization" in headers:
