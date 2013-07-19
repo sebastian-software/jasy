@@ -42,7 +42,7 @@ def __scanNode(node, data):
     
     elif node.type == "declaration":
         print("DECLARATION OF VARIABLE: %s" % node.name)
-        
+
         data.declared.add(node.name)
         
         if hasattr(node, "initializer"):

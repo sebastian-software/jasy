@@ -164,7 +164,7 @@ def Statement(tokenizer, staticContext):
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
-    elif tokenType == "identifier":
+    elif tokenType == "identifier" or tokenType == "hex":
         nextTokenType = tokenizer.peek()
 
         # e.g. background: 
@@ -172,7 +172,7 @@ def Statement(tokenizer, staticContext):
             node = Property(tokenizer, staticContext)
             return node
 
-        # e.g. h1 {...
+        # e.g. h1, #dad {...
         elif nextTokenType == "left_curly":
             node = Selector(tokenizer, staticContext)
             return node
@@ -209,6 +209,17 @@ def Statement(tokenizer, staticContext):
 
         # e.g. :last-child, ...
         elif nextTokenType == "identifier":
+            node = Selector(tokenizer, staticContext)
+            return node
+
+        else:
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+
+    # Class selectors e.g. #contact, .message {...
+    elif tokenType == "dot":
+        nextTokenType = tokenizer.peek()
+
+        if nextTokenType == "identifier":
             node = Selector(tokenizer, staticContext)
             return node
 
@@ -257,6 +268,12 @@ def Selector(tokenizer, staticContext):
 
         elif tokenType == "comma":
             selector += ", "
+
+        elif tokenType == "hex":
+            selector += tokenizer.token.value
+
+        elif tokenType == "dot":
+            selector += "."
 
         tokenType = tokenizer.get()
 
