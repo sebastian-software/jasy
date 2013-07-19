@@ -241,16 +241,16 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
-
-
     def __analyseScope(self, tree):
         ScopeScanner.scan(tree)
-
 
 
     def __removeUnused(self, tree):
         Unused.cleanup(tree)
 
+
+    def __executeMixins(self, tree):
+        pass
 
 
 
@@ -270,10 +270,17 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
 
+        print(tree)
 
         print("")
         print("")
+        print("EXECUTING MIXINS")
+        self.__executeMixins(tree)
+
+
         print("")
+        print("")
+        print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
 
@@ -281,6 +288,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print("")
         print("RESOLVING CONDITIONALS...")
         self.__resolveConditionals(tree)
+
+
+        print("")
+        print("")
+        print("FINAL TREE")
+        print(tree)
 
 
         

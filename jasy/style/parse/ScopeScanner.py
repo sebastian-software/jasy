@@ -35,23 +35,18 @@ def __scanNode(node, data):
     """
     
     if node.type == "mixin":
-        print("REGISTER MIXIN: %s" % node.name)
-
         data.declared.add(node.name)
         data.modified.add(node.name)
     
     elif node.type == "declaration":
-        print("DECLARATION OF VARIABLE: %s" % node.name)
-
         data.declared.add(node.name)
         
         if hasattr(node, "initializer"):
             data.modified.add(node.name)
-        
-        # If the variable is used as a iterator, we need to add it to the use counter as well
-        if getattr(node.parent, "rel", None) == "iterator":
-            data.increment(node.name)
             
+    elif node.type == "call":
+        data.increment(node.name)
+
     elif node.type == "variable":
         # Ignore parameter names (of inner functions, these are handled by __scanScope)
         if node.parent.type == "list" and getattr(node.parent, "rel", None) == "params":
