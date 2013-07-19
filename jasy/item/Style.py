@@ -7,8 +7,12 @@ import os, copy, zlib, fnmatch, re
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Parser as Parser
-import jasy.style.clean.Permutate
+import jasy.style.clean.Permutate as Permutate
 import jasy.style.output.Optimization
+
+import jasy.style.parse.ScopeScanner as ScopeScanner
+import jasy.style.clean.Unused as Unused
+
 from jasy.style.output.Compressor import Compressor
 from jasy.style.Util import assembleDot
 
@@ -120,7 +124,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             if permutation:
                 Console.debug("Patching tree with permutation: %s", permutation)
                 Console.indent()
-                jasy.style.clean.Permutate.patch(tree, permutation)
+                Permutate.patch(tree, permutation)
                 Console.outdent()
         
             self.project.getCache().store(field, tree, self.mtime, True)
@@ -240,12 +244,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __analyseScope(self, tree):
-        import jasy.style.parse.ScopeScanner as ScopeScanner
-
-
         ScopeScanner.scan(tree)
 
-        print(tree)
+
+
+    def __removeUnused(self, tree):
+        Unused.cleanup(tree)
 
 
 
@@ -265,6 +269,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print("")
         print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
+
+
+        print("")
+        print("")
+        print("")
+        self.__removeUnused(tree)
 
 
         print("")
