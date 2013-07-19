@@ -160,9 +160,6 @@ class OutputManager:
             result = []
 
             for styleObj in styles:
-                
-                # styleObj.getMergedTree(session.getCurrentPermutation(), session)
-                
                 compressed = styleObj.getCompressed(session, session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
 
                 if self.__addDividers:

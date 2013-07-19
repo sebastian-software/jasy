@@ -221,12 +221,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __resolveConditionals(self, tree):
-        print("Resolving conditions...")
 
+        # Scope Analyse von JavaScript?
+        # Alle deklarierten und zugegriffenen Variablen auf den aktuellen Selektor oder das aktuelle StyleSheet hängen?
+        # Nach jedem komplett Durchlauf durch alle Nodes überprüfen ob noch Werte übrig sind und Vorgang gegenfalls wiederholen
+        # Ermittlung von nicht zur Verfügung stehenden Variablen
 
         def recurser(node):
             return False
-
 
 
         while recurser(tree):
@@ -236,10 +238,38 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
+
+    def __analyseScope(self, tree):
+        import jasy.style.parse.ScopeScanner as ScopeScanner
+
+
+        ScopeScanner.scan(tree)
+
+        print(tree)
+
+
+
+
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
+
+        print("GET COMPRESSED!!!")
 
         tree = self.getMergedTree(permutation, session)
 
+        print("")
+        print("")
+        print("TREE READY:")
+        print(tree)
+
+        print("")
+        print("")
+        print("ANALYSING SCOPE...")
+        self.__analyseScope(tree)
+
+
+        print("")
+        print("")
+        print("RESOLVING CONDITIONALS...")
         self.__resolveConditionals(tree)
 
 
