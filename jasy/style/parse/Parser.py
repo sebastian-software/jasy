@@ -291,15 +291,13 @@ def Variable(tokenizer, staticContext):
     elif tokenizer.peek() == "left_curly":
         node = Node.Node(tokenizer, "mixin")
         node.name = name
+
         node.append(Block(tokenizer, staticContext), "rules")
 
     # e.g. $foo() or $foo(a,b) or $foo(a,b) {}
     elif tokenizer.peek() == "left_paren":
-        variable = Node.Node(tokenizer, "variable")
-        variable.name = name
-
         node = Node.Node(tokenizer, "call")
-        node.append(variable)
+        node.name = name
 
         if tokenizer.mustMatch("left_paren"):
             node.append(ArgumentList(tokenizer, staticContext), "params")
