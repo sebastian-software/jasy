@@ -35,20 +35,22 @@ def __scanNode(node, data):
     """
     
     if node.type == "mixin":
+        print("REGISTER MIXIN: %s" % node.name)
+
         data.declared.add(node.name)
         data.modified.add(node.name)
     
     elif node.type == "declaration":
-        varName = getattr(node, "name", None)
-        if varName != None:
-            data.declared.add(varName)
-            
-            if hasattr(node, "initializer"):
-                data.modified.add(varName)
-            
-            # If the variable is used as a iterator, we need to add it to the use counter as well
-            if getattr(node.parent, "rel", None) == "iterator":
-                data.increment(varName)
+        print("DECLARATION OF VARIABLE: %s" % node.name)
+        
+        data.declared.add(node.name)
+        
+        if hasattr(node, "initializer"):
+            data.modified.add(node.name)
+        
+        # If the variable is used as a iterator, we need to add it to the use counter as well
+        if getattr(node.parent, "rel", None) == "iterator":
+            data.increment(node.name)
             
     elif node.type == "variable":
         # Ignore parameter names (of inner functions, these are handled by __scanScope)
@@ -135,7 +137,7 @@ def __scanScope(node):
     # Look for accessed varibles which have not been defined
     # Might be a part of a closure or just a mistake
     for name in data.accessed:
-        if name not in data.declared and name not in data.params and name != "arguments":
+        if name not in data.declared and name not in data.params:
             data.shared[name] = data.accessed[name]
             
     # Look for variables which have been defined, but not accessed.
