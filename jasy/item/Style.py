@@ -8,6 +8,7 @@ import os, copy, zlib, fnmatch, re
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Parser as Parser
 import jasy.style.clean.Permutate as Permutate
+import jasy.style.clean.Mixins as Mixins
 import jasy.style.output.Optimization
 
 import jasy.style.parse.ScopeScanner as ScopeScanner
@@ -250,7 +251,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __executeMixins(self, tree):
-        pass
+        Mixins.process(tree)
 
 
 
@@ -269,8 +270,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print("")
         print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
-
         print(tree)
+
 
         print("")
         print("")
