@@ -50,51 +50,30 @@ def __scanNode(node, data):
             if getattr(node.parent, "rel", None) == "iterator":
                 data.increment(varName)
             
-        else:
-            # JS 1.7 Destructing Expression
-            varNames = node.names
-            for identifier in node.names:
-                data.declared.add(identifier.value)
-                data.modified.add(identifier.value)
-                
-            # If the variable is used as a iterator, we need to add it to the use counter as well
-            if getattr(node.parent, "rel", None) == "iterator":
-                for identifier in node.names:
-                    data.increment(identifier.value)
-            
-    elif node.type == "identifier":
+    elif node.type == "variable":
         # Ignore parameter names (of inner functions, these are handled by __scanScope)
         if node.parent.type == "list" and getattr(node.parent, "rel", None) == "params":
-            pass
-        
-        # Ignore property initialization names
-        elif node.parent.type == "property_init" and node.parent[0] == node:
             pass
             
         # Ignore non first identifiers in dot-chains
         elif node.parent.type != "dot" or node.parent.index(node) == 0:
-            if node.value != "arguments":
-                data.increment(node.value)
+            data.increment(node.name)
+        
+            if node.parent.type in ("increment", "decrement"):
+                data.modified.add(node.name)
             
-                if node.parent.type in ("increment", "decrement"):
-                    data.modified.add(node.value)
-                
-                elif node.parent.type == "assign" and node.parent[0] == node:
-                    data.modified.add(node.value)
+            elif node.parent.type == "assign" and node.parent[0] == node:
+                data.modified.add(node.name)
 
-                # Support for package-like object access
-                if node.parent.type == "dot":
-                    package = __combinePackage(node)
-                    if package in data.packages:
-                        data.packages[package] += 1
-                    else:
-                        data.packages[package] = 1
+            # Support for package-like object access
+            if node.parent.type == "dot":
+                package = __combinePackage(node)
+                if package in data.packages:
+                    data.packages[package] += 1
+                else:
+                    data.packages[package] = 1
                 
-    # Treat exception variables in catch blocks like declared
-    elif node.type == "block" and node.parent.type == "catch":
-        data.declared.add(node.parent.exception.value)                
-    
-    if node.type == "rules" or node.type == "selector":
+    if node.type == "block":
         innerVariables = __scanScope(node)
         for name in innerVariables.shared:
             data.increment(name, innerVariables.shared[name])
@@ -180,12 +159,10 @@ def __addParams(node, data):
 
     rel = getattr(node, "rel", None)
     if rel == "rules" and node.parent.type == "mixin":
-        # In expressed_form the function name belongs to the function body, not to the parent scope
-        if node.parent.functionForm == "expressed_form":
-            data.name = getattr(node.parent, "name", None)
+        data.name = getattr(node.parent, "name", None)
         
         paramList = getattr(node.parent, "params", None)
         if paramList:
             for paramIdentifier in paramList:
-                data.params.add(paramIdentifier.value)
+                data.params.add(paramIdentifier.name)
 
