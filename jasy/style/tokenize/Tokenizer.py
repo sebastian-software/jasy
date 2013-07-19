@@ -55,6 +55,8 @@ operatorNames = {
 # Assignment operators
 assignOperators = ["+", "-", "*", "/", "%"]
 
+# Match hex colors
+reHex = re.compile("^#([A-Fa-f0-9]{3}){1,2}$")
 
 
 
@@ -337,18 +339,24 @@ class Tokenizer(object):
     def lexHex(self, ch):
         token = self.token
         input = self.source
-        token.type = "hex"
 
+        # Parse whole string first to get everything until the next seperator to 
+        # correctly parse identifiers which are actually selectors not colors
         while(True):
             ch = input[self.cursor]
             self.cursor += 1
                             
-            if not ((ch >= "0" and ch <= "9") or (ch >= "a" and ch <= "f") or (ch >= "A" and ch <= "F")):
+            if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-"):
                 break
 
         self.cursor -= 1
 
         segment = input[token.start:self.cursor]
+
+        if reHex.match(segment):
+            token.type = "hex"
+        else:
+            token.type = "identifier"
         
         token.value = segment
 
