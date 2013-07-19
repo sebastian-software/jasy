@@ -19,6 +19,7 @@ def __process(node):
 
     if node.type == "call":
         name = node.name
+
         print("FOUND CALL:")
         print(node)
 
@@ -27,14 +28,16 @@ def __process(node):
         print("FOUND MIXIN:")
         print(mixin)
 
-
         replacement = __resolve(mixin, node.params)
 
         print("REPLACEMENT:")
         print(replacement)
 
-
-
+        # Reverse inject all children of that block
+        # at the same position as the original call
+        pos = node.index(call)
+        for child in reversed(replacement):
+            node.insert(child, pos)
 
 
 
