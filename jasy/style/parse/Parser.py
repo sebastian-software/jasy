@@ -294,6 +294,7 @@ def Variable(tokenizer, staticContext):
 
     # e.g. $foo = 1
     if tokenizer.peek() == "assign":
+
         node = Node.Node(tokenizer, "declaration")
         node.name = name
 
@@ -303,6 +304,10 @@ def Variable(tokenizer, staticContext):
 
             initializerNode = AssignExpression(tokenizer, staticContext)
             node.append(initializerNode, "initializer")        
+
+        # Ignore trailing comma... handle it like a follow up expression
+        if tokenizer.peek("comma"):
+            tokenizer.get()
 
     # e.g. $foo {}
     elif tokenizer.peek() == "left_curly":
