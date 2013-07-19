@@ -251,7 +251,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __executeMixins(self, tree):
-        Mixins.process(tree)
+        while Mixins.process(tree):
+            pass
 
 
 
@@ -266,24 +267,11 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print("TREE READY:")
         print(tree)
 
-        print("")
-        print("")
-        print("ANALYSING SCOPE...")
-        self.__analyseScope(tree)
-        print(tree)
 
-
-        print("")
-        print("")
-        print("EXECUTING MIXINS")
-        self.__executeMixins(tree)
-
-
-        print("")
-        print("")
-        print("CLEANING UP UNUSED")
-        self.__removeUnused(tree)
-
+        #
+        # PHASE 1
+        # Resolving conditionals
+        #        
 
         print("")
         print("")
@@ -291,10 +279,63 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         self.__resolveConditionals(tree)
 
 
+
+        #
+        # PHASE 2
+        # Trivial cleanups
+        #
+
+        print("")
+        print("")
+        print("ANALYSING SCOPE...")
+        self.__analyseScope(tree)
+
+        print("")
+        print("")
+        print("CLEANING UP UNUSED")
+        self.__removeUnused(tree)
+
+
+
+        #
+        # PHASE 3
+        # Resolve all mixins
+        #
+
+        print("")
+        print("")
+        print("EXECUTING MIXINS")
+        self.__executeMixins(tree)
+
+
+
+        #
+        # PHASE 4
+        # Post mixin cleanups
+        #
+
+        print("")
+        print("")
+        print("ANALYSING SCOPE...")
+        self.__analyseScope(tree)
+
+        print("")
+        print("")
+        print("CLEANING UP UNUSED")
+        self.__removeUnused(tree)
+
+
+
+        #
+        # DONE
+        #
+
         print("")
         print("")
         print("FINAL TREE")
         print(tree)
+
+
 
 
         

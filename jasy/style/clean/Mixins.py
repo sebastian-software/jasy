@@ -6,7 +6,8 @@
 import copy
 
 def process(tree):
-    __process(tree)
+    modified = __process(tree)
+    return modified
 
 
 
@@ -35,9 +36,12 @@ def __process(node):
 
         # Reverse inject all children of that block
         # at the same position as the original call
-        pos = node.index(call)
+        parent = node.parent
+        pos = parent.index(node)
         for child in reversed(replacement):
-            node.insert(child, pos)
+            parent.insert(pos, child)
+
+        return True
 
 
 
@@ -52,7 +56,6 @@ def __finder(node, name):
                 return child
 
     return __finder(node.parent, name)
-
 
 
 
@@ -72,14 +75,11 @@ def __resolve(mixin, params):
 
 
 
-
 def __resolveRecurser(node, variables):
 
     for child in node:
         if child is not None:
             __resolveRecurser(child, variables)
-
-
 
     if node.type == "variable" and node.name in variables:
         node.parent.replace(node, copy.deepcopy(variables[node.name]))
