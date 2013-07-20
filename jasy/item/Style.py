@@ -338,6 +338,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         print(tree)
 
 
+        print("")
+        print("")
+        print("COMPRESSED")
+        compressed = Compressor(formatting).compress(tree)
+        print(compressed)
+
+
 
 
         

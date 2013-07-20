@@ -3,6 +3,14 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import json, re
+
+__all__ = [ "Compressor" ]
+
+high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
+ascii_encoder = json.JSONEncoder(ensure_ascii=True)
+unicode_encoder = json.JSONEncoder(ensure_ascii=False)
+
 class Compressor:
     __semicolonSymbol = ";"
     __commaSymbol = ","
@@ -102,6 +110,8 @@ class Compressor:
                 print("Compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
                 sys.exit(1)
 
+        return result
+
 
     #
     # Sheet Scope
@@ -111,9 +121,52 @@ class Compressor:
         return self.__statements(node)
 
 
-    def type__statements(self, node):
+    def type_selector(self, node):
         return self.__statements(node)
 
+
+    def type_string(self, node):
+        # Omit writing real high unicode character which are not supported well by browsers
+        ascii = ascii_encoder.encode(node.value)
+
+        if high_unicode.search(ascii):
+            return ascii
+        else:
+            return unicode_encoder.encode(node.value)
+
+    def type_number(self, node):
+        value = node.value
+
+        # Special handling for protected float/exponential
+        if type(value) == str:
+            # Convert zero-prefix
+            if value.startswith("0.") and len(value) > 2:
+                value = value[1:]
+                
+            # Convert zero postfix
+            elif value.endswith(".0"):
+                value = value[:-2]
+
+        elif int(value) == value and node.parent.type != "dot":
+            value = int(value)
+
+        return "%s%s" % (value, getattr(node, "unit", ""))
+
+
+    def type_identifier(self, node):
+        return node.value
+
+    def type_block(self, node):
+        return "{%s}" % self.__statements(node)
+
+    def type_property(self, node):
+        return "%s:%s\n" % (node.name, self.__values(node))
+
+    def type_declaration(self, node):
+        return "ERROR-DECLARATION: %s;" % node.name
+
+    def type_variable(self, node):
+        return "$ERROR-VAR-%s" % node.name
 
 
 
@@ -127,5 +180,18 @@ class Compressor:
         for child in node:
             result.append(self.compress(child))
 
-        return "".join(result)
+        return "\n".join(result)
+
+
+    def __values(self, node):
+        result = []
+        for child in node:
+            result.append(self.compress(child))
+
+        print("XXX", result)
+
+        return " ".join(result)
+
+
+
 

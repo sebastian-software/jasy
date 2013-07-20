@@ -8,7 +8,7 @@ import re, sys, json
 from jasy.js.tokenize.Lang import keywords
 from jasy.js.parse.Lang import expressions, futureReserved
 
-all = [ "Compressor" ]
+__all__ = [ "Compressor" ]
 
 high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
