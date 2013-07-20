@@ -14,11 +14,15 @@ unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 class Compressor:
     __semicolonSymbol = ";"
     __commaSymbol = ","
-    
+    __useIndenting = True
+    __useBlockBreaks = True
+    __useStatementBreaks = True
+    __useWhiteSpace = True
+
+    __indentLevel = 0
+
 
     __simple = ["true", "false", "null"]
-
-    __indent = 0
 
     __dividers = {
         "plus"        : '+',
@@ -62,6 +66,9 @@ class Compressor:
 
     def __init__(self, format=None):
         if format:
+            if format.has("indent"):
+                self.__useIndenting = True
+
             if format.has("semicolon"):
                 self.__semicolonSymbol = ";\n"
             
@@ -117,9 +124,12 @@ class Compressor:
 
     def indent(self, code):
 
+        if not self.__useIndenting:
+            return code
+
         lines = code.split("\n")
         result = []
-        prefix = self.__indent * "  "
+        prefix = self.__indentLevel * "  "
 
         for line in lines:
             result.append("%s%s" % (prefix, line))
@@ -151,6 +161,7 @@ class Compressor:
         else:
             return unicode_encoder.encode(node.value)
 
+
     def type_number(self, node):
         value = node.value
 
@@ -173,22 +184,32 @@ class Compressor:
     def type_identifier(self, node):
         return node.value
 
-    def type_block(self, node):
-        self.__indent += 1
-        inner = self.__statements(node)
-        self.__indent -= 1
 
-        return "{\n%s\n}\n" % inner
+    def type_block(self, node):
+        self.__indentLevel += 1
+        inner = self.__statements(node)
+        self.__indentLevel -= 1
+
+        if self.__useBlockBreaks:
+            return "{\n%s\n}\n" % inner
+        else:
+            return "{%s}" % inner
+
 
     def type_property(self, node):
-        self.__indent += 1
+        self.__indentLevel += 1
         inner = self.__values(node)
-        self.__indent -= 1
+        self.__indentLevel -= 1
 
-        return self.indent("%s: %s;" % (node.name, inner))
+        if self.__useWhiteSpace:
+            return self.indent("%s: %s;" % (node.name, inner))
+        else:
+            return self.indent("%s:%s;" % (node.name, inner))
+
 
     def type_declaration(self, node):
         return self.indent("ERROR-DECLARATION: %s;" % node.name)
+
 
     def type_variable(self, node):
         return "$ERROR-VAR-%s" % node.name
@@ -205,7 +226,10 @@ class Compressor:
         for child in node:
             result.append(self.compress(child))
 
-        return "\n".join(result)
+        if self.__useStatementBreaks:
+            return "\n".join(result)
+        else:
+            return "".join(result)
 
 
     def __values(self, node):
