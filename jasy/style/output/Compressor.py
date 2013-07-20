@@ -18,6 +18,8 @@ class Compressor:
 
     __simple = ["true", "false", "null"]
 
+    __indent = 0
+
     __dividers = {
         "plus"        : '+',
         "minus"       : '-',
@@ -113,6 +115,21 @@ class Compressor:
         return result
 
 
+    def indent(self, code):
+
+        lines = code.split("\n")
+        result = []
+        prefix = self.__indent * "  "
+
+        for line in lines:
+            result.append("%s%s" % (prefix, line))
+
+        return "\n".join(result)
+
+
+
+
+
     #
     # Sheet Scope
     #
@@ -122,7 +139,7 @@ class Compressor:
 
 
     def type_selector(self, node):
-        return self.__statements(node)
+        return self.indent("%s%s" % (node.name, self.compress(node.rules)))
 
 
     def type_string(self, node):
@@ -157,13 +174,21 @@ class Compressor:
         return node.value
 
     def type_block(self, node):
-        return "{%s}" % self.__statements(node)
+        self.__indent += 1
+        inner = self.__statements(node)
+        self.__indent -= 1
+
+        return "{\n%s\n}\n" % inner
 
     def type_property(self, node):
-        return "%s:%s\n" % (node.name, self.__values(node))
+        self.__indent += 1
+        inner = self.__values(node)
+        self.__indent -= 1
+
+        return self.indent("%s: %s;" % (node.name, inner))
 
     def type_declaration(self, node):
-        return "ERROR-DECLARATION: %s;" % node.name
+        return self.indent("ERROR-DECLARATION: %s;" % node.name)
 
     def type_variable(self, node):
         return "$ERROR-VAR-%s" % node.name
@@ -187,8 +212,6 @@ class Compressor:
         result = []
         for child in node:
             result.append(self.compress(child))
-
-        print("XXX", result)
 
         return " ".join(result)
 
