@@ -251,8 +251,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __executeMixins(self, tree):
-        while Mixins.process(tree):
-            pass
+        modifiedMixins = Mixins.processMixins(tree)
+        modifiedSelectors = Mixins.processSelectors(tree)
+
+        return modifiedMixins or modifiedSelectors
 
 
 
@@ -273,10 +275,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Resolving conditionals
         #        
 
-        print("")
-        print("")
-        print("RESOLVING CONDITIONALS...")
-        self.__resolveConditionals(tree)
+        #print("")
+        #print("")
+        #print("RESOLVING CONDITIONALS...")
+        #self.__resolveConditionals(tree)
 
 
 
@@ -285,14 +287,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Trivial cleanups
         #
 
-        print("")
-        print("")
-        print("ANALYSING SCOPE...")
+        #print("")
+        #print("")
+        #print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
 
-        print("")
-        print("")
-        print("CLEANING UP UNUSED")
+        #print("")
+        #print("")
+        #print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
 
@@ -302,9 +304,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Resolve all mixins
         #
 
-        print("")
-        print("")
-        print("EXECUTING MIXINS")
+        #print("")
+        #print("")
+        #print("EXECUTING MIXINS")
         self.__executeMixins(tree)
 
 
@@ -314,14 +316,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Post mixin cleanups
         #
 
-        print("")
-        print("")
-        print("ANALYSING SCOPE...")
+        #print("")
+        #print("")
+        #print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
 
-        print("")
-        print("")
-        print("CLEANING UP UNUSED")
+        #print("")
+        #print("")
+        #print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
 
