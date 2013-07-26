@@ -214,7 +214,27 @@ class Compressor:
         return "$ERROR-VAR-%s" % node.name
 
     def type_mixin(self, node):
-        return self.indent("$ERROR-MIXIN-%s;" % node.name)
+        # Filter out non-extend mixins
+        if not getattr(node, "selector"):
+            return self.indent("$ERROR-MIXIN-%s;" % node.name)
+
+        if self.__useBlockBreaks:
+            result = ",\n".join(node.selector)
+        elif self.__useWhiteSpace:
+            result = ", ".join(node.selector)
+        else:
+            result = ",".join(node.selector)
+
+        self.__indentLevel += 1
+        inner = self.__statements(node.rules)
+        self.__indentLevel -= 1
+
+        if self.__useBlockBreaks:
+            result += "{\n%s\n}\n" % inner
+        else:
+            result += "{%s}" % inner
+
+        return result
 
 
 
