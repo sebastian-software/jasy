@@ -9,6 +9,7 @@ import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Parser as Parser
 import jasy.style.clean.Permutate as Permutate
 import jasy.style.clean.Mixins as Mixins
+import jasy.style.clean.Variables as Variables
 import jasy.style.output.Optimization
 
 import jasy.style.parse.ScopeScanner as ScopeScanner
@@ -258,46 +259,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-
     def __computeVariables(self, tree):
+        Variables.compute(tree)
 
-        def __computeRecurser(node, scope, values):
-            if hasattr(node, "scope"):
-                scope = node.scope
-                values = copy.copy(values)
-
-                # Reset all local variables to None
-                # which enforces not to keep values from outer scope
-                for name in scope.modified:
-                    values[name] = None
-
-
-            if node.type == "declaration" and hasattr(node, "initializer"):
-                values[node.name] = node.initializer
-
-
-
-            if node.type == "variable":
-                name = node.name
-                if not name in values:
-                    raise Exception("Could not resolve variable %s at line %s", name, node.line)
-
-                value = values[name]
-                if value is None:
-                    Console.warn("Could not resolve %s at line %s", name, node.line)
-
-                node.parent.replace(node, copy.deepcopy(values[name]))
-
-
-
-
-            for child in node:
-                if child is not None:
-                    __computeRecurser(child, scope, values)
-
-
-
-        __computeRecurser(tree, None, {})
 
 
 
