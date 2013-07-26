@@ -49,13 +49,18 @@ def __combineSelector(node):
 
     while node:
         if node.type == "selector":
-            splitted = node.name.split(",")
-            if not selector:
-                selector = splitted
-            else:
-                selector = [" ".join(item) for item in itertools.product(splitted, selector)]
+            # splitted = node.name.split(",")
+            # if not selector:
+            #     selector = splitted
+            # else:
+            #     selector = [" ".join(item) for item in itertools.product(splitted, selector)]
+
+            selector.append(splitted)
 
         node = getattr(node, "parent", None)
+
+
+    print("XXX", itertools.product(*selector))
 
     return ",".join(selector)
 
