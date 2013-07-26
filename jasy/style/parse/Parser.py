@@ -267,7 +267,7 @@ def Selector(tokenizer, staticContext):
             selector += ":"
 
         elif tokenType == "comma":
-            selector += ", "
+            selector += ","
 
         elif tokenType == "hex":
             selector += tokenizer.token.value

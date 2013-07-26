@@ -3,7 +3,7 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import copy, random, string
+import copy, random, string, itertools
 import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
 
@@ -49,15 +49,18 @@ def __combineSelector(node):
 
     while node:
         if node.type == "selector":
-            selector.append(node.name)
+            splitted = node.name.split(",")
+            if not selector:
+                selector = splitted
+            else:
+                selector = [" ".join(item) for item in itertools.product(splitted, selector)]
 
         if not hasattr(node, "parent"):
             break
 
         node = node.parent
 
-    return " ".join(reversed(selector))
-
+    return ",".join(selector)
 
 
 def __extend(node):
