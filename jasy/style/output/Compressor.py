@@ -150,6 +150,10 @@ class Compressor:
 
 
     def type_selector(self, node):
+        # Ignore selectors without rules
+        if len(node.rules) == 0:
+            return ""
+
         selector = node.name
 
         if self.__useBlockBreaks:
