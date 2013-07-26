@@ -228,6 +228,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def __resolveConditionals(self, tree):
 
+        return
+
         # Scope Analyse von JavaScript?
         # Alle deklarierten und zugegriffenen Variablen auf den aktuellen Selektor oder das aktuelle StyleSheet hängen?
         # Nach jedem komplett Durchlauf durch alle Nodes überprüfen ob noch Werte übrig sind und Vorgang gegenfalls wiederholen
@@ -268,89 +270,38 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
 
-        #print("GET COMPRESSED!!!")
-
         tree = self.getMergedTree(permutation, session)
 
-        #print("")
-        #print("")
-        #print("TREE READY:")
-        #print(tree)
+        # PHASE 1 :: Resolving conditionals
+
+        self.__resolveConditionals(tree)
 
 
-        #
-        # PHASE 1
-        # Resolving conditionals
-        #        
+        # PHASE 2 :: Trivial cleanups
 
-        #print("")
-        #print("")
-        #print("RESOLVING CONDITIONALS...")
-        #self.__resolveConditionals(tree)
-
-
-
-        #
-        # PHASE 2
-        # Trivial cleanups
-        #
-
-        #print("")
-        #print("")
-        #print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
-
-        #print("")
-        #print("")
-        #print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
 
-
         #
-        # PHASE 3
-        # Resolve all mixins
-        #
+        # PHASE 3 :: Resolve all mixins
 
-        #print("")
-        #print("")
-        #print("EXECUTING MIXINS")
         self.__executeMixins(tree)
 
 
+        # PHASE 4 :: Post mixin cleanups
 
-        #
-        # PHASE 4
-        # Post mixin cleanups
-        #
-
-        #print("")
-        #print("")
-        #print("ANALYSING SCOPE...")
         self.__analyseScope(tree)
-
-        #print("")
-        #print("")
-        #print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
 
-
-        #
-        # PHASE 5
-        # Compute variables
-        #
-
-        #print("BEFORE VARIABLES")
-        #print(tree)
+        # PHASE 5 :: Compute variables
 
         Console.info("Computing variables...")
         self.__computeVariables(tree)
 
 
-        #
         # DONE
-        #
 
         print("")
         print("")

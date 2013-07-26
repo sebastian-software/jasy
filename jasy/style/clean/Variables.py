@@ -8,8 +8,8 @@ def compute(tree):
     __computeRecurser(tree, None, {})    
 
 
-def __computeValue(node, values):
-    Console.info("Computing type: %s: %s", node.type, node)
+def __computeOperation(node, values):
+    Console.info("Computing operation: %s", node.type)
 
     # Resolve first child of operation
     first = node[0]
@@ -94,7 +94,7 @@ def __computeRecurser(node, scope, values):
 
     # Support typical operators
     if node.type in ("plus", "minus", "mul", "div", "mod"):
-        repl = __computeValue(node, values)
+        repl = __computeOperation(node, values)
         if repl:
             node.parent.replace(node, repl)
         else:
