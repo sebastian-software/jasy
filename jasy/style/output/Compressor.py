@@ -150,7 +150,16 @@ class Compressor:
 
 
     def type_selector(self, node):
-        return self.indent("%s%s" % (node.name, self.compress(node.rules)))
+        selector = node.name
+
+        if self.__useBlockBreaks:
+            result = ",\n".join(selector)
+        elif self.__useWhiteSpace:
+            result = ", ".join(selector)
+        else:
+            result = ",".join(selector)
+
+        return self.indent("%s%s" % (result, self.compress(node.rules)))
 
 
     def type_string(self, node):

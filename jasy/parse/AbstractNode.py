@@ -181,7 +181,7 @@ class AbstractNode(list):
             # "parent" is a relation to the parent node - for serialization we ignore these at the moment
             # "rel" is used internally to keep the relation to the parent - used by nodes which need to keep track of specific children
             # "start" and "end" are for debugging only
-            if hasattr(self, name) and name not in ("type", "parent", "comments", "rel", "start", "end") and name[0] != "_":
+            if hasattr(self, name) and name not in ("type", "parent", "comments", "selector", "rel", "start", "end") and name[0] != "_":
                 value = getattr(self, name)
                 if isinstance(value, AbstractNode):
                     if hasattr(value, "rel"):
@@ -199,8 +199,8 @@ class AbstractNode(list):
                             continue
                         try:
                             value = ",".join(value)
-                        except TypeError:
-                            raise Exception("Invalid attribute list child at: %s" % name)
+                        except TypeError as ex:
+                            raise Exception("Invalid attribute list child at: %s: %s" % (name, ex))
                             
                     attrsCollection.append('%s=%s' % (name, json.dumps(value)))
 
@@ -208,8 +208,9 @@ class AbstractNode(list):
         
         comments = getattr(self, "comments", None)
         scope = getattr(self, "scope", None)
+        selector = getattr(self, "selector", None)
         
-        if len(self) == 0 and len(relatedChildren) == 0 and (not comments or len(comments) == 0) and not scope:
+        if len(self) == 0 and len(relatedChildren) == 0 and (not comments or len(comments) == 0) and not scope and not selector:
             result = "%s<%s%s/>%s" % (lead, self.type, attrs, lineBreak)
 
         else:
@@ -229,6 +230,10 @@ class AbstractNode(list):
                             statValue = ",".join(statValue.keys())
                         
                         result += '%s<stat name="%s">%s</stat>%s' % (innerLead, statKey, statValue, lineBreak)
+
+            if selector:
+                for entry in selector:
+                    result += '%s<selector>%s</stat>%s' % (innerLead, entry, lineBreak)                        
 
             for child in self:
                 if not child:

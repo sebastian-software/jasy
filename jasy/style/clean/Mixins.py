@@ -49,11 +49,11 @@ def __combineSelector(node):
 
     while node:
         if node.type == "selector":
-            selector.append(node.name.split(","))
+            selector.append(node.name)
 
         node = getattr(node, "parent", None)
 
-    return ",".join([" ".join(item) for item in itertools.product(*reversed(selector))])
+    return [" ".join(item) for item in itertools.product(*reversed(selector))]
 
 
 def __extend(node):
@@ -76,10 +76,10 @@ def __extend(node):
         print("Attach to selector: %s" % selector)
 
         if hasattr(mixin, "selector"):
-            # We iterate from in inverse mode, so add selectors to the front
-            mixin.selector.insert(0, selector)
+            # We iterate from in inverse mode, so add new selectors to the front
+            mixin.selector[0:0] = selector
         else:
-            mixin.selector = [selector]
+            mixin.selector = selector
 
         node.parent.remove(node)
 

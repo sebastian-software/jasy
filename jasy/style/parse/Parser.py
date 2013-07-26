@@ -277,7 +277,7 @@ def Selector(tokenizer, staticContext):
 
         tokenType = tokenizer.get()
 
-    node.name = selector
+    node.name = selector.split(",")
 
     # Next process content of selector
     tokenizer.unget()
