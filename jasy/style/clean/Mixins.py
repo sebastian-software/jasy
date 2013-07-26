@@ -3,8 +3,9 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import copy
+import copy, random, string
 import jasy.core.Console as Console
+import jasy.style.parse.Node as Node
 
 
 def processMixins(tree):
@@ -106,29 +107,51 @@ def __resolveMixin(mixin, params):
     Returns a clone of the given mixin and applies optional parameters to it
     """
 
-    # Map all parameters to a variables dict for easy lookup
-    variables = {}
-    for pos, param in enumerate(params):
-        variables[mixin.params[pos].name] = param
+    # Generate random prefix for variables and parameters
+    chars = string.ascii_letters + string.digits
+    prefix = ''.join(random.sample(chars*6, 6))
 
+    # Data base of all local variable and parameter name mappings
+    variables = {}
+
+    # Generate full recursive clone of mixin rules
     clone = copy.deepcopy(mixin.rules)
 
-    if variables:
-        __resolveRecurser(clone, variables)
+    if hasattr(mixin, "params"):
+        for pos, param in enumerate(mixin.params):
+            variables[param.name] = "%s-%s" % (prefix, param.name)
+            Console.info("Renaming variable: %s to %s", param.name, variables[param.name])
+
+            # We have to copy over the parameter value as a local variable declaration
+            paramAsDeclaration = Node.Node(type="declaration")
+            paramAsDeclaration.name = variables[param.name]
+
+            # Copy over actual param value
+            if len(params) > pos:
+                paramAsDeclaration.append(copy.deepcopy(params[pos]), "initializer")
+
+            clone.insert(0, paramAsDeclaration)
+
+    __renameRecurser(clone, variables, prefix)
 
     return clone
 
 
-def __resolveRecurser(node, variables):
+def __renameRecurser(node, variables, prefix):
     """
 
     """
 
     for child in node:
         if child is not None:
-            __resolveRecurser(child, variables)
+            __renameRecurser(child, variables, prefix)
 
-    if node.type == "variable" and node.name in variables:
-        node.parent.replace(node, copy.deepcopy(variables[node.name]))
+    if node.type == "variable":
+        # Dynamic assignment
+        if not node.name in variables:
+            variables[node.name] = "%s-%s" % (prefix, node.name)
+
+        Console.info("Renaming variable: %s to %s", node.name, variables[node.name])
+        node.name = variables[node.name]
 
 
