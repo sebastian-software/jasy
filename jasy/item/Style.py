@@ -261,11 +261,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return modifiedMixins or modifiedSelectors
 
 
-
     def __computeVariables(self, tree):
         Variables.compute(tree)
 
 
+    def __flatteningSelectors(self, tree):
+        pass
 
 
 
@@ -298,8 +299,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         # PHASE 5 :: Compute variables
 
-        Console.info("Computing variables...")
         self.__computeVariables(tree)
+
+
+        # PHASE 6 :: Flattening selectors
+
+        self.__flatteningSelectors(tree)
 
 
         # DONE
