@@ -80,7 +80,8 @@ def __extend(node):
         print("Attach to selector: %s" % selector)
 
         if hasattr(mixin, "selector"):
-            mixin.selector.append(selector)
+            # We iterate from in inverse mode, so add selectors to the front
+            mixin.selector.insert(0, selector)
         else:
             mixin.selector = [selector]
 
