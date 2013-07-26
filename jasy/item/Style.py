@@ -258,6 +258,50 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
+
+    def __computeVariables(self, tree):
+
+        def __computeRecurser(node, scope, values):
+            if hasattr(node, "scope"):
+                scope = node.scope
+                values = copy.copy(values)
+
+                # Reset all local variables to None
+                # which enforces not to keep values from outer scope
+                for name in scope.modified:
+                    values[name] = None
+
+
+            if node.type == "declaration" and hasattr(node, "initializer"):
+                values[node.name] = node.initializer
+
+
+
+            if node.type == "variable":
+                name = node.name
+                if not name in values:
+                    raise Exception("Could not resolve variable %s at line %s", name, node.line)
+
+                value = values[name]
+                if value is None:
+                    Console.warn("Could not resolve %s at line %s", name, node.line)
+
+                node.parent.replace(node, copy.deepcopy(values[name]))
+
+
+
+
+            for child in node:
+                if child is not None:
+                    __computeRecurser(child, scope, values)
+
+
+
+        __computeRecurser(tree, None, {})
+
+
+
+
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
 
         print("GET COMPRESSED!!!")
@@ -326,6 +370,15 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         #print("CLEANING UP UNUSED")
         self.__removeUnused(tree)
 
+
+
+        #
+        # PHASE 5
+        # Compute variables
+        #
+
+        Console.info("Computing variables...")
+        self.__computeVariables(tree)
 
 
         #
