@@ -149,9 +149,9 @@ def __renameRecurser(node, variables, prefix):
     if node.type == "variable":
         # Dynamic assignment
         if not node.name in variables:
+            Console.info("Renaming variable: %s to %s", node.name, variables[node.name])
             variables[node.name] = "%s-%s" % (prefix, node.name)
 
-        Console.info("Renaming variable: %s to %s", node.name, variables[node.name])
         node.name = variables[node.name]
 
 

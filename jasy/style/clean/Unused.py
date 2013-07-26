@@ -36,7 +36,6 @@ def cleanup(node):
     x = 0
     cleaned = False
     
-    Console.debug("Removing unused variables...")
     while True:
         x = x + 1
         Console.debug("Removing unused variables [Iteration: %s]...", x)
@@ -78,7 +77,6 @@ def __cleanup(node):
     # Process global style sheet node
     elif node.type == "sheet" and not hasattr(node, "parent"):
         if node.scope.unused:
-            print("ROOT HAS UNUSED: %s " % node.scope.unused)
             if __recurser(node, node.scope.unused):
                 cleaned = True            
 
