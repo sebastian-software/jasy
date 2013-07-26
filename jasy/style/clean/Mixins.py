@@ -55,10 +55,7 @@ def __combineSelector(node):
             else:
                 selector = [" ".join(item) for item in itertools.product(splitted, selector)]
 
-        if not hasattr(node, "parent"):
-            break
-
-        node = node.parent
+        node = getattr(node, "parent", None)
 
     return ",".join(selector)
 
