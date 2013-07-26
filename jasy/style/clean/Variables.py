@@ -1,6 +1,7 @@
 
 import copy
 import jasy.style.parse.Node as Node
+import jasy.core.Console as Console
 
 
 def compute(tree):

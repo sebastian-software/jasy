@@ -18,6 +18,7 @@ def processMixins(tree):
     return modified
 
 
+
 def processSelectors(tree):
 
     Console.info("Merging mixins into selectors")
@@ -26,20 +27,6 @@ def processSelectors(tree):
     Console.outdent()
 
     return modified
-
-
-
-
-def __findSelector(node):
-    if node.type == "selector":
-        return node
-
-    if hasattr(node, "parent"):
-        result = __findSelector(node.parent)
-        if result:
-            return result
-
-    return None
 
 
 
@@ -68,7 +55,6 @@ def __process(node, scanMixins=False, active=None):
     if active and node.type == "call":
         name = node.name
 
-        # selector = __findSelector(node)
         mixin = __findMixin(node.parent, name)
         replacements = __resolveMixin(mixin, node.params)
 
@@ -119,12 +105,9 @@ def __resolveMixin(mixin, params):
 
     if hasattr(mixin, "params"):
         for pos, param in enumerate(mixin.params):
-            variables[param.name] = "%s-%s" % (prefix, param.name)
-            Console.info("Renaming variable: %s to %s", param.name, variables[param.name])
-
             # We have to copy over the parameter value as a local variable declaration
             paramAsDeclaration = Node.Node(type="declaration")
-            paramAsDeclaration.name = variables[param.name]
+            paramAsDeclaration.name = param.name
 
             # Copy over actual param value
             if len(params) > pos:
@@ -137,21 +120,27 @@ def __resolveMixin(mixin, params):
     return clone
 
 
+
 def __renameRecurser(node, variables, prefix):
     """
-
+    Resursive engine to rename all local variables to prefixed ones for protecting
+    the scope of the mixin vs. the place it is injected to.
     """
 
     for child in node:
         if child is not None:
             __renameRecurser(child, variables, prefix)
 
-    if node.type == "variable":
-        # Dynamic assignment
+    # Set variable
+    if node.type == "declaration":
         if not node.name in variables:
-            Console.info("Renaming variable: %s to %s", node.name, variables[node.name])
             variables[node.name] = "%s-%s" % (prefix, node.name)
+            Console.info("Renaming variable: %s to %s at line %s", node.name, variables[node.name], node.line)
 
         node.name = variables[node.name]
+
+    # Access variable
+    elif node.type == "variable" and node.name in variables:
+        node.name = variables[node.name]        
 
 

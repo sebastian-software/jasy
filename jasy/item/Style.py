@@ -341,6 +341,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Compute variables
         #
 
+        print("BEFORE VARIABLES")
+        print(tree)
+
         Console.info("Computing variables...")
         self.__computeVariables(tree)
 
