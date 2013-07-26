@@ -52,11 +52,11 @@ def __process(node, scanMixins=False, active=None):
                 __process(child, scanMixins=scanMixins, active=active)
 
 
-    if active and node.type == "call":
+    if active and node.type == "call" or (node.type == "variable" and node.parent.type == "block"):
         name = node.name
 
         mixin = __findMixin(node.parent, name)
-        replacements = __resolveMixin(mixin, node.params)
+        replacements = __resolveMixin(mixin, getattr(node, "params", None))
 
         Console.info("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
 

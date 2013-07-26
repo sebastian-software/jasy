@@ -214,7 +214,7 @@ class Compressor:
         return "$ERROR-VAR-%s" % node.name
 
     def type_mixin(self, node):
-        return "$ERROR-MIXIN-%s;" % node.name
+        return self.indent("$ERROR-MIXIN-%s;" % node.name)
 
 
 
