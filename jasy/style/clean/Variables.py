@@ -86,31 +86,32 @@ def __computeRecurser(node, scope, values):
         for name in scope.modified:
             values[name] = None
 
-
-    for child in node:
+    # Worked on copy to prevent issues during length changes (due removing declarations, etc.)
+    for child in list(node):
         if child is not None:
             __computeRecurser(child, scope, values)
 
-
-
+    # Support typical operators
     if node.type in ("plus", "minus", "mul", "div", "mod"):
         repl = __computeValue(node, values)
         if repl:
-            print("Replacing with value!")
             node.parent.replace(node, repl)
-
-
-
-
+        else:
+            Console.error("Got no valid return value to replace operation at line: %s" % node.line)
 
     # Update values of variable
-    if node.type == "declaration" and hasattr(node, "initializer"):
+    elif node.type == "declaration" and hasattr(node, "initializer"):
         print("Found declaration: %s = %s" % (node.name, node.initializer))
+        
+        # Update internal variable mapping
         values[node.name] = node.initializer
+
+        # Remove declaration node from tree
+        node.parent.remove(node)
 
 
     # Replace variable with actual value
-    if node.type == "variable":
+    elif node.type == "variable":
         name = node.name
         if not name in values:
             raise Exception("Could not resolve variable %s at line %s", name, node.line)
