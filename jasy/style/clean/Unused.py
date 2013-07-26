@@ -101,8 +101,12 @@ def __recurser(node, unused):
                     retval = True
                     
     if node.type == "mixin":
+        # Mixin with actual users aka extending customers
+        if getattr(node, "selector", None):
+            pass
+
         # Remove full unused functions (when not in top-level scope)
-        if node.name in unused:
+        elif node.name in unused:
             Console.debug("Removing unused mixin %s at line %s" % (node.name, node.line))
             node.parent.remove(node)
             retval = True
