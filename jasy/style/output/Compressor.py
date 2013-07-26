@@ -4,6 +4,7 @@
 #
 
 import json, re
+import itertools
 
 __all__ = [ "Compressor" ]
 
@@ -218,12 +219,14 @@ class Compressor:
         if not getattr(node, "selector"):
             return self.indent("$ERROR-MIXIN-%s;" % node.name)
 
+        selector = node.selector
+
         if self.__useBlockBreaks:
-            result = ",\n".join(node.selector)
+            result = ",\n".join(selector)
         elif self.__useWhiteSpace:
-            result = ", ".join(node.selector)
+            result = ", ".join(selector)
         else:
-            result = ",".join(node.selector)
+            result = ",".join(selector)
 
         self.__indentLevel += 1
         inner = self.__statements(node.rules)
