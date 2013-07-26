@@ -268,14 +268,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
 
-        print("GET COMPRESSED!!!")
+        #print("GET COMPRESSED!!!")
 
         tree = self.getMergedTree(permutation, session)
 
-        print("")
-        print("")
-        print("TREE READY:")
-        print(tree)
+        #print("")
+        #print("")
+        #print("TREE READY:")
+        #print(tree)
 
 
         #
@@ -341,8 +341,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Compute variables
         #
 
-        print("BEFORE VARIABLES")
-        print(tree)
+        #print("BEFORE VARIABLES")
+        #print(tree)
 
         Console.info("Computing variables...")
         self.__computeVariables(tree)

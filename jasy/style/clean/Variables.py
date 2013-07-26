@@ -9,7 +9,7 @@ def compute(tree):
 
 
 def __computeValue(node, values):
-    print("Computing type: %s", node.type, node)
+    Console.info("Computing type: %s: %s", node.type, node)
 
     # Resolve first child of operation
     first = node[0]
@@ -23,7 +23,8 @@ def __computeValue(node, values):
 
     # Compare operation types
     if first.type == second.type:
-        print("Same type: %s" % first.type)
+        Console.info("Same type: %s", first.type)
+
         if first.type == "number":
             print(first, second)
 
@@ -51,10 +52,10 @@ def __computeValue(node, values):
                 else:
                     raise Exception("Unsupported number operation: %s at %s" % (node.type, node.line))
 
-
-
-                print("Number Artithmetic Result: ", repl)
                 return repl
+
+            else:
+                raise Exception("Could not compute result from numbers of different units: %s vs %s at line %s" % (first.unit, second.unit, node.line))
 
         elif first.type == "string":
             repl = Node.Node(type="string")
@@ -65,10 +66,10 @@ def __computeValue(node, values):
                 raise Exception("Unsupported string operation: %s at %s" % (node.type, node.line))
 
         else:
-            raise Exception("Could not compute result from numbers of different units: %s vs %s at line %s" % (first.unit, second.unit, node.line))
+            raise Exception("Unsupported operation: %s at %s" % (node.type, node.line))
 
     else:
-        print("Different type: %s vs %s" % (first.type, second.type))
+        Console.info("Different type: %s vs %s", first.type, second.type)
 
 
 
@@ -76,7 +77,7 @@ def __computeRecurser(node, scope, values):
 
     # Update scope of new block starts
     if hasattr(node, "scope"):
-        print("New scope")
+        Console.info("New scope")
         
         scope = node.scope
         values = copy.copy(values)
@@ -97,18 +98,17 @@ def __computeRecurser(node, scope, values):
         if repl:
             node.parent.replace(node, repl)
         else:
-            Console.error("Got no valid return value to replace operation at line: %s" % node.line)
+            Console.error("Got no valid return value to replace operation at line: %s", node.line)
 
     # Update values of variable
     elif node.type == "declaration" and hasattr(node, "initializer"):
-        print("Found declaration: %s = %s" % (node.name, node.initializer))
+        Console.info("Found declaration: %s = %s", node.name, node.initializer)
         
         # Update internal variable mapping
         values[node.name] = node.initializer
 
         # Remove declaration node from tree
         node.parent.remove(node)
-
 
     # Replace variable with actual value
     elif node.type == "variable":
@@ -120,7 +120,7 @@ def __computeRecurser(node, scope, values):
         if value is None:
             Console.warn("Could not resolve %s at line %s", name, node.line)
 
-        print("Resolve variable: %s to %s" % (name, values[name]))
+        Console.info("Resolve variable: %s to %s", name, values[name])
         node.parent.replace(node, copy.deepcopy(values[name]))
 
 
