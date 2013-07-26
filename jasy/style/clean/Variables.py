@@ -119,6 +119,7 @@ def __computeRecurser(node, scope, values):
         value = values[name]
         if value is None:
             Console.warn("Could not resolve %s at line %s", name, node.line)
+            return
 
         Console.info("Resolve variable: %s to %s", name, values[name])
         node.parent.replace(node, copy.deepcopy(values[name]))

@@ -208,11 +208,14 @@ class Compressor:
 
 
     def type_declaration(self, node):
-        return self.indent("ERROR-DECLARATION: %s;" % node.name)
-
+        return self.indent("ERROR-DECLARATION-%s;" % node.name)
 
     def type_variable(self, node):
         return "$ERROR-VAR-%s" % node.name
+
+    def type_mixin(self, node):
+        return "$ERROR-MIXIN-%s;" % node.name
+
 
 
 
