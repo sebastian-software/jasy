@@ -8,6 +8,16 @@ import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
 
 
+def processExtends(tree):
+
+    Console.info("Processing extends...")
+    Console.indent()
+    modified = __extend(tree)
+    Console.outdent()
+
+    return modified
+
+
 def processMixins(tree):
 
     Console.info("Merging mixins with each other...")
@@ -27,6 +37,54 @@ def processSelectors(tree):
     Console.outdent()
 
     return modified
+
+
+
+def __combineSelector(node):
+    """
+    Figures out the fully qualified selector of the given Node
+    """
+
+    selector = []
+
+    while node:
+        if node.type == "selector":
+            selector.append(node.name)
+
+        if not hasattr(node, "parent"):
+            break
+
+        node = node.parent
+
+    return " ".join(reversed(selector))
+
+
+
+def __extend(node):
+
+    for child in reversed(node):
+        # Ignore all mixin declarations. Can't operate inside them.
+        # For these things to work we have to wait for the include mechanics to resolve them first 
+        # (which actually just remove these mixin declarations though)
+        if child is not None and child.type != "mixin":
+            __extend(child)
+
+    if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
+        print("Extend like mixin at: %s" % node.line)
+
+        name = node.name
+        mixin = __findMixin(node.parent, name)
+        print("Found mixin: ", mixin)
+
+        selector = __combineSelector(node.parent)
+        print("Attach to selector: %s" % selector)
+
+        if hasattr(mixin, "selector"):
+            mixin.selector.append(selector)
+        else:
+            mixin.selector = [selector]
+
+        node.parent.remove(node)
 
 
 
@@ -52,7 +110,7 @@ def __process(node, scanMixins=False, active=None):
                 __process(child, scanMixins=scanMixins, active=active)
 
 
-    if active and node.type == "call" or (node.type == "variable" and node.parent.type == "block"):
+    if active and (node.type == "call" or (node.type == "variable" and node.parent.type == "block")):
         name = node.name
 
         mixin = __findMixin(node.parent, name)

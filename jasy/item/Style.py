@@ -254,6 +254,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __executeMixins(self, tree):
+        modifiedExtends = Mixins.processExtends(tree)
         modifiedMixins = Mixins.processMixins(tree)
         modifiedSelectors = Mixins.processSelectors(tree)
 
