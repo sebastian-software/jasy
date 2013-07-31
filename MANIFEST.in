@@ -1,7 +1,14 @@
 recursive-include bin *
 recursive-include jasy *.py
 recursive-include jasy/data *
+recursive-include util *.md
+recursive-include util *.py
+recursive-include util *.sh
+
 include license.md
 include readme.md
 include changelog.md
+include contributing.md
 include requirements.txt
+
+include .travis.yml
