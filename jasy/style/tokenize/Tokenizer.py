@@ -148,12 +148,16 @@ class Tokenizer(object):
         startOfFile = self.cursor is 0
         
         indent = ""
+
+        self.skippedSpaces = False
+        self.skippedComments = False
+        self.skippedLineBreaks = False
         
         while (True):
             if len(input) > self.cursor:
                 ch = input[self.cursor]
             else:
-                return
+                break
                 
             self.cursor += 1
             
@@ -165,9 +169,11 @@ class Tokenizer(object):
             if ch == "\n" and not self.scanNewlines:
                 self.line += 1
                 indent = ""
+                self.skippedLineBreaks = True
                 
             elif ch == "/" and next == "*":
                 self.cursor += 1
+                self.skippedComments = True
                 text = "/*"
                 inline = startLine == self.line and startLine > 1
                 commentStartLine = self.line
@@ -211,6 +217,7 @@ class Tokenizer(object):
                     
             elif ch == "/" and next == "/":
                 self.cursor += 1
+                self.skippedComments = True
                 text = "//"
                 if startLine == self.line and not startOfFile:
                     mode = "inline"
@@ -242,11 +249,12 @@ class Tokenizer(object):
 
             # check for whitespace, also for special cases like 0xA0
             elif ch in "\xA0 \t":
+                self.skippedSpaces = True
                 indent += ch
 
             else:
                 self.cursor -= 1
-                return
+                break
 
 
     def lexZeroNumber(self, ch):
@@ -467,6 +475,7 @@ class Tokenizer(object):
             token = self.tokens[self.tokenIndex]
             if token.type != "newline" or self.scanNewlines:
                 return token.type
+
 
         self.skip()
 
