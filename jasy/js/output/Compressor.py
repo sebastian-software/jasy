@@ -560,3 +560,6 @@ class Compressor:
         
         return "%s}" % self.__removeSemicolon(result)
         
+
+
+        

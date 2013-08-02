@@ -3,9 +3,10 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import copy, random, string, itertools
+import copy, random, string
 import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
+import jasy.style.Util as Util
 
 
 def processExtends(tree):
@@ -40,22 +41,6 @@ def processSelectors(tree):
 
 
 
-def __combineSelector(node):
-    """
-    Figures out the fully qualified selector of the given Node
-    """
-
-    selector = []
-
-    while node:
-        if node.type == "selector":
-            selector.append(node.name)
-
-        node = getattr(node, "parent", None)
-
-    return [" ".join(item) for item in itertools.product(*reversed(selector))]
-
-
 def __extend(node):
 
     for child in reversed(node):
@@ -72,7 +57,7 @@ def __extend(node):
         mixin = __findMixin(node.parent, name)
         print("Found mixin: ", mixin)
 
-        selector = __combineSelector(node.parent)
+        selector = Util.combineSelector(node.parent)
         print("Attach to selector: %s" % selector)
 
         if hasattr(mixin, "selector"):

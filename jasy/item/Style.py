@@ -14,9 +14,10 @@ import jasy.style.output.Optimization
 
 import jasy.style.parse.ScopeScanner as ScopeScanner
 import jasy.style.clean.Unused as Unused
+import jasy.style.Util as Util
 
 from jasy.style.output.Compressor import Compressor
-from jasy.style.Util import assembleDot
+
 
 
 import jasy.core.Permutation
@@ -195,7 +196,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     if valueNode.type in ("string", "identifier"):
                         includeName = valueNode.value
                     elif valueNode.type == "dot":
-                        includeName = assembleDot(valueNode)
+                        includeName = Util.assembleDot(valueNode)
                     else:
                         raise Exception("Invalid include: %s" % valueNode)
 
@@ -266,7 +267,47 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __flatteningSelectors(self, tree):
-        pass
+
+        insertIndex = 0
+
+        def flatter(node):
+
+            nonlocal insertIndex
+
+            # Process children first
+            for child in reversed(node):
+                if child is not None:
+                    flatter(child)
+
+
+            # Extended mixin
+            if node.type == "selector" or node.type == "mixin":
+                if len(node.rules) == 0:
+                    Console.info("Cleaning up empty selector/mixin at line %s" % node.line)
+                    node.parent.remove(node)
+                    return
+
+                if node.type == "selector":
+                    selector = node.name
+                else:
+                    selector = node.selector
+
+                print("Found selector: %s" % selector)
+
+                combined = Util.combineSelector(node)
+                print("Combined: %s" % combined)
+
+                if node.type == "selector":
+                    node.name = combined
+                else:
+                    node.selector = combined
+
+                #tree.append(node)
+                tree.insert(len(tree)-1-insertIndex, node)
+                insertIndex += 1
+
+
+        flatter(tree)
 
 
 
@@ -306,6 +347,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         self.__flatteningSelectors(tree)
 
+
+        self.__analyseScope(tree)
 
         # DONE
 
