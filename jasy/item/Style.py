@@ -256,39 +256,39 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         tree = self.getMergedTree(permutation, session)
 
-        # PHASE 1 :: Resolving conditionals
+        # PHASE 1
+        # Resolving conditionals
         self.__resolveConditionals(tree)
 
-        # PHASE 2 :: Trivial cleanups
+        # PHASE 2
+        # Trivial cleanups
         ScopeScanner.scan(tree)
         Unused.cleanup(tree)
 
-        # PHASE 3 :: Resolve all mixins
+        # PHASE 3
+        # Resolve all mixins
         modifiedExtends = Mixins.processExtends(tree)
         modifiedMixins = Mixins.processMixins(tree)
         modifiedSelectors = Mixins.processSelectors(tree)
 
-        # PHASE 4 :: Post mixin cleanups
+        # PHASE 4
+        # Post mixin cleanups
         ScopeScanner.scan(tree)
         Unused.cleanup(tree)
 
-        # PHASE 5 :: Compute variables
+        # PHASE 5
+        # Compute variables
         Variables.compute(tree)
 
-        # PHASE 6 :: Flattening selectors
+        # PHASE 6
+        # Flattening selectors
         Flatter.process(tree)
 
-        # PHASE 7 :: Post scan to remove (hopefully) all variable/mixin access
+        # PHASE 7
+        # Post scan to remove (hopefully) all variable/mixin access
         ScopeScanner.scan(tree)
 
-
-
-        # DONE
-        print("")
-        print("")
-        print("FINAL TREE")
-        print(tree)
-
+        # DEBUG
         print("")
         print("")
         print("COMPRESSED")
