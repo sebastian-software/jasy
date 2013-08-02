@@ -11,7 +11,7 @@ import jasy.style.Util as Util
 
 def processExtends(tree):
 
-    Console.debug("Processing extends...")
+    Console.debug("Processing extend requests...")
     Console.indent()
     modified = __extend(tree)
     Console.outdent()
@@ -42,13 +42,26 @@ def processSelectors(tree):
 
 
 def __extend(node):
+    """
+    Finds extend requests for mixins aka 
+
+    - mixins calls without params
+    - simple variables in a block
+
+    For all found extend requests it detects the flattened selector and appends 
+    the selector section of the extendable mixin accordingly. After that it 
+    removes the original mixin request.
+    """
+
+    modified = False
 
     for child in reversed(node):
         # Ignore all mixin declarations. Can't operate inside them.
         # For these things to work we have to wait for the include mechanics to resolve them first 
         # (which actually just remove these mixin declarations though)
         if child is not None and child.type != "mixin":
-            __extend(child)
+            if __extend(child):
+                modified = True
 
     if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
         Console.debug("Extend request to mixin at: %s", node.line)
@@ -74,6 +87,10 @@ def __extend(node):
         node.parent.remove(node)
         Console.outdent()
 
+        modified = True
+
+    return modified
+
 
 
 def __process(node, scanMixins=False, active=None):
@@ -84,6 +101,8 @@ def __process(node, scanMixins=False, active=None):
     - active: Whether replacements should happen
     """
 
+    modified = False
+
     if active is None:
         active = not scanMixins
 
@@ -91,12 +110,13 @@ def __process(node, scanMixins=False, active=None):
         if child is not None:
             if child.type == "mixin":
                 if scanMixins:
-                    __process(child, scanMixins=scanMixins, active=True)
+                    if __process(child, scanMixins=scanMixins, active=True):
+                        modified = True
 
             else:
                 # Only process non mixin childs
-                __process(child, scanMixins=scanMixins, active=active)
-
+                if __process(child, scanMixins=scanMixins, active=active):
+                    modified = True
 
     if active and (node.type == "call" or (node.type == "variable" and node.parent.type == "block")):
         name = node.name
@@ -116,7 +136,9 @@ def __process(node, scanMixins=False, active=None):
         # Finally remove original node
         parent.remove(node)
 
-        return True
+        modified = True
+
+    return modified
 
 
 
