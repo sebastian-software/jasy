@@ -5,26 +5,29 @@
 
 import os, copy, zlib, fnmatch, re
 
-import jasy.style.tokenize.Tokenizer as Tokenizer
-import jasy.style.parse.Parser as Parser
-import jasy.style.clean.Permutate as Permutate
-import jasy.style.clean.Mixins as Mixins
-import jasy.style.clean.Variables as Variables
-import jasy.style.output.Optimization
-
-import jasy.style.parse.ScopeScanner as ScopeScanner
-import jasy.style.clean.Unused as Unused
-import jasy.style.clean.Flatter as Flatter
-import jasy.style.Util as Util
-
-from jasy.style.output.Compressor import Compressor
-
-
-
 import jasy.core.Permutation
 import jasy.core.Console as Console 
 
 import jasy.item.Abstract
+
+import jasy.style.Util as Util
+
+import jasy.style.tokenize.Tokenizer as Tokenizer
+
+import jasy.style.parse.Parser as Parser
+import jasy.style.parse.ScopeScanner as ScopeScanner
+
+import jasy.style.clean.Permutate as Permutate
+import jasy.style.clean.Unused as Unused
+
+import jasy.style.process.Mixins as Mixins
+import jasy.style.process.Variables as Variables
+import jasy.style.process.Flatter as Flatter
+
+import jasy.style.output.Optimization
+from jasy.style.output.Compressor import Compressor
+
+
 
 defaultOptimization = jasy.style.output.Optimization.Optimization()
 defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
