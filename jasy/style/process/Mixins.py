@@ -84,7 +84,7 @@ def __extend(node):
 
         mixin = __findMixin(node.parent, name)
         if not mixin:
-            raise Exeption("Could not find mixin %s as required by extend request at line %s" % (node.name, node.line))
+            raise Exception("Could not find mixin %s as required by extend request at line %s" % (node.name, node.line))
 
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
@@ -161,10 +161,23 @@ def __findMixin(node, name):
 
     for child in reversed(node):
         if child is not None:
-            if child.type == "mixin" and child.name == name:
+            # Sheets are just fragments with a special origin, 
+            # but otherwise the content is valid on the same level
+            # as other siblings of the sheet.
+            if child.type == "sheet":
+                for subChild in reversed(child):
+                    if subChild is not None:
+                        if subChild.type == "mixin" and subChild.name == name:
+                            return subChild
+
+            elif child.type == "mixin" and child.name == name:
                 return child
 
-    return __findMixin(node.parent, name)
+    parent = getattr(node, "parent", None)
+    if parent:
+        return __findMixin(parent, name)
+    else:
+        return None
 
 
 
