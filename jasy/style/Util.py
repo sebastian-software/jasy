@@ -32,14 +32,31 @@ def combineSelector(node):
 
     selector = []
 
-    while node:
-        if node.type == "selector":
-            selector.append(node.name)
-        elif node.type == "mixin":
-            selector.append(node.selector)
+    current = node
+    while current:
+        if current.type == "selector":
+            selector.append(current.name)
+        elif current.type == "mixin":
+            selector.append(current.selector)
 
-        node = getattr(node, "parent", None)
+        current = getattr(current, "parent", None)
 
-    return [" ".join(item) for item in itertools.product(*reversed(selector))]
+    result = []
+    for item in itertools.product(*reversed(selector)):
+        combined = ""
+        for part in item:
+            if combined:
+                if "&" in part:
+                    combined = part.replace("&", combined)
+                else:
+                    combined = "%s %s" % (combined, part)
+            else:
+                if "&" in part:
+                    raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
+                else:
+                    combined = part
 
+        result.append(combined)
+
+    return result
 
