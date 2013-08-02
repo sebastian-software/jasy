@@ -164,7 +164,7 @@ def Statement(tokenizer, staticContext):
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
-    elif tokenType == "identifier" or tokenType == "hex":
+    elif tokenType == "identifier":
         nextTokenType = tokenizer.peek()
 
         # e.g. background: 
@@ -215,7 +215,7 @@ def Statement(tokenizer, staticContext):
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
-    # Class selectors e.g. #contact, .message {...
+    # Class selectors e.g. .message {...
     elif tokenType == "dot":
         nextTokenType = tokenizer.peek()
 
@@ -225,6 +225,19 @@ def Statement(tokenizer, staticContext):
 
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+
+
+    # Class selectors e.g. &.selected, &::after {...
+    elif tokenType == "ampersand":
+        nextTokenType = tokenizer.peek()
+
+        if nextTokenType == "identifier" or nextTokenType == "colon":
+            node = Selector(tokenizer, staticContext)
+            return node
+
+        else:
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            
 
     elif tokenType == "semicolon":
         node = Node.Node(tokenizer, "semicolon")
@@ -269,11 +282,11 @@ def Selector(tokenizer, staticContext):
         elif tokenType == "comma":
             selector += ","
 
-        elif tokenType == "hex":
-            selector += tokenizer.token.value
-
         elif tokenType == "dot":
             selector += "."
+
+        elif tokenType == "ampersand":
+            selector += "&"
 
         tokenType = tokenizer.get()
 
@@ -675,9 +688,9 @@ def PrimaryExpression(tokenizer, staticContext):
         node = Node.Node(tokenizer, tokenType)
         node.name = tokenizer.token.value
 
-    elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string", "hex"]:
+    elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string"]:
         node = Node.Node(tokenizer, tokenType)
-        if tokenType in ("identifier", "string", "hex", "number"):
+        if tokenType in ("identifier", "string", "number"):
             node.value = tokenizer.token.value
         if tokenType == "number" and hasattr(tokenizer.token, "unit"):
             node.unit = tokenizer.token.unit

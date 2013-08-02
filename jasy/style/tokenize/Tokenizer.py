@@ -35,7 +35,7 @@ operatorNames = {
     ';'   : 'semicolon', 
     ':'   : 'colon', 
     '='   : 'assign', 
-    '?'   : 'hook', 
+    '&'   : 'ampersand',
 
     '&&'  : 'and', 
     '||'  : 'or', 
@@ -336,31 +336,6 @@ class Tokenizer(object):
         return segment
 
 
-    def lexHex(self, ch):
-        token = self.token
-        input = self.source
-
-        # Parse whole string first to get everything until the next seperator to 
-        # correctly parse identifiers which are actually selectors not colors
-        while(True):
-            ch = input[self.cursor]
-            self.cursor += 1
-                            
-            if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-"):
-                break
-
-        self.cursor -= 1
-
-        segment = input[token.start:self.cursor]
-
-        if reHex.match(segment):
-            token.type = "hex"
-        else:
-            token.type = "identifier"
-        
-        token.value = segment
-
-
     def lexDot(self, ch):
         token = self.token
         input = self.source
@@ -515,12 +490,17 @@ class Tokenizer(object):
         else:
             nextCh = None
 
+        # Normal identifiers
         if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "@" or ch == "_":
             self.lexIdent(ch)
 
         # Identifier with leading "-" (minus) e.g. -webkit-transition
         elif ch == "-" and nextCh and ((nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z")):
-            self.lexIdent(ch)            
+            self.lexIdent(ch)
+
+        # Identifier with leading hex symbol
+        elif ch == "#" and nextCh and ((nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z") or (nextCh >= "0" and nextCh <= "9")):
+            self.lexIdent(ch)
 
         elif ch == ".":
             self.lexDot(ch)
@@ -531,9 +511,6 @@ class Tokenizer(object):
 
         elif ch in operatorNames:
             self.lexOp(ch)
-        
-        elif ch == "#":
-            self.lexHex(ch)
 
         elif ch >= "1" and ch <= "9":
             self.lexNumber(ch)
