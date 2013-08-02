@@ -26,8 +26,6 @@ def __computeOperation(node, values):
         Console.info("Same type: %s", first.type)
 
         if first.type == "number":
-            print(first, second)
-
             firstUnit = getattr(first, "unit", None)
             secondUnit = getattr(second, "unit", None)
 

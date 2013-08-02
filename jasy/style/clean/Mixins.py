@@ -4,6 +4,7 @@
 #
 
 import copy, random, string
+
 import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
 import jasy.style.Util as Util
