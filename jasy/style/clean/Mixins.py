@@ -11,7 +11,7 @@ import jasy.style.Util as Util
 
 def processExtends(tree):
 
-    Console.info("Processing extends...")
+    Console.debug("Processing extends...")
     Console.indent()
     modified = __extend(tree)
     Console.outdent()
@@ -21,7 +21,7 @@ def processExtends(tree):
 
 def processMixins(tree):
 
-    Console.info("Merging mixins with each other...")
+    Console.debug("Merging mixins with each other...")
     Console.indent()
     modified = __process(tree, scanMixins=True)
     Console.outdent()
@@ -32,7 +32,7 @@ def processMixins(tree):
 
 def processSelectors(tree):
 
-    Console.info("Merging mixins into selectors")
+    Console.debug("Merging mixins into selectors")
     Console.indent()
     modified = __process(tree, scanMixins=False)
     Console.outdent()
@@ -51,22 +51,28 @@ def __extend(node):
             __extend(child)
 
     if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
-        print("Extend like mixin at: %s" % node.line)
+        Console.debug("Extend request to mixin at: %s", node.line)
+        Console.indent()
 
         name = node.name
         mixin = __findMixin(node.parent, name)
-        print("Found mixin: ", mixin)
+        if not mixin:
+            raise Exeption("Could not find mixin %s as required by extend request at line %s" % (node.name, node.line))
+
+        Console.debug("Found matching mixin at line: %s", mixin.line)
 
         selector = Util.combineSelector(node.parent)
-        print("Attach to selector: %s" % selector)
+        Console.debug("Extend selector of mixin by: %s", selector)
 
         if hasattr(mixin, "selector"):
             # We iterate from in inverse mode, so add new selectors to the front
             mixin.selector[0:0] = selector
+
         else:
             mixin.selector = selector
 
         node.parent.remove(node)
+        Console.outdent()
 
 
 
@@ -98,7 +104,7 @@ def __process(node, scanMixins=False, active=None):
         mixin = __findMixin(node.parent, name)
         replacements = __resolveMixin(mixin, getattr(node, "params", None))
 
-        Console.info("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
+        Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
 
         # Reverse inject all children of that block
         # at the same position as the original call
@@ -175,7 +181,7 @@ def __renameRecurser(node, variables, prefix):
     if node.type == "declaration":
         if not node.name in variables:
             variables[node.name] = "%s-%s" % (prefix, node.name)
-            Console.info("Renaming variable: %s to %s at line %s", node.name, variables[node.name], node.line)
+            Console.debug("Renaming variable: %s to %s at line %s", node.name, variables[node.name], node.line)
 
         node.name = variables[node.name]
 
