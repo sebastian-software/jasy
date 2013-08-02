@@ -268,7 +268,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def __flatteningSelectors(self, tree):
 
-        insertIndex = 0
+        insertIndex = 1
 
         def flatter(node):
 
@@ -302,8 +302,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                 else:
                     node.selector = combined
 
-                #tree.append(node)
-                tree.insert(len(tree)-1-insertIndex, node)
+                tree.insert(len(tree)-insertIndex, node)
                 insertIndex += 1
 
 
