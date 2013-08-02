@@ -33,16 +33,18 @@ def cleanup(node):
         ScopeScanner.scan(node)
 
     # Re cleanup until nothing to remove is found
-    x = 0
+    iteration = 0
     cleaned = False
     
     Console.info("Removing unused variables...")
     Console.indent()
 
     while True:
-        x = x + 1
+        iteration += 1
 
-        if __cleanup(node):
+        modified = __cleanup(node)
+        if modified > 0:
+            Console.info("Removed %s unused variables", modified)
             ScopeScanner.scan(node)
             cleaned = True
         else:
@@ -61,25 +63,23 @@ def cleanup(node):
 def __cleanup(node):
     """ The scanner part which looks for scopes with unused variables/params """
     
-    cleaned = False
+    cleaned = 0
 
     for child in list(node):
-        if child != None and __cleanup(child):
-            cleaned = True
+        if child != None:
+            cleaned += __cleanup(child)
 
     # Process any selector separately.
     # Variables defined in there do not affect the outside
     if node.type == "selector":
         rules = node.rules
         if rules.scope.unused:
-            if __recurser(node.rules, rules.scope.unused):
-                cleaned = True
+            cleaned += __recurser(node.rules, rules.scope.unused)
 
     # Process global style sheet node
     elif node.type == "sheet" and not hasattr(node, "parent"):
         if node.scope.unused:
-            if __recurser(node, node.scope.unused):
-                cleaned = True            
+            cleaned += __recurser(node, node.scope.unused)
 
     return cleaned
             
@@ -91,15 +91,14 @@ def __recurser(node, unused):
     variable definitions which are unused
     """
     
-    retval = False
+    modified = 0
     
     # Process children, but ignore all selector blocks as these should be processed separately
     if node.type != "selector":
         for child in reversed(node):
             # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
             if child != None:
-                if __recurser(child, unused):
-                    retval = True
+                modified += __recurser(child, unused)
                     
     if node.type == "mixin":
         # Mixin with actual users aka extending customers
@@ -110,7 +109,7 @@ def __recurser(node, unused):
         elif node.name in unused:
             Console.debug("Removing unused mixin %s at line %s" % (node.name, node.line))
             node.parent.remove(node)
-            retval = True
+            modified += 1
 
         else:
             # Remove unused parameters
@@ -122,7 +121,7 @@ def __recurser(node, unused):
                     if variable.name in unused:
                         Console.debug("Removing unused parameter '%s' in line %s", variable.name, variable.line)
                         params.remove(variable)
-                        retval = True
+                        modified += 1
                     else:
                         break
 
@@ -133,14 +132,14 @@ def __recurser(node, unused):
                 if init.type in ("null", "this", "true", "false", "identifier", "number", "string"):
                     Console.debug("Removing unused primitive variable %s at line %s" % (node.name, node.line))
                     node.parent.remove(node)
-                    retval = True
+                    modified += 1
                     
                 else:
                     Console.debug("Could not automatically remove unused variable %s at line %s without possible side-effects" % (node.name, node.line))
                 
             else:
                 node.parent.remove(node)
-                retval = True
+                modified += 1
 
-    return retval
+    return modified
 

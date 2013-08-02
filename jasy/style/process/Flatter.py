@@ -7,9 +7,13 @@ import jasy.style.Util as Util
 import jasy.core.Console as Console 
 
 def process(tree):
+    """
+    Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...` 
+    """
 
     insertIndex = 1
     Console.info("Flattening selectors...")
+    Console.indent()
 
     def __flatter(node):
 
@@ -44,5 +48,10 @@ def process(tree):
             insertIndex += 1
 
     __flatter(tree)
+
+    Console.info("Flattended %s selectors", insertIndex-1)
+    Console.outdent()
+
+    return insertIndex > 1
 
 

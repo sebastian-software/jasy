@@ -18,6 +18,7 @@ def processExtends(tree):
     Console.info("Processing extend requests...")
     Console.indent()
     modified = __extend(tree)
+    Console.info("Processed %s selectors", modified)
     Console.outdent()
 
     return modified
@@ -31,6 +32,7 @@ def processMixins(tree):
     Console.info("Merging mixins with each other...")
     Console.indent()
     modified = __process(tree, scanMixins=True)
+    Console.info("Merged %s mixins", modified)
     Console.outdent()
 
     return modified
@@ -45,6 +47,7 @@ def processSelectors(tree):
     Console.info("Merging mixins into selectors")
     Console.indent()
     modified = __process(tree, scanMixins=False)
+    Console.info("Merged %s mixins", modified)
     Console.outdent()
 
     return modified
@@ -63,17 +66,17 @@ def __extend(node):
     removes the original mixin request.
     """
 
-    modified = False
+    modified = 0
 
     for child in reversed(node):
         # Ignore all mixin declarations. Can't operate inside them.
         # For these things to work we have to wait for the include mechanics to resolve them first 
         # (which actually just remove these mixin declarations though)
         if child is not None and child.type != "mixin":
-            if __extend(child):
-                modified = True
+            modified += __extend(child)
 
     if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
+
         name = node.name
 
         Console.debug("Extend request to mixin %s at: %s", name, node.line)
@@ -98,7 +101,7 @@ def __extend(node):
         node.parent.remove(node)
         Console.outdent()
 
-        modified = True
+        modified += 1
 
     return modified
 
@@ -112,7 +115,7 @@ def __process(node, scanMixins=False, active=None):
     - active: Whether replacements should happen
     """
 
-    modified = False
+    modified = 0
 
     if active is None:
         active = not scanMixins
@@ -121,13 +124,11 @@ def __process(node, scanMixins=False, active=None):
         if child is not None:
             if child.type == "mixin":
                 if scanMixins:
-                    if __process(child, scanMixins=scanMixins, active=True):
-                        modified = True
+                    modified += __process(child, scanMixins=scanMixins, active=True)
 
             else:
                 # Only process non mixin childs
-                if __process(child, scanMixins=scanMixins, active=active):
-                    modified = True
+                modified += __process(child, scanMixins=scanMixins, active=active)
 
     if active and (node.type == "call" or (node.type == "variable" and node.parent.type == "block")):
         name = node.name
@@ -147,7 +148,7 @@ def __process(node, scanMixins=False, active=None):
         # Finally remove original node
         parent.remove(node)
 
-        modified = True
+        modified += 1
 
     return modified
 
