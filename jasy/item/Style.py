@@ -14,6 +14,7 @@ import jasy.style.output.Optimization
 
 import jasy.style.parse.ScopeScanner as ScopeScanner
 import jasy.style.clean.Unused as Unused
+import jasy.style.clean.Flatter as Flatter
 import jasy.style.Util as Util
 
 from jasy.style.output.Compressor import Compressor
@@ -246,68 +247,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
-    def __analyseScope(self, tree):
-        ScopeScanner.scan(tree)
-
-
-    def __removeUnused(self, tree):
-        Unused.cleanup(tree)
-
-
-    def __executeMixins(self, tree):
-        modifiedExtends = Mixins.processExtends(tree)
-        modifiedMixins = Mixins.processMixins(tree)
-        modifiedSelectors = Mixins.processSelectors(tree)
-
-        return modifiedMixins or modifiedSelectors
-
-
-    def __computeVariables(self, tree):
-        Variables.compute(tree)
-
-
-    def __flatteningSelectors(self, tree):
-
-        insertIndex = 1
-
-        def flatter(node):
-
-            nonlocal insertIndex
-
-            # Process children first
-            for child in reversed(node):
-                if child is not None:
-                    flatter(child)
-
-
-            # Extended mixin
-            if node.type == "selector" or node.type == "mixin":
-                if len(node.rules) == 0:
-                    Console.info("Cleaning up empty selector/mixin at line %s" % node.line)
-                    node.parent.remove(node)
-                    return
-
-                if node.type == "selector":
-                    selector = node.name
-                else:
-                    selector = node.selector
-
-                #print("Found selector: %s" % selector)
-
-                combined = Util.combineSelector(node)
-                #print("Combined: %s" % combined)
-
-                if node.type == "selector":
-                    node.name = combined
-                else:
-                    node.selector = combined
-
-                tree.insert(len(tree)-insertIndex, node)
-                insertIndex += 1
-
-
-        flatter(tree)
-
 
 
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
@@ -315,47 +254,37 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = self.getMergedTree(permutation, session)
 
         # PHASE 1 :: Resolving conditionals
-
         self.__resolveConditionals(tree)
 
-
         # PHASE 2 :: Trivial cleanups
+        ScopeScanner.scan(tree)
+        Unused.cleanup(tree)
 
-        self.__analyseScope(tree)
-        self.__removeUnused(tree)
-
-
-        #
         # PHASE 3 :: Resolve all mixins
-
-        self.__executeMixins(tree)
-
+        modifiedExtends = Mixins.processExtends(tree)
+        modifiedMixins = Mixins.processMixins(tree)
+        modifiedSelectors = Mixins.processSelectors(tree)
 
         # PHASE 4 :: Post mixin cleanups
-
-        self.__analyseScope(tree)
-        self.__removeUnused(tree)
-
+        ScopeScanner.scan(tree)
+        Unused.cleanup(tree)
 
         # PHASE 5 :: Compute variables
-
-        self.__computeVariables(tree)
-
+        Variables.compute(tree)
 
         # PHASE 6 :: Flattening selectors
+        Flatter.process(tree)
 
-        self.__flatteningSelectors(tree)
+        # PHASE 7 :: Post scan to remove (hopefully) all variable/mixin access
+        ScopeScanner.scan(tree)
 
 
-        self.__analyseScope(tree)
 
         # DONE
-
-        #print("")
-        #print("")
-        #print("FINAL TREE")
-        #print(tree)
-
+        print("")
+        print("")
+        print("FINAL TREE")
+        print(tree)
 
         print("")
         print("")
