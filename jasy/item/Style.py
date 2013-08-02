@@ -265,8 +265,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         ScopeScanner.scan(tree)
         Unused.cleanup(tree)
 
-        print(tree)
-
         # PHASE 3
         # Resolve all mixins
         Mixins.processExtends(tree)
