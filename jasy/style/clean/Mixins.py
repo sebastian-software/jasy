@@ -15,7 +15,7 @@ def processExtends(tree):
     Processes all requests for mixin extends
     """
 
-    Console.debug("Processing extend requests...")
+    Console.info("Processing extend requests...")
     Console.indent()
     modified = __extend(tree)
     Console.outdent()
@@ -28,7 +28,7 @@ def processMixins(tree):
     Processes all mixin includes inside mixins 
     """
 
-    Console.debug("Merging mixins with each other...")
+    Console.info("Merging mixins with each other...")
     Console.indent()
     modified = __process(tree, scanMixins=True)
     Console.outdent()
@@ -42,7 +42,7 @@ def processSelectors(tree):
     Processes all mixin includes inside selectors
     """
 
-    Console.debug("Merging mixins into selectors")
+    Console.info("Merging mixins into selectors")
     Console.indent()
     modified = __process(tree, scanMixins=False)
     Console.outdent()

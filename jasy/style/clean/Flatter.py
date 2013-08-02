@@ -9,6 +9,7 @@ import jasy.core.Console as Console
 def process(tree):
 
     insertIndex = 1
+    Console.info("Flattening selectors...")
 
     def __flatter(node):
 
@@ -23,7 +24,7 @@ def process(tree):
         # Extended mixin
         if node.type == "selector" or node.type == "mixin":
             if len(node.rules) == 0:
-                Console.info("Cleaning up empty selector/mixin at line %s" % node.line)
+                Console.debug("Cleaning up empty selector/mixin at line %s" % node.line)
                 node.parent.remove(node)
                 return
 
@@ -32,10 +33,7 @@ def process(tree):
             else:
                 selector = node.selector
 
-            #print("Found selector: %s" % selector)
-
             combined = Util.combineSelector(node)
-            #print("Combined: %s" % combined)
 
             if node.type == "selector":
                 node.name = combined
