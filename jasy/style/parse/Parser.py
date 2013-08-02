@@ -124,10 +124,12 @@ def Statement(tokenizer, staticContext):
         node = Variable(tokenizer, staticContext)
         return node
 
+
     elif tokenType == "left_curly":
         node = Statements(tokenizer, staticContext)
         tokenizer.mustMatch("right_curly")
         return node
+
 
     elif tokenType == "command":
 
@@ -163,6 +165,7 @@ def Statement(tokenizer, staticContext):
 
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
+
 
     elif tokenType == "identifier":
         nextTokenType = tokenizer.peek()
@@ -215,6 +218,7 @@ def Statement(tokenizer, staticContext):
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
+
     # Class selectors e.g. .message {...
     elif tokenType == "dot":
         nextTokenType = tokenizer.peek()
@@ -242,6 +246,7 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "semicolon":
         node = Node.Node(tokenizer, "semicolon")
         return node
+
 
     else:
         node = Node.Node(tokenizer, "unknown")
