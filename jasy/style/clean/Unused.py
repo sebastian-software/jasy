@@ -130,7 +130,7 @@ def __recurser(node, unused):
         if node.name in unused:
             if hasattr(node, "initializer"):
                 init = node.initializer
-                if init.type in ("null", "this", "true", "false", "identifier", "number", "string", "regexp"):
+                if init.type in ("null", "this", "true", "false", "identifier", "number", "string"):
                     Console.debug("Removing unused primitive variable %s at line %s" % (node.name, node.line))
                     node.parent.remove(node)
                     retval = True

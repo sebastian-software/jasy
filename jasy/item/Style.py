@@ -267,9 +267,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         # PHASE 3
         # Resolve all mixins
-        modifiedExtends = Mixins.processExtends(tree)
-        modifiedMixins = Mixins.processMixins(tree)
-        modifiedSelectors = Mixins.processSelectors(tree)
+        Mixins.processExtends(tree)
+        Mixins.processMixins(tree)
+        Mixins.processSelectors(tree)
 
         # PHASE 4
         # Post mixin cleanups
