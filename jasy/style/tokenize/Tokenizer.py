@@ -439,7 +439,7 @@ class Tokenizer(object):
                 ch = input[self.cursor]
                 self.cursor += 1
 
-                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-" or ((isVariable or isCommand) and ch == ".")):
+                if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-" or ch == "."):
                     break
                     
         except IndexError:

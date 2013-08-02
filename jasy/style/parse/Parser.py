@@ -185,13 +185,8 @@ def Statement(tokenizer, staticContext):
             node = Selector(tokenizer, staticContext)
             return node
 
-        # e.g. background-color
-        elif nextTokenType == "minus":
-            node = Property(tokenizer, staticContext)
-            return node
-
         # e.g. jasy.gradient() or gradient() - process them as expressions
-        elif nextTokenType == "dot" or nextTokenType == "left_paren":
+        elif nextTokenType == "left_paren":
             tokenizer.unget()
             node = Expression(tokenizer, staticContext)
             return node
