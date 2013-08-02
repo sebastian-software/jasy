@@ -5,11 +5,16 @@ import jasy.core.Console as Console
 
 
 def compute(tree):
-    __computeRecurser(tree, None, {})    
+    Console.info("Resolving variables...")
+    Console.indent()
+
+    __computeRecurser(tree, None, {})
+
+    Console.outdent()
 
 
 def __computeOperation(node, values):
-    Console.info("Computing operation: %s", node.type)
+    Console.debug("Computing operation: %s", node.type)
 
     # Resolve first child of operation
     first = node[0]
@@ -23,7 +28,7 @@ def __computeOperation(node, values):
 
     # Compare operation types
     if first.type == second.type:
-        Console.info("Same type: %s", first.type)
+        # Console.debug("Same type: %s", first.type)
 
         if first.type == "number":
             firstUnit = getattr(first, "unit", None)
@@ -67,7 +72,7 @@ def __computeOperation(node, values):
             raise Exception("Unsupported operation: %s at %s" % (node.type, node.line))
 
     else:
-        Console.info("Different type: %s vs %s", first.type, second.type)
+        Console.debug("TODO: Different type: %s vs %s", first.type, second.type)
 
 
 
@@ -75,8 +80,6 @@ def __computeRecurser(node, scope, values):
 
     # Update scope of new block starts
     if hasattr(node, "scope"):
-        Console.info("New scope")
-        
         scope = node.scope
         values = copy.copy(values)
 
@@ -100,7 +103,7 @@ def __computeRecurser(node, scope, values):
 
     # Update values of variable
     elif node.type == "declaration" and hasattr(node, "initializer"):
-        Console.info("Found declaration: %s = %s", node.name, node.initializer)
+        Console.debug("Found declaration of %s at line %s", node.name, node.line)
         
         # Update internal variable mapping
         values[node.name] = node.initializer
@@ -119,9 +122,7 @@ def __computeRecurser(node, scope, values):
             Console.warn("Could not resolve %s at line %s", name, node.line)
             return
 
-        Console.info("Resolve variable: %s to %s", name, values[name])
+        Console.debug("Resolving variable: %s at line %s with %s from %s", name, node.line, values[name].type, values[name].line)
         node.parent.replace(node, copy.deepcopy(values[name]))
-
-
 
 

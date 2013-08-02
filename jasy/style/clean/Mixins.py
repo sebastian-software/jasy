@@ -74,18 +74,19 @@ def __extend(node):
                 modified = True
 
     if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
-        Console.debug("Extend request to mixin at: %s", node.line)
+        name = node.name
+
+        Console.debug("Extend request to mixin %s at: %s", name, node.line)
         Console.indent()
 
-        name = node.name
         mixin = __findMixin(node.parent, name)
         if not mixin:
             raise Exeption("Could not find mixin %s as required by extend request at line %s" % (node.name, node.line))
 
-        Console.debug("Found matching mixin at line: %s", mixin.line)
+        Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
         selector = Util.combineSelector(node.parent)
-        Console.debug("Extend selector of mixin by: %s", selector)
+        Console.debug("Extending selector of mixin by: %s", selector)
 
         if hasattr(mixin, "selector"):
             # We iterate from in inverse mode, so add new selectors to the front
