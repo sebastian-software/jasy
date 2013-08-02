@@ -292,10 +292,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                 else:
                     selector = node.selector
 
-                print("Found selector: %s" % selector)
+                #print("Found selector: %s" % selector)
 
                 combined = Util.combineSelector(node)
-                print("Combined: %s" % combined)
+                #print("Combined: %s" % combined)
 
                 if node.type == "selector":
                     node.name = combined
@@ -351,10 +351,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         # DONE
 
-        print("")
-        print("")
-        print("FINAL TREE")
-        print(tree)
+        #print("")
+        #print("")
+        #print("FINAL TREE")
+        #print(tree)
 
 
         print("")
