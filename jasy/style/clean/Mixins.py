@@ -10,6 +10,9 @@ import jasy.style.Util as Util
 
 
 def processExtends(tree):
+    """
+    Processes all requests for mixin extends
+    """
 
     Console.debug("Processing extend requests...")
     Console.indent()
@@ -20,6 +23,9 @@ def processExtends(tree):
 
 
 def processMixins(tree):
+    """
+    Processes all mixin includes inside mixins 
+    """
 
     Console.debug("Merging mixins with each other...")
     Console.indent()
@@ -31,6 +37,9 @@ def processMixins(tree):
 
 
 def processSelectors(tree):
+    """
+    Processes all mixin includes inside selectors
+    """
 
     Console.debug("Merging mixins into selectors")
     Console.indent()
