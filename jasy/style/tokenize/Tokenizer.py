@@ -424,6 +424,7 @@ class Tokenizer(object):
         # Variables/Commands should support packaged/namespaced names e.g. "foo.bar"
         isVariable = input[token.start] == "$"
         isCommand = input[token.start] == "@"
+        isHex = input[token.start] == "#"
 
         try:
             while True:
@@ -485,7 +486,7 @@ class Tokenizer(object):
         self.cursor += 1
 
         # Peek to next character
-        if ch == "-" and len(input) > self.cursor:
+        if (ch == "-" or ch == "#") and len(input) > self.cursor:
             nextCh = input[self.cursor]
         else:
             nextCh = None
@@ -522,7 +523,7 @@ class Tokenizer(object):
             self.lexString(ch)
         
         else:
-            raise ParseError("Illegal token: %s (Code: %s)" % (ch, ord(ch)), self.fileId, self.line)
+            raise ParseError("Illegal token: %s (Code: %s) - Next: %s (Code: %s)" % (ch, ord(ch), nextCh, nextCh and ord(nextCh)), self.fileId, self.line)
 
         token.end = self.cursor
         return token.type
