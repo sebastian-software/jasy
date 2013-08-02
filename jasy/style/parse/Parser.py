@@ -3,10 +3,15 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import re
+
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
 
 __all__ = [ "parse", "parseExpression" ]
+
+
+RE_SELECTOR_SPLIT = re.compile(r"\s*,\s*")
 
 
 def parseExpression(source, fileId=None, line=1):
@@ -235,7 +240,7 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "ampersand":
         nextTokenType = tokenizer.peek()
 
-        if nextTokenType == "identifier" or nextTokenType == "colon":
+        if nextTokenType == "identifier" or nextTokenType == "colon" or nextTokenType == "left_curly":
             node = Selector(tokenizer, staticContext)
             return node
 
@@ -278,6 +283,9 @@ def Selector(tokenizer, staticContext):
     selector = ""
 
     while tokenType != "left_curly":
+        if selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
+            selector += " "
+
         if tokenType == "identifier":
             selector += tokenizer.token.value
 
@@ -293,9 +301,13 @@ def Selector(tokenizer, staticContext):
         elif tokenType == "ampersand":
             selector += "&"
 
+        else:
+            raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
+
         tokenType = tokenizer.get()
 
-    node.name = selector.split(",")
+    # Split at commas, but ignore any white spaces (trim single selectors)
+    node.name = RE_SELECTOR_SPLIT.split(selector)
 
     # Next process content of selector
     tokenizer.unget()
