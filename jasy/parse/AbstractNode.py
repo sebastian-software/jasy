@@ -233,7 +233,7 @@ class AbstractNode(list):
 
             if selector:
                 for entry in selector:
-                    result += '%s<selector>%s</stat>%s' % (innerLead, entry, lineBreak)                        
+                    result += '%s<selector>%s</selector>%s' % (innerLead, entry, lineBreak)                        
 
             for child in self:
                 if not child:
