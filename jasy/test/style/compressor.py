@@ -16,6 +16,9 @@ class Tests(unittest.TestCase):
 
     def process(self, code):
         return Compressor.Compressor().compress(Parser.parse(code))
+
+    def test_selector_star(self):
+        self.assertEqual(self.process('* { box-sizing: border-box }'), '*{box-sizing:border-box;}')
         
     def test_selector_tag(self):
         self.assertEqual(self.process('h1 { color: red }'), 'h1{color:red;}')
@@ -26,21 +29,17 @@ class Tests(unittest.TestCase):
     def test_selector_id(self):
         self.assertEqual(self.process('#header { background-color: #fff }'), '#header{background-color:#fff;}')
 
-    def test_selector_pseudo_class_invalidcss(self):
-        # That's not really valid CSS though...
-        self.assertEqual(self.process(':first-child { font-weight: bold }'), ':first-child{font-weight:bold;}')
-
-    def test_selector_pseudo_element_invalidcss(self):
-        # That's not really valid CSS though...
-        self.assertEqual(self.process('::after { content: "AFTER" }'), '::after{content:"AFTER";}')
+    def test_selector_tag_id(self):
+        self.assertEqual(self.process('div#header { background-color: #fff }'), 'div#header{background-color:#fff;}')
 
     def test_selector_pseudo_class(self):
-        # That's not really valid CSS though...
         self.assertEqual(self.process('span:first-child { font-weight: bold }'), 'span:first-child{font-weight:bold;}')
 
     def test_selector_pseudo_element(self):
-        # That's not really valid CSS though...
         self.assertEqual(self.process('span::after { content: "AFTER" }'), 'span::after{content:"AFTER";}')
+
+    def test_selector_pseudo_element_dashed(self):
+        self.assertEqual(self.process('span::first-line { content: "AFTER" }'), 'span::first-line{content:"AFTER";}')
 
     def test_selector_tag_child(self):
         self.assertEqual(self.process('h1 span { font-size: 0.6em }'), 'h1 span{font-size:.6em;}')
@@ -90,31 +89,34 @@ class Tests(unittest.TestCase):
 
 """
 *
-E:root
+
 E:nth-child(n)
 E:nth-last-child(n)
 E:nth-of-type(n)
 E:nth-last-of-type(n)
 E:lang(fr)
-E:enabled
-E:disabled
-E:checked
-E::first-line
-E::first-letter
-E::before
-E::after
-E.warning
 E:not(s)
-E#myid
 
+
+
+
+############
 ## DONE:
+############
 
 E
+E#myid
+E.warning
+
 E F
 E > F
 E + F
 E ~ F
 
+E:enabled
+E:disabled
+E:checked
+E:root
 E:first-child
 E:last-child
 E:first-of-type
@@ -129,6 +131,11 @@ E:hover
 E:focus
 E:target
 
+E::first-line
+E::first-letter
+E::before
+E::after
+
 E[foo]
 E[foo="bar"]
 E[foo~="bar"]
@@ -136,7 +143,6 @@ E[foo^="bar"]
 E[foo$="bar"]
 E[foo*="bar"]
 E[foo|="en"]
-
 
 """
 

@@ -174,15 +174,17 @@ def Statement(tokenizer, staticContext):
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
 
-    elif tokenType == "identifier":
-        nextTokenType = tokenizer.peek()
+    elif tokenType == "identifier" or tokenType == "mul":
 
-        # e.g. jasy.gradient() or gradient() - process them as expressions
-        # native calls in these places result in full property or multiple full properties
-        if nextTokenType == "left_paren":
-            tokenizer.unget()
-            node = Expression(tokenizer, staticContext)
-            return node            
+        if tokenType == "identifier":
+            nextTokenType = tokenizer.peek()
+
+            # e.g. jasy.gradient() or gradient() - process them as expressions
+            # native calls in these places result in full property or multiple full properties
+            if nextTokenType == "left_paren":
+                tokenizer.unget()
+                node = Expression(tokenizer, staticContext)
+                return node            
 
         # It's hard to differentiate between selectors and properties.
         # The strategy is to look for these next symbols as they define if the tokens
@@ -257,9 +259,7 @@ def Statement(tokenizer, staticContext):
 
 
     else:
-        node = Node.Node(tokenizer, "unknown")
-        node.token = tokenizer.token.type
-        return node
+        raise SyntaxError("Warning: Unsupport token in Statement(): %s" % tokenType, tokenizer)
 
 
 
@@ -348,6 +348,8 @@ def Selector(tokenizer, staticContext):
                 selector += "^"
             elif tokenType == "pipe":
                 selector += "|"
+            elif tokenType == "mul":
+                selector += "*"
             elif tokenType == "assign":
                 if token.assignOp:
                     if token.assignOp == "mul":
