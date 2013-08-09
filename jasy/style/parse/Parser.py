@@ -324,8 +324,6 @@ def Selector(tokenizer, staticContext):
 
         tokenType = tokenizer.get()
 
-    print("SELECTOR: ", selector)
-
     # Split at commas, but ignore any white spaces (trim single selectors)
     node.name = RE_SELECTOR_SPLIT.split(selector)
 
