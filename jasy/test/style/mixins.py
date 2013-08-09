@@ -258,6 +258,22 @@ class Tests(unittest.TestCase):
 
 
 
+    def test_mixin_param_name_conflicts(self):
+        self.assertEqual(self.process('''
+            $style($size, $color){
+              font-size: 15px * $size;
+              color: $color;
+            }
+
+            h1{
+              $color = yellow;
+              $style(3, blue);
+              color: $color;
+            }
+            '''), 'h1{font-size:45px;color:blue;color:yellow;}')        
+
+
+
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
