@@ -115,7 +115,7 @@ def __computeRecurser(node, scope, values):
     elif node.type == "variable":
         name = node.name
         if not name in values:
-            raise Exception("Could not resolve variable %s at line %s", name, node.line)
+            raise Exception("Could not resolve variable %s at line %s" % (name, node.line))
 
         value = values[name]
         if value is None:
