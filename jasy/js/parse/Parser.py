@@ -672,7 +672,7 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
         tokenizer.unget()
 
     childContext = StaticContext(True, builder)
-    rp = tokenizer.save()
+    # rp = tokenizer.save()
     
     if staticContext.inFunction:
         # Inner functions don't reset block numbering, only functions at
