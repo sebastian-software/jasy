@@ -11,7 +11,7 @@ if __name__ == "__main__":
 import jasy.style.Engine as Engine
 
 """
-SUPPORTS
+SUPPORTS E.G.:
 
 $font{
   font-family: Arial, sans-serif;
@@ -194,6 +194,48 @@ class Tests(unittest.TestCase):
 
         self.assertRaises(Exception, wrapper)        
 
+
+
+    def test_mixin_param_with_compution(self):
+        self.assertEqual(self.process('''
+            $font($size){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font(1+1.5);
+              color: red;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')   
+
+
+    def test_mixin_param_uses_extend(self):
+        self.assertEqual(self.process('''
+            $arial{
+              font-family: Arial, sans-serif;
+            }
+
+            $font($size){
+              $arial;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font(1+1.5);
+              color: red;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')          
 
 
 

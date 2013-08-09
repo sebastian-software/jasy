@@ -334,7 +334,7 @@ class Tokenizer(object):
 
         # Protect float or exponent numbers
         if floating:
-            token.value = segment
+            token.value = float(segment)
         else:
             token.value = int(segment)
 
