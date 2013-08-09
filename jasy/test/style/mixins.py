@@ -212,7 +212,26 @@ class Tests(unittest.TestCase):
               $font(1+1.5);
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')   
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')
+
+
+    def test_mixin_param_with_mixed_compution(self):
+        self.assertEqual(self.process('''
+            $font($size){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font( 2 + 3px );
+              color: red;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:75px;color:red;}')           
 
 
     def test_mixin_param_uses_extend(self):
@@ -232,10 +251,10 @@ class Tests(unittest.TestCase):
             }
 
             h2{
-              $font(1+1.5);
+              $font(2);
               color: red;
             }
-            '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:37.5px;color:red;}')          
+            '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:30px;color:red;}')          
 
 
 
