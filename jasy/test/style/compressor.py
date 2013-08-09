@@ -42,6 +42,9 @@ class Tests(unittest.TestCase):
         # That's not really valid CSS though...
         self.assertEqual(self.process('span::after { content: "AFTER" }'), 'span::after{content:"AFTER";}')
 
+    def test_selector_tag_child(self):
+        self.assertEqual(self.process('h1 span { font-size: 0.6em }'), 'h1 span{font-size:.6em;}')
+
     def test_selector_tag_multi(self):
         self.assertEqual(self.process('h1, h2 { color: red }'), 'h1,h2{color:red;}')
 
@@ -57,6 +60,24 @@ class Tests(unittest.TestCase):
     def test_selector_attribute(self):
         self.assertEqual(self.process('ul li[selected] { background: blue }'), 'ul li[selected]{background:blue;}')
 
+    def test_selector_attribute_equal(self):
+        self.assertEqual(self.process('ul li[selected="bar"] { background: blue }'), 'ul li[selected="bar"]{background:blue;}')
+
+    def test_selector_attribute_compare1(self):
+        self.assertEqual(self.process('ul li[selected~="bar"] { background: blue }'), 'ul li[selected~="bar"]{background:blue;}')
+
+    def test_selector_attribute_compare2(self):
+        self.assertEqual(self.process('ul li[selected^="bar"] { background: blue }'), 'ul li[selected^="bar"]{background:blue;}')
+
+    def test_selector_attribute_compare3(self):
+        self.assertEqual(self.process('ul li[selected$="bar"] { background: blue }'), 'ul li[selected$="bar"]{background:blue;}')
+
+    def test_selector_attribute_compare4(self):
+        self.assertEqual(self.process('ul li[selected*="bar"] { background: blue }'), 'ul li[selected*="bar"]{background:blue;}')
+
+    def test_selector_attribute_compare5(self):
+        self.assertEqual(self.process('ul li[selected|="en"] { background: blue }'), 'ul li[selected|="en"]{background:blue;}')
+
     def test_selector_child_combinator(self):
         self.assertEqual(self.process('ul > li { color: red }'), 'ul>li{color:red;}')
 
@@ -69,13 +90,6 @@ class Tests(unittest.TestCase):
 
 """
 *
-E[foo]
-E[foo="bar"]
-E[foo~="bar"]
-E[foo^="bar"]
-E[foo$="bar"]
-E[foo*="bar"]
-E[foo|="en"]
 E:root
 E:nth-child(n)
 E:nth-last-child(n)
@@ -114,6 +128,14 @@ E:active
 E:hover
 E:focus
 E:target
+
+E[foo]
+E[foo="bar"]
+E[foo~="bar"]
+E[foo^="bar"]
+E[foo$="bar"]
+E[foo*="bar"]
+E[foo|="en"]
 
 
 """
