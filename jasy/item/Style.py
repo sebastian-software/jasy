@@ -288,14 +288,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         # Post scan to remove (hopefully) all variable/mixin access
         ScopeScanner.scan(tree)
 
-        # DEBUG
-        print("")
-        print("")
-        print("COMPRESSED")
-        compressed = Compressor(formatting).compress(tree)
-        print(compressed)
-
-
+        # DONE
+        return Compressor(formatting).compress(tree)
 
 
         
