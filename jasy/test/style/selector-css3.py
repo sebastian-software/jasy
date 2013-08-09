@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys, os, unittest, logging, inspect
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -8,8 +8,7 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.style.parse.Parser as Parser
-import jasy.style.output.Compressor as Compressor
+import jasy.style.Engine as Engine
 
 """
 SUPPORTED CSS SELECTORS
@@ -68,7 +67,10 @@ E:not(s)
 class Tests(unittest.TestCase):
 
     def process(self, code):
-        return Compressor.Compressor().compress(Parser.parse(code))
+        callerName = inspect.stack()[1][3][5:]
+
+        tree = Engine.getTree(code, callerName)
+        return Engine.compressTree(tree)
 
     def test_selector_star(self):
         self.assertEqual(self.process('* { box-sizing: border-box }'), '*{box-sizing:border-box;}')

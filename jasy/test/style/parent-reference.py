@@ -34,10 +34,9 @@ h1{
 class Tests(unittest.TestCase):
 
     def process(self, code):
-        callerName = inspect.stack()[1][3]
-        baseName = callerName[5:]
+        callerName = inspect.stack()[1][3][5:]
 
-        tree = Engine.getTree(code, baseName)
+        tree = Engine.getTree(code, callerName)
         tree = Engine.processTree(tree)
         return Engine.compressTree(tree)
 
