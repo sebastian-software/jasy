@@ -26,12 +26,21 @@ class Tests(unittest.TestCase):
     def test_basic_id(self):
         self.assertEqual(self.process('#header { background-color: #fff }'), '#header{background-color:#fff;}')
 
+    def test_basic_pseudo_class_invalidcss(self):
+        # That's not really valid CSS though...
+        self.assertEqual(self.process(':first-child { font-weight: bold }'), ':first-child{font-weight:bold;}')
+
+    def test_basic_pseudo_element_invalidcss(self):
+        # That's not really valid CSS though...
+        self.assertEqual(self.process('::after { content: "AFTER" }'), '::after{content:"AFTER";}')
+
     def test_basic_pseudo_class(self):
-        self.assertEqual(self.process('span:first-child { font-weight: bold }'), '')
+        # That's not really valid CSS though...
+        self.assertEqual(self.process('span:first-child { font-weight: bold }'), 'span:first-child{font-weight:bold;}')
 
     def test_basic_pseudo_element(self):
-        self.assertEqual(self.process('div::after { content: "AFTER" }'), '')
-
+        # That's not really valid CSS though...
+        self.assertEqual(self.process('span::after { content: "AFTER" }'), 'span::after{content:"AFTER";}')
 
 
 
