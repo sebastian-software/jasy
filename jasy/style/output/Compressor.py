@@ -4,7 +4,6 @@
 #
 
 import json, re
-import itertools
 
 __all__ = [ "Compressor" ]
 
@@ -79,6 +78,10 @@ class Compressor:
 
 
     def compress(self, node):
+        """
+        Compresses the given node and returns the compressed text result
+        """
+
         type = node.type
 
         if type in self.__simple:
@@ -122,6 +125,9 @@ class Compressor:
 
 
     def indent(self, code):
+        """
+        Indents the given code by the current indenting setup
+        """
 
         if not self.__useIndenting:
             return code
@@ -218,12 +224,6 @@ class Compressor:
         else:
             return self.indent("%s:%s;" % (node.name, inner))
 
-
-    def type_declaration(self, node):
-        return self.indent("ERROR-DECLARATION-%s;" % node.name)
-
-    def type_variable(self, node):
-        return "$ERROR-VAR-%s" % node.name
 
     def type_mixin(self, node):
         # Filter out non-extend mixins
