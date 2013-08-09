@@ -54,6 +54,64 @@ class Tests(unittest.TestCase):
     def test_selector_method(self):
         self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
 
+    def test_selector_attribute(self):
+        self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
+
+    def test_selector_child_combinator(self):
+        self.assertEqual(self.process('ul > li { color: red }'), '')
+
+    def test_selector_adjacent_sibling_combinator(self):
+        self.assertEqual(self.process('ul + li { color: red }'), '')
+
+    def test_selector_general_sibling_combinator(self):
+        self.assertEqual(self.process('h1 ~ h2 { font-style: italic }'), '')
+
+
+"""
+*
+E
+E[foo]
+E[foo="bar"]
+E[foo~="bar"]
+E[foo^="bar"]
+E[foo$="bar"]
+E[foo*="bar"]
+E[foo|="en"]
+E:root
+E:nth-child(n)
+E:nth-last-child(n)
+E:nth-of-type(n)
+E:nth-last-of-type(n)
+E:first-child
+E:last-child
+E:first-of-type
+E:last-of-type
+E:only-child
+E:only-of-type
+E:empty
+E:link
+E:visited
+E:active
+E:hover
+E:focus
+E:target
+E:lang(fr)
+E:enabled
+E:disabled
+E:checked
+E::first-line
+E::first-letter
+E::before
+E::after
+E.warning
+E#myid
+E:not(s)
+E F
+E > F
+E + F
+E ~ F
+"""
+
 
 
 if __name__ == '__main__':
