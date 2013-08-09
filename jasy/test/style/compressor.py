@@ -17,30 +17,39 @@ class Tests(unittest.TestCase):
     def process(self, code):
         return Compressor.Compressor().compress(Parser.parse(code))
         
-    def test_basic_tag(self):
+    def test_selector_tag(self):
         self.assertEqual(self.process('h1 { color: red }'), 'h1{color:red;}')
 
-    def test_basic_classname(self):
+    def test_selector_classname(self):
         self.assertEqual(self.process('.important { background: rgb(200,20,20) }'), '.important{background:rgb(200,20,20);}')
 
-    def test_basic_id(self):
+    def test_selector_id(self):
         self.assertEqual(self.process('#header { background-color: #fff }'), '#header{background-color:#fff;}')
 
-    def test_basic_pseudo_class_invalidcss(self):
+    def test_selector_pseudo_class_invalidcss(self):
         # That's not really valid CSS though...
         self.assertEqual(self.process(':first-child { font-weight: bold }'), ':first-child{font-weight:bold;}')
 
-    def test_basic_pseudo_element_invalidcss(self):
+    def test_selector_pseudo_element_invalidcss(self):
         # That's not really valid CSS though...
         self.assertEqual(self.process('::after { content: "AFTER" }'), '::after{content:"AFTER";}')
 
-    def test_basic_pseudo_class(self):
+    def test_selector_pseudo_class(self):
         # That's not really valid CSS though...
         self.assertEqual(self.process('span:first-child { font-weight: bold }'), 'span:first-child{font-weight:bold;}')
 
-    def test_basic_pseudo_element(self):
+    def test_selector_pseudo_element(self):
         # That's not really valid CSS though...
         self.assertEqual(self.process('span::after { content: "AFTER" }'), 'span::after{content:"AFTER";}')
+
+    def test_selector_tag_multi(self):
+        self.assertEqual(self.process('h1, h2 { color: red }'), 'h1,h2{color:red;}')
+
+    def test_selector_class_multi(self):
+        self.assertEqual(self.process('.message,.info { font-weight: normal }'), '.message,.info{font-weight:normal;}')
+
+    def test_selector_id_multi(self):
+        self.assertEqual(self.process('#header, #footer { background: #333 }'), '#header,#footer{background:#333;}')
 
 
 
