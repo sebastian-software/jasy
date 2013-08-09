@@ -24,6 +24,7 @@ def processExtends(tree):
     return modified
 
 
+
 def processMixins(tree):
     """
     Processes all mixin includes inside mixins 
@@ -54,7 +55,17 @@ def processSelectors(tree):
 
 
 
-def __extend(node):
+def isExtendCall(node):
+    return (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block")
+
+
+
+def isMixinCall(node):
+    return (node.type == "call" or (node.type == "variable" and node.parent.type == "block"))
+
+
+
+def __extend(node, scanMixins=False):
     """
     Finds extend requests for mixins aka 
 
@@ -72,10 +83,10 @@ def __extend(node):
         # Ignore all mixin declarations. Can't operate inside them.
         # For these things to work we have to wait for the include mechanics to resolve them first 
         # (which actually just remove these mixin declarations though)
-        if child is not None and child.type != "mixin":
+        if child is not None and (scanMixins or child.type != "mixin"):
             modified += __extend(child)
 
-    if (node.type == "call" and (not hasattr(node, "params") or len(node.params) == 0)) or (node.type == "variable" and node.parent.type == "block"):
+    if isExtendCall(node):
 
         name = node.name
 
@@ -130,7 +141,7 @@ def __process(node, scanMixins=False, active=None):
                 # Only process non mixin childs
                 modified += __process(child, scanMixins=scanMixins, active=active)
 
-    if active and (node.type == "call" or (node.type == "variable" and node.parent.type == "block")):
+    if active and isMixinCall(node) and not isExtendCall(node):
         name = node.name
 
         mixin = __findMixin(node.parent, name)

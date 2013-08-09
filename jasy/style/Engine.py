@@ -59,6 +59,7 @@ def processTree(tree, fileId=None):
     Mixins.processExtends(tree)
     Mixins.processMixins(tree)
     Mixins.processSelectors(tree)
+    Mixins.processExtends(tree)
 
     # PHASE 4
     # Post mixin cleanups
