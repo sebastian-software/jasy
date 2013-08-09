@@ -111,7 +111,7 @@ class Tokenizer(object):
 
     def find(self, anyOf):
         point = self.save()
-
+        
         while True:
             tokenType = self.get()
             if tokenType in anyOf:
@@ -581,8 +581,8 @@ class Tokenizer(object):
         self.tokens = copy.copy(point["tokens"])
         self.lookahead = point["lookahead"]
         self.scanNewline = point["scanNewlines"]
-        self.line = point["line"],
-        self.skippedSpaces = point["skippedSpaces"],
-        self.skippedComments = point["skippedComments"],
+        self.line = point["line"]
+        self.skippedSpaces = point["skippedSpaces"]
+        self.skippedComments = point["skippedComments"]
         self.skippedLineBreaks = point["skippedLineBreaks"]
 
