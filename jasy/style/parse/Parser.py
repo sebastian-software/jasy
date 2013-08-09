@@ -299,25 +299,37 @@ def Selector(tokenizer, staticContext):
 
     tokenType = tokenizer.token.type
     selector = ""
+    nospace = True
 
     while tokenType != "left_curly":
-        if selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
-            selector += " "
+        if tokenType in ("identifier", "colon", "dot"):
+            if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
+                selector += " "     
 
-        if tokenType == "identifier":
-            selector += tokenizer.token.value
+            nospace = False       
 
-        elif tokenType == "colon":
-            selector += ":"
+            if tokenType == "identifier":
+                selector += tokenizer.token.value
+            elif tokenType == "colon":
+                selector += ":"
+            elif tokenType == "dot":
+                selector += "."
 
-        elif tokenType == "comma":
-            selector += ","
+        elif tokenType in ("comma", "ampersand", "tilde", "plus", "gt"):
 
-        elif tokenType == "dot":
-            selector += "."
+            # No spaces between the previous, this symbol and the next
+            nospace = True
 
-        elif tokenType == "ampersand":
-            selector += "&"
+            if tokenType == "comma":
+                selector += ","
+            elif tokenType == "ampersand":
+                selector += "&"
+            elif tokenType == "tilde":
+                selector += "~"
+            elif tokenType == "plus":
+                selector += "+"
+            elif tokenType == "gt":
+                selector += ">"
 
         else:
             raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)

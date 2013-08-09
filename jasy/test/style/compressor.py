@@ -55,16 +55,16 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
 
     def test_selector_attribute(self):
-        self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
+        self.assertEqual(self.process('ul li[selected] { background: blue }'), '')
 
     def test_selector_child_combinator(self):
-        self.assertEqual(self.process('ul > li { color: red }'), '')
+        self.assertEqual(self.process('ul > li { color: red }'), 'ul>li{color:red;}')
 
     def test_selector_adjacent_sibling_combinator(self):
-        self.assertEqual(self.process('ul + li { color: red }'), '')
+        self.assertEqual(self.process('ul + li { color: red }'), 'ul+li{color:red;}')
 
     def test_selector_general_sibling_combinator(self):
-        self.assertEqual(self.process('h1 ~ h2 { font-style: italic }'), '')
+        self.assertEqual(self.process('h1 ~ h2 { font-style: italic }'), 'h1~h2{font-style:italic;}')
 
 
 """
