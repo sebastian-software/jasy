@@ -302,6 +302,8 @@ def Selector(tokenizer, staticContext):
     nospace = True
 
     while tokenType != "left_curly":
+        token = tokenizer.token
+
         if tokenType in ("identifier", "colon", "dot"):
             if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
                 selector += " "     
@@ -309,13 +311,13 @@ def Selector(tokenizer, staticContext):
             nospace = False       
 
             if tokenType == "identifier":
-                selector += tokenizer.token.value
+                selector += token.value
             elif tokenType == "colon":
                 selector += ":"
             elif tokenType == "dot":
                 selector += "."
 
-        elif tokenType in ("comma", "ampersand", "tilde", "plus", "gt"):
+        else:
 
             # No spaces between the previous, this symbol and the next
             nospace = True
@@ -330,9 +332,18 @@ def Selector(tokenizer, staticContext):
                 selector += "+"
             elif tokenType == "gt":
                 selector += ">"
-
-        else:
-            raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
+            elif tokenType == "left_bracket":
+                selector += "["
+            elif tokenType == "right_bracket":
+                selector += "]"
+            elif tokenType == "left_paren":
+                selector += "("
+            elif tokenType == "right_paren":
+                selector += ")"
+            elif tokenType == "number":
+                selector += "%s%s" % (token.value, getattr(token, "unit", ""))
+            else:
+                raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
 
         tokenType = tokenizer.get()
 

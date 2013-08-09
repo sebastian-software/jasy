@@ -52,10 +52,10 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('#header, #footer { background: #333 }'), '#header,#footer{background:#333;}')
 
     def test_selector_method(self):
-        self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
+        self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), 'ul li:nth-child(2n){background:lightgrey;}')
 
     def test_selector_attribute(self):
-        self.assertEqual(self.process('ul li[selected] { background: blue }'), '')
+        self.assertEqual(self.process('ul li[selected] { background: blue }'), 'ul li[selected]{background:blue;}')
 
     def test_selector_child_combinator(self):
         self.assertEqual(self.process('ul > li { color: red }'), 'ul>li{color:red;}')
@@ -69,7 +69,6 @@ class Tests(unittest.TestCase):
 
 """
 *
-E
 E[foo]
 E[foo="bar"]
 E[foo~="bar"]
@@ -82,6 +81,26 @@ E:nth-child(n)
 E:nth-last-child(n)
 E:nth-of-type(n)
 E:nth-last-of-type(n)
+E:lang(fr)
+E:enabled
+E:disabled
+E:checked
+E::first-line
+E::first-letter
+E::before
+E::after
+E.warning
+E:not(s)
+E#myid
+
+## DONE:
+
+E
+E F
+E > F
+E + F
+E ~ F
+
 E:first-child
 E:last-child
 E:first-of-type
@@ -95,21 +114,8 @@ E:active
 E:hover
 E:focus
 E:target
-E:lang(fr)
-E:enabled
-E:disabled
-E:checked
-E::first-line
-E::first-letter
-E::before
-E::after
-E.warning
-E#myid
-E:not(s)
-E F
-E > F
-E + F
-E ~ F
+
+
 """
 
 
