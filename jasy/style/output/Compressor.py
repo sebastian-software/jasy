@@ -225,6 +225,21 @@ class Compressor:
             return self.indent("%s:%s;" % (node.name, inner))
 
 
+    def type_call(self, node):
+        params = []
+        callParams = getattr(node, "params", None)
+        if callParams:
+            for paramNode in callParams:
+                params.append(self.compress(paramNode))
+
+        if self.__useWhiteSpace:
+            paramsJoin = ", "
+        else:
+            paramsJoin = ","
+
+        return "%s(%s)" % (node[0].value, paramsJoin.join(params))
+
+
     def type_mixin(self, node):
         # Filter out non-extend mixins
         if not getattr(node, "selector"):

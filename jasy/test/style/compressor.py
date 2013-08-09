@@ -21,7 +21,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('h1 { color: red }'), 'h1{color:red;}')
 
     def test_basic_classname(self):
-        self.assertEqual(self.process('.important { background: rgb(200,20,20) }'), '')
+        self.assertEqual(self.process('.important { background: rgb(200,20,20) }'), '.important{background:rgb(200,20,20);}')
 
     def test_basic_id(self):
         self.assertEqual(self.process('#header { background-color: #fff }'), '#header{background-color:#fff;}')
