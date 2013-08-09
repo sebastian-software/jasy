@@ -89,12 +89,12 @@ def compressTree(tree, formatting=None):
 
 
 
-def __printTokens(self, text):
+def printTokens(text, fileId=None):
     """
     Prints out a structured list of tokens 
     """
 
-    tokenizer = getTokenizer(text)
+    tokenizer = getTokenizer(text, fileId)
     indent = 0
 
     while tokenizer.get() and not tokenizer.done():
