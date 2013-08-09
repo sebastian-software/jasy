@@ -53,8 +53,20 @@ class Tests(unittest.TestCase):
     def test_selector_id_multi(self):
         self.assertEqual(self.process('#header, #footer { background: #333 }'), '#header,#footer{background:#333;}')
 
-    def test_selector_method(self):
+    def test_selector_methodlike_noarg(self):
+        self.assertEqual(self.process('ul li:nth-child() { background: lightgrey }'), 'ul li:nth-child(){background:lightgrey;}')
+
+    def test_selector_methodlike_posarg(self):
+        self.assertEqual(self.process('ul li:nth-child(2) { background: lightgrey }'), 'ul li:nth-child(2){background:lightgrey;}')
+
+    def test_selector_methodlike_iterarg(self):
         self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), 'ul li:nth-child(2n){background:lightgrey;}')
+
+    def test_selector_methodlike_lang(self):
+        self.assertEqual(self.process('ul li:lang(de) { background: lightgrey }'), 'ul li:lang(de){background:lightgrey;}')
+
+    def test_selector_methodlike_not(self):
+        self.assertEqual(self.process('ul li:not(:first-child) { background: lightgrey }'), 'ul li:not(:first-child){background:lightgrey;}')
 
     def test_selector_attribute(self):
         self.assertEqual(self.process('ul li[selected] { background: blue }'), 'ul li[selected]{background:blue;}')
@@ -88,8 +100,6 @@ class Tests(unittest.TestCase):
 
 
 """
-*
-
 E:nth-child(n)
 E:nth-last-child(n)
 E:nth-of-type(n)
@@ -103,6 +113,8 @@ E:not(s)
 ############
 ## DONE:
 ############
+
+*
 
 E
 E#myid
