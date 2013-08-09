@@ -54,7 +54,21 @@ class AbstractNode(list):
 
         for arg in args:
             self.append(arg)
-            
+
+
+    def getFileName(self):
+        """
+        Traverses up the tree to find a node with a fileId and returns it
+        """
+
+        node = self
+        while node:
+            fileId = getattr(node, "fileId", None)
+            if fileId is not None:
+                return fileId
+
+            node = getattr(node, "parent", None)            
+
             
     def getUnrelatedChildren(self):
         """Collects all unrelated children"""
