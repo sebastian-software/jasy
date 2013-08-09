@@ -235,7 +235,7 @@ class Tests(unittest.TestCase):
               $font(1+1.5);
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')          
+            '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:37.5px;color:red;}')          
 
 
 
