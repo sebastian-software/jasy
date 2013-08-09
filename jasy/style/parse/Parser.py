@@ -306,7 +306,7 @@ def Selector(tokenizer, staticContext):
     while tokenType != "left_curly":
         token = tokenizer.token
 
-        if tokenType in ("identifier", "colon", "dot"):
+        if tokenType in ("identifier", "colon", "dot", "ampersand"):
             if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
                 selector += " "     
 
@@ -318,7 +318,9 @@ def Selector(tokenizer, staticContext):
                 selector += ":"
             elif tokenType == "dot":
                 selector += "."
-
+            elif tokenType == "ampersand":
+                selector += "&"
+                
         else:
 
             # No spaces between the previous, this symbol and the next
@@ -326,8 +328,6 @@ def Selector(tokenizer, staticContext):
 
             if tokenType == "comma":
                 selector += ","
-            elif tokenType == "ampersand":
-                selector += "&"
             elif tokenType == "tilde":
                 selector += "~"
             elif tokenType == "plus":
