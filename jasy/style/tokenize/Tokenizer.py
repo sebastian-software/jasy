@@ -36,6 +36,7 @@ operatorNames = {
     ':'   : 'colon', 
     '='   : 'assign', 
     '&'   : 'ampersand',
+    '~'   : 'tilde',    
 
     '&&'  : 'and', 
     '||'  : 'or', 
