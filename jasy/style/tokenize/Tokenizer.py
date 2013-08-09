@@ -30,6 +30,9 @@ operatorNames = {
     '-'   : 'minus', 
     '/'   : 'div', 
     '%'   : 'mod', 
+    '$'   : 'dollar',
+    '^'   : 'carat',
+    '|'   : 'pipe',
 
     ','   : 'comma', 
     ';'   : 'semicolon', 
@@ -465,6 +468,11 @@ class Tokenizer(object):
 
         identifier = input[token.start:self.cursor]
 
+        if len(identifier) == 1 and (isCommand or isVariable or isHex):
+            print("INVALID IDENTIFIER: %s" % identifier)
+
+
+
         if isCommand:
             token.type = "command"
             token.value = identifier[1:]
@@ -509,22 +517,25 @@ class Tokenizer(object):
         self.cursor += 1
 
         # Peek to next character
-        if (ch == "-" or ch == "#") and len(input) > self.cursor:
+        if (ch == "-" or ch == "#" or ch == "$" or ch == "@") and len(input) > self.cursor:
             nextCh = input[self.cursor]
         else:
             nextCh = None
 
-        # Normal identifiers
-        if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "@" or ch == "_":
-            self.lexIdent(ch)
-
-        # Identifier with leading "-" (minus) e.g. -webkit-transition
-        elif ch == "-" and nextCh and ((nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z")):
-            self.lexIdent(ch)
-
-        # Identifier with leading hex symbol
-        elif ch == "#" and nextCh and ((nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z") or (nextCh >= "0" and nextCh <= "9")):
-            self.lexIdent(ch)
+        # Identifiers (or single operators)
+        if (ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or ch == "$" or ch == "@" or ch == "_" or ch == "#" or ch == "-":
+            # Lex as identifier if not started with a special symbol
+            if nextCh is None:
+                self.lexIdent(ch)
+            # Lex as identifier when next character is an actual character
+            elif (nextCh >= "a" and nextCh <= "z") or (nextCh >= "A" and nextCh <= "Z"):
+                self.lexIdent(ch)
+            # For hex value still lex as identifier when next character is a number
+            elif ch == "#" and (nextCh >= "0" and nextCh <= "9"):
+                self.lexIdent(ch)
+            # Otherwise lex as a trivial operator
+            else:
+                self.lexOp(ch)
 
         elif ch == ".":
             self.lexDot(ch)

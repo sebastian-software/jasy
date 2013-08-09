@@ -3,10 +3,12 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import re
+import re, json
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
+
+ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
 __all__ = [ "parse", "parseExpression" ]
 
@@ -340,6 +342,21 @@ def Selector(tokenizer, staticContext):
                 selector += "("
             elif tokenType == "right_paren":
                 selector += ")"
+            elif tokenType == "dollar":
+                selector += "$"
+            elif tokenType == "carat":
+                selector += "^"
+            elif tokenType == "pipe":
+                selector += "|"
+            elif tokenType == "assign":
+                if token.assignOp:
+                    if token.assignOp == "mul":
+                        selector += "*"
+                    else:
+                        raise SyntaxError("Invalid attribute selector expression %s" % token.assignOp, tokenizer)
+                selector += "="
+            elif tokenType == "string":
+                selector += ascii_encoder.encode(token.value)
             elif tokenType == "number":
                 selector += "%s%s" % (token.value, getattr(token, "unit", ""))
             else:
