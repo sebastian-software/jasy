@@ -672,7 +672,6 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
         tokenizer.unget()
 
     childContext = StaticContext(True, builder)
-    # rp = tokenizer.save()
     
     if staticContext.inFunction:
         # Inner functions don't reset block numbering, only functions at
@@ -687,85 +686,6 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
     else:
         builder.FUNCTION_hoistVars(childContext.blockId)
         builder.FUNCTION_setBody(functionNode, Script(tokenizer, childContext))
-
-    # 
-    # Hoisting makes parse-time binding analysis tricky. A taxonomy of hoists:
-    # 
-    # 1. vars hoist to the top of their function:
-    # 
-    #    var x = 'global';
-    #    function f() {
-    #      x = 'f';
-    #      if (false)
-    #        var x;
-    #    }
-    #    f();
-    #    print(x); // "global"
-    # 
-    # 2. lets hoist to the top of their block:
-    # 
-    #    function f() { // id: 0
-    #      var x = 'f';
-    #      {
-    #        {
-    #          print(x); // "undefined"
-    #        }
-    #        let x;
-    #      }
-    #    }
-    #    f();
-    # 
-    # 3. inner functions at function top-level hoist to the beginning
-    #    of the function.
-    # 
-    # If the builder used is doing parse-time analyses, hoisting may
-    # invalidate earlier conclusions it makes about variable scope.
-    # 
-    # The builder can opt to set the needsHoisting flag in a
-    # CompilerContext (in the case of var and function hoisting) or in a
-    # node of type BLOCK (in the case of let hoisting). This signals for
-    # the parser to reparse sections of code.
-    # 
-    # To avoid exponential blowup, if a function at the program top-level
-    # has any hoists in its child blocks or inner functions, we reparse
-    # the entire toplevel function. Each toplevel function is parsed at
-    # most twice.
-    # 
-    # The list of declarations can be tied to block ids to aid talking
-    # about declarations of blocks that have not yet been fully parsed.
-    # 
-    # Blocks are already uniquely numbered; see the comment in
-    # Statements.
-    # 
-    
-    #
-    # wpbasti: 
-    # Don't have the feeling that I need this functionality because the
-    # tree is often modified before the variables and names inside are 
-    # of any interest. So better doing this in a post-scan.
-    #
-    
-    #
-    # if childContext.needsHoisting:
-    #     # Order is important here! Builders expect functions to come after variables!
-    #     builder.setHoists(functionNode.body.id, childContext.variables.concat(childContext.functions))
-    # 
-    #     if staticContext.inFunction:
-    #         # If an inner function needs hoisting, we need to propagate
-    #         # this flag up to the parent function.
-    #         staticContext.needsHoisting = True
-    #     
-    #     else:
-    #         # Only re-parse functions at the top level of the program.
-    #         childContext = StaticContext(True, builder)
-    #         tokenizer.rewind(rp)
-    #         
-    #         # Set a flag in case the builder wants to have different behavior
-    #         # on the second pass.
-    #         builder.secondPass = True
-    #         builder.FUNCTION_hoistVars(functionNode.body.id, True)
-    #         builder.FUNCTION_setBody(functionNode, Script(tokenizer, childContext))
-    #         builder.secondPass = False
 
     if tokenType == "left_curly":
         tokenizer.mustMatch("right_curly")

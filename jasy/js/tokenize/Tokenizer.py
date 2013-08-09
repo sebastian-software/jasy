@@ -585,23 +585,4 @@ class Tokenizer(object):
             raise ParseError("PANIC: too much lookahead!", self.fileId, self.line)
         
         self.tokenIndex = (self.tokenIndex - 1) & 3
-        
-    
-    def save(self):
-        return {
-            "cursor" : self.cursor,
-            "tokenIndex": self.tokenIndex,
-            "tokens": copy.copy(self.tokens),
-            "lookahead": self.lookahead,
-            "scanNewlines": self.scanNewlines,
-            "line": self.line
-        }
 
-    
-    def rewind(self, point):
-        self.cursor = point["cursor"]
-        self.tokenIndex = point["tokenIndex"]
-        self.tokens = copy.copy(point["tokens"])
-        self.lookahead = point["lookahead"]
-        self.scanNewline = point["scanNewline"]
-        self.line = point["line"]
