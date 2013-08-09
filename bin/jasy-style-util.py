@@ -32,24 +32,22 @@ logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 
 import jasy
 
-from jasy.style.parse.Parser import parse
-from jasy.style.parse.ScopeScanner import scan
-from jasy.style.output.Compressor import Compressor
-from jasy.core.Permutation import Permutation
+import jasy.style.Engine as Engine
+
 
 for fname in sys.argv[2:]:
     text = open(fname, encoding="utf-8").read()
-    root = parse(text, fname)
-    variables = scan(root)
     
     print(">>> File: %s" % fname)
     
-    if job == "compress":
-        print(Compressor().compress(root))
+    if job == "compress":    
+        tree = Engine.getTree(text, fname)
+        tree = Engine.processTree(tree)
+        print(Engine.compressTree(tree))
         
     elif job == "tree":
-        print(root.toXml())
+        print(Engine.getTree(text, fname).toXml())
 
     elif job == "tokens":
-        print("TODO")
+        Engine.printTokens(text, fname)
 
