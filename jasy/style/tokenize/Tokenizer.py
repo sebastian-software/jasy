@@ -109,6 +109,19 @@ class Tokenizer(object):
         return self.token
 
 
+    def find(self, anyOf):
+        point = self.save()
+
+        while True:
+            tokenType = self.get()
+            if tokenType in anyOf:
+                self.rewind(point)
+                return tokenType
+
+        self.rewind(point)
+        return None
+
+
     def peek(self, scanOperand=False):
         if self.lookahead:
             next = self.tokens.get((self.tokenIndex + self.lookahead) & 3)
@@ -567,7 +580,7 @@ class Tokenizer(object):
         self.tokenIndex = point["tokenIndex"]
         self.tokens = copy.copy(point["tokens"])
         self.lookahead = point["lookahead"]
-        self.scanNewline = point["scanNewline"]
+        self.scanNewline = point["scanNewlines"]
         self.line = point["line"],
         self.skippedSpaces = point["skippedSpaces"],
         self.skippedComments = point["skippedComments"],

@@ -175,20 +175,26 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "identifier":
         nextTokenType = tokenizer.peek()
 
-        # e.g. background: 
-        if nextTokenType == "colon":
+        # e.g. jasy.gradient() or gradient() - process them as expressions
+        # native calls in these places result in full property or multiple full properties
+        if nextTokenType == "left_paren":
+            tokenizer.unget()
+            node = Expression(tokenizer, staticContext)
+            return node            
+
+        # It's hard to differentiate between selectors and properties.
+        # The strategy is to look for these next symbols as they define if the tokens
+        # until then are either a selector or property declaration.
+        nextRelevantTokenType = tokenizer.find(("semicolon", "left_curly", "right_curly"))
+
+        # e.g. background: xxx;
+        if nextRelevantTokenType == "right_curly" or nextRelevantTokenType == "semicolon":
             node = Property(tokenizer, staticContext)
             return node
 
         # e.g. h1, #dad {...
-        elif nextTokenType == "left_curly":
+        elif nextRelevantTokenType == "left_curly":
             node = Selector(tokenizer, staticContext)
-            return node
-
-        # e.g. jasy.gradient() or gradient() - process them as expressions
-        elif nextTokenType == "left_paren":
-            tokenizer.unget()
-            node = Expression(tokenizer, staticContext)
             return node
 
         else:
