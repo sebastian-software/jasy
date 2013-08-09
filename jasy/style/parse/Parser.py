@@ -256,6 +256,13 @@ def Statement(tokenizer, staticContext):
 
 
 def Property(tokenizer, staticContext):
+    """
+    Parses all CSS properties e.g.
+
+    - background: red
+    - font: 12px bold Arial;
+    """
+
     node = Node.Node(tokenizer, "property")
     node.name = tokenizer.token.value
 
@@ -272,6 +279,16 @@ def Property(tokenizer, staticContext):
 
 
 def Selector(tokenizer, staticContext):
+    """
+    CSS selector parser e.g.
+
+    h1
+    .infobox
+    #header
+    h1::after
+    h2:first-child
+    """
+
     node = Node.Node(tokenizer, "selector")
 
     tokenType = tokenizer.token.type
@@ -301,6 +318,8 @@ def Selector(tokenizer, staticContext):
 
         tokenType = tokenizer.get()
 
+    print("SELECTOR: ", selector)
+
     # Split at commas, but ignore any white spaces (trim single selectors)
     node.name = RE_SELECTOR_SPLIT.split(selector)
 
@@ -314,6 +333,14 @@ def Selector(tokenizer, staticContext):
 
 
 def Variable(tokenizer, staticContext):
+    """
+    All kind of variable usage:
+
+    - variable access
+    - variable declaration
+    - mixin declaration
+    - mixin call
+    """
     
     name = tokenizer.token.value
 
@@ -363,6 +390,10 @@ def Variable(tokenizer, staticContext):
 
 
 def ParenExpression(tokenizer, staticContext):
+    """
+    An expression in parens. Sometimes to force priority of math operations etc.
+    """
+
     tokenizer.mustMatch("left_paren")
     node = Expression(tokenizer, staticContext)
     tokenizer.mustMatch("right_paren")
@@ -371,7 +402,11 @@ def ParenExpression(tokenizer, staticContext):
 
 
 def Expression(tokenizer, staticContext):
-    """Top-down expression parser matched against SpiderMonkey."""
+    """
+    Top-down expression parser matched against SpiderMonkey for original JS 
+    parsing and modified to match styles.
+    """
+
     node = AssignExpression(tokenizer, staticContext)
 
     if tokenizer.match("comma"):
