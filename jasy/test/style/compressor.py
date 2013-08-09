@@ -51,7 +51,8 @@ class Tests(unittest.TestCase):
     def test_selector_id_multi(self):
         self.assertEqual(self.process('#header, #footer { background: #333 }'), '#header,#footer{background:#333;}')
 
-
+    def test_selector_method(self):
+        self.assertEqual(self.process('ul li:nth-child(2n) { background: lightgrey }'), '')
 
 
 
