@@ -202,6 +202,17 @@ class Compressor:
         return node.value
 
 
+    def type_comma(self, node):
+        first = self.compress(node[0])
+        second = self.compress(node[1])
+        if self.__useWhiteSpace:
+            res = "%s, %s"
+        else:
+            res = "%s,%s" 
+
+        return res % (first, second)
+
+
     def type_block(self, node):
         self.__indentLevel += 1
         inner = self.__statements(node)
