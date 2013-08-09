@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys, os, unittest, logging, inspect
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -8,8 +8,7 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.style.parse.Parser as Parser
-import jasy.style.output.Compressor as Compressor
+import jasy.style.Engine as Engine
 
 """
 SUPPORTS
@@ -35,7 +34,12 @@ h1{
 class Tests(unittest.TestCase):
 
     def process(self, code):
-        return Compressor.Compressor().compress(Parser.parse(code))
+        callerName = inspect.stack()[1][3]
+        baseName = callerName[5:]
+
+        tree = Engine.getTree(code, baseName)
+        tree = Engine.processTree(tree)
+        return Engine.compressTree(tree)
 
     def test_reference_before(self):
         self.assertEqual(self.process('''
@@ -44,7 +48,7 @@ class Tests(unittest.TestCase):
                 font-weight: bold;
               }
             }
-            '''), '')
+            '''), 'h1:first-child{font-weight:bold;}')
         
     def test_reference_after(self):
         self.assertEqual(self.process('''
@@ -53,7 +57,7 @@ class Tests(unittest.TestCase):
                 text-shadow: 1px;
               }
             }
-            '''), '')
+            '''), '.cssshadow h1{text-shadow:1px;}')
 
     def test_reference_between(self):
         self.assertEqual(self.process('''
@@ -62,7 +66,7 @@ class Tests(unittest.TestCase):
                 color: red;
               }
             }
-            '''), '')        
+            '''), 'header h1:first-child{color:red;}')        
 
 
 
