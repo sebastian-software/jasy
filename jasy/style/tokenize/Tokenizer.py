@@ -555,7 +555,10 @@ class Tokenizer(object):
             "tokens": copy.copy(self.tokens),
             "lookahead": self.lookahead,
             "scanNewlines": self.scanNewlines,
-            "line": self.line
+            "line": self.line,
+            "skippedSpaces": self.skippedSpaces,
+            "skippedComments": self.skippedComments,
+            "skippedLineBreaks": self.skippedLineBreaks
         }
 
     
@@ -565,4 +568,8 @@ class Tokenizer(object):
         self.tokens = copy.copy(point["tokens"])
         self.lookahead = point["lookahead"]
         self.scanNewline = point["scanNewline"]
-        self.line = point["line"]
+        self.line = point["line"],
+        self.skippedSpaces = point["skippedSpaces"],
+        self.skippedComments = point["skippedComments"],
+        self.skippedLineBreaks = point["skippedLineBreaks"]
+
