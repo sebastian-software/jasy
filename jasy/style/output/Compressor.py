@@ -13,12 +13,10 @@ ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 
 class Compressor:
-    __semicolonSymbol = ";"
-    __commaSymbol = ","
-    __useIndenting = True
-    __useBlockBreaks = True
-    __useStatementBreaks = True
-    __useWhiteSpace = True
+    __useIndenting = False
+    __useBlockBreaks = False
+    __useStatementBreaks = False
+    __useWhiteSpace = False
 
     __indentLevel = 0
 
@@ -70,14 +68,14 @@ class Compressor:
             if format.has("indent"):
                 self.__useIndenting = True
 
-            if format.has("semicolon"):
-                self.__semicolonSymbol = ";\n"
-            
-            if format.has("comma"):
-                self.__commaSymbol = ",\n"
-            
-        self.__forcedSemicolon = False
+            if format.has("blocks"):
+                self.__useBlockBreaks = True
 
+            if format.has("statements"):
+                self.__useStatementBreaks = True
+
+            if format.has("whitespace"):
+                self.__useWhiteSpace = True
 
 
     def compress(self, node):

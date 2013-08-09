@@ -64,7 +64,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     # Temporary development alias
     def getTokens(self):
-        return self.__getTokens()
+        return self.__printTokens()
 
     # Temporary development alias
     def getTree(self):
@@ -73,7 +73,11 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def __getTokens(self, context=None):
+    def __printTokens(self, context=None):
+        """
+        Prints out a structured list of tokens 
+        """
+
         tokenizer = Tokenizer.Tokenizer(self.getText(), self.id, 0)
         indent = 0
 
@@ -94,6 +98,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def __getTree(self, context=None):
+        """
+        Returns the parsed tree
+        """
         
         field = "tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
@@ -110,7 +117,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     
     def __getOptimizedTree(self, permutation=None, context=None):
-        """Returns an optimized tree with permutations applied"""
+        """
+        Returns an optimized tree with permutations applied
+        """
 
         field = "opt-tree[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
