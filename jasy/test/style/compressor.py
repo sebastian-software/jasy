@@ -11,6 +11,59 @@ if __name__ == "__main__":
 import jasy.style.parse.Parser as Parser
 import jasy.style.output.Compressor as Compressor
 
+"""
+SUPPORTED CSS SELECTORS
+LIST FROM: http://www.w3.org/TR/css3-selectors/
+
+*
+
+E
+E#myid
+E.warning
+
+E F
+E > F
+E + F
+E ~ F
+
+E:enabled
+E:disabled
+E:checked
+E:root
+E:first-child
+E:last-child
+E:first-of-type
+E:last-of-type
+E:only-child
+E:only-of-type
+E:empty
+E:link
+E:visited
+E:active
+E:hover
+E:focus
+E:target
+
+E::first-line
+E::first-letter
+E::before
+E::after
+
+E[foo]
+E[foo="bar"]
+E[foo~="bar"]
+E[foo^="bar"]
+E[foo$="bar"]
+E[foo*="bar"]
+E[foo|="en"]
+
+E:nth-child(n)
+E:nth-last-child(n)
+E:nth-of-type(n)
+E:nth-last-of-type(n)
+E:lang(fr)
+E:not(s)
+"""
 
 class Tests(unittest.TestCase):
 
@@ -98,65 +151,6 @@ class Tests(unittest.TestCase):
     def test_selector_general_sibling_combinator(self):
         self.assertEqual(self.process('h1 ~ h2 { font-style: italic }'), 'h1~h2{font-style:italic;}')
 
-
-"""
-E:nth-child(n)
-E:nth-last-child(n)
-E:nth-of-type(n)
-E:nth-last-of-type(n)
-E:lang(fr)
-E:not(s)
-
-
-
-
-############
-## DONE:
-############
-
-*
-
-E
-E#myid
-E.warning
-
-E F
-E > F
-E + F
-E ~ F
-
-E:enabled
-E:disabled
-E:checked
-E:root
-E:first-child
-E:last-child
-E:first-of-type
-E:last-of-type
-E:only-child
-E:only-of-type
-E:empty
-E:link
-E:visited
-E:active
-E:hover
-E:focus
-E:target
-
-E::first-line
-E::first-letter
-E::before
-E::after
-
-E[foo]
-E[foo="bar"]
-E[foo~="bar"]
-E[foo^="bar"]
-E[foo$="bar"]
-E[foo*="bar"]
-E[foo|="en"]
-
-"""
 
 
 
