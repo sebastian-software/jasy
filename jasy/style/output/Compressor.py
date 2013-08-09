@@ -3,7 +3,7 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import json, re
+import json, re, sys
 
 __all__ = [ "Compressor" ]
 
@@ -117,9 +117,8 @@ class Compressor:
         else:
             try:
                 result = getattr(self, "type_%s" % type)(node)
-            except KeyError:
-                print("Compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
-                sys.exit(1)
+            except AttributeError:
+                raise Exception("Compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
 
         return result
 
