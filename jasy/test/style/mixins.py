@@ -133,7 +133,8 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_missing(self):
-        self.assertEqual(self.process('''
+        def wrapper():
+            self.process('''
             $font($size){
               font-family: Arial, sans-serif;
               font-size: 15px * $size;
@@ -148,7 +149,50 @@ class Tests(unittest.TestCase):
               $font();
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')          
+            ''')      
+
+        self.assertRaises(Exception, wrapper)
+
+
+    def test_mixin_param_transparent_units(self):
+        self.assertEqual(self.process('''
+            $font($size){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font(2px);
+              color: red;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')   
+
+
+    def test_mixin_param_mixed_units(self):
+        def wrapper():
+            self.process('''
+            $font($size){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font(3rem);
+              color: red;
+            }
+            ''')      
+
+        self.assertRaises(Exception, wrapper)        
 
 
 
