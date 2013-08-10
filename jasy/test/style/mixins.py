@@ -133,6 +133,8 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_missing(self):
+        import jasy.style.process.Variables as Variables
+
         def wrapper():
             self.process('''
             $font($size){
@@ -151,7 +153,7 @@ class Tests(unittest.TestCase):
             }
             ''')      
 
-        self.assertRaises(Exception, wrapper)
+        self.assertRaises(Variables.VariableError, wrapper)
 
 
     def test_mixin_param_transparent_units(self):
@@ -174,6 +176,8 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_mixed_units(self):
+        import jasy.style.process.Variables as Variables
+
         def wrapper():
             self.process('''
             $font($size){
@@ -192,7 +196,7 @@ class Tests(unittest.TestCase):
             }
             ''')      
 
-        self.assertRaises(Exception, wrapper)        
+        self.assertRaises(Variables.VariableError, wrapper)        
 
 
 
@@ -273,6 +277,8 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_wrong_place_call(self):
+        import jasy.style.parse.Parser as Parser
+
         def wrapper():
             self.process('''
             $style($color){
@@ -284,10 +290,12 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Exception, wrapper)        
+        self.assertRaises(Parser.SyntaxError, wrapper)        
 
 
     def test_mixin_wrong_place_variable(self):
+        import jasy.style.process.Variables as Variables
+
         def wrapper():
             self.process('''
             $style(){
@@ -299,8 +307,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        wrapper()
-        #self.assertRaises(Exception, wrapper)             
+        self.assertRaises(Variables.VariableError, wrapper)             
 
 
 if __name__ == '__main__':
