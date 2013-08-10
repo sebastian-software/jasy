@@ -272,8 +272,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:45px;color:blue;color:yellow;}')        
 
 
-
-    def test_mixin_wrong_place(self):
+    def test_mixin_wrong_place_call(self):
         def wrapper():
             self.process('''
             $style($color){
@@ -286,6 +285,22 @@ class Tests(unittest.TestCase):
             ''')
 
         self.assertRaises(Exception, wrapper)        
+
+
+    def test_mixin_wrong_place_variable(self):
+        def wrapper():
+            self.process('''
+            $style(){
+              color: red;
+            }
+
+            h1{
+              color: $style;
+            }
+            ''')
+
+        wrapper()
+        #self.assertRaises(Exception, wrapper)             
 
 
 if __name__ == '__main__':
