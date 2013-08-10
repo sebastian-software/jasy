@@ -320,7 +320,7 @@ def Selector(tokenizer, staticContext):
                 selector += "."
             elif tokenType == "ampersand":
                 selector += "&"
-                
+
         else:
 
             # No spaces between the previous, this symbol and the next
@@ -647,7 +647,7 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
 
         elif tokenType == "left_paren" and allowCallSyntax:
             childNode = Node.Node(tokenizer, "call")
-            childNode.append(node)
+            childNode.name = node.name
             childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
         else:
