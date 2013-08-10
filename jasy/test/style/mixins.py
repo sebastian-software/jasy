@@ -257,7 +257,6 @@ class Tests(unittest.TestCase):
             '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:30px;color:red;}')          
 
 
-
     def test_mixin_param_name_conflicts(self):
         self.assertEqual(self.process('''
             $style($size, $color){
@@ -272,6 +271,21 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1{font-size:45px;color:blue;color:yellow;}')        
 
+
+
+    def test_mixin_wrong_place(self):
+        def wrapper():
+            self.process('''
+            $style($color){
+              color: $color;
+            }
+
+            h1{
+              color: $style(red);
+            }
+            ''')
+
+        self.assertRaises(Exception, wrapper)        
 
 
 if __name__ == '__main__':
