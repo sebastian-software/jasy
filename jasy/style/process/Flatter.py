@@ -35,7 +35,11 @@ def process(tree):
             if node.type == "selector":
                 selector = node.name
             else:
-                selector = node.selector
+                try:
+                    selector = node.selector
+                except AttributeError:
+                    # Seems like a mixin which is not used. Ignore it.
+                    return
 
             combined = Util.combineSelector(node)
 
