@@ -56,25 +56,27 @@ def processTree(tree, fileId=None):
 
     # PHASE 3
     # Resolve all mixins
-    Mixins.processExtends(tree)
     Mixins.processMixins(tree)
     Mixins.processSelectors(tree)
-    Mixins.processExtends(tree)
 
     # PHASE 4
+    # Assign selectors to mixins (support for extend)
+    Mixins.processExtends(tree)
+
+    # PHASE 5
     # Post mixin cleanups
     ScopeScanner.scan(tree)
     Unused.cleanup(tree)
 
-    # PHASE 5
+    # PHASE 6
     # Compute variables
     Variables.compute(tree)
 
-    # PHASE 6
+    # PHASE 7
     # Flattening selectors
     Flatter.process(tree)
 
-    # PHASE 7
+    # PHASE 8
     # Post scan to remove (hopefully) all variable/mixin access
     ScopeScanner.scan(tree)
 
