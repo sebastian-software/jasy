@@ -6,7 +6,7 @@ import jasy.core.Console as Console
 
 class VariableError(Exception):
     def __init__(self, message, node):
-        Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s" % (message, node.type, node.getFileName(), node.line))
+        Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
 def compute(tree):
@@ -124,8 +124,7 @@ def __computeRecurser(node, scope, values):
 
         value = values[name]
         if value is None:
-            Console.warn("Could not resolve %s at line %s", name, node.line)
-            return
+            raise VariableError("Could not resolve variable %s" % name, node)
 
         Console.debug("Resolving variable: %s at line %s with %s from %s", name, node.line, values[name].type, values[name].line)
         node.parent.replace(node, copy.deepcopy(values[name]))

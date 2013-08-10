@@ -14,7 +14,7 @@ unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 
 class CompressorError(Exception):
     def __init__(self, message, node):
-        Exception.__init__(self, "Compressor Error: %s for node type=%s in %s at line %s" % (message, node.type, node.getFileName(), node.line))
+        Exception.__init__(self, "Compressor Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
 class Compressor:
