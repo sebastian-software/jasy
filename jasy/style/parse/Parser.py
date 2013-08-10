@@ -609,11 +609,11 @@ def UnaryExpression(tokenizer, staticContext):
     elif tokenType == "increment" or tokenType == "decrement":
         # Prefix increment/decrement.
         node = Node.Node(tokenizer, tokenType)
-        node.append(MemberExpression(tokenizer, staticContext, True))
+        node.append(MemberExpression(tokenizer, staticContext))
 
     else:
         tokenizer.unget()
-        node = MemberExpression(tokenizer, staticContext, True)
+        node = MemberExpression(tokenizer, staticContext)
 
         # Don't look across a newline boundary for a postfix {in,de}crement.
         if tokenizer.tokens[(tokenizer.tokenIndex + tokenizer.lookahead - 1) & 3].line == tokenizer.line:
@@ -626,7 +626,7 @@ def UnaryExpression(tokenizer, staticContext):
     return node
 
 
-def MemberExpression(tokenizer, staticContext, allowCallSyntax):
+def MemberExpression(tokenizer, staticContext):
     node = PrimaryExpression(tokenizer, staticContext)
 
     while True:
@@ -634,21 +634,17 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
 
         if tokenType == "end":
             break
-        
-        if tokenType == "dot":
-            childNode = Node.Node(tokenizer)
-            childNode.append(node)
-            
-            tokenizer.mustMatch("identifier")
-            tokenType = tokenizer.token.type
-            idenNode = Node.Node(tokenizer, tokenType)
-            idenNode.value = tokenizer.token.value
-            childNode.append(idenNode)
 
-        elif tokenType == "left_paren" and allowCallSyntax:
-            childNode = Node.Node(tokenizer, "call")
-            childNode.name = node.name
-            childNode.append(ArgumentList(tokenizer, staticContext), "params")
+        # system calls
+        elif tokenType == "left_paren":
+
+            if node.type == "identifier":
+                childNode = Node.Node(tokenizer, "system")
+                childNode.name = node.value
+                childNode.append(ArgumentList(tokenizer, staticContext), "params")
+                
+            else:
+                raise SyntaxError("Unsupported mixin include in expression statement", tokenizer)
 
         else:
             tokenizer.unget()
