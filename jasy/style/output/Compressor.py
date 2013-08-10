@@ -11,6 +11,12 @@ high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 
+
+class CompressorError(Exception):
+    def __init__(self, message, node):
+        Exception.__init__(self, "Compressor Error: %s in %s@%s" % (message, node.getFileName(), node.line))
+
+
 class Compressor:
     __useIndenting = False
     __useBlockBreaks = False
@@ -252,8 +258,8 @@ class Compressor:
 
     def type_mixin(self, node):
         # Filter out non-extend mixins
-        if not getattr(node, "selector"):
-            return self.indent("$ERROR-MIXIN-%s;" % node.name)
+        if not hasattr(node, "selector"):
+            raise CompressorError("Left mixin \"%s\" found in tree to compress" % node.name, node)
 
         selector = node.selector
 
