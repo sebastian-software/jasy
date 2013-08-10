@@ -4,6 +4,11 @@ import jasy.style.parse.Node as Node
 import jasy.core.Console as Console
 
 
+class VariableError(Exception):
+    def __init__(self, message, node):
+        Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s" % (message, node.type, node.getFileName(), node.line))
+
+
 def compute(tree):
     Console.info("Resolving variables...")
     Console.indent()
@@ -53,12 +58,12 @@ def __computeOperation(node, values):
                 elif node.type == "mod":
                     repl.value = first.value % second.value
                 else:
-                    raise Exception("Unsupported number operation: %s at %s" % (node.type, node.line))
+                    raise VariableError("Unsupported number operation", node)
 
                 return repl
 
             else:
-                raise Exception("Could not compute result from numbers of different units: %s vs %s at line %s" % (first.unit, second.unit, node.line))
+                raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), node)
 
         elif first.type == "string":
             repl = Node.Node(type="string")
@@ -66,10 +71,10 @@ def __computeOperation(node, values):
             if node.type == "plus":
                 repl.value = first.value + second.value
             else:
-                raise Exception("Unsupported string operation: %s at %s" % (node.type, node.line))
+                raise VariableError("Unsupported string operation", node)
 
         else:
-            raise Exception("Unsupported operation: %s at %s" % (node.type, node.line))
+            raise VariableError("Unsupported operation", node)
 
     else:
         Console.debug("TODO: Different type: %s vs %s", first.type, second.type)
@@ -115,7 +120,7 @@ def __computeRecurser(node, scope, values):
     elif node.type == "variable":
         name = node.name
         if not name in values:
-            raise Exception("Could not resolve variable %s at line %s" % (name, node.line))
+            raise VariableError("Could not resolve variable %s" % name, node)
 
         value = values[name]
         if value is None:
