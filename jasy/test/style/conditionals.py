@@ -82,7 +82,8 @@ class Tests(unittest.TestCase):
               font-size: 20px;
             }
 
-            @if jasy.debug == false{
+            @if jasy.debug == false
+            {
               h1{
                 outline: 1px solid red;
               }
@@ -102,6 +103,64 @@ class Tests(unittest.TestCase):
               }
             }
             '''), 'h1{font-size:20px;}h1{outline:none;}p{color:black;}')           
+
+
+    def test_if_else_false_paren(self):
+        self.assertEqual(self.process('''
+            h1{
+              font-size: 20px;
+            }
+
+            @if (jasy.debug == false)
+            {
+              h1{
+                outline: 1px solid red;
+              }
+
+              p{
+                color:red;
+              }
+            }
+            @else
+            {
+              h1{
+                outline: none;
+              }
+
+              p{
+                color: black;
+              }
+            }
+            '''), 'h1{font-size:20px;}h1{outline:none;}p{color:black;}')
+
+
+    def test_if_else_false_paren_notoper(self):
+        self.assertEqual(self.process('''
+            h1{
+              font-size: 20px;
+            }
+
+            @if (jasy.debug == !false)
+            {
+              h1{
+                outline: 1px solid red;
+              }
+
+              p{
+                color:red;
+              }
+            }
+            @else
+            {
+              h1{
+                outline: none;
+              }
+
+              p{
+                color: black;
+              }
+            }
+            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')           
 
 
     def test_variable(self):
