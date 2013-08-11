@@ -13,6 +13,7 @@ import jasy.style.parse.ScopeScanner as ScopeScanner
 import jasy.style.clean.Permutate as Permutate
 import jasy.style.clean.Unused as Unused
 
+import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
@@ -47,7 +48,7 @@ def processTree(tree, fileId=None):
 
     # PHASE 1
     # Resolving conditionals
-    # self.__resolveConditionals(tree)
+    Resolver.process(tree)
 
     # PHASE 2
     # Trivial cleanups
