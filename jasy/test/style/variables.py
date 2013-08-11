@@ -56,6 +56,27 @@ class Tests(unittest.TestCase):
             }
             '''), '.box{width:300px;height:200px;}')
 
+        
+    def test_value_simple_scope(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $height = 200px;
+
+            .box{
+              $width = 40px;
+              $height = 20px;
+
+              width: $width;
+              height: $height;
+            }
+
+            header{
+              width: $width;
+              height: $height;
+            }
+
+            '''), '.box{width:40px;height:20px;}header{width:300px;height:200px;}')        
+
 
     def test_value_simple_namespaced(self):
         self.assertEqual(self.process('''
