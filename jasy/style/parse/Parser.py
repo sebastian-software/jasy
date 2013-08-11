@@ -389,7 +389,7 @@ def Variable(tokenizer, staticContext):
             # Declaration and assignment are effectively the same
             node.assignOp = tokenizer.token.assignOp
 
-            initializerNode = AssignExpression(tokenizer, staticContext)
+            initializerNode = OrExpression(tokenizer, staticContext)
 
             if tokenizer.peek() not in ("comma", "semicolon"):
                 initializerList = Node.Node(tokenizer, "list")
@@ -397,7 +397,7 @@ def Variable(tokenizer, staticContext):
                 node.append(initializerList, "initializer")
 
                 while tokenizer.peek() not in ("comma", "semicolon"):
-                    initializerList.append(AssignExpression(tokenizer, staticContext))
+                    initializerList.append(OrExpression(tokenizer, staticContext))
 
             else:
                 node.append(initializerNode, "initializer")        
