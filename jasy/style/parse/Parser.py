@@ -258,12 +258,6 @@ def Statement(tokenizer, staticContext):
         return node
 
 
-    elif tokenType == "increment" or tokenType == "decrement":
-        tokenizer.unget()
-        node = Expression(tokenizer, staticContext)
-        return node
-
-
     else:
         raise SyntaxError("Warning: Unsupport token in Statement(): %s" % tokenType, tokenizer)
 
@@ -443,7 +437,7 @@ def Variable(tokenizer, staticContext):
             node.type = "mixin"
             node.append(Block(tokenizer, staticContext), "rules")
 
-        return node        
+        return node
 
     else:
         node = Node.Node(tokenizer, "variable")
@@ -623,22 +617,9 @@ def UnaryExpression(tokenizer, staticContext):
         node = Node.Node(tokenizer, tokenType)
         node.append(UnaryExpression(tokenizer, staticContext))
     
-    elif tokenType == "increment" or tokenType == "decrement":
-        # Prefix increment/decrement.
-        node = Node.Node(tokenizer, tokenType)
-        node.append(MemberExpression(tokenizer, staticContext))
-
     else:
         tokenizer.unget()
         node = MemberExpression(tokenizer, staticContext)
-
-        # Don't look across a newline boundary for a postfix {in,de}crement.
-        if tokenizer.tokens[(tokenizer.tokenIndex + tokenizer.lookahead - 1) & 3].line == tokenizer.line:
-            if tokenizer.match("increment") or tokenizer.match("decrement"):
-                childNode = Node.Node(tokenizer)
-                childNode.postfix = True
-                childNode.append(node)
-                node = childNode
 
     return node
 
