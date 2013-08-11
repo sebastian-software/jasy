@@ -402,10 +402,17 @@ def Variable(tokenizer, staticContext):
             node.assignOp = tokenizer.token.assignOp
 
             initializerNode = AssignExpression(tokenizer, staticContext)
-            node.append(initializerNode, "initializer")        
 
-        if tokenizer.peek() not in ("comma", "semicolon"):
-            raise SyntaxError("Invalid declaration of variable \"%s\"!" % name, tokenizer)
+            if tokenizer.peek() not in ("comma", "semicolon"):
+                initializerList = Node.Node(tokenizer, "list")
+                initializerList.append(initializerNode)
+                node.append(initializerList, "initializer")
+
+                while tokenizer.peek() not in ("comma", "semicolon"):
+                    initializerList.append(AssignExpression(tokenizer, staticContext))
+
+            else:
+                node.append(initializerNode, "initializer")        
 
         # Ignore trailing comma... handle it like a follow up expression
         if tokenizer.peek("comma"):

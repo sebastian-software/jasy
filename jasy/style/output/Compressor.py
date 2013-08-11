@@ -208,6 +208,10 @@ class Compressor:
         return node.value
 
 
+    def type_list(self, node):
+        return " ".join([ self.compress(child) for child in node ])
+
+
     def type_comma(self, node):
         first = self.compress(node[0])
         second = self.compress(node[1])

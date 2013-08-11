@@ -111,18 +111,23 @@ class Tests(unittest.TestCase):
 
 
     def test_define_multi(self):
-        import jasy.style.parse.Parser as Parser
+        self.assertEqual(self.process('''
+            $inner = 20px 10px;
 
-        def wrapper():
-            self.assertEqual(self.process('''
-                $inner = 20px 10px;
+            .box{
+              padding: $inner;
+            }
+            '''), '.box{padding:20px 10px;}')
 
-                .box{
-                  padding: $inner;
-                }
-                '''), '.box{padding: 20px 10px}')        
 
-        self.assertRaises(Parser.SyntaxError, wrapper)
+    def test_define_multi_plus_operation_declaration(self):
+        self.assertEqual(self.process('''
+            $inner = 20px * 3 10px * 2;
+
+            .box{
+              padding: $inner;
+            }
+            '''), '.box{padding:60px 20px;}')
 
 
     def test_define_assignop_plus(self):
