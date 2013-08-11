@@ -119,9 +119,9 @@ def __checkCondition(node):
     elif node.type == "true":
         return True
         
-    elif node.type == "eq" or node.type == "strict_eq":
+    elif node.type == "eq":
         return __compareNodes(node[0], node[1])
-    elif node.type == "ne" or node.type == "strict_ne":
+    elif node.type == "ne":
         return __invertResult(__compareNodes(node[0], node[1]))
         
     elif node.type == "not":
@@ -159,21 +159,54 @@ def __invertResult(result):
     return result
 
 
+def __negateType(node):
+    """
+    Negates the value inside a not-type
+    """
+
+    child = node[0]
+    
+    if child.type == "false":
+        return "true"
+    elif child.type == "true":
+        return "false"
+    elif child.type == "number":
+        if child.value == 0:
+            return "true"
+        else:
+            return "false"
+    elif child.type == "string":
+        if len(child.value) > 0:
+            return "false"
+        else:
+            return "true"
+    else:
+        return None
+
+
 def __compareNodes(a, b):
     """
     This method compares two nodes from the tree regarding equality.
     It supports boolean, string and number type compares
     """
+
+    firstType = a.type
+    if firstType == "not":
+        firstType = __negateType(a)
+
+    secondType = b.type
+    if secondType == "not":
+        secondType = __negateType(b)
     
-    if a.type == b.type:
-        if a.type in ("string", "number"):
+    if firstType == secondType:
+        if firstType in ("string", "number"):
             return a.value == b.value
-        elif a.type == "true":
+        elif firstType == "true":
             return True
-        elif b.type == "false":
+        elif secondType == "false":
             return False    
             
-    elif a.type in ("true", "false") and b.type in ("true", "false"):
+    elif firstType in ("true", "false") and secondType in ("true", "false"):
         return False
 
     return None
