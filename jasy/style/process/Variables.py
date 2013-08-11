@@ -116,7 +116,7 @@ def __computeRecurser(node, scope, values):
         Console.debug("Found declaration of %s at line %s", node.name, node.line)
 
         # Modify value instead of replace when assign operator is set
-        if node.assignOp:
+        if hasattr(node, "assignOp") and node.assignOp is not None:
             if not node.name in values:
                 raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % node.name, node)
 
