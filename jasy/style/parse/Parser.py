@@ -625,7 +625,12 @@ def MemberExpression(tokenizer, staticContext):
                 childNode = Node.Node(tokenizer, "system")
                 childNode.name = node.value
                 childNode.append(ArgumentList(tokenizer, staticContext), "params")
-                
+            
+            elif node.type == "command":
+                childNode = Node.Node(tokenizer, "command")
+                childNode.name = node.name
+                childNode.append(ArgumentList(tokenizer, staticContext), "params")
+
             else:
                 raise SyntaxError("Unsupported mixin include in expression statement", tokenizer)
 
@@ -670,6 +675,10 @@ def PrimaryExpression(tokenizer, staticContext):
     elif tokenType == "variable":
         node = Node.Node(tokenizer, tokenType)
         node.name = tokenizer.token.value
+
+    elif tokenType == "command":
+        node = Node.Node(tokenizer, tokenType)
+        node.name = tokenizer.token.value        
 
     elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string"]:
         node = Node.Node(tokenizer, tokenType)
