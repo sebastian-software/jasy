@@ -223,6 +223,19 @@ class Tests(unittest.TestCase):
             '''), '.box{width:278.07px;}')
 
 
+    def test_math_operation_percent(self):
+        self.assertEqual(self.process('''
+            $columns = 12;
+            $width = 100% / $columns;
+            $pxwidth = 960px * $width;
+
+            .box{
+              width: $width;
+              height: $pxwidth;
+            }
+            '''), '.box{width:8.3333%;height:80px;}')
+
+
     def test_string_operation(self):
         self.assertEqual(self.process('''
             $text = "Hello {{name}}.";
