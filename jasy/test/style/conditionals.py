@@ -31,8 +31,17 @@ class Tests(unittest.TestCase):
               h1{
                 outline: 1px solid red;
               }
+
+              p{
+                color:red;
+              }
             }
-            '''), 'h1:first-child{font-weight:bold;}')
+
+            $engine = @variable(jasy.engine);
+            h2{
+              content: $engine;
+            }
+            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}h2{content:"webkit";}')
 
 
 
