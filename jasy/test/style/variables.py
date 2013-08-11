@@ -17,6 +17,7 @@ $width = 300px;
 $height = $width * .5;
 $width += 20px;
 $content = "Hello" + "World";
+$negative = -100px;
 
 """
 
@@ -78,6 +79,50 @@ class Tests(unittest.TestCase):
             }
             '''), '.box{width:400px;}')
 
+
+    def test_define_unary(self):
+        self.assertEqual(self.process('''
+            $negative = -100px;
+
+            .box{
+              left: $negative;
+            }
+            '''), '.box{left:-100px;}')
+
+
+    def test_define_color_hex(self):
+        self.assertEqual(self.process('''
+            $hex = #39FC20;
+
+            .box{
+              color: $hex;
+            }
+            '''), '.box{color:#39FC20;}')
+
+
+    def test_define_color_hex3(self):
+        self.assertEqual(self.process('''
+            $hex = #3F2;
+
+            .box{
+              color: $hex;
+            }
+            '''), '.box{color:#3F2;}')
+
+
+    def test_define_multi(self):
+        import jasy.style.parse.Parser as Parser
+
+        def wrapper():
+            self.assertEqual(self.process('''
+                $inner = 20px 10px;
+
+                .box{
+                  padding: $inner;
+                }
+                '''), '.box{padding: 20px 10px}')        
+
+        self.assertRaises(Parser.SyntaxError, wrapper)
 
 
     def test_define_assignop_plus(self):

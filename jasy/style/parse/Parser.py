@@ -53,7 +53,7 @@ def parse(source, fileId=None, line=1):
 
 class SyntaxError(Exception):
     def __init__(self, message, tokenizer):
-        Exception.__init__(self, "Syntax error: %s\n%s:%s" % (message, tokenizer.fileId, tokenizer.line))
+        Exception.__init__(self, "Syntax error: %s\n%s at line %s" % (message, tokenizer.fileId, tokenizer.line))
 
 
 # Used as a status container during tree-building for every def body and the global body
@@ -403,6 +403,9 @@ def Variable(tokenizer, staticContext):
 
             initializerNode = AssignExpression(tokenizer, staticContext)
             node.append(initializerNode, "initializer")        
+
+        if tokenizer.peek() not in ("comma", "semicolon"):
+            raise SyntaxError("Invalid declaration of variable \"%s\"!" % name, tokenizer)
 
         # Ignore trailing comma... handle it like a follow up expression
         if tokenizer.peek("comma"):
