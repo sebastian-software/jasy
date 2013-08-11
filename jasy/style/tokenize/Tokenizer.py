@@ -289,7 +289,7 @@ class Tokenizer(object):
                     break
                 
             self.cursor -= 1
-            token.value = input[token.start:self.cursor]
+            token.value = float(input[token.start:self.cursor])
             
         elif ch == "x" or ch == "X":
             while(True):
@@ -470,8 +470,6 @@ class Tokenizer(object):
 
         if len(identifier) == 1 and (isCommand or isVariable or isHex):
             print("INVALID IDENTIFIER: %s" % identifier)
-
-
 
         if isCommand:
             token.type = "command"
