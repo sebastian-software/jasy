@@ -67,6 +67,26 @@ def __computeOperation(first, second, parent, operator, values):
 
                 return repl
 
+            elif firstUnit == "%" or secondUnit == "%":
+
+                if operator in ("mul", "div"):
+                    repl = Node.Node(type="number")
+
+                    if operator == "mul":
+                        repl.value = first.value * second.value / 100
+                    elif operator == "mul":
+                        repl.value = first.value / second.value / 100
+
+                    if firstUnit == "%":
+                        repl.unit = secondUnit
+                    else:
+                        repl.unit = firstUnit
+
+                    return repl
+
+                else:
+                    raise VariableError("Could not compute mixed percent operations for operators other than \"*\" and \"/\"", node)
+
             else:
                 raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
 
