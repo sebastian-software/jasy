@@ -136,6 +136,16 @@ class Tests(unittest.TestCase):
             '''), '.box{color:#3F2;}')
 
 
+    def test_define_color_rgb(self):
+        self.assertEqual(self.process('''
+            $rgb = rgb(200, 100, 50);
+
+            .box{
+              color: $rgb;
+            }
+            '''), '.box{color:rgb(200,100,50);}')
+
+
     def test_define_multi(self):
         self.assertEqual(self.process('''
             $inner = 20px 10px;

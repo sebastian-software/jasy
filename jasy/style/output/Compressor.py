@@ -11,6 +11,8 @@ high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 
+nativeMethods = ("rgb", "rgba", "hsb", "hsba", "url")
+
 
 class CompressorError(Exception):
     def __init__(self, message, node):
@@ -290,7 +292,13 @@ class Compressor:
         return result
 
 
+    def type_system(self, node):
+        name = node.name
+        if not name in nativeMethods:
+            raise CompressorError("Unsupported native method: %s" % name, node)
 
+        return "%s(%s)" % (name, ",".join([ self.compress(child) for child in node.params ]))
+        
 
 
     #
