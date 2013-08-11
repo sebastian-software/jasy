@@ -45,12 +45,72 @@ class Tests(unittest.TestCase):
                 color:red;
               }
             }
+            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')
 
+
+    def test_if_else_true(self):
+        self.assertEqual(self.process('''
+            h1{
+              font-size: 20px;
+            }
+
+            @if jasy.debug == true{
+              h1{
+                outline: 1px solid red;
+              }
+
+              p{
+                color:red;
+              }
+            }
+            @else
+            {
+              h1{
+                outline: none;
+              }
+
+              p{
+                color: black;
+              }
+            }
+            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')        
+
+
+    def test_if_else_false(self):
+        self.assertEqual(self.process('''
+            h1{
+              font-size: 20px;
+            }
+
+            @if jasy.debug == false{
+              h1{
+                outline: 1px solid red;
+              }
+
+              p{
+                color:red;
+              }
+            }
+            @else
+            {
+              h1{
+                outline: none;
+              }
+
+              p{
+                color: black;
+              }
+            }
+            '''), 'h1{font-size:20px;}h1{outline:none;}p{color:black;}')           
+
+
+    def test_variable(self):
+        self.assertEqual(self.process('''
             $engine = @variable(jasy.engine);
             h2{
               content: $engine;
             }
-            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}h2{content:"gecko";}')
+            '''), 'h2{content:"gecko";}')
 
 
 
