@@ -16,9 +16,18 @@ class ResolverError(Exception):
             Exception.__init__(self, "Resolver Error: %s!" % message)
 
 
+def process(tree, permutation):
+    __recurser(tree, permutation)
 
 
-def transform(value, name=None):
+
+
+
+#
+# Implementation
+#
+
+def __transform(value, name=None):
 
     if value is True:
         node = Node.Node(type="true")
@@ -36,18 +45,12 @@ def transform(value, name=None):
     return node
 
 
-
-def process(tree, permutation):
-    recurser(tree, permutation)
-
-
-
-def recurser(node, permutation, inCondition=False):
+def __recurser(node, permutation, inCondition=False):
 
     # Process children first (resolve logic is inner-out)
     for child in reversed(node):
         if child is not None:
-            recurser(child, permutation, inCondition or getattr(child, "rel", None) == "condition")
+            __recurser(child, permutation, inCondition or getattr(child, "rel", None) == "condition")
 
 
     # Replace identifiers with their actual value
@@ -56,7 +59,7 @@ def recurser(node, permutation, inCondition=False):
             if not permutation.has(node.value):
                 raise ResolverError("Could not find environment variable %s" % node.value, node)
 
-            repl = transform(permutation.get(node.value), node.value)
+            repl = __transform(permutation.get(node.value), node.value)
             node.parent.replace(node, repl)
 
 
@@ -91,22 +94,12 @@ def recurser(node, permutation, inCondition=False):
             if not permutation.has(identifier):
                 raise ResolverError("Could not find environment variable %s" % identifier, identifierNode)
 
-            repl = transform(permutation.get(identifier), identifierNode)
+            repl = __transform(permutation.get(identifier), identifierNode)
             node.parent.replace(node, repl)
 
         else:
             raise ResolverError("Unsupported inline command %s" % node.name, node)
 
-
-
-
-
-
-
-
-#
-# Implementation
-#
 
 def __checkCondition(node):
     """
