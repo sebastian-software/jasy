@@ -40,7 +40,7 @@ class Tests(unittest.TestCase):
         tree = Engine.processTree(tree)
         return Engine.compressTree(tree)
 
-    def test_reference_before(self):
+    def test_before(self):
         self.assertEqual(self.process('''
             h1{
               &:first-child{
@@ -49,7 +49,7 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1:first-child{font-weight:bold;}')
         
-    def test_reference_after(self):
+    def test_after(self):
         self.assertEqual(self.process('''
             h1{
               .cssshadow &{
@@ -58,7 +58,7 @@ class Tests(unittest.TestCase):
             }
             '''), '.cssshadow h1{text-shadow:1px;}')
 
-    def test_reference_between(self):
+    def test_between(self):
         self.assertEqual(self.process('''
             h1{
               header &:first-child{
