@@ -258,6 +258,12 @@ def Statement(tokenizer, staticContext):
         return node
 
 
+    elif tokenType == "increment" or tokenType == "decrement":
+        tokenizer.unget()
+        node = Expression(tokenizer, staticContext)
+        return node
+
+
     else:
         raise SyntaxError("Warning: Unsupport token in Statement(): %s" % tokenType, tokenizer)
 
@@ -491,7 +497,7 @@ def AssignExpression(tokenizer, staticContext):
     if not tokenizer.match("assign"):
         return lhs
 
-    if lhs.type == "object_init" or lhs.type == "array_init" or lhs.type == "identifier" or lhs.type == "dot" or lhs.type == "index" or lhs.type == "call":
+    if lhs.type == "identifier" or lhs.type == "dot" or lhs.type == "call":
         pass
     else:
         raise SyntaxError("Bad left-hand side of assignment", tokenizer)
@@ -608,7 +614,7 @@ def MultiplyExpression(tokenizer, staticContext):
 def UnaryExpression(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
 
-    if tokenType in ["typeof", "not", "plus", "minus"]:
+    if tokenType in ["not", "plus", "minus"]:
         if tokenType == "plus":
             tokenType = "unary_plus"
         elif tokenType == "minus":
