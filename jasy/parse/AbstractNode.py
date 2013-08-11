@@ -117,7 +117,28 @@ class AbstractNode(list):
         kid.parent = self
 
         return list.insert(self, index, kid)
-            
+
+
+    def insertAll(self, index, kids):
+        """Inserts all kids starting with the given index"""
+
+        if index is None:
+            for kid in list(kids):
+                self.append(kid)
+        else:
+            for pos, kid in enumerate(list(kids)):
+                self.insert(index+pos, kid)
+
+
+    def insertAllReplace(self, orig, kids):
+        """Inserts all kids at the same position as the original node (which is removed afterwards)"""
+
+        index = self.index(orig)
+        for pos, kid in enumerate(list(kids)):
+            self.insert(index+pos, kid)       
+
+        self.remove(orig)
+
 
     def append(self, kid, rel=None):
         """Appends the given kid with an optional relation hint"""
@@ -168,7 +189,6 @@ class AbstractNode(list):
             
             # cleanup old kid
             delattr(kid, "rel")
-            
             
         elif hasattr(repl, "rel"):
             # delete old relation on new child
