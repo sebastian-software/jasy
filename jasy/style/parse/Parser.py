@@ -56,6 +56,7 @@ class SyntaxError(Exception):
         Exception.__init__(self, "Syntax error: %s\n%s at line %s" % (message, tokenizer.fileId, tokenizer.line))
 
 
+
 # Used as a status container during tree-building for every def body and the global body
 class StaticContext(object):
     def __init__(self):
@@ -71,10 +72,6 @@ def Sheet(tokenizer, staticContext):
     # change type from "block" to "sheet" for style root
     node.type = "sheet"
     
-    # copy over data from compiler context
-    # node.functions = staticContext.functions
-    # node.variables = staticContext.variables
-
     return node
     
 
