@@ -122,6 +122,15 @@ def __computeOperation(first, second, parent, operator, values):
         return repl
 
 
+    elif first.type == "string" or second.type == "string":
+        repl = Node.Node(type="string")
+
+        if operator == "plus":
+            repl.value = str(first.value) + str(second.value)
+            return repl
+        else:
+            raise VariableError("Unsupported string operation", parent)
+
     else:
         raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
 

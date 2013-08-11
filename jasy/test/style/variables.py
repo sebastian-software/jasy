@@ -223,6 +223,17 @@ class Tests(unittest.TestCase):
             '''), '.box{content:"<p>Hello {{name}}.Welcome to my site!</p>";}')
 
 
+    def test_mixed_operation(self):
+        self.assertEqual(self.process('''
+            $text = "Hello ";
+            $text += 42;
+
+            .box{
+              content: $text;
+            }
+            '''), '.box{content:"Hello 42";}')
+
+
     def test_value_operator_math(self):
         self.assertEqual(self.process('''
             $base = 30px;
