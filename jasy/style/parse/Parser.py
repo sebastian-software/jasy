@@ -22,14 +22,14 @@ def parseExpression(source, fileId=None, line=1):
         source = source + ";"
     
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
-    staticContext = StaticContext(False)
+    staticContext = StaticContext()
     
     return Expression(tokenizer, staticContext)
 
 
 def parse(source, fileId=None, line=1):    
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
-    staticContext = StaticContext(False)
+    staticContext = StaticContext()
     node = Sheet(tokenizer, staticContext)
     
     # store fileId on top-level node
@@ -58,19 +58,10 @@ class SyntaxError(Exception):
 
 # Used as a status container during tree-building for every def body and the global body
 class StaticContext(object):
-    # inRule is used to check if a return stm appears in a valid context.
-    def __init__(self, inRule):
-        # Whether this is inside a rule, mostly True, only for top-level scope it's False
-        self.inRule = inRule
-        
+    def __init__(self):
         self.blockId = 0
         self.statementStack = []
-                
-        # Status
-        self.bracketLevel = 0
-        self.curlyLevel = 0
-        self.parenLevel = 0
-        self.hookLevel = 0
+
         
 
 def Sheet(tokenizer, staticContext):
