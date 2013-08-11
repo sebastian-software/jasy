@@ -3,6 +3,8 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import copy
+
 import jasy.core.Console as Console 
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
@@ -41,14 +43,32 @@ def getTree(text, fileId=None):
     return Parser.parse(text, fileId)
 
 
-def processTree(tree, fileId=None):
+
+def permutateTree(tree, permutation=None):
+    """
+    Returns an optimized tree with permutations applied
+    """
+
+    if permutation:
+
+        # Work on a copy
+        tree = copy.deepcopy(tree)
+
+        Resolver.process(tree, permutation)
+        ScopeScanner.scan(tree)
+
+        return tree
+
+    else:
+
+        return tree
+
+
+
+def processTree(tree):
     """
     Applies all relevant modifications to the tree to allow compression to CSS
     """
-
-    # PHASE 1
-    # Resolving conditionals
-    Resolver.process(tree)
 
     # PHASE 2
     # Trivial cleanups

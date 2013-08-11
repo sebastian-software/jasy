@@ -37,28 +37,26 @@ def transform(value, name=None):
 
 
 
-def process(tree):
-    values = {
-        "jasy.engine" : "webkit",
-        "jasy.debug" : True
-    }
-
-    recurser(tree, values)
+def process(tree, permutation):
+    recurser(tree, permutation)
 
 
 
-def recurser(node, values, inCondition=False):
+def recurser(node, permutation, inCondition=False):
 
     # Process children first (resolve logic is inner-out)
     for child in reversed(node):
         if child is not None:
-            recurser(child, values, inCondition or getattr(child, "rel", None) == "condition")
+            recurser(child, permutation, inCondition or getattr(child, "rel", None) == "condition")
 
 
     # Replace identifiers with their actual value
     if inCondition:
         if node.type == "identifier":
-            repl = transform(values[node.value], node.value)
+            if not permutation.has(node.value):
+                raise ResolverError("Could not find environment variable %s" % node.value, node)
+
+            repl = transform(permutation.get(node.value), node.value)
             node.parent.replace(node, repl)
 
 
@@ -90,11 +88,14 @@ def recurser(node, values, inCondition=False):
                 raise ResolverError("Invalid parameter to @variable call: %s" % identifierNode.type, identifierNode)
 
             identifier = identifierNode.value
-            if not identifier in values:
-                raise ResolverError("Could not find environment variable %s" % identifier)
+            if not permutation.has(identifier):
+                raise ResolverError("Could not find environment variable %s" % identifier, identifierNode)
 
-            repl = transform(values[identifier], identifierNode)
+            repl = transform(permutation.get(identifier), identifierNode)
             node.parent.replace(node, repl)
+
+        else:
+            raise ResolverError("Unsupported inline command %s" % node.name, node)
 
 
 
