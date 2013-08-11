@@ -14,6 +14,9 @@ import jasy.style.Engine as Engine
 SUPPORTS
 
 $width = 300px;
+$height = $width * .5;
+$width += 20px;
+$content = "Hello" + "World";
 
 """
 
@@ -99,6 +102,18 @@ class Tests(unittest.TestCase):
               width: $width;
             }
             '''), '.box{width:240px;}')
+
+
+    def test_math_operation(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $width = $width * 1.3;
+            $width *= .5 + .213;
+
+            .box{
+              width: $width;
+            }
+            '''), '.box{width:278.07px;}')
 
 
     def test_string_operation(self):

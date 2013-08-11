@@ -376,7 +376,7 @@ class Tokenizer(object):
             self.cursor -= 1
 
             token.type = "number"
-            token.value = input[token.start:self.cursor]
+            token.value = float(input[token.start:self.cursor])
 
             unit = self.lexUnit()
             if unit:
