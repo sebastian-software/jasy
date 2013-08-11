@@ -161,6 +161,20 @@ def __computeRecurser(node, scope, values):
         else:
             raise VariableError("Got no valid return value to replace operation", node)
 
+
+    # Not operator support
+    elif node.type == "not":
+        child = node[0]
+        if child.type == "true":
+            child.type = "false"
+        elif child.type == "false":
+            child.type = "true"
+        else:
+            raise VariableError("Could not apply not operator to non boolean variable", node)
+
+        node.parent.replace(node, child)
+
+
     # Update values of variable
     elif node.type == "declaration" and hasattr(node, "initializer"):
         Console.debug("Found declaration of %s at line %s", node.name, node.line)

@@ -234,6 +234,17 @@ class Tests(unittest.TestCase):
             '''), '.box{content:"Hello 42";}')
 
 
+    def test_nonequal(self):
+        self.assertEqual(self.process('''
+            $freeuser = true;
+            $enabled = !$freeuser;
+
+            .box{
+              content: $enabled;
+            }
+            '''), '.box{content:false;}')
+
+
     def test_value_operator_math(self):
         self.assertEqual(self.process('''
             $base = 30px;
