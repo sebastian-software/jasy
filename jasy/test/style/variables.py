@@ -120,7 +120,7 @@ class Tests(unittest.TestCase):
             '''), '.box{padding:20px 10px;}')
 
 
-    def test_define_multi_plus_operation_declaration(self):
+    def test_define_multi_plus_operation_decl(self):
         self.assertEqual(self.process('''
             $inner = 20px * 3 10px * 2;
 
@@ -128,6 +128,37 @@ class Tests(unittest.TestCase):
               padding: $inner;
             }
             '''), '.box{padding:60px 20px;}')
+
+
+    def test_define_multi_mutation_end(self):
+        self.assertEqual(self.process('''
+            $inner = 20px 10px;
+
+            .box{
+              padding: $inner * 2;
+            }
+            '''), '.box{padding:40px 20px;}')
+
+
+    def test_define_multi_mutation_begin(self):
+        self.assertEqual(self.process('''
+            $inner = 20px 10px;
+
+            .box{
+              padding: .5 * $inner;
+            }
+            '''), '.box{padding:10px 5px;}')
+
+
+    def test_define_multi_mutation_plex(self):
+        self.assertEqual(self.process('''
+            $inner = 20px 10px;
+            $outer = 2 3;
+
+            .box{
+              padding: $inner * $outer;
+            }
+            '''), '.box{padding:40px 30px;}')
 
 
     def test_define_assignop_plus(self):

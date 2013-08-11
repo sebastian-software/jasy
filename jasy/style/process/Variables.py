@@ -38,7 +38,7 @@ def __computeOperation(first, second, parent, operator, values):
 
     # Compare operation types
     if first.type == second.type:
-        # Console.debug("Same type: %s", first.type)
+        # print("Same type: %s" % first.type)
 
         if first.type == "number":
             firstUnit = getattr(first, "unit", None)
@@ -79,11 +79,51 @@ def __computeOperation(first, second, parent, operator, values):
             else:
                 raise VariableError("Unsupported string operation", parent)
 
+        elif first.type == "list":
+            if len(first) == len(second):
+                repl = Node.Node(type="list")
+                for pos, child in enumerate(first):
+                    childRepl = __computeOperation(child, second[pos], parent, operator, values)
+                    if childRepl is None:
+                        raise VariableError("Got no valid return value to replace operation", child)
+
+                    repl.append(childRepl)
+
+                return repl                
+
+            else:
+                raise VariableError("For list operations both lists have to have the same length!", parent)
+
         else:
             raise VariableError("Unsupported operation", parent)
 
+
+    elif first.type == "list" and second.type != "list":
+        repl = Node.Node(type="list")
+        for child in first:
+            childRepl = __computeOperation(child, second, parent, operator, values)
+            if childRepl is None:
+                raise VariableError("Got no valid return value to replace operation", child)
+
+            repl.append(childRepl)
+
+        return repl
+ 
+
+    elif first.type != "list" and second.type == "list":
+        repl = Node.Node(type="list")
+        for child in second:
+            childRepl = __computeOperation(first, child, parent, operator, values)
+            if childRepl is None:
+                raise VariableError("Got no valid return value to replace operation", child)
+
+            repl.append(childRepl)
+
+        return repl
+
+
     else:
-        Console.debug("TODO: Different type: %s vs %s", first.type, second.type)
+        raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
 
 
 
@@ -110,7 +150,7 @@ def __computeRecurser(node, scope, values):
         if repl:
             node.parent.replace(node, repl)
         else:
-            raise VariableError("Got no valid return value to replace operation.", node)
+            raise VariableError("Got no valid return value to replace operation", node)
 
     # Update values of variable
     elif node.type == "declaration" and hasattr(node, "initializer"):
@@ -125,7 +165,7 @@ def __computeRecurser(node, scope, values):
             if repl:
                 values[node.name] = repl
             else:
-                raise VariableError("Got no valid return value to replace operation.", node)
+                raise VariableError("Got no valid return value to replace operation", node)
 
         else:        
             # Update internal variable mapping
