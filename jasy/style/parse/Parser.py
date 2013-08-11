@@ -39,10 +39,10 @@ def parse(source, fileId=None, line=1):
     # if there is something non-attached by an inner node it is attached to
     # the top level node, which is not correct, but might be better than
     # just ignoring the comment after all.
-    # if len(node) > 0:
-    #     builder.COMMENTS_add(node[-1], None, tokenizer.getComments())
-    # else:
-    #     builder.COMMENTS_add(node, None, tokenizer.getComments())
+    if len(node) > 0:
+        addComments(node[-1], None, tokenizer.getComments())
+    else:
+        addComments(node, None, tokenizer.getComments())
     
     if not tokenizer.done():
         raise SyntaxError("Unexpected end of file", tokenizer)
@@ -481,7 +481,6 @@ def Expression(tokenizer, staticContext):
     return node
 
 
-
 def AssignExpression(tokenizer, staticContext):
     comments = tokenizer.getComments()
     node = Node.Node(tokenizer, "assign")
@@ -501,8 +500,6 @@ def AssignExpression(tokenizer, staticContext):
     node.append(AssignExpression(tokenizer, staticContext))
 
     return node
-
-
 
 
 def OrExpression(tokenizer, staticContext):
@@ -668,7 +665,6 @@ def ArgumentList(tokenizer, staticContext):
     tokenizer.mustMatch("right_paren")
 
     return node
-
 
 
 def PrimaryExpression(tokenizer, staticContext):

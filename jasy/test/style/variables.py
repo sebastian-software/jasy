@@ -57,6 +57,18 @@ class Tests(unittest.TestCase):
             '''), '.box{width:300px;height:200px;}')
 
 
+    def test_value_simple_namespaced(self):
+        self.assertEqual(self.process('''
+            $box.width = 300px;
+            $box.height = 200px;
+
+            .box{
+              width: $box.width;
+              height: $box.height;
+            }
+            '''), '.box{width:300px;height:200px;}')
+
+
     def test_value_simple_multi(self):
         self.assertEqual(self.process('''
             $width = 300px, $height = 200px;
