@@ -18,8 +18,8 @@ def compute(tree):
     Console.outdent()
 
 
-def __computeOperation(node, values):
-    Console.debug("Computing operation: %s", node.type)
+def __processOperator(node, values):
+    Console.debug("Process operator: %s", node.type)
 
     # Resolve first child of operation
     first = node[0]
@@ -30,6 +30,11 @@ def __computeOperation(node, values):
     second = node[1]
     if second.type == "variable":
         second = values[second.name]
+
+    return __computeOperation(first, second, node, node.type, values)
+
+
+def __computeOperation(first, second, parent, operator, values):
 
     # Compare operation types
     if first.type == second.type:
@@ -47,34 +52,34 @@ def __computeOperation(node, values):
                 elif secondUnit is not None:
                     repl.unit = secondUnit
 
-                if node.type == "plus":
+                if operator == "plus":
                     repl.value = first.value + second.value
-                elif node.type == "minus":
+                elif operator == "minus":
                     repl.value = first.value - second.value
-                elif node.type == "mul":
+                elif operator == "mul":
                     repl.value = first.value * second.value
-                elif node.type == "div":
+                elif operator == "div":
                     repl.value = first.value / second.value
-                elif node.type == "mod":
+                elif operator == "mod":
                     repl.value = first.value % second.value
                 else:
-                    raise VariableError("Unsupported number operation", node)
+                    raise VariableError("Unsupported number operation", parent)
 
                 return repl
 
             else:
-                raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), node)
+                raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
 
         elif first.type == "string":
             repl = Node.Node(type="string")
 
-            if node.type == "plus":
+            if operator == "plus":
                 repl.value = first.value + second.value
             else:
-                raise VariableError("Unsupported string operation", node)
+                raise VariableError("Unsupported string operation", parent)
 
         else:
-            raise VariableError("Unsupported operation", node)
+            raise VariableError("Unsupported operation", parent)
 
     else:
         Console.debug("TODO: Different type: %s vs %s", first.type, second.type)
@@ -100,18 +105,30 @@ def __computeRecurser(node, scope, values):
 
     # Support typical operators
     if node.type in ("plus", "minus", "mul", "div", "mod"):
-        repl = __computeOperation(node, values)
+        repl = __processOperator(node, values)
         if repl:
             node.parent.replace(node, repl)
         else:
-            Console.error("Got no valid return value to replace operation at line: %s", node.line)
+            raise VariableError("Got no valid return value to replace operation.", node)
 
     # Update values of variable
     elif node.type == "declaration" and hasattr(node, "initializer"):
         Console.debug("Found declaration of %s at line %s", node.name, node.line)
-        
-        # Update internal variable mapping
-        values[node.name] = node.initializer
+
+        # Modify value instead of replace when assign operator is set
+        if node.assignOp:
+            if not node.name in values:
+                raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % node.name, node)
+
+            repl = __computeOperation(values[node.name], node.initializer, node, node.assignOp, values)
+            if repl:
+                values[node.name] = repl
+            else:
+                raise VariableError("Got no valid return value to replace operation.", node)
+
+        else:        
+            # Update internal variable mapping
+            values[node.name] = node.initializer
 
         # Remove declaration node from tree
         node.parent.remove(node)

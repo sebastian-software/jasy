@@ -397,8 +397,9 @@ def Variable(tokenizer, staticContext):
         node.name = name
 
         if tokenizer.match("assign"):
-            if tokenizer.token.assignOp:
-                raise SyntaxError("Invalid variable initialization", tokenizer)
+            # Support declarations with assign operations
+            # Declaration and assignment are effectively the same
+            node.assignOp = tokenizer.token.assignOp
 
             initializerNode = AssignExpression(tokenizer, staticContext)
             node.append(initializerNode, "initializer")        

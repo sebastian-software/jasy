@@ -64,15 +64,28 @@ class Tests(unittest.TestCase):
             '''), '.box{padding:10px;width:280px;height:180px;}')
 
 
+
     def test_define_override(self):
         self.assertEqual(self.process('''
             $width = 300px;
-            $width += 20;
+            $width = 400px;
 
             .box{
               width: $width;
             }
-            '''), '')
+            '''), '.box{width:400px;}')
+
+
+
+    def test_define_override_combined(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $width += 53;
+
+            .box{
+              width: $width;
+            }
+            '''), '.box{width:353px;}')
 
 
 
