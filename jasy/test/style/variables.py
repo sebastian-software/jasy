@@ -26,11 +26,85 @@ class Tests(unittest.TestCase):
         tree = Engine.processTree(tree)
         return Engine.compressTree(tree)
 
-    def test_reference_before(self):
+    def test_unused(self):
         self.assertEqual(self.process('''
             $width = 300px;
-            '''), 'x')
+            '''), '')
+
+    def test_unused_operation(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $height = 200px;
+            $size = $width * $height;
+            '''), '')
         
+    def test_value_simple(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $height = 200px;
+
+            .box{
+              width: $width;
+              height: $height;
+            }
+            '''), '.box{width:300px;height:200px;}')
+
+
+    def test_value_simple_math(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $height = 200px;
+
+            .box{
+              $padding = 10px;
+              padding: $padding;
+              width: $width - $padding * 2;
+              height: $height - $padding * 2;
+            }
+            '''), '.box{padding:10px;width:280px;height:180px;}')
+
+
+    def test_define_override(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+            $width += 20;
+
+            .box{
+              width: $width;
+            }
+            '''), '')
+
+
+
+    def test_value_operator_math(self):
+        self.assertEqual(self.process('''
+            $base = 30px;
+            $larger = $base * 1.3;
+            $smaller = $base * 0.6;
+            $reallysmall = $smaller - 10;
+
+            // snap
+            $larger = $larger - $larger % 5;
+
+            h1{
+              font-size: $larger;
+            }
+
+            p{
+              font-size: $base;
+            }
+
+            small{
+              font-size: $smaller;
+            }
+
+            footer{
+              font-size: $reallysmall;
+            }
+            '''), 'h1{font-size:35px;}p{font-size:30px;}small{font-size:18px;}footer{font-size:8px;}')
+
+
+
 
 
 
