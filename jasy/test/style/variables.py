@@ -110,7 +110,7 @@ class Tests(unittest.TestCase):
             .box{
               content: $text;
             }
-            '''), '.box{content:"<p>Hello {{name}.Welcome to my site!</p>";}')
+            '''), '.box{content:"<p>Hello {{name}}.Welcome to my site!</p>";}')
 
 
     def test_value_operator_math(self):
