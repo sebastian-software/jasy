@@ -188,6 +188,10 @@ class Compressor:
     def type_number(self, node):
         value = node.value
 
+        # Apply basic rounding to reduce size overhead of floating point
+        if type(value) is float and not hasattr(node, "precision"):
+            value = round(value, 4)
+
         # Special handling for protected float/exponential
         if type(value) == str:
             # Convert zero-prefix
