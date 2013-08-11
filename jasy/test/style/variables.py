@@ -15,9 +15,12 @@ SUPPORTS
 
 $width = 300px;
 $height = $width * .5;
+$width = 300px, $height = 200px;
 $width += 20px;
 $content = "Hello" + "World";
 $negative = -100px;
+$list = 20px 30px
+$listoper = $list * 20
 
 """
 
@@ -52,6 +55,17 @@ class Tests(unittest.TestCase):
               height: $height;
             }
             '''), '.box{width:300px;height:200px;}')
+
+
+    def test_value_simple_multi(self):
+        self.assertEqual(self.process('''
+            $width = 300px, $height = 200px;
+
+            .box{
+              width: $width;
+              height: $height;
+            }
+            '''), '.box{width:300px;height:200px;}')        
 
 
     def test_value_simple_math(self):
