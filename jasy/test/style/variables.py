@@ -77,7 +77,7 @@ class Tests(unittest.TestCase):
 
 
 
-    def test_define_override_combined(self):
+    def test_define_assignop_plus(self):
         self.assertEqual(self.process('''
             $width = 300px;
             $width += 53;
@@ -87,6 +87,30 @@ class Tests(unittest.TestCase):
             }
             '''), '.box{width:353px;}')
 
+
+    def test_define_assignop_multi(self):
+        self.assertEqual(self.process('''
+            $width = 20px;
+            $columns = 12;
+
+            $width *= $columns;
+
+            .box{
+              width: $width;
+            }
+            '''), '.box{width:240px;}')
+
+
+    def test_string_operation(self):
+        self.assertEqual(self.process('''
+            $text = "Hello {{name}}.";
+            $text += "Welcome to my site!";
+            $text = "<p>" + $text + "</p>";
+
+            .box{
+              content: $text;
+            }
+            '''), '.box{content:"<p>Hello {{name}.Welcome to my site!</p>";}')
 
 
     def test_value_operator_math(self):

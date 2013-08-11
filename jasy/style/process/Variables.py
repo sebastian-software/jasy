@@ -75,6 +75,7 @@ def __computeOperation(first, second, parent, operator, values):
 
             if operator == "plus":
                 repl.value = first.value + second.value
+                return repl
             else:
                 raise VariableError("Unsupported string operation", parent)
 
