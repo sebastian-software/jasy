@@ -228,7 +228,8 @@ def __patchVarStatements(node, firstVarStatement):
         # Recursion into children
         # Create a cast to list() to keep loop stable during modification
         for child in list(node):
-            __patchVarStatements(child, firstVarStatement)
+            if child is not None:
+                __patchVarStatements(child, firstVarStatement)
             
             
 def __rebuildAsAssignment(node, firstVarStatement):
