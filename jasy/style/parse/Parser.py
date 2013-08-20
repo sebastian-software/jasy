@@ -158,6 +158,9 @@ def Statement(tokenizer, staticContext):
             node.append(Expression(tokenizer, staticContext))
             return node
 
+        elif tokenValue == "font-face":
+            return Selector(tokenizer, staticContext)
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
@@ -294,7 +297,7 @@ def Selector(tokenizer, staticContext):
     while tokenType != "left_curly":
         token = tokenizer.token
 
-        if tokenType in ("identifier", "colon", "dot", "ampersand"):
+        if tokenType in ("identifier", "colon", "dot", "ampersand", "command"):
             if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
                 selector += " "     
 
@@ -308,6 +311,8 @@ def Selector(tokenizer, staticContext):
                 selector += "."
             elif tokenType == "ampersand":
                 selector += "&"
+            elif tokenType == "command":
+                selector += "@%s" % token.value
 
         else:
 

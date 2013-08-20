@@ -434,9 +434,12 @@ class Tokenizer(object):
             token.assignOp = operatorNames[op]
             op += "="
             
-        else:
+        elif op in operatorNames:
             token.type = operatorNames[op]
             token.assignOp = None
+
+        else:
+            raise ParseError("Unknown operator: %s!" % op, self.fileId, self.line)
 
 
     def lexIdent(self, ch):
