@@ -161,6 +161,9 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "font-face":
             return Selector(tokenizer, staticContext)
 
+        elif tokenValue == "keyframes":
+            return KeyFrames(tokenizer, staticContext)
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
@@ -273,6 +276,44 @@ def Property(tokenizer, staticContext):
         childNode = Expression(tokenizer, staticContext)
 
         node.append(childNode)    
+
+    return node
+
+
+def KeyFrames(tokenizer, staticContext):
+    """
+    Supports e.g.:
+
+    @keyframes fade{
+      0%{
+        background-color: #000000;
+      }
+
+      100%{
+        background-color: #FFFFFF;
+      }
+    }
+    """
+
+    node = Node.Node(tokenizer, "keyframes")
+    
+    # Use param as name on keyframes
+    tokenizer.get()
+    node.name = tokenizer.token.value
+
+    tokenizer.mustMatch("left_curly")
+
+    while tokenizer.get() != "right_curly":
+        token = tokenizer.token
+
+        # Parse frame as block
+        frameNode = Node.Node(tokenizer, "frame")
+        frameNode.value = "%s%s" % (token.value, getattr(token, "unit", ""))
+        node.append(frameNode)
+
+        # Next process content of selector
+        blockNode = Block(tokenizer, staticContext)
+        frameNode.append(blockNode, "rules")
 
     return node
 
