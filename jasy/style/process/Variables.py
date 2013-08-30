@@ -235,11 +235,11 @@ def __computeRecurser(node, scope, values):
     elif node.type == "variable":
         name = node.name
         if not name in values:
-            raise VariableError("Could not resolve variable %s" % name, node)
+            raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
 
         value = values[name]
         if value is None:
-            raise VariableError("Could not resolve variable %s" % name, node)
+            raise VariableError("Could not resolve variable %s! Value is none!" % name, node)
 
         Console.debug("Resolving variable: %s at line %s with %s from %s", name, node.line, values[name].type, values[name].line)
         node.parent.replace(node, copy.deepcopy(values[name]))
@@ -250,11 +250,12 @@ def __computeRecurser(node, scope, values):
             name = matchObj.group(1)
 
             if not name in values:
-                raise VariableError("Could not resolve variable %s" % name, node)
+                print("OTHER VALUES: %s" % values)
+                raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
 
             value = values[name]
             if value is None:
-                raise VariableError("Could not resolve variable %s" % name, node)          
+                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)          
 
             if value.type == "identifier":
                 return value.value
