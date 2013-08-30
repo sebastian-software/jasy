@@ -449,6 +449,12 @@ class Tokenizer(object):
         isCommand = input[token.start] == "@"
         isHex = input[token.start] == "#"
 
+        # Support variable blocks e.g. ${foo}
+        inVariableBlock = False
+        if input[self.cursor] == "{":
+            inVariableBlock = True
+            self.cursor += 1
+
         try:
             while True:
                 ch = input[self.cursor]
@@ -460,14 +466,22 @@ class Tokenizer(object):
         except IndexError:
             self.cursor += 1
             pass
-        
+
         # Put the non-word character back.
         self.cursor -= 1
 
-        identifier = input[token.start:self.cursor]
+        # Support variable blocks e.g. ${foo}
+        if inVariableBlock:
+            if input[self.cursor] != "}":
+                raise ParseError("Invalid variable block identifier: %s" % identifier, self.fileId, self.line)
+        
+            identifier = input[token.start+1:self.cursor]
+            self.cursor += 1
+        else:
+            identifier = input[token.start:self.cursor]
 
         if len(identifier) == 1 and (isCommand or isVariable or isHex):
-            print("INVALID IDENTIFIER: %s" % identifier)
+            raise ParseError("Invalid identifier: %s" % identifier, self.fileId, self.line)
 
         if isCommand:
             token.type = "command"
@@ -528,6 +542,9 @@ class Tokenizer(object):
                 self.lexIdent(ch)
             # For hex value still lex as identifier when next character is a number
             elif ch == "#" and (nextCh >= "0" and nextCh <= "9"):
+                self.lexIdent(ch)
+            # Variable in boundary
+            elif ch == "$" and nextCh == "{":
                 self.lexIdent(ch)
             # Otherwise lex as a trivial operator
             else:
