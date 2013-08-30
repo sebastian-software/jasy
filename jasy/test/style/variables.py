@@ -375,7 +375,17 @@ class Tests(unittest.TestCase):
               float: $align;
               display: inline-block;
             }
-            '''), '.text-left{text-align:left;}.box-left{float:left;display:inline-block;}')        
+            '''), '.text-left{text-align:left;}.box-left{float:left;display:inline-block;}')
+
+
+    def test_variable_selector_complex(self):
+        self.assertEqual(self.process('''
+            $cell = 4;
+
+            .box:nth-child(${cell}n){
+              color: red $cell;
+            }
+            '''), '')           
 
 
 
