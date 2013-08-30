@@ -350,6 +350,27 @@ class Tests(unittest.TestCase):
             '''), '.box{width:400px;}')
 
 
+
+    def test_variable_usedonly_in_selector(self):
+        self.assertEqual(self.process('''
+            $align = left;
+
+            .box-$align{
+              display: inline-block;
+            }
+            '''), '')    
+
+
+    def test_variable_usedonly_in_property(self):
+        self.assertEqual(self.process('''
+            $edge = left;
+
+            .box{
+              margin-$edge: 20px;
+            }
+            '''), '')    
+
+
     def test_variable_property(self):
         self.assertEqual(self.process('''
             $align = left;
@@ -383,10 +404,9 @@ class Tests(unittest.TestCase):
             $cell = 4;
 
             .box:nth-child(${cell}n){
-              color: red $cell;
+              color: red;
             }
             '''), '')           
-
 
 
 if __name__ == '__main__':
