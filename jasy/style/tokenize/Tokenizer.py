@@ -24,6 +24,7 @@ operatorNames = {
     '!='  : 'ne', 
     '!'   : 'not', 
     '=='  : 'eq', 
+    '?='  : 'defset',
 
     '+'   : 'plus', 
     '*'   : 'mul', 
@@ -41,6 +42,7 @@ operatorNames = {
     '&'   : 'ampersand',
     '~'   : 'tilde',  
     '@'   : 'at',
+    '?'   : 'questionmark',
 
     '&&'  : 'and', 
     '||'  : 'or', 
@@ -55,11 +57,7 @@ operatorNames = {
 
 
 # Assignment operators
-assignOperators = ["+", "-", "*", "/", "%"]
-
-# Match hex colors
-reHex = re.compile("^#([A-Fa-f0-9]{3}){1,2}$")
-
+assignOperators = ["+", "-", "*", "/", "%", "?"]
 
 
 #
