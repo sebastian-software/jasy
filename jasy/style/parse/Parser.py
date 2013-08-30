@@ -408,6 +408,8 @@ def Selector(tokenizer, staticContext):
                 selector += ascii_encoder.encode(token.value)
             elif tokenType == "number":
                 selector += "%s%s" % (token.value, getattr(token, "unit", ""))
+            elif tokenType == "variable":
+                selector += "${%s}" % token.value
             else:
                 raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
 

@@ -350,7 +350,6 @@ class Tests(unittest.TestCase):
             '''), '.box{width:400px;}')
 
 
-
     def test_variable_property(self):
         self.assertEqual(self.process('''
             $align = left;
@@ -362,6 +361,17 @@ class Tests(unittest.TestCase):
               border-color-$align: 1px solid red;            
             }
             '''), '.box{float:left;margin-left:10px;left:20px;border-color-left:1px solid red;}')
+
+
+    def test_variable_selector(self):
+        self.assertEqual(self.process('''
+            $align = left;
+
+            .box-$align{
+              float: $align;
+              display: inline-block;
+            }
+            '''), '.box{}')        
 
 
 
