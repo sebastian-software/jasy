@@ -1,7 +1,14 @@
+#
+# Jasy - Web Tooling Framework
+# Copyright 2013 Sebastian Werner
+#
 
-import copy
+import copy, re
 import jasy.style.parse.Node as Node
 import jasy.core.Console as Console
+
+
+RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
 
 class VariableError(Exception):
@@ -223,6 +230,7 @@ def __computeRecurser(node, scope, values):
         # Remove declaration node from tree
         node.parent.remove(node)
 
+
     # Replace variable with actual value
     elif node.type == "variable":
         name = node.name
@@ -235,5 +243,29 @@ def __computeRecurser(node, scope, values):
 
         Console.debug("Resolving variable: %s at line %s with %s from %s", name, node.line, values[name].type, values[name].line)
         node.parent.replace(node, copy.deepcopy(values[name]))
+
+
+    elif node.type == "property" and getattr(node, "dynamic", False):
+        def replacer(matchObj):
+            name = matchObj.group(1)
+
+            if not name in values:
+                raise VariableError("Could not resolve variable %s" % name, node)
+
+            value = values[name]
+            if value is None:
+                raise VariableError("Could not resolve variable %s" % name, node)          
+
+            if value.type == "identifier":
+                return value.value
+            elif value.type == "string":
+                return value.value  
+            elif value.type == "number":
+                return "%s%s" % (value.value, getattr(value, "unit", ""))
+            else:
+                raise VariableError("Could not replace property inline variable with value of type: %s" % value.type, node)
+
+        node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
+
 
 
