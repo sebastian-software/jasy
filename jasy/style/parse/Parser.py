@@ -273,15 +273,13 @@ def Property(tokenizer, staticContext):
     # Start from the beginning to support mixed identifiers/variables easily
     tokenizer.unget()
 
-    # node.name = tokenizer.token.value
-
     while tokenizer.match("variable") or tokenizer.match("identifier"):
         token = tokenizer.token
         if token.type == "variable":
             node.name += "${%s}" % token.value
+            node.dynamic = True
         else:
             node.name += token.value
-
 
     if not tokenizer.mustMatch("colon"):
         raise SyntaxError("Invalid property definition", tokenizer)
