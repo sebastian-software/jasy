@@ -268,6 +268,14 @@ def Property(tokenizer, staticContext):
     node = Node.Node(tokenizer, "property")
     node.name = tokenizer.token.value
 
+    while tokenizer.match("variable") or tokenizer.match("identifier"):
+        token = tokenizer.token
+        if token.type == "variable":
+            node.name += "${%s}" % token.value
+        else:
+            node.name += token.name
+
+
     if not tokenizer.mustMatch("colon"):
         raise SyntaxError("Invalid property definition", tokenizer)
 
