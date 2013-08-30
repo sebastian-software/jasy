@@ -367,11 +367,15 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $align = left;
 
+            .text-${align}{
+              text-align: ${align};
+            }
+
             .box-$align{
               float: $align;
               display: inline-block;
             }
-            '''), '.box{}')        
+            '''), '.text-left{text-align:left;}.box-left{float:left;display:inline-block;}')        
 
 
 

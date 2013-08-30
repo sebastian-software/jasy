@@ -245,7 +245,7 @@ def __computeRecurser(node, scope, values):
         node.parent.replace(node, copy.deepcopy(values[name]))
 
 
-    elif node.type == "property" and getattr(node, "dynamic", False):
+    elif node.type in ("property", "selector") and getattr(node, "dynamic", False):
         def replacer(matchObj):
             name = matchObj.group(1)
 
@@ -265,7 +265,14 @@ def __computeRecurser(node, scope, values):
             else:
                 raise VariableError("Could not replace property inline variable with value of type: %s" % value.type, node)
 
-        node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
+        # Fix all selectors
+        if node.type == "selector":
+            selectors = node.name
+            for pos, selector in enumerate(selectors):
+                selectors[pos] = RE_INLINE_VARIABLE.sub(replacer, selector)
+
+        else:
+            node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
 
 
 
