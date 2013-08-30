@@ -62,13 +62,18 @@ def __scanNode(node, data):
             elif node.parent.type == "assign" and node.parent[0] == node:
                 data.modified.add(node.name)
 
-            # Support for package-like object access
-            if node.parent.type == "dot":
-                package = __combinePackage(node)
-                if package in data.packages:
-                    data.packages[package] += 1
-                else:
-                    data.packages[package] = 1
+
+    elif node.type == "selector" and getattr(node, "dynamic", False):
+        pass
+        # TODO
+
+
+
+    elif node.type == "property" and getattr(node, "dynamic", False):
+        pass
+        # TODO
+
+
                 
     if node.type == "block":
         innerVariables = __scanScope(node)
