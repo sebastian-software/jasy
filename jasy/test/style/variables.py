@@ -361,7 +361,7 @@ class Tests(unittest.TestCase):
               $align: 20px;
               border-color-$align: 1px solid red;            
             }
-            '''), '.box{}')
+            '''), '.box{float:left;margin-left:10px;left:20px;border-color-left:1px solid red;}')
 
 
 
