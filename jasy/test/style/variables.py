@@ -329,7 +329,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:35px;}p{font-size:30px;}small{font-size:18px;}footer{font-size:8px;}')
 
 
-    def test_value_default_available(self):
+    def test_default_available(self):
         self.assertEqual(self.process('''
             $width = 300px;
             $width ?= 400px;
@@ -340,7 +340,7 @@ class Tests(unittest.TestCase):
             '''), '.box{width:300px;}')
 
 
-    def test_value_default_new(self):
+    def test_default_new(self):
         self.assertEqual(self.process('''
             $width ?= 400px;
 
@@ -348,6 +348,20 @@ class Tests(unittest.TestCase):
               width: $width;
             }
             '''), '.box{width:400px;}')
+
+
+
+    def test_variable_property(self):
+        self.assertEqual(self.process('''
+            $align = left;
+
+            .box{
+              float: $align;
+              margin-${align}: 10px;
+              $align: 20px;
+              border-color-$align: 1px solid red;            
+            }
+            '''), '.box{}')
 
 
 

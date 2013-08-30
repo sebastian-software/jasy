@@ -115,12 +115,8 @@ def Statement(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
     tokenValue = getattr(tokenizer.token, "value", "")
     
-    if tokenType == "variable":
-        node = Variable(tokenizer, staticContext)
-        return node
 
-
-    elif tokenType == "left_curly":
+    if tokenType == "left_curly":
         node = Statements(tokenizer, staticContext)
         tokenizer.mustMatch("right_curly")
         return node
@@ -199,6 +195,12 @@ def Statement(tokenizer, staticContext):
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
+    # Declaration / Assignment
+    elif tokenType == "variable":
+        node = Variable(tokenizer, staticContext)
+        return node
+
+
     # Vendor prefixed property
     elif tokenType == "minus":
         node = Property(tokenizer, staticContext)
@@ -266,14 +268,19 @@ def Property(tokenizer, staticContext):
     """
 
     node = Node.Node(tokenizer, "property")
-    node.name = tokenizer.token.value
+    node.name = ""
+
+    # Start from the beginning to support mixed identifiers/variables easily
+    tokenizer.unget()
+
+    # node.name = tokenizer.token.value
 
     while tokenizer.match("variable") or tokenizer.match("identifier"):
         token = tokenizer.token
         if token.type == "variable":
             node.name += "${%s}" % token.value
         else:
-            node.name += token.name
+            node.name += token.value
 
 
     if not tokenizer.mustMatch("colon"):
@@ -480,6 +487,10 @@ def Variable(tokenizer, staticContext):
             node.append(Block(tokenizer, staticContext), "rules")
 
         return node
+
+    # e.g. ${align}: left; => Parse as property
+    elif tokenizer.peek() == "colon":
+        return Property(tokenizer, staticContext)
 
     else:
         node = Node.Node(tokenizer, "variable")
