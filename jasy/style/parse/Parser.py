@@ -253,7 +253,7 @@ def Statement(tokenizer, staticContext):
 
 
     else:
-        raise SyntaxError("Warning: Unsupport token in Statement(): %s" % tokenType, tokenizer)
+        raise SyntaxError("Warning: Unsupported token in Statement(): %s" % tokenType, tokenizer)
 
 
 

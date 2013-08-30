@@ -24,7 +24,6 @@ operatorNames = {
     '!='  : 'ne', 
     '!'   : 'not', 
     '=='  : 'eq', 
-    '?='  : 'defset',
 
     '+'   : 'plus', 
     '*'   : 'mul', 
