@@ -63,6 +63,14 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:-10px;}')            
 
 
+    def test_simple_multi_plus(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px + 20px;
+            }
+            '''), 'h2{margin:30px;}')        
+
+
     def test_simple_multi_minus_unary(self):
         self.assertEqual(self.process('''
             h2{
@@ -70,6 +78,31 @@ class Tests(unittest.TestCase):
             }
             '''), 'h2{margin:10px -20px;}')   
 
+
+    def test_simple_multi_plus_unary(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px +20px;
+            }
+            '''), 'h2{margin:10px +20px;}')  
+
+
+    def test_simple_multi_minus_compact(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px-20px;
+            }
+            '''), 'h2{margin:-10px;}')            
+
+
+    def test_simple_multi_plus_compact(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px+20px;
+            }
+            '''), 'h2{margin:30px;}')    
+
+  
 
 
 

@@ -602,8 +602,21 @@ def AddExpression(tokenizer, staticContext):
     node = MultiplyExpression(tokenizer, staticContext)
     if node.type == "identifier":
         return node
-    
+
     while tokenizer.match("plus") or tokenizer.match("minus"):
+        # Whether there was skipped spaces before
+        skippedA = tokenizer.skippedSpaces or tokenizer.skippedLineBreaks
+
+        # ...but not after the plus/minus token
+        peek = tokenizer.peek()
+        skippedB = tokenizer.skippedSpaces or tokenizer.skippedLineBreaks
+
+        # ... then do not interpret as plus/minus expression but as unary prefix
+        if skippedA and not skippedB:
+            tokenizer.unget()
+            return node
+
+        # Build real plus/minus node
         childNode = Node.Node(tokenizer)
         childNode.append(node)
 
@@ -612,7 +625,7 @@ def AddExpression(tokenizer, staticContext):
             raise SyntaxError("Invalid expression", tokenizer)
 
         childNode.append(express)
-        node = childNode
+        node = childNode            
 
     return node
 

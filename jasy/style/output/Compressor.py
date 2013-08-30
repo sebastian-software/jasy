@@ -188,6 +188,9 @@ class Compressor:
 
 
     def type_number(self, node):
+        if not hasattr(node, "value"):
+            print("GOT CRAZY NUMBER: ", node)
+
         value = node.value
 
         # Apply basic rounding to reduce size overhead of floating point
