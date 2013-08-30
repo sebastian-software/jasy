@@ -329,7 +329,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:35px;}p{font-size:30px;}small{font-size:18px;}footer{font-size:8px;}')
 
 
-    def test_value_default(self):
+    def test_value_default_available(self):
         self.assertEqual(self.process('''
             $width = 300px;
             $width ?= 400px;
@@ -337,7 +337,18 @@ class Tests(unittest.TestCase):
             .box{
               width: $width;
             }
-            '''), '.box{}')
+            '''), '.box{width:300px;}')
+
+
+    def test_value_default_new(self):
+        self.assertEqual(self.process('''
+            $width ?= 400px;
+
+            .box{
+              width: $width;
+            }
+            '''), '.box{width:400px;}')
+
 
 
 if __name__ == '__main__':

@@ -36,6 +36,10 @@ def __processOperator(node, values):
 
 def __computeOperation(first, second, parent, operator, values):
 
+    # Support for default set operator "?=" when variable was not defined before
+    if first is None and operator == "questionmark":
+        return second
+
     # Compare operation types
     if first.type == second.type:
         # print("Same type: %s" % first.type)
@@ -62,6 +66,8 @@ def __computeOperation(first, second, parent, operator, values):
                     repl.value = first.value / second.value
                 elif operator == "mod":
                     repl.value = first.value % second.value
+                elif operator == "questionmark":
+                    return first
                 else:
                     raise VariableError("Unsupported number operation", parent)
 
