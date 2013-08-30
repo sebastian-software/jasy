@@ -451,7 +451,7 @@ class Tokenizer(object):
 
         # Support variable blocks e.g. ${foo}
         inVariableBlock = False
-        if input[self.cursor] == "{":
+        if isVariable and input[self.cursor] == "{":
             inVariableBlock = True
             self.cursor += 1
 
@@ -470,17 +470,27 @@ class Tokenizer(object):
         # Put the non-word character back.
         self.cursor -= 1
 
-        # Support variable blocks e.g. ${foo}
+        # Compute start offset
+        startOffset = 0
+        if isCommand or isVariable:
+            if inVariableBlock:
+                startOffset = 2
+            else:
+                startOffset = 1
+
+        # Extract identifier part
+        identifier = input[token.start+startOffset:self.cursor]
+
+        # Support for variable blocks e.g. ${foo}
         if inVariableBlock:
+            # Check whether next character would be the required curly brace
             if input[self.cursor] != "}":
                 raise ParseError("Invalid variable block identifier: %s" % identifier, self.fileId, self.line)
         
-            identifier = input[token.start+1:self.cursor]
+            # Jump over closing curly brace
             self.cursor += 1
-        else:
-            identifier = input[token.start:self.cursor]
 
-        if len(identifier) == 1 and (isCommand or isVariable or isHex):
+        if len(identifier) == 0 and (isCommand or isVariable or isHex):
             raise ParseError("Invalid identifier: %s" % identifier, self.fileId, self.line)
 
         if isCommand:
