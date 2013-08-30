@@ -495,10 +495,10 @@ class Tokenizer(object):
 
         if isCommand:
             token.type = "command"
-            token.value = identifier[1:]
+            token.value = identifier
         elif isVariable:
             token.type = "variable"
-            token.value = identifier[1:]
+            token.value = identifier
         elif identifier == "true" or identifier == "false":
             token.type = identifier
         else:
