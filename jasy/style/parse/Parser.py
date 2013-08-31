@@ -303,7 +303,7 @@ def KeyFrames(tokenizer, staticContext):
     Supports e.g.:
 
     @keyframes fade{
-      0%{
+      from, 10%{
         background-color: #000000;
       }
 
@@ -322,12 +322,24 @@ def KeyFrames(tokenizer, staticContext):
     tokenizer.mustMatch("left_curly")
 
     while tokenizer.get() != "right_curly":
-        token = tokenizer.token
-
+        
         # Parse frame as block
         frameNode = Node.Node(tokenizer, "frame")
+        token = tokenizer.token
         frameNode.value = "%s%s" % (token.value, getattr(token, "unit", ""))
         node.append(frameNode)
+
+        # Process comma separated values for 
+        while True:            
+            if tokenizer.peek() != "comma":
+                break
+            else:
+                tokenizer.mustMatch("comma")
+
+                # Next one is our next value
+                tokenizer.get()
+                token = tokenizer.token
+                frameNode.value += ",%s%s" % (token.value, getattr(token, "unit", ""))
 
         # Next process content of selector
         blockNode = Block(tokenizer, staticContext)
