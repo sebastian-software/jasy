@@ -144,7 +144,8 @@ class Compressor:
         prefix = self.__indentLevel * "  "
 
         for line in lines:
-            result.append("%s%s" % (prefix, line))
+            if line:
+                result.append("%s%s" % (prefix, line))
 
         return "\n".join(result)
 
@@ -297,8 +298,47 @@ class Compressor:
         if not name in nativeMethods:
             raise CompressorError("Unsupported native method: %s" % name, node)
 
-        return "%s(%s)" % (name, ",".join([ self.compress(child) for child in node.params ]))
+        if self.__useWhiteSpace:
+            separator = ", "
+        else:
+            separator = ","
+
+        return "%s(%s)" % (name, separator.join([ self.compress(child) for child in node.params ]))
+
+
+    def type_keyframes(self, node):
+        result = "@keyframes %s{" % node.name
+
+        if self.__useBlockBreaks:
+            result += "\n"
+
+        self.__indentLevel += 1
         
+        frames = "".join([ self.compress(child) for child in node ])
+        result += self.indent(frames)
+
+        self.__indentLevel -= 1
+
+        if self.__useBlockBreaks:
+            result += "\n"
+
+        result += "}"
+
+        return result
+
+
+    def type_frame(self, node):
+        result = ""
+
+        if self.__useWhiteSpace:
+            result += node.value.replace(",", ", ")
+        else:
+            result += node.value 
+
+        result += self.compress(node.rules)
+
+        return result
+
 
 
     #
