@@ -340,6 +340,20 @@ class Compressor:
         return result
 
 
+    def type_media(self, node):
+        if self.__useBlockBreaks:
+            separator = ",\n"
+        elif self.__useWhiteSpace:
+            separator = ", "
+        else:
+            separator = ","
+
+        result = "@media %s" % separator.join(node.name)
+        result += self.compress(node.rules)
+
+        return result        
+
+
 
     #
     # Helpers
