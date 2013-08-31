@@ -30,9 +30,35 @@ class Tests(unittest.TestCase):
         return Engine.compressTree(tree)
 
 
+    def test_named(self):
+        self.assertEqual(self.process('''
+            @keyframes bump {
+              from {
+                color: red;
+              }
+              to {
+                color: white;
+              }
+            }
+            '''), '@keyframes bump{from{color:red;}to{color:white;}}')
+
+
+    def test_percent(self):
+        self.assertEqual(self.process('''
+            @keyframes bump {
+              0% {
+                color: red;
+              }
+              100% {
+                color: white;
+              }
+            }
+            '''), '@keyframes bump{0%{color:red;}100%{color:white;}}')        
+
+
     def test_multistep(self):
         self.assertEqual(self.process('''
-            @keyframes fontbulger {
+            @keyframes bump {
               0%, 100% {
                 font-size: 10px;
               }
@@ -40,7 +66,7 @@ class Tests(unittest.TestCase):
                 font-size: 12px;
               }
             }
-            '''), '')
+            '''), '@keyframes bump{0%,100%{font-size:10px;}50%{font-size:12px;}}')
 
 
 
