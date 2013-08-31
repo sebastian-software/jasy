@@ -40,6 +40,69 @@ class Tests(unittest.TestCase):
             '''), '')
 
 
+    def test_comma(self):
+        self.assertEqual(self.process('''
+            @media handheld, tv{
+              body{
+                background-color: yellow;
+              }
+            }
+            '''), '')        
+
+
+    def test_size(self):
+        self.assertEqual(self.process('''
+            @media (max-width: 600px) {
+              .sidebar {
+                display: none;
+              }
+            }
+            '''), '')        
+
+
+    def test_and(self):
+        self.assertEqual(self.process('''
+            @media tv and (min-width: 700px) and (orientation: landscape) {
+              .headline {
+                float: left;
+              }
+            }
+            '''), '')        
+
+
+    def test_ratio(self):
+        self.assertEqual(self.process('''
+            @media screen and (min-aspect-ratio: 1/1) {
+              body{
+                 font-size: 16px;
+              }
+            }
+            '''), '')        
+
+
+
+    def test_comma_and(self):
+        self.assertEqual(self.process('''
+            @media handheld and (min-width: 20em), screen and (min-width: 20em) {
+              header{
+                height: 30px;
+              }
+            }
+            '''), '')         
+
+
+    def test_reallife_pixel(self):
+        self.assertEqual(self.process('''
+            @media (-webkit-min-device-pixel-ratio: 2), /* Webkit-based browsers */
+              (min--moz-device-pixel-ratio: 2),         /* Older Firefox browsers (prior to Firefox 16) */
+              (min-resolution: 2dppx),                  /* The standard way */
+              (min-resolution: 192dpi)                  /* dppx fallback */ 
+            {
+              button{
+                background-size: 60px 20px;
+              }
+            }
+            '''), '')   
 
 
 

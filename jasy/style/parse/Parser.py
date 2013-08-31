@@ -372,14 +372,41 @@ def Media(tokenizer, staticContext):
 
     tokenType = tokenizer.get()
     query = ""
+    requiresSpace = False
 
     while tokenType != "left_curly":
         token = tokenizer.token    
 
         if tokenType == "identifier":
+            if requiresSpace:
+                query += " "
             query += token.value
+            requiresSpace = True
         elif tokenType == "comma":
             query += ","
+            requiresSpace = False
+        elif tokenType == "left_paren":
+            query += "("
+            requiresSpace = False
+        elif tokenType == "right_paren":
+            query += ")"
+            requiresSpace = False
+        elif tokenType == "colon":
+            query += ":"
+            requiresSpace = False
+        elif tokenType == "div":
+            query += "/"
+            requiresSpace = False
+        elif tokenType == "string":
+            if requiresSpace:
+                query += " "
+            query += ascii_encoder.encode(token.value)
+            requiresSpace = True
+        elif tokenType == "number":
+            if requiresSpace:
+                query += " "
+            query += "%s%s" % (token.value, getattr(token, "unit", ""))            
+            requiresSpace = True
         else:
             raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
 
