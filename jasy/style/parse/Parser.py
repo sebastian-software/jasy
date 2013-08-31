@@ -160,6 +160,9 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "keyframes":
             return KeyFrames(tokenizer, staticContext)
 
+        elif tokenValue == "media":
+            return Media(tokenizer, staticContext)
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
@@ -346,6 +349,55 @@ def KeyFrames(tokenizer, staticContext):
         frameNode.append(blockNode, "rules")
 
     return node
+
+
+def Media(tokenizer, staticContext):
+    """
+    Supports e.g.:
+
+    @media print{
+      body{
+        background-color: #000000;
+      }
+    }
+
+    @media handheld, tv{
+      body{
+        background-color: yellow;
+      }
+    }
+    """
+
+    node = Node.Node(tokenizer, "media")
+
+    tokenType = tokenizer.get()
+    query = ""
+
+    while tokenType != "left_curly":
+        token = tokenizer.token    
+
+        if tokenType == "identifier":
+            query += token.value
+        elif tokenType == "comma":
+            query += ","
+        else:
+            raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
+
+
+        tokenType = tokenizer.get()
+
+    # Split at commas, but ignore any white spaces (trim single selectors)
+    node.name = RE_SELECTOR_SPLIT.split(query)
+
+    # Next process content of selector
+    tokenizer.unget()
+    childNode = Block(tokenizer, staticContext)
+    node.append(childNode, "rules")    
+
+    return node
+
+
+
 
 
 def Selector(tokenizer, staticContext):
