@@ -22,7 +22,7 @@ if len(sys.argv) == 1:
     sys.stderr.write("Missing job name\n")
     sys.exit(1)
     
-supported = set(("tokens", "tree", "compress"))
+supported = set(("tokens", "tree", "compress", "optimize"))
 job = sys.argv[1]
 if not job in supported:
     sys.stderr.write("Invalid job %s\n" % job)
@@ -33,6 +33,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 import jasy
 
 import jasy.style.Engine as Engine
+import jasy.style.output.Formatting as Formatting
 
 
 for fname in sys.argv[2:]:
@@ -40,10 +41,16 @@ for fname in sys.argv[2:]:
     
     print(">>> File: %s" % fname)
     
-    if job == "compress":    
+    if job == "optimize":    
         tree = Engine.getTree(text, fname)
         tree = Engine.processTree(tree)
         print(Engine.compressTree(tree))
+
+    elif job == "compress":    
+        formatting = Formatting.Formatting("blocks", "whitespace", "statements", "indent")
+        tree = Engine.getTree(text, fname)
+        tree = Engine.processTree(tree)
+        print(Engine.compressTree(tree, formatting))
         
     elif job == "tree":
         print(Engine.getTree(text, fname).toXml())
