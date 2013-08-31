@@ -277,7 +277,12 @@ def Property(tokenizer, staticContext):
         token = tokenizer.token
         if token.type == "variable":
             node.name += "${%s}" % token.value
-            node.dynamic = True
+
+            if hasattr(node, "dynamic"):
+                node.dynamic.add(token.value)
+            else:
+                node.dynamic = set([token.value])
+
         else:
             node.name += token.value
 
@@ -409,7 +414,11 @@ def Selector(tokenizer, staticContext):
             elif tokenType == "number":
                 selector += "%s%s" % (token.value, getattr(token, "unit", ""))
             elif tokenType == "variable":
-                node.dynamic = True
+                if hasattr(node, "dynamic"):
+                    node.dynamic.add(token.value)
+                else:
+                    node.dynamic = set([token.value])
+
                 selector += "${%s}" % token.value
             else:
                 raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)

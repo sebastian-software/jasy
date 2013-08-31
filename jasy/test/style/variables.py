@@ -358,7 +358,7 @@ class Tests(unittest.TestCase):
             .box-$align{
               display: inline-block;
             }
-            '''), '')    
+            '''), '.box-left{display:inline-block;}')    
 
 
     def test_variable_usedonly_in_property(self):
@@ -368,7 +368,7 @@ class Tests(unittest.TestCase):
             .box{
               margin-$edge: 20px;
             }
-            '''), '')    
+            '''), '.box{margin-left:20px;}')    
 
 
     def test_variable_property(self):
@@ -406,7 +406,7 @@ class Tests(unittest.TestCase):
             .box:nth-child(${cell}n){
               color: red;
             }
-            '''), '')           
+            '''), '.box:nth-child(4n){color:red;}')           
 
 
 if __name__ == '__main__':

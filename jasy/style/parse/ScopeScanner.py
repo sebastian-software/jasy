@@ -63,17 +63,12 @@ def __scanNode(node, data):
                 data.modified.add(node.name)
 
 
-    elif node.type == "selector" and getattr(node, "dynamic", False):
-        pass
-        # TODO
-
-
-
-    elif node.type == "property" and getattr(node, "dynamic", False):
-        pass
-        # TODO
-
-
+    elif node.type in ("selector", "property") and getattr(node, "dynamic", False):
+        for name in node.dynamic:
+            data.increment(name)
+    
+    # BREAK OF IF-ELSE CHAIN 
+    # All non blocks have to be processed in else-block
                 
     if node.type == "block":
         innerVariables = __scanScope(node)
