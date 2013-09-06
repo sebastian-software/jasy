@@ -66,7 +66,10 @@ def combineSelector(node):
 
 
     if media:
-        combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
+        if len(media) > 1:
+            combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
+        else:
+            combinedMedia = media[0][0]
     else:
         combinedMedia = None
 
