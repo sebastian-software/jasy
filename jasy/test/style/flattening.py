@@ -124,8 +124,6 @@ class Tests(unittest.TestCase):
             '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4b{color:red;}}.rule5{color:white;}')
 
 
-
-
     def test_merge_media(self):
         self.assertEqual(self.process('''
             @media print{
@@ -152,7 +150,6 @@ class Tests(unittest.TestCase):
               font-weight: normal;
             }
             '''), 'body{color:black;font-weight:normal;}')
-
 
         
     def test_merge_media_and_selector(self):
