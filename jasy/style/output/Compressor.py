@@ -348,9 +348,7 @@ class Compressor:
         else:
             separator = ","
 
-        result = "@media %s" % separator.join(node.name)
-        result += self.compress(node.rules)
-
+        result = "@media %s %s" % (separator.join(node.name), self.compress(node.rules))
         return result        
 
 
