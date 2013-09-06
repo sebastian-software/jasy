@@ -64,8 +64,8 @@ def combineSelector(node):
 
         combinedSelectors.append(combined)
 
-
     if media:
+        # Use compact format when possible
         if len(media) > 1:
             combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
         else:
