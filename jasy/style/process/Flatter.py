@@ -18,6 +18,10 @@ def process(tree):
     Console.indent()
 
     def __flatter(node):
+        """
+        Moves all selectors to the top tree node while keeping media queries intact 
+        and/or making them CSS2 compatible (regarding formatting)
+        """
 
         nonlocal insertIndex
 
@@ -92,6 +96,8 @@ def process(tree):
     def __clean(node):
         """
         Removes all empty rules. Starting from inside out for a deep cleanup.
+        This is a required step for the next one where we combine media queries
+        and selectors and need to have an easy reference point to the previous node.
         """
 
         # Process children first
@@ -143,14 +149,15 @@ def process(tree):
                 previousSelector = None
 
 
-
+        # Re-run combiner inside all media queries.
+        # Selectors in there are allowed and could be combined, too
         if top:
             for child in tree:
                 if child and child.type == "media":
                     __combine(child.rules, False)
 
 
-
+    # Execute the different features in order
     __flatter(tree)
     __clean(tree)
     __combine(tree)
