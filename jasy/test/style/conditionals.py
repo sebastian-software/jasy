@@ -45,7 +45,7 @@ class Tests(unittest.TestCase):
                 color:red;
               }
             }
-            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')
+            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')
 
 
     def test_if_else_true(self):
@@ -73,7 +73,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')        
+            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')        
 
 
     def test_if_else_false(self):
@@ -102,7 +102,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;}h1{outline:none;}p{color:black;}')           
+            '''), 'h1{font-size:20px;outline:none;}p{color:black;}')           
 
 
     def test_if_else_false_paren(self):
@@ -131,7 +131,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;}h1{outline:none;}p{color:black;}')
+            '''), 'h1{font-size:20px;outline:none;}p{color:black;}')
 
 
     def test_if_else_false_paren_notoper(self):
@@ -160,7 +160,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;}h1{outline:1px solid red;}p{color:red;}')           
+            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')           
 
 
     def test_variable(self):

@@ -72,7 +72,7 @@ class Tests(unittest.TestCase):
                 color: orange;
               }
 
-              .rule4a{
+              .rule4b{
                 color: red;
               }
             }
@@ -80,7 +80,7 @@ class Tests(unittest.TestCase):
             .rule5{
               color: white;
             }
-            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4a{color:red;}}.rule5{color:white;}')
+            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4b{color:red;}}.rule5{color:white;}')
 
 
     def test_order_inner_media(self):
@@ -112,7 +112,7 @@ class Tests(unittest.TestCase):
               }
             }
 
-            .rule4a{
+            .rule4b{
               @media screen{
                 color: red;
               }
@@ -121,7 +121,54 @@ class Tests(unittest.TestCase):
             .rule5{
               color: white;
             }
-            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4a{color:red;}}.rule5{color:white;}')
+            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4b{color:red;}}.rule5{color:white;}')
+
+
+
+
+    def test_merge_media(self):
+        self.assertEqual(self.process('''
+            @media print{
+              body{
+                color: black;
+              }
+            }
+
+            @media print{
+              header{
+                color: #333;
+              }
+            }
+            '''), '@media print{body{color:black;}header{color:#333;}}')
+
+
+    def test_merge_selector(self):
+        self.assertEqual(self.process('''
+            body{
+              color: black;
+            }
+
+            body{
+              font-weight: normal;
+            }
+            '''), 'body{color:black;font-weight:normal;}')
+
+
+        
+    def test_merge_media_and_selector(self):
+        self.assertEqual(self.process('''
+            @media print{
+              body{
+                color: black;
+              }
+            }
+
+            @media print{
+              body{
+                color: #333;
+              }
+            }
+            '''), '@media print{body{color:black;color:#333;}}')
 
 
 
