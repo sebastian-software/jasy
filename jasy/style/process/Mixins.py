@@ -99,8 +99,11 @@ def __extend(node, scanMixins=False):
 
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
-        selector = Util.combineSelector(node.parent)
+        selector, media = Util.combineSelector(node.parent)
         Console.debug("Extending selector of mixin by: %s", selector)
+
+        if media:
+            raise Exception("Missing media query support for extend()")
 
         if hasattr(mixin, "selector"):
             # We iterate from in inverse mode, so add new selectors to the front

@@ -31,6 +31,7 @@ def combineSelector(node):
     """
 
     selector = []
+    media = []
 
     current = node
     while current:
@@ -38,13 +39,15 @@ def combineSelector(node):
             selector.append(current.name)
         elif current.type == "mixin":
             selector.append(current.selector)
+        elif current.type == "media":
+            media.append(current.name)
 
         current = getattr(current, "parent", None)
 
     if not selector:
         raise Exception("Node %s at line %s is not a selector/mixin and is no child of any selector/mixin." % (node.type, node.line))
 
-    result = []
+    combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
         combined = ""
         for part in item:
@@ -59,7 +62,13 @@ def combineSelector(node):
                 else:
                     combined = part
 
-        result.append(combined)
+        combinedSelectors.append(combined)
 
-    return result
+
+    if media:
+        combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
+    else:
+        combinedMedia = None
+
+    return combinedSelectors, combinedMedia
 
