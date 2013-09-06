@@ -43,7 +43,86 @@ class Tests(unittest.TestCase):
                 color: #333;
               }
             }
-            '''), '')
+            '''), '@media print{body{color:black;}}@media screen{body{color:#333;}}')
+
+
+    def test_order(self):
+        self.assertEqual(self.process('''
+
+            .rule1{
+              color: black;
+            }
+
+            @media print{
+              .rule2a{
+                color: green;
+              }
+            
+              .rule2b{
+                color: blue;
+              }
+            }
+
+            .rule3{
+              color: grey;
+            }
+
+            @media screen{
+              .rule4a{
+                color: orange;
+              }
+
+              .rule4a{
+                color: red;
+              }
+            }
+
+            .rule5{
+              color: white;
+            }
+            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4a{color:red;}}.rule5{color:white;}')
+
+
+    def test_order_inner_media(self):
+        self.assertEqual(self.process('''
+
+            .rule1{
+              color: black;
+            }
+
+            .rule2a{
+              @media print{
+                color: green;
+              }
+            }
+          
+            .rule2b{
+              @media print{
+                color: blue;
+              }
+            }
+
+            .rule3{
+              color: grey;
+            }
+
+            .rule4a{
+              @media screen{
+                color: orange;
+              }
+            }
+
+            .rule4a{
+              @media screen{
+                color: red;
+              }
+            }
+  
+            .rule5{
+              color: white;
+            }
+            '''), '.rule1{color:black;}@media print{.rule2a{color:green;}.rule2b{color:blue;}}.rule3{color:grey;}@media screen{.rule4a{color:orange;}.rule4a{color:red;}}.rule5{color:white;}')
+
 
 
 
