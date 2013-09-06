@@ -171,7 +171,22 @@ class Tests(unittest.TestCase):
             '''), '@media print{body{color:black;color:#333;}}')
 
 
+    def test_merge_media_and_selector_conditional(self):
+        self.assertEqual(self.process('''
+            @media print{
+              body{
+                color: black;
+              }
+            }
 
+            @if jasy.debug{
+              @media print{
+                body{
+                  color: #333;
+                }
+              }
+            }
+            '''), '@media print{body{color:black;color:#333;}}')
 
 
 
