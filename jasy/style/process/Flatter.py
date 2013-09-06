@@ -106,7 +106,7 @@ def process(tree):
 
 
 
-    def __combine(tree):
+    def __combine(tree, top=True):
         """
         Combines follow up selector/media nodes with the same name.
         """
@@ -141,6 +141,14 @@ def process(tree):
 
                 previousMedia = child.name
                 previousSelector = None
+
+
+
+        if top:
+            for child in tree:
+                if child and child.type == "media":
+                    __combine(child.rules, False)
+
 
 
     __flatter(tree)
