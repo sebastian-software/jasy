@@ -239,10 +239,6 @@ def __resolveMixin(mixin, params):
 
             clone.insert(0, paramAsDeclaration)
 
-
-    print("CLONE")
-    print(clone)
-
     __renameRecurser(clone, variables, prefix)
 
     return clone
