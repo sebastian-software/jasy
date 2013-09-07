@@ -108,7 +108,10 @@ def process(tree):
         if hasattr(node, "rules") and len(node.rules) == 0:
             Console.debug("Cleaning up empty selector/mixin at line %s" % node.line)
             node.parent.remove(node)
-            return
+
+        elif node.type == "content":
+            Console.debug("Cleaning up left over @content at line %s" % node.line)
+            node.parent.remove(node)
 
 
 
