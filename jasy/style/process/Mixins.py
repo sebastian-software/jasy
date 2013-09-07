@@ -125,6 +125,33 @@ def __extend(node, scanMixins=False):
             else:
                 mixin.selector = selector
 
+            virtualBlock = Node.Node(type="block")
+            __extendContent(mixin.rules, node, virtualBlock, mixin)
+
+            if len(virtualBlock) > 0:
+                callSelector, callMedia = Util.combineSelector(node)
+
+                if callSelector:
+                    virtualSelector = Node.Node(type="selector")
+                    virtualSelector.name = callSelector
+
+                if callMedia:
+                    virtualMedia = Node.Node(type="media")
+                    virtualMedia.name = callMedia
+
+                if callSelector:
+                    virtualSelector.append(virtualBlock, "rules")
+                elif callMedia:
+                    virtualMedia.append(virtualBlock, "rules")
+
+                if callMedia:
+                    virtualTop = virtualMedia
+                elif callSelector:
+                    virtualTop = virtualSelector
+
+                pos = mixin.parent.index(mixin)
+                mixin.parent.insert(pos+1, virtualTop)
+
         node.parent.remove(node)
         Console.outdent()
 
@@ -194,10 +221,45 @@ def __injectContent(node, call):
     if node.type == "content":
         if hasattr(call, "rules"):
             Console.debug("Inserting content section from call into mixin clone")
-            node.parent.insertAllReplace(node, call.rules)
+            node.parent.insertAllReplace(node, copy.deepcopy(call.rules))
         else:
             Console.debug("Removing unused content section from mixin clone")
             node.parent.remove(node)
+
+
+def __extendContent(node, call, targetBlock, stopCombineAt):
+    """
+    Builds up a list of selector/mediaqueries to insert after the extend to produce
+    the @content sections on the intended selectors.
+    """
+
+    for child in reversed(node):
+        if child:
+            __extendContent(child, call, targetBlock, stopCombineAt)
+
+    if node.type == "content" and hasattr(call, "rules"):
+        # Extends support @content as well. In this case we produce a new selector
+        # which matches the position of the content section and append it after
+        # the original extended mixin on return
+
+        Console.debug("Inserting content section into new virtual selector")
+
+        selector, media = Util.combineSelector(node, stop=stopCombineAt)
+
+        selectorNode = Node.Node(type="selector")
+        selectorNode.name = selector
+
+        selectorNode.append(copy.deepcopy(call.rules), "rules")
+
+        # Support media queries, too
+        if media:
+            mediaNode = Node.Node(type="media")
+            mediaNode.name = media
+            mediaNode.append(selectorNode)
+            targetBlock.append(mediaNode)
+
+        else:
+            targetBlock.append(selectorNode)
 
 
 def __findMixin(node, name):
