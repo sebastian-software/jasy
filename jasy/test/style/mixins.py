@@ -450,7 +450,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::before,h2::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;}h1::before{margin-right:2px;margin-top:1px;}h2{color:blue;}')
 
 
-    def xtest_mixin_content_double(self):
+    def test_mixin_content_double(self):
         self.assertEqual(self.process('''
             $virtual(){
               &::before{
@@ -467,7 +467,7 @@ class Tests(unittest.TestCase):
                 content: "|";
               }
             }
-            '''), '')        
+            '''), 'h1::after{content:"|";}h1::before{content:"|";}')        
 
 
     def test_mixin_content_with_param(self):
@@ -539,7 +539,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{margin-right:2px;margin-top:1px;}')
 
 
-    def xtest_extend_local_override(self):
+    def test_extend_local_override(self):
         self.assertEqual(self.process('''
             $icon(){
               &::after{
@@ -559,7 +559,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{margin-right:2px;margin-top:1px;}')        
 
 
-    def xtest_extend_or_mixin(self):
+    def test_extend_or_mixin(self):
         self.assertEqual(self.process('''
             $box($color=red) {
               color: $color;
