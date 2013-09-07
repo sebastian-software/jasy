@@ -421,12 +421,10 @@ class Tests(unittest.TestCase):
         self.assertRaises(Variables.VariableError, wrapper)      
 
 
-
     def test_mixin_content(self):
         self.assertEqual(self.process('''
             $icon(){
-              
-              &::after{
+              &::before{
                 content: "u1929";
                 font-family: Icons;
                 width: 22px;
@@ -435,16 +433,148 @@ class Tests(unittest.TestCase):
 
                 @content;
               }
-
             }
 
             h1{
-              $icon(true) < {
+              $icon() < {
                 margin-right: 2px;
                 margin-top: 1px;
               }
             }
-            '''), 'h1::after{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;margin-right:2px;margin-top:1px;}')
+
+            h2{
+              $icon();
+
+              color: blue;
+            }            
+            '''), 'h1::before,h2::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;}h1::before{margin-right:2px;margin-top:1px;}h2{color:blue;}')
+
+
+    def xtest_mixin_content_double(self):
+        self.assertEqual(self.process('''
+            $virtual(){
+              &::before{
+                @content;
+              }
+
+              &::after{
+                @content;
+              }
+            }
+
+            h1{
+              $virtual() < {
+                content: "|";
+              }
+            }
+            '''), '')        
+
+
+    def test_mixin_content_with_param(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                content: "u1929";
+                font-family: Icons;
+                width: 22px;
+                height: 22px;
+                display: inline-block;
+
+                @content;
+              }
+            }
+
+            h1{
+              $icon(x) < {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+            }
+            '''), 'h1::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;margin-right:2px;margin-top:1px;}')
+
+
+    def test_mixin_content_with_param_double(self):
+        self.assertEqual(self.process('''
+            $virtual($width, $height){
+              &::before{
+                width: $width;
+                height: $height;
+
+                @content;
+              }
+
+              &::after{
+                width: $width;
+                height: $height;
+                
+                @content;
+              }
+            }
+
+            h1{
+              $virtual(24px, 30px) < {
+                content: "|";
+              }
+            }
+            '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')     
+
+
+    def test_mixin_local_override(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::after{
+                content: "u1929";
+                font-family: Icons;
+              }
+            }
+
+            h1{
+              $icon($size) {
+                margin-right: $size;
+                margin-top: $size/2;
+              }
+
+              $icon(2px);
+            }
+            '''), 'h1{margin-right:2px;margin-top:1px;}')
+
+
+    def xtest_extend_local_override(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::after{
+                content: "u1929";
+                font-family: Icons;
+              }
+            }
+
+            h1{
+              $icon {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+
+              $icon;
+            }
+            '''), 'h1{margin-right:2px;margin-top:1px;}')        
+
+
+    def xtest_extend_or_mixin(self):
+        self.assertEqual(self.process('''
+            $box($color=red) {
+              color: $color;
+              border: 1px solid $color;
+            }
+
+            .errorbox{
+              $box;
+            }
+
+            .messagebox{
+              $box(green);
+            }
+            .
+            '''), '')             
 
 
 if __name__ == '__main__':
