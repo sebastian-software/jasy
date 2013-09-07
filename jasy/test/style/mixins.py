@@ -336,9 +336,55 @@ class Tests(unittest.TestCase):
             h1{
               $color = yellow;
               $style(3, blue);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')        
+
+
+    def test_mixin_param_name_conflicts_default_ignore(self):
+        self.assertEqual(self.process('''
+            $style($size, $color=red){
+              font-size: 15px * $size;
               color: $color;
             }
-            '''), 'h1{font-size:45px;color:blue;color:yellow;}')        
+
+            h1{
+              $color = yellow;
+              $style(3, blue);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')            
+
+
+    def test_mixin_param_name_conflicts_default_use(self):
+        self.assertEqual(self.process('''
+            $style($size, $color=red){
+              font-size: 15px * $size;
+              color: $color;
+            }
+
+            h1{
+              $color = yellow;
+              $style(3);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:red;background:yellow;}')
+
+
+    def test_mixin_param_name_default_from_outer(self):
+        self.assertEqual(self.process('''
+            $titleColor = orange;
+
+            $style($size, $color=$titleColor){
+              font-size: 15px * $size;
+              color: $color;
+              border-bottom: 1px solid $titleColor;
+            }
+
+            h1{
+              $style(3);
+            }
+            '''), 'h1{font-size:45px;color:orange;border-bottom:1px solid orange;}')        
 
 
     def test_mixin_wrong_place_call(self):

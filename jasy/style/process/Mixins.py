@@ -236,6 +236,8 @@ def __resolveMixin(mixin, params):
             # Copy over actual param value
             if len(params) > pos:
                 paramAsDeclaration.append(copy.deepcopy(params[pos]), "initializer")
+            elif param.type == "assign" and param[0].type == "variable":
+                paramAsDeclaration.append(param[1], "initializer")
 
             clone.insert(0, paramAsDeclaration)
 
