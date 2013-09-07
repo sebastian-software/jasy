@@ -160,6 +160,11 @@ def __addParams(node, data):
         
         paramList = getattr(node.parent, "params", None)
         if paramList:
-            for paramIdentifier in paramList:
-                data.params.add(paramIdentifier.name)
+            for variable in paramList:
+                if variable.type == "variable":
+                    data.params.add(variable.name)
+                elif variable.type == "assign" and variable[0].type == "variable":
+                    data.params.add(variable[0].name)
+
+
 

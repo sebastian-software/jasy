@@ -100,10 +100,10 @@ def __extend(node, scanMixins=False):
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
         selector, media = Util.combineSelector(node.parent)
-        Console.debug("Extending selector of mixin by: %s - %s", selector, media)
 
         if media:
-            Console.warn("Extending inside media query works like including.")
+            Console.warn("Extending inside media query behaves like including (less efficient): %s + %s", media, ", ".join(selector))
+
             clone = __resolveMixin(mixin, None)
 
             # Reverse inject all children of that block
@@ -113,12 +113,15 @@ def __extend(node, scanMixins=False):
             for child in reversed(clone):
                 parent.insert(pos, child)
 
-        elif hasattr(mixin, "selector"):
-            # We iterate from in inverse mode, so add new selectors to the front
-            mixin.selector[0:0] = selector
-
         else:
-            mixin.selector = selector
+            Console.debug("Extending selector of mixin by: %s", ", ".join(selector))
+
+            if hasattr(mixin, "selector"):
+                # We iterate from in inverse mode, so add new selectors to the front
+                mixin.selector[0:0] = selector
+
+            else:
+                mixin.selector = selector
 
         node.parent.remove(node)
         Console.outdent()
@@ -222,13 +225,23 @@ def __resolveMixin(mixin, params):
         for pos, param in enumerate(mixin.params):
             # We have to copy over the parameter value as a local variable declaration
             paramAsDeclaration = Node.Node(type="declaration")
-            paramAsDeclaration.name = param.name
+
+            if param.type == "variable":
+                paramAsDeclaration.name = param.name
+            elif param.type == "assign" and param[0].type == "variable":
+                paramAsDeclaration.name = param[0].name
+            else:
+                raise Exception("Unsupported param structure for mixin resolver at line %s! Expected type variable or assignment and got: %s!" % (mixin.line, param.type));
 
             # Copy over actual param value
             if len(params) > pos:
                 paramAsDeclaration.append(copy.deepcopy(params[pos]), "initializer")
 
             clone.insert(0, paramAsDeclaration)
+
+
+    print("CLONE")
+    print(clone)
 
     __renameRecurser(clone, variables, prefix)
 
