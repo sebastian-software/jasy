@@ -149,6 +149,11 @@ def Statement(tokenizer, staticContext):
 
             return node
 
+        elif tokenValue == "content":
+            node = Node.Node(tokenizer, "content")
+            node.append(Expression(tokenizer, staticContext))
+            return node
+
         elif tokenValue == "include":
             node = Node.Node(tokenizer, "include")
             node.append(Expression(tokenizer, staticContext))
