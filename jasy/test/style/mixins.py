@@ -135,49 +135,6 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
-    def test_mixin_default_param(self):
-        self.assertEqual(self.process('''
-            $font($size=2){
-              font-family: Arial, sans-serif;
-              font-size: 15px * $size;
-            }
-
-            h1{
-              $font(3);
-              color: blue;
-            }
-
-            h2{
-              $font();
-              color: red;
-            }
-            '''), 'h2{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}')
-
-
-    def test_mixin_default_param_two_extends(self):
-        self.assertEqual(self.process('''
-            $font($size=2){
-              font-family: Arial, sans-serif;
-              font-size: 15px * $size;
-            }
-
-            h1{
-              $font(3);
-              color: blue;
-            }
-
-            h2{
-              $font();
-              color: red;
-            }
-
-            h3{
-              $font();
-              color: green;
-            }            
-            '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')        
-
-
     def test_mixin_param_toomany(self):
         self.assertEqual(self.process('''
             $font($size){
@@ -219,6 +176,49 @@ class Tests(unittest.TestCase):
             ''')      
 
         self.assertRaises(Variables.VariableError, wrapper)
+
+
+    def test_mixin_default_param(self):
+        self.assertEqual(self.process('''
+            $font($size=2){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font();
+              color: red;
+            }
+            '''), 'h2{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}')
+
+
+    def test_mixin_default_param_two_extends(self):
+        self.assertEqual(self.process('''
+            $font($size=2){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font();
+              color: red;
+            }
+
+            h3{
+              $font();
+              color: green;
+            }            
+            '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')        
 
 
     def test_mixin_param_transparent_units(self):
