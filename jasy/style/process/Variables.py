@@ -209,30 +209,39 @@ def __computeRecurser(node, scope, values):
 
 
     # Update values of variable
-    elif node.type == "declaration" and hasattr(node, "initializer"):
-        Console.debug("Found declaration of %s at line %s", node.name, node.line)
+    elif (node.type == "declaration" and hasattr(node, "initializer")) or node.type == "assign":
+        
+        if node.type == "declaration":
+            name = node.name
+            init = node.initializer
+            Console.debug("Found declaration of %s at line %s", name, node.line)
+
+        else:
+            name = node[0].name
+            init = node[1]
+            Console.debug("Found assignment of %s at line %s", name, node.line)
 
         # Modify value instead of replace when assign operator is set
         if hasattr(node, "assignOp") and node.assignOp is not None:
-            if not node.name in values:
-                raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % node.name, node)
+            if not name in values:
+                raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
-            repl = __computeOperation(values[node.name], node.initializer, node, node.assignOp, values)
+            repl = __computeOperation(values[name], init, node, node.assignOp, values)
             if repl:
-                values[node.name] = repl
+                values[name] = repl
             else:
                 raise VariableError("Got no valid return value to replace operation", node)
 
         else:        
             # Update internal variable mapping
-            values[node.name] = node.initializer
+            values[name] = init
 
         # Remove declaration node from tree
         node.parent.remove(node)
 
 
     # Replace variable with actual value
-    elif node.type == "variable":
+    elif node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
         if not name in values:
             raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
