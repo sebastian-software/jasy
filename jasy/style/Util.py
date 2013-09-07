@@ -25,7 +25,7 @@ def assembleDot(node, result=None):
 
 
 
-def combineSelector(node):
+def combineSelector(node, stop=None):
     """
     Figures out the fully qualified selector of the given Node
     """
@@ -33,8 +33,9 @@ def combineSelector(node):
     selector = []
     media = []
 
+    # Selector and media lists are in reversed order...
     current = node
-    while current:
+    while current and current is not stop:
         if current.type == "selector":
             selector.append(current.name)
         elif current.type == "mixin":
@@ -47,6 +48,7 @@ def combineSelector(node):
     if not selector and not media:
         raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
 
+    # So we process collected selector data in reversed order, too, to get the normal order back
     combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
         combined = ""
@@ -57,7 +59,8 @@ def combineSelector(node):
                 else:
                     combined = "%s %s" % (combined, part)
             else:
-                if "&" in part:
+                # Tolerate open/unsolvable "&" parent reference when we stop too early
+                if not stop and "&" in part:
                     raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
                 else:
                     combined = part
@@ -67,6 +70,7 @@ def combineSelector(node):
     if media:
         # Use compact format when possible
         if len(media) > 1:
+            # So we join collected media data in reversed order, too, to get the normal order back
             combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
         else:
             combinedMedia = media[0][0]
