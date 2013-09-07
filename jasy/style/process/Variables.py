@@ -250,7 +250,6 @@ def __computeRecurser(node, scope, values):
             name = matchObj.group(1)
 
             if not name in values:
-                print("OTHER VALUES: %s" % values)
                 raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
 
             value = values[name]
