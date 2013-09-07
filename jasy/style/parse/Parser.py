@@ -644,7 +644,7 @@ def AssignExpression(tokenizer, staticContext):
     if not tokenizer.match("assign"):
         return lhs
 
-    if lhs.type == "identifier" or lhs.type == "dot" or lhs.type == "call":
+    if lhs.type == "variable":
         pass
     else:
         raise SyntaxError("Bad left-hand side of assignment", tokenizer)
