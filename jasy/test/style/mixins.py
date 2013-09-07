@@ -56,6 +56,28 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
         
+
+    def test_extend_media(self):
+        self.assertEqual(self.process('''
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            @media screen{
+              h1{
+                $font;
+                color: blue;
+              }
+            }
+            
+            h1{
+              $font;
+              color: black;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@media screen{h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
+
     def test_extend_def_as_func(self):
         self.assertEqual(self.process('''
             $font(){

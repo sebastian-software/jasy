@@ -100,12 +100,20 @@ def __extend(node, scanMixins=False):
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
         selector, media = Util.combineSelector(node.parent)
-        Console.debug("Extending selector of mixin by: %s", selector)
+        Console.debug("Extending selector of mixin by: %s - %s", selector, media)
 
         if media:
-            raise Exception("Missing media query support for extend()")
+            Console.warn("Extending inside media query works like including.")
+            clone = __resolveMixin(mixin, None)
 
-        if hasattr(mixin, "selector"):
+            # Reverse inject all children of that block
+            # at the same position as the original call
+            parent = node.parent
+            pos = parent.index(node)
+            for child in reversed(clone):
+                parent.insert(pos, child)
+
+        elif hasattr(mixin, "selector"):
             # We iterate from in inverse mode, so add new selectors to the front
             mixin.selector[0:0] = selector
 
