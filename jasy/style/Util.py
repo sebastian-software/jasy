@@ -44,8 +44,8 @@ def combineSelector(node):
 
         current = getattr(current, "parent", None)
 
-    if not selector:
-        raise Exception("Node %s at line %s is not a selector/mixin and is no child of any selector/mixin." % (node.type, node.line))
+    if not selector and not media:
+        raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
 
     combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
