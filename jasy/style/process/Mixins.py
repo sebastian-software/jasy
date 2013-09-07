@@ -104,13 +104,15 @@ def __extend(node, scanMixins=False):
         if media:
             Console.warn("Extending inside media query behaves like including (less efficient): %s + %s", media, ", ".join(selector))
 
-            clone = __resolveMixin(mixin, None)
+            replacements = __resolveMixin(mixin, None)
+
+            Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
 
             # Reverse inject all children of that block
             # at the same position as the original call
             parent = node.parent
             pos = parent.index(node)
-            for child in reversed(clone):
+            for child in reversed(replacements):
                 parent.insert(pos, child)
 
         else:
@@ -163,6 +165,8 @@ def __process(node, scanMixins=False, active=None):
 
         Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
 
+        __injectContent(replacements, node)
+
         # Reverse inject all children of that block
         # at the same position as the original call
         parent = node.parent
@@ -177,6 +181,23 @@ def __process(node, scanMixins=False, active=None):
 
     return modified
 
+
+def __injectContent(node, call):
+    """
+    Inserts content section of call into prepared content area of mixin clone
+    """
+
+    for child in reversed(node):
+        if child:
+            __injectContent(child, call)
+
+    if node.type == "content":
+        if hasattr(call, "rules"):
+            Console.debug("Inserting content section from call into mixin clone")
+            node.parent.insertAllReplace(node, call.rules)
+        else:
+            Console.debug("Removing unused content section from mixin clone")
+            node.parent.remove(node)
 
 
 def __findMixin(node, name):

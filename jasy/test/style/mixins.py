@@ -418,7 +418,33 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)             
+        self.assertRaises(Variables.VariableError, wrapper)      
+
+
+
+    def test_mixin_content(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              
+              &::after{
+                content: "u1929";
+                font-family: Icons;
+                width: 22px;
+                height: 22px;
+                display: inline-block;
+
+                @content;
+              }
+
+            }
+
+            h1{
+              $icon(true) < {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+            }
+            '''), 'h1::after{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;margin-right:2px;margin-top:1px;}')
 
 
 if __name__ == '__main__':
