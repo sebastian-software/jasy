@@ -3,6 +3,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2012-2013 Sebastian Werner
 #
 
 # Import standard library stuff
@@ -41,7 +42,7 @@ docfolder = doctemp.name
 srcfolder = os.path.join(basedir, "jasy")
 
 print("Generating API indexes...")
-cmd = ["sphinx-apidoc", "--full", "--maxdepth", "4", "--output-dir", docfolder, "-V", str(version), "-R", str(release), "-A", "Zynga Inc.", "-H", "Jasy – Web Tooling Framework", srcfolder]
+cmd = ["sphinx-apidoc", "--full", "--maxdepth", "4", "--output-dir", docfolder, "-V", str(version), "-R", str(release), "-A", "Sebastian Werner", "-H", "Jasy – Web Tooling Framework", srcfolder]
 executeCommand(cmd, "Could not generate indexies")
 
 
@@ -61,7 +62,7 @@ patches = {
 for patchKey in patches:
 		configContent = configContent.replace(patchKey, patches[patchKey])
 open(os.path.join(docfolder, "conf.py"), "w").write(configContent)
-
+open(os.path.join(basedir, "sphinx.py"), "w").write(configContent)
 
 #
 # GENERATING HTML PAGES
