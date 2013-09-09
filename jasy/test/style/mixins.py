@@ -56,6 +56,28 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
         
+
+    def test_extend_media(self):
+        self.assertEqual(self.process('''
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            @media screen{
+              h1{
+                $font;
+                color: blue;
+              }
+            }
+            
+            h1{
+              $font;
+              color: black;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@media screen{h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
+
     def test_extend_def_as_func(self):
         self.assertEqual(self.process('''
             $font(){
@@ -154,6 +176,49 @@ class Tests(unittest.TestCase):
             ''')      
 
         self.assertRaises(Variables.VariableError, wrapper)
+
+
+    def test_mixin_default_param(self):
+        self.assertEqual(self.process('''
+            $font($size=2){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font();
+              color: red;
+            }
+            '''), 'h2{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}')
+
+
+    def test_mixin_default_param_two_extends(self):
+        self.assertEqual(self.process('''
+            $font($size=2){
+              font-family: Arial, sans-serif;
+              font-size: 15px * $size;
+            }
+
+            h1{
+              $font(3);
+              color: blue;
+            }
+
+            h2{
+              $font();
+              color: red;
+            }
+
+            h3{
+              $font();
+              color: green;
+            }            
+            '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')        
 
 
     def test_mixin_param_transparent_units(self):
@@ -271,9 +336,55 @@ class Tests(unittest.TestCase):
             h1{
               $color = yellow;
               $style(3, blue);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')        
+
+
+    def test_mixin_param_name_conflicts_default_ignore(self):
+        self.assertEqual(self.process('''
+            $style($size, $color=red){
+              font-size: 15px * $size;
               color: $color;
             }
-            '''), 'h1{font-size:45px;color:blue;color:yellow;}')        
+
+            h1{
+              $color = yellow;
+              $style(3, blue);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')            
+
+
+    def test_mixin_param_name_conflicts_default_use(self):
+        self.assertEqual(self.process('''
+            $style($size, $color=red){
+              font-size: 15px * $size;
+              color: $color;
+            }
+
+            h1{
+              $color = yellow;
+              $style(3);
+              background: $color;
+            }
+            '''), 'h1{font-size:45px;color:red;background:yellow;}')
+
+
+    def test_mixin_param_name_default_from_outer(self):
+        self.assertEqual(self.process('''
+            $titleColor = orange;
+
+            $style($size, $color=$titleColor){
+              font-size: 15px * $size;
+              color: $color;
+              border-bottom: 1px solid $titleColor;
+            }
+
+            h1{
+              $style(3);
+            }
+            '''), 'h1{font-size:45px;color:orange;border-bottom:1px solid orange;}')        
 
 
     def test_mixin_wrong_place_call(self):
@@ -307,7 +418,163 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)             
+        self.assertRaises(Variables.VariableError, wrapper)      
+
+
+    def test_mixin_content(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                content: "u1929";
+                font-family: Icons;
+                width: 22px;
+                height: 22px;
+                display: inline-block;
+
+                @content;
+              }
+            }
+
+            h1{
+              $icon() < {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+            }
+
+            h2{
+              $icon();
+
+              color: blue;
+            }            
+            '''), 'h1::before,h2::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;}h1::before{margin-right:2px;margin-top:1px;}h2{color:blue;}')
+
+
+    def xtest_mixin_content_double(self):
+        self.assertEqual(self.process('''
+            $virtual(){
+              &::before{
+                @content;
+              }
+
+              &::after{
+                @content;
+              }
+            }
+
+            h1{
+              $virtual() < {
+                content: "|";
+              }
+            }
+            '''), '')        
+
+
+    def test_mixin_content_with_param(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                content: "u1929";
+                font-family: Icons;
+                width: 22px;
+                height: 22px;
+                display: inline-block;
+
+                @content;
+              }
+            }
+
+            h1{
+              $icon(x) < {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+            }
+            '''), 'h1::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;margin-right:2px;margin-top:1px;}')
+
+
+    def test_mixin_content_with_param_double(self):
+        self.assertEqual(self.process('''
+            $virtual($width, $height){
+              &::before{
+                width: $width;
+                height: $height;
+
+                @content;
+              }
+
+              &::after{
+                width: $width;
+                height: $height;
+                
+                @content;
+              }
+            }
+
+            h1{
+              $virtual(24px, 30px) < {
+                content: "|";
+              }
+            }
+            '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')     
+
+
+    def test_mixin_local_override(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::after{
+                content: "u1929";
+                font-family: Icons;
+              }
+            }
+
+            h1{
+              $icon($size) {
+                margin-right: $size;
+                margin-top: $size/2;
+              }
+
+              $icon(2px);
+            }
+            '''), 'h1{margin-right:2px;margin-top:1px;}')
+
+
+    def xtest_extend_local_override(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::after{
+                content: "u1929";
+                font-family: Icons;
+              }
+            }
+
+            h1{
+              $icon {
+                margin-right: 2px;
+                margin-top: 1px;
+              }
+
+              $icon;
+            }
+            '''), 'h1{margin-right:2px;margin-top:1px;}')        
+
+
+    def xtest_extend_or_mixin(self):
+        self.assertEqual(self.process('''
+            $box($color=red) {
+              color: $color;
+              border: 1px solid $color;
+            }
+
+            .errorbox{
+              $box;
+            }
+
+            .messagebox{
+              $box(green);
+            }
+            .
+            '''), '')             
 
 
 if __name__ == '__main__':

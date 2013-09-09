@@ -149,6 +149,10 @@ def Statement(tokenizer, staticContext):
 
             return node
 
+        elif tokenValue == "content":
+            node = Node.Node(tokenizer, "content")
+            return node
+
         elif tokenValue == "include":
             node = Node.Node(tokenizer, "include")
             node.append(Expression(tokenizer, staticContext))
@@ -580,12 +584,20 @@ def Variable(tokenizer, staticContext):
         node = Node.Node(tokenizer, "call")
         node.name = name
 
+        # Mixin call or Mixin definition
         if tokenizer.mustMatch("left_paren"):
             node.append(ArgumentList(tokenizer, staticContext), "params")
 
+        # Mixin definition
         if tokenizer.peek() == "left_curly":
             node.type = "mixin"
             node.append(Block(tokenizer, staticContext), "rules")
+
+        # Mixin call with content section
+        elif tokenizer.peek() == "lt":
+            # Ignore smaller symbol / Jump to block
+            tokenizer.get()
+            node.append(Block(tokenizer, staticContext), "rules")            
 
         return node
 
@@ -644,7 +656,7 @@ def AssignExpression(tokenizer, staticContext):
     if not tokenizer.match("assign"):
         return lhs
 
-    if lhs.type == "identifier" or lhs.type == "dot" or lhs.type == "call":
+    if lhs.type == "variable":
         pass
     else:
         raise SyntaxError("Bad left-hand side of assignment", tokenizer)

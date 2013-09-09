@@ -25,26 +25,31 @@ def assembleDot(node, result=None):
 
 
 
-def combineSelector(node):
+def combineSelector(node, stop=None):
     """
     Figures out the fully qualified selector of the given Node
     """
 
     selector = []
+    media = []
 
+    # Selector and media lists are in reversed order...
     current = node
-    while current:
+    while current and current is not stop:
         if current.type == "selector":
             selector.append(current.name)
         elif current.type == "mixin":
             selector.append(current.selector)
+        elif current.type == "media":
+            media.append(current.name)
 
         current = getattr(current, "parent", None)
 
-    if not selector:
-        raise Exception("Node %s at line %s is not a selector/mixin and is no child of any selector/mixin." % (node.type, node.line))
+    if not selector and not media:
+        raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
 
-    result = []
+    # So we process collected selector data in reversed order, too, to get the normal order back
+    combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
         combined = ""
         for part in item:
@@ -54,12 +59,23 @@ def combineSelector(node):
                 else:
                     combined = "%s %s" % (combined, part)
             else:
-                if "&" in part:
+                # Tolerate open/unsolvable "&" parent reference when we stop too early
+                if not stop and "&" in part:
                     raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
                 else:
                     combined = part
 
-        result.append(combined)
+        combinedSelectors.append(combined)
 
-    return result
+    if media:
+        # Use compact format when possible
+        if len(media) > 1:
+            # So we join collected media data in reversed order, too, to get the normal order back
+            combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
+        else:
+            combinedMedia = media[0][0]
+    else:
+        combinedMedia = None
+
+    return combinedSelectors, combinedMedia
 

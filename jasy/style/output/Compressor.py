@@ -350,8 +350,8 @@ class Compressor:
 
         result = "@media %s" % separator.join(node.name)
         result += self.compress(node.rules)
-
-        return result        
+        
+        return self.indent(result)
 
 
 

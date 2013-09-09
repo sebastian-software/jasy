@@ -99,15 +99,58 @@ def __extend(node, scanMixins=False):
 
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
-        selector = Util.combineSelector(node.parent)
-        Console.debug("Extending selector of mixin by: %s", selector)
+        selector, media = Util.combineSelector(node.parent)
 
-        if hasattr(mixin, "selector"):
-            # We iterate from in inverse mode, so add new selectors to the front
-            mixin.selector[0:0] = selector
+        if media:
+            Console.warn("Extending inside media query behaves like including (less efficient): %s + %s", media, ", ".join(selector))
+
+            replacements = __resolveMixin(mixin, None)
+
+            Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
+
+            # Reverse inject all children of that block
+            # at the same position as the original call
+            parent = node.parent
+            pos = parent.index(node)
+            for child in reversed(replacements):
+                parent.insert(pos, child)
 
         else:
-            mixin.selector = selector
+            Console.debug("Extending selector of mixin by: %s", ", ".join(selector))
+
+            if hasattr(mixin, "selector"):
+                # We iterate from in inverse mode, so add new selectors to the front
+                mixin.selector[0:0] = selector
+
+            else:
+                mixin.selector = selector
+
+            virtualBlock = Node.Node(type="block")
+            __extendContent(mixin.rules, node, virtualBlock, mixin)
+
+            if len(virtualBlock) > 0:
+                callSelector, callMedia = Util.combineSelector(node)
+
+                if callSelector:
+                    virtualSelector = Node.Node(type="selector")
+                    virtualSelector.name = callSelector
+
+                if callMedia:
+                    virtualMedia = Node.Node(type="media")
+                    virtualMedia.name = callMedia
+
+                if callSelector:
+                    virtualSelector.append(virtualBlock, "rules")
+                elif callMedia:
+                    virtualMedia.append(virtualBlock, "rules")
+
+                if callMedia:
+                    virtualTop = virtualMedia
+                elif callSelector:
+                    virtualTop = virtualSelector
+
+                pos = mixin.parent.index(mixin)
+                mixin.parent.insert(pos+1, virtualTop)
 
         node.parent.remove(node)
         Console.outdent()
@@ -149,6 +192,8 @@ def __process(node, scanMixins=False, active=None):
 
         Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))
 
+        __injectContent(replacements, node)
+
         # Reverse inject all children of that block
         # at the same position as the original call
         parent = node.parent
@@ -163,6 +208,58 @@ def __process(node, scanMixins=False, active=None):
 
     return modified
 
+
+def __injectContent(node, call):
+    """
+    Inserts content section of call into prepared content area of mixin clone
+    """
+
+    for child in reversed(node):
+        if child:
+            __injectContent(child, call)
+
+    if node.type == "content":
+        if hasattr(call, "rules"):
+            Console.debug("Inserting content section from call into mixin clone")
+            node.parent.insertAllReplace(node, copy.deepcopy(call.rules))
+        else:
+            Console.debug("Removing unused content section from mixin clone")
+            node.parent.remove(node)
+
+
+def __extendContent(node, call, targetBlock, stopCombineAt):
+    """
+    Builds up a list of selector/mediaqueries to insert after the extend to produce
+    the @content sections on the intended selectors.
+    """
+
+    for child in reversed(node):
+        if child:
+            __extendContent(child, call, targetBlock, stopCombineAt)
+
+    if node.type == "content" and hasattr(call, "rules"):
+        # Extends support @content as well. In this case we produce a new selector
+        # which matches the position of the content section and append it after
+        # the original extended mixin on return
+
+        Console.debug("Inserting content section into new virtual selector")
+
+        selector, media = Util.combineSelector(node, stop=stopCombineAt)
+
+        selectorNode = Node.Node(type="selector")
+        selectorNode.name = selector
+
+        selectorNode.append(copy.deepcopy(call.rules), "rules")
+
+        # Support media queries, too
+        if media:
+            mediaNode = Node.Node(type="media")
+            mediaNode.name = media
+            mediaNode.append(selectorNode)
+            targetBlock.append(mediaNode)
+
+        else:
+            targetBlock.append(selectorNode)
 
 
 def __findMixin(node, name):
@@ -211,11 +308,19 @@ def __resolveMixin(mixin, params):
         for pos, param in enumerate(mixin.params):
             # We have to copy over the parameter value as a local variable declaration
             paramAsDeclaration = Node.Node(type="declaration")
-            paramAsDeclaration.name = param.name
+
+            if param.type == "variable":
+                paramAsDeclaration.name = param.name
+            elif param.type == "assign" and param[0].type == "variable":
+                paramAsDeclaration.name = param[0].name
+            else:
+                raise Exception("Unsupported param structure for mixin resolver at line %s! Expected type variable or assignment and got: %s!" % (mixin.line, param.type));
 
             # Copy over actual param value
             if len(params) > pos:
                 paramAsDeclaration.append(copy.deepcopy(params[pos]), "initializer")
+            elif param.type == "assign" and param[0].type == "variable":
+                paramAsDeclaration.append(param[1], "initializer")
 
             clone.insert(0, paramAsDeclaration)
 

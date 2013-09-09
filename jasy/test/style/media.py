@@ -37,7 +37,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), '')
+            '''), '@media print{body{color:black;}}')
 
 
     def test_comma(self):
@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
                 background-color: yellow;
               }
             }
-            '''), '')        
+            '''), '@media handheld{body{background-color:yellow;}}')        
 
 
     def test_size(self):
@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
                 display: none;
               }
             }
-            '''), '')        
+            '''), '@media (max-width:600px){.sidebar{display:none;}}')        
 
 
     def test_and(self):
@@ -67,7 +67,7 @@ class Tests(unittest.TestCase):
                 float: left;
               }
             }
-            '''), '')        
+            '''), '@media tv and(min-width:700px)and(orientation:landscape){.headline{float:left;}}')        
 
 
     def test_ratio(self):
@@ -77,7 +77,7 @@ class Tests(unittest.TestCase):
                  font-size: 16px;
               }
             }
-            '''), '')        
+            '''), '@media screen and(min-aspect-ratio:1/1){body{font-size:16px;}}')        
 
 
 
@@ -88,7 +88,7 @@ class Tests(unittest.TestCase):
                 height: 30px;
               }
             }
-            '''), '')         
+            '''), '@media handheld and(min-width:20em){header{height:30px;}}')         
 
 
     def test_reallife_pixel(self):
@@ -102,7 +102,7 @@ class Tests(unittest.TestCase):
                 background-size: 60px 20px;
               }
             }
-            '''), '')   
+            '''), '@media (-webkit-min-device-pixel-ratio:2){button{background-size:60px 20px;}}')   
 
 
 
