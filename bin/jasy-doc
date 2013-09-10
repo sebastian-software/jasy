@@ -27,10 +27,10 @@ release = jasy.__version__
 
 print("Running Doc Generator for Jasy %s (%s)" % (version, release))
 print("From: %s" % basedir)
-print("Dist: %s" % os.path.abspath("docs"))
+print("Dist: %s" % os.path.abspath("docs/html"))
 print("Generating HTML pages...")
 
-cmd = ["sphinx-build", "-b", "html", "docs", "docs"]
+cmd = ["sphinx-build", "-b", "html", "docs", "docs/html"]
 executeCommand(cmd, "Could not generate indexies")
 
 print("Done")

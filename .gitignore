@@ -4,6 +4,6 @@ dist
 build
 MANIFEST
 jasy.egg-info
-docs/*.html
+docs/html
 docs/_*
 docs/.*
