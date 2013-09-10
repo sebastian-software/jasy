@@ -51,6 +51,7 @@ copyright = '2013, Sebastian Werner'
 #
 # The short X.Y version.
 version = '1.5'
+
 # The full version, including alpha/beta/rc tags.
 release = '1.5-alpha3'
 
@@ -105,7 +106,7 @@ pygments_style = 'sphinx'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = 'Jasy 1.5-alpha3'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 html_short_title = 'Jasy 1.5-alpha3'
