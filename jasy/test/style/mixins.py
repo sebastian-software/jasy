@@ -55,6 +55,25 @@ class Tests(unittest.TestCase):
               color: red;
             }
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
+
+
+    def test_local_extend(self):
+        self.assertEqual(self.process('''
+            h1{
+              $font{
+                font-family: Arial, sans-serif;
+                font-size: 15px;
+              }
+
+              $font;
+              color: blue;
+
+              span {
+                $font;
+                font-size: 70%;
+              }
+            }
+            '''), '')        
         
 
     def test_extend_media(self):

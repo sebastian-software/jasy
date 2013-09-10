@@ -99,7 +99,7 @@ def __extend(node, scanMixins=False):
 
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
-        selector, media = Util.combineSelector(node.parent)
+        selector, media = Util.combineSelector(node.parent, stop=node.parent)
 
         if media:
             Console.warn("Extending inside media query behaves like including (less efficient): %s + %s", media, ", ".join(selector))
