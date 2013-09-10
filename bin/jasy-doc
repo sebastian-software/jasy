@@ -26,18 +26,21 @@ version = re.compile("[0-9]\.[0-9]+").match(jasy.__version__).group(0)
 release = jasy.__version__
 outdir = os.path.abspath("docs/html")
 
-print("Running Doc Generator for Jasy %s (%s)" % (version, release))
-print("From: %s" % basedir)
-print("Dist: %s" % outdir)
+print(">>> Running Doc Generator for Jasy %s (%s)" % (version, release))
+print("  - From: %s" % basedir)
+print("  - Dist: %s" % outdir)
 
 if os.path.exists(outdir):
-    print("Cleaning up...")
+    print(">>> Cleaning up...")
     shutil.rmtree(outdir)
 
-print("Generating HTML pages...")
+print(">>> Generating API doc index...")
+cmd = ["sphinx-apidoc", "-o", "docs", "-f", "jasy"]
+executeCommand(cmd, "Could not update API index!")
 
+print(">>> Generating HTML pages...")
 cmd = ["sphinx-build", "-b", "html", "docs", outdir]
-executeCommand(cmd, "Could not generate indexies")
+executeCommand(cmd, "Could not generate indexies!")
 
-print("Done")
+print(">>> Done")
 
