@@ -7,7 +7,7 @@
 #
 
 # Import standard library stuff
-import sys, os.path, logging, tempfile, re
+import sys, os.path, logging, re, shutil
 
 # Version check
 if sys.version_info[0] < 3:
@@ -24,13 +24,19 @@ from jasy.core.Util import executeCommand
 
 version = re.compile("[0-9]\.[0-9]+").match(jasy.__version__).group(0)
 release = jasy.__version__
+outdir = os.path.abspath("docs/html")
 
 print("Running Doc Generator for Jasy %s (%s)" % (version, release))
 print("From: %s" % basedir)
-print("Dist: %s" % os.path.abspath("docs/html"))
+print("Dist: %s" % outdir)
+
+if os.path.exists(outdir):
+    print("Cleaning up...")
+    shutil.rmtree(outdir)
+
 print("Generating HTML pages...")
 
-cmd = ["sphinx-build", "-b", "html", "docs", "docs/html"]
+cmd = ["sphinx-build", "-b", "html", "docs", outdir]
 executeCommand(cmd, "Could not generate indexies")
 
 print("Done")
