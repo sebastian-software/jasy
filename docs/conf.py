@@ -14,6 +14,12 @@
 
 import sys, os
 
+# Include local Jasy into Python library path
+basedir = os.path.join(os.path.abspath(os.pardir))
+if os.path.exists(os.path.join(basedir, "jasy")):
+    sys.path.insert(0, basedir)
+
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
