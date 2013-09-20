@@ -30,6 +30,10 @@ def combineSelector(node, stop=None):
     Figures out the fully qualified selector of the given Node
     """
 
+    # Fast path and fix for identical start/stop
+    if node is stop:
+        return ["&"], None
+
     selector = []
     media = []
 
