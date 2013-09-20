@@ -12,30 +12,35 @@ def process(tree):
     Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...` 
     """
 
-    insertIndex = 0
-
     Console.info("Flattening selectors...")
     Console.indent()
 
-    def __flatter(node):
+    def __flatter(node, dest):
         """
         Moves all selectors to the top tree node while keeping media queries intact 
         and/or making them CSS2 compatible (regarding formatting)
         """
 
-        nonlocal insertIndex
+        toplevel = hasattr(node, "parent") and not hasattr(node.parent, "parent")
+
+        # Insert all children of top-level nodes into a helper element first
+        # This is required to place mixins first, before the current node and append
+        # all remaining nodes afterwards
+        if toplevel:
+            chdest = Node.Node(None, "helper")
+        else:
+            chdest = dest
 
         # Process children first
-        for child in list(node):
-            if child is not None:
-                __flatter(child)
+        if len(node) > 0:
+            for child in list(node):
+                if child is not None:
+                    __flatter(child, chdest)
 
-        # Increase index position when reaching new child of tree
-        if getattr(node, "parent", None) == tree:
-            insertIndex += 1
+        # Filter out simple nodes
+        if node.type in ("selector", "mixin", "media") and hasattr(node, "rules") and len(node.rules) > 0:
 
-        # Extended mixin
-        if node.type in ("selector", "mixin", "media") and len(node.rules) > 0:
+            # Combine selector and/or media query
             combinedSelector, combinedMedia = Util.combineSelector(node)
 
             if node.type == "selector":
@@ -45,31 +50,20 @@ def process(tree):
             elif node.type == "media":
                 pass
 
-            if node.type == "selector" or node.type == "mixin":
-                if combinedMedia:
-                    # Share same media element when possible
-                    previousMedia = insertIndex > 0 and tree[insertIndex-1]
-                    if previousMedia and previousMedia.name[0] == combinedMedia:
-                        mediaBlock = previousMedia.rules
-                        mediaBlock.append(node)
-                        return
+            if combinedMedia and node.type in ("selector", "mixin"):
+                # Dynamically create matching media query
+                mediaNode = Node.Node(None, "media")
+                mediaNode.name = [combinedMedia]
 
-                    else:
-                        # Dynamically create matching media query
-                        mediaNode = Node.Node(None, "media")
-                        mediaNode.name = [combinedMedia]
+                mediaBlock = Node.Node(None, "block")
+                mediaNode.append(mediaBlock, "rules")
+                
+                mediaBlock.append(node)
+                node = mediaNode
 
-                        mediaBlock = Node.Node(None, "block")
-                        mediaNode.append(mediaBlock, "rules")
-                        mediaBlock.append(node)
-
-                        # Insert media query node instead of rule node to tree
-                        node = mediaNode
 
             elif node.type == "media":
                 # Insert direct properties into new selector:block
-
-                previousMedia = insertIndex > 0 and tree[insertIndex-1]
 
                 selectorNode = Node.Node(None, "selector")
                 selectorNode.name = combinedSelector
@@ -85,11 +79,23 @@ def process(tree):
                 # Then insert the newly created and filled selector block into the media node
                 node.rules.append(selectorNode)
 
-            # When node is not yet in the root tree, append it there
-            # and correct insertIndex for next insertion
-            if getattr(node, "parent", None) != tree:
-                tree.insert(insertIndex, node)
-                insertIndex += 1
+
+        if node.type in ("selector", "mixin", "media"):
+
+            # Place any mixins before the current node
+            if toplevel:
+                for child in list(chdest):
+                    if child.type == "mixin":
+                        dest.append(child)
+
+            # The append self
+            dest.append(node)
+
+            # Afterwards append any children
+            if toplevel:
+                for child in list(chdest):
+                    dest.append(child)
+
 
 
 
@@ -161,13 +167,16 @@ def process(tree):
 
 
     # Execute the different features in order
-    __flatter(tree)
+    dest = Node.Node(None, "sheet")
+    __flatter(tree, dest)
+    tree.insertAll(0, dest)
+
     __clean(tree)
     __combine(tree)
 
-    Console.info("Flattended %s selectors", insertIndex-1)
+    Console.info("Flattended selectors")
     Console.outdent()
 
-    return insertIndex > 1
+    return
 
 

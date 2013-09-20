@@ -73,8 +73,35 @@ class Tests(unittest.TestCase):
                 font-size: 70%;
               }
             }
-            '''), '')        
+            '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')        
         
+
+    def test_local_extend_complex(self):
+        self.assertEqual(self.process('''
+            h1{
+              $font{
+                font-family: Arial, sans-serif;
+                font-size: 15px;
+              }
+
+              $font;
+              color: blue;
+
+              span {
+                $font;
+                font-size: 70%;
+
+                small{
+                  $font;
+                  font-size: 50%;
+                }
+              }
+
+              background: blue;
+              font-weight: bold;
+            }
+            '''), '')
+
 
     def test_extend_media(self):
         self.assertEqual(self.process('''
