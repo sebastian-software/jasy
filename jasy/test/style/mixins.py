@@ -74,6 +74,26 @@ class Tests(unittest.TestCase):
               }
             }
             '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')        
+
+
+    def test_local_extend_with_media(self):
+      self.assertEqual(self.process('''
+          h1{
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            $font;
+
+            @media print{
+              font-size: 20pt;
+              color: #111;
+            }
+
+            color: #333;
+          }
+          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
         
 
     def test_local_extend_complex(self):
