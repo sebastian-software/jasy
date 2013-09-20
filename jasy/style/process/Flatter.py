@@ -21,12 +21,12 @@ def process(tree):
         and/or making them CSS2 compatible (regarding formatting)
         """
 
-        toplevel = hasattr(node, "parent") and not hasattr(node.parent, "parent")
+        process = node.type in ("selector", "mixin", "media")
 
         # Insert all children of top-level nodes into a helper element first
         # This is required to place mixins first, before the current node and append
         # all remaining nodes afterwards
-        if toplevel:
+        if process:
             chdest = Node.Node(None, "helper")
         else:
             chdest = dest
@@ -37,8 +37,8 @@ def process(tree):
                 if child is not None:
                     __flatter(child, chdest)
 
-        # Filter out simple nodes
-        if node.type in ("selector", "mixin", "media") and hasattr(node, "rules") and len(node.rules) > 0:
+        # Filter out empty nodes from processing
+        if process and hasattr(node, "rules") and len(node.rules) > 0:
 
             # Combine selector and/or media query
             combinedSelector, combinedMedia = Util.combineSelector(node)
@@ -80,21 +80,19 @@ def process(tree):
                 node.rules.append(selectorNode)
 
 
-        if node.type in ("selector", "mixin", "media"):
+        if process:
 
             # Place any mixins before the current node
-            if toplevel:
-                for child in list(chdest):
-                    if child.type == "mixin":
-                        dest.append(child)
+            for child in list(chdest):
+                if child.type == "mixin":
+                    dest.append(child)
 
             # The append self
             dest.append(node)
 
             # Afterwards append any children
-            if toplevel:
-                for child in list(chdest):
-                    dest.append(child)
+            for child in list(chdest):
+                dest.append(child)
 
 
 

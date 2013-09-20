@@ -100,7 +100,7 @@ class Tests(unittest.TestCase):
               background: blue;
               font-weight: bold;
             }
-            '''), '')
+            '''), 'h1,h1 span,h1 span small{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;background:blue;font-weight:bold;}h1 span{font-size:70%;}h1 span small{font-size:50%;}')
 
 
     def test_extend_media(self):
