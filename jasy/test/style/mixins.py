@@ -103,6 +103,36 @@ class Tests(unittest.TestCase):
             '''), 'h1,h1 span,h1 span small{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;background:blue;font-weight:bold;}h1 span{font-size:70%;}h1 span small{font-size:50%;}')
 
 
+    def test_local_extend_deeper(self):
+        self.assertEqual(self.process('''
+            h1{
+              color: black;
+              text-decoration: underline;
+
+              strong{
+                $font{
+                  font-family: Arial, sans-serif;
+                  font-size: 30px;
+                }
+
+                $font;
+                color: black;
+              }
+
+              small{
+                $font{
+                  font-family: Arial, sans-serif;
+                  font-size: 20px;
+                }
+
+                $font;
+                color: grey;
+              }
+
+            }
+            '''), 'h1 strong{font-family:Arial,sans-serif;font-size:30px;}h1 small{font-family:Arial,sans-serif;font-size:20px;}h1{color:black;text-decoration:underline;}h1 strong{color:black;}h1 small{color:grey;}')
+
+
     def test_extend_media(self):
         self.assertEqual(self.process('''
             $font{
