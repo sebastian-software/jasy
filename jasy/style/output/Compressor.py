@@ -286,7 +286,7 @@ class Compressor:
         self.__indentLevel -= 1
 
         if self.__useBlockBreaks:
-            result += "{\n%s\n}\n" % inner
+            result += "{\n%s\n}" % inner
         else:
             result += "{%s}" % inner
 
