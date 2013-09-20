@@ -96,6 +96,30 @@ class Tests(unittest.TestCase):
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
         
 
+    def test_local_extend_with_inner_media(self):
+      self.assertEqual(self.process('''
+          h1{
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+
+              @media print{
+                font-size: 20pt;
+                color: #111;
+              }              
+            }
+
+            $font;
+            color: #333;
+
+            small{
+              $font;
+              color: red;
+            }
+          }
+          '''), 'h1,h1 small{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1,h1 small{font-size:20pt;color:#111;}}h1 small{color:red;}')
+
+
     def test_local_extend_complex(self):
         self.assertEqual(self.process('''
             h1{
