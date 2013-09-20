@@ -589,11 +589,14 @@ class Tests(unittest.TestCase):
               $box;
             }
 
+            .seconderrorbox{
+              $box;
+            }
+
             .messagebox{
               $box(green);
             }
-            .
-            '''), '')             
+            '''), '.errorbox,.seconderrorbox{color:red;border:1px solid red;}.messagebox{color:green;border:1px solid green;}')             
 
 
 if __name__ == '__main__':
