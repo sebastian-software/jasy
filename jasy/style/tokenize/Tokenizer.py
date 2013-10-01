@@ -556,6 +556,9 @@ class Tokenizer(object):
             # Variable in boundary
             elif ch == "$" and nextCh == "{":
                 self.lexIdent(ch)
+            # Engine prefixed system command
+            elif ch == "@" and nextCh == "-":
+                self.lexIdent(ch)
             # Otherwise lex as a trivial operator
             else:
                 self.lexOp(ch)
