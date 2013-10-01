@@ -39,33 +39,31 @@ class Optimization(FlagSet.FlagSet):
         whenever any optimization could not be applied to the given tree.
         """
         
-        enabled = self.__optimizations
-        
-        if "wrap" in enabled:
+        if self.has("wrap"):
             try:
                 ClosureWrapper.optimize(tree)
             except CryptPrivates.Error as err:
                 raise Error(err)
             
-        if "declarations" in enabled:
+        if self.has("declarations"):
             try:
                 CombineDeclarations.optimize(tree)
             except CombineDeclarations.Error as err:
                 raise Error(err)
 
-        if "blocks" in enabled:
+        if self.has("blocks"):
             try:
                 BlockReducer.optimize(tree)
             except BlockReducer.Error as err:
                 raise Error(err)
 
-        if "variables" in enabled:
+        if self.has("variables"):
             try:
                 LocalVariables.optimize(tree)
             except LocalVariables.Error as err:
                 raise Error(err)
 
-        if "privates" in enabled:
+        if self.has("privates"):
             try:
                 CryptPrivates.optimize(tree, tree.fileId)
             except CryptPrivates.Error as err:

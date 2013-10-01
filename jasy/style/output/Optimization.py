@@ -31,9 +31,7 @@ class Optimization(FlagSet.FlagSet):
         whenever any optimization could not be applied to the given tree.
         """
         
-        enabled = self.__optimizations
-        
-        # if "wrap" in enabled:
+        # if self.has("wrap"):
         #     try:
         #         ClosureWrapper.optimize(tree)
         #     except CryptPrivates.Error as err:
