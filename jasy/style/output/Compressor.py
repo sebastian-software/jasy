@@ -323,7 +323,12 @@ class Compressor:
 
 
     def type_keyframes(self, node):
-        result = "@keyframes %s{" % node.name
+        if node.vendor:
+            result = "@-%s-keyframes " % node.vendor
+        else:
+            result = "@%skeyframes "
+
+        result += "%s{" % node.name
 
         if self.__useBlockBreaks:
             result += "\n"
