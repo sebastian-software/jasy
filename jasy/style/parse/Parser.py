@@ -815,7 +815,12 @@ def MemberExpression(tokenizer, staticContext):
             if node.type == "identifier":
                 childNode = Node.Node(tokenizer, "system")
                 childNode.name = node.value
-                childNode.append(ArgumentList(tokenizer, staticContext), "params")
+
+                # Special processing of URL commands
+                if node.value == "url":
+                    childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
+                else:
+                    childNode.append(ArgumentList(tokenizer, staticContext), "params")
             
             elif node.type == "command":
                 childNode = Node.Node(tokenizer, "command")
@@ -830,6 +835,37 @@ def MemberExpression(tokenizer, staticContext):
             return node
 
         node = childNode
+
+    return node
+
+
+def UrlArgumentList(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "list")
+    
+    if tokenizer.match("right_paren", True):
+        return node
+
+    url = ""
+    while True:
+        tokenType = tokenizer.get()
+
+        if tokenType == "right_paren":
+            break
+        elif tokenType == "string":
+            token = tokenizer.token
+            url += token.value
+        elif tokenType == "div":
+            url += "/"
+        elif tokenType == "identifier":
+            token = tokenizer.token
+            url += token.value
+        else:
+            token = tokenizer.token
+            print("TOKEN", token.type, token.value)
+
+    urlParam = Node.Node(tokenizer, "identifier")
+    urlParam.value = url
+    node.append(urlParam)
 
     return node
 
