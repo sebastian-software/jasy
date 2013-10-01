@@ -527,6 +527,9 @@ class Session():
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
         setups["jasy.build.time"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
 
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.version",4,"%s"' % jasy.__version__)
+        setups["jasy.version"] = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+
         detects = self.__exportFieldDetects()
         for fieldName in detects:
             fieldSetup = "jasy.Env.addField(%s);" % self.__exportField(fieldName)
