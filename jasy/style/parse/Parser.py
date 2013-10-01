@@ -14,6 +14,13 @@ __all__ = [ "parse", "parseExpression" ]
 
 
 RE_SELECTOR_SPLIT = re.compile(r"\s*,\s*")
+RE_ENGINE_PROPERTY = re.compile(r"^\-(apple|chrome|moz|ms|o|webkit)\-[a-z\-]+$")
+
+
+def extractEngine(property):
+    match = RE_ENGINE_PROPERTY.match(property)
+    if match:
+        return match.group(1)
 
 
 def parseExpression(source, fileId=None, line=1):
@@ -161,7 +168,8 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "font-face":
             return Selector(tokenizer, staticContext)
 
-        elif tokenValue == "keyframes":
+        # Special case: Support keyframe command with engine prefix
+        elif tokenValue == "keyframes" or tokenValue.endswith("-keyframes"):
             return KeyFrames(tokenizer, staticContext)
 
         elif tokenValue == "media":
@@ -321,6 +329,7 @@ def KeyFrames(tokenizer, staticContext):
     """
 
     node = Node.Node(tokenizer, "keyframes")
+    node.prefix = extractEngine(tokenizer.token.value)
     
     # Use param as name on keyframes
     tokenizer.get()
