@@ -7,7 +7,7 @@ import itertools, re
         
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
 
-def extractEngine(name):
+def extractVendor(name):
     match = RE_ENGINE_PROPERTY.match(name)
     if match:
         return match.group(1)

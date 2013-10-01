@@ -7,6 +7,7 @@ import re, json
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
+import jasy.style.Util as Util
 
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
@@ -14,13 +15,6 @@ __all__ = [ "parse", "parseExpression" ]
 
 
 RE_SELECTOR_SPLIT = re.compile(r"\s*,\s*")
-RE_ENGINE_PROPERTY = re.compile(r"^\-(apple|chrome|moz|ms|o|webkit)\-[a-z\-]+$")
-
-
-def extractEngine(property):
-    match = RE_ENGINE_PROPERTY.match(property)
-    if match:
-        return match.group(1)
 
 
 def parseExpression(source, fileId=None, line=1):
@@ -329,7 +323,7 @@ def KeyFrames(tokenizer, staticContext):
     """
 
     node = Node.Node(tokenizer, "keyframes")
-    node.prefix = extractEngine(tokenizer.token.value)
+    node.vendor = Util.extractVendor(tokenizer.token.value)
     
     # Use param as name on keyframes
     tokenizer.get()

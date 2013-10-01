@@ -20,6 +20,6 @@ class Node(AbstractNode.AbstractNode):
         "statement", "variables", "names",
 
         # style specific
-        "rules", "token", "unit", "selector", "dynamic", "prefix"
+        "rules", "token", "unit", "selector", "dynamic", "vendor"
     ]
 
