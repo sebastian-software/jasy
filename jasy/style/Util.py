@@ -3,8 +3,22 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import itertools
+import itertools, re
         
+RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
+
+def extractEngine(name):
+    match = RE_ENGINE_PROPERTY.match(name)
+    if match:
+        return match.group(1)
+
+
+def extractName(name):
+    match = RE_ENGINE_PROPERTY.match(name)
+    if match:
+        return match.group(2)
+
+
 def assembleDot(node, result=None):
     """
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
