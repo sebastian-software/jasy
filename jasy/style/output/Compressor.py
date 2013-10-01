@@ -326,7 +326,7 @@ class Compressor:
         if node.vendor:
             result = "@-%s-keyframes " % node.vendor
         else:
-            result = "@%skeyframes "
+            result = "@keyframes "
 
         result += "%s{" % node.name
 

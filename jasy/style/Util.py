@@ -17,6 +17,8 @@ def extractName(name):
     match = RE_ENGINE_PROPERTY.match(name)
     if match:
         return match.group(2)
+    else:
+        return name
 
 
 def assembleDot(node, result=None):
