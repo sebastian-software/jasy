@@ -323,7 +323,7 @@ class Compressor:
 
 
     def type_keyframes(self, node):
-        if node.vendor:
+        if hasattr(node, "vendor"):
             result = "@-%s-keyframes " % node.vendor
         else:
             result = "@keyframes "
