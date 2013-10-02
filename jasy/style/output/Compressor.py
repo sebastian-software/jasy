@@ -6,6 +6,8 @@
 import json, re, sys
 import jasy.style.Util as Util
 
+ascii_encoder = json.JSONEncoder(ensure_ascii=True)
+
 __all__ = [ "Compressor" ]
 
 nativeMethods = (
@@ -190,7 +192,10 @@ class Compressor:
 
 
     def type_string(self, node):
-        return "%s%s%s" % (node.quote, node.value, node.quote)
+        if hasattr(node, "quote"):
+            return "%s%s%s" % (node.quote, node.value, node.quote)
+        else:
+            return ascii_encoder.encode(node.value)
 
 
     def type_number(self, node):
