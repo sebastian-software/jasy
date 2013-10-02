@@ -215,6 +215,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
                     childStyleItem = session.getStyleByName(includeName)
 
+                    if childStyleItem is None:
+                        raise Exception("Did not find style sheet: %s" % includeName)
+
                     # Use merged tree for children as well...
                     childRoot = childStyleItem.getMergedTree(permutation, session)
 
