@@ -77,7 +77,7 @@ class Compressor:
             try:
                 result = getattr(self, "type_%s" % type)(node)
             except AttributeError:
-                raise Exception("Compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
+                raise Exception("Script compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
             
         if getattr(node, "parenthesized", None):
             return "(%s)" % result
