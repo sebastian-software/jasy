@@ -246,6 +246,18 @@ def Statement(tokenizer, staticContext):
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
+    # Attribute selectors e.g. [hidden] {...
+    elif tokenType == "left_bracket":
+        nextTokenType = tokenizer.peek()
+
+        if nextTokenType == "identifier":
+            node = Selector(tokenizer, staticContext)
+            return node
+
+        else:
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+
+
     # Class selectors e.g. &.selected, &::after {...
     elif tokenType == "ampersand":
         nextTokenType = tokenizer.peek()
