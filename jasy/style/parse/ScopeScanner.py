@@ -44,7 +44,7 @@ def __scanNode(node, data):
         if hasattr(node, "initializer"):
             data.modified.add(node.name)
             
-    elif node.type == "call":
+    elif node.type == "call" and hasattr(node, "name"):
         data.increment(node.name)
 
     elif node.type == "variable":
