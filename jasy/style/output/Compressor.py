@@ -8,10 +8,6 @@ import jasy.style.Util as Util
 
 __all__ = [ "Compressor" ]
 
-high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
-ascii_encoder = json.JSONEncoder(ensure_ascii=True)
-unicode_encoder = json.JSONEncoder(ensure_ascii=False)
-
 nativeMethods = (
     "rgb", "rgba", "hsb", "hsba", 
     "url", 
@@ -194,13 +190,7 @@ class Compressor:
 
 
     def type_string(self, node):
-        # Omit writing real high unicode character which are not supported well by browsers
-        ascii = ascii_encoder.encode(node.value)
-
-        if high_unicode.search(ascii):
-            return ascii
-        else:
-            return unicode_encoder.encode(node.value)
+        return "%s%s%s" % (node.quote, node.value, node.quote)
 
 
     def type_number(self, node):

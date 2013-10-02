@@ -929,6 +929,9 @@ def PrimaryExpression(tokenizer, staticContext):
         if tokenType == "number" and hasattr(tokenizer.token, "unit"):
             node.unit = tokenizer.token.unit
 
+        if tokenType == "string":
+            node.quote = tokenizer.token.quote
+
     else:
         raise SyntaxError("Missing operand. Found type: %s" % tokenType, tokenizer)
 
