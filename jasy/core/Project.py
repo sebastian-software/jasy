@@ -27,7 +27,8 @@ __all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
 
 
 classExtensions = (".js")
-styleExtensions = (".sht")
+styleExtensions = (".style")
+templateExtensions = (".tmpl")
 # Gettext .po files + ICU formats (http://userguide.icu-project.org/locale/localizing) (all formats but without .java support)
 translationExtensions = (".po", ".xlf", ".properties", ".txt")
 docFiles = ("package.md", "readme.md")
