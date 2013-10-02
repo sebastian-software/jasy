@@ -102,7 +102,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         Returns the parsed tree
         """
         
-        field = "tree[%s]" % self.id
+        field = "style:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             Console.info("Processing stylesheet %s %s...", Console.colorize(self.id, "bold"), Console.colorize("[%s]" % context, "cyan"))
@@ -121,7 +121,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         Returns an optimized tree with permutations applied
         """
 
-        field = "opt-tree[%s]-%s" % (self.id, permutation)
+        field = "style:opt-tree[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             tree = copy.deepcopy(self.__getTree("%s:plain" % context))
@@ -178,7 +178,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         
     def getFields(self):
-        field = "fields[%s]" % (self.id)
+        field = "style:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
             fields = collectFields(self.__getTree(context="fields"))
@@ -308,7 +308,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         permutation = self.filterPermutation(permutation)
         
-        field = "compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
+        field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
             tree = self.__getOptimizedTree(permutation, context)
@@ -331,7 +331,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             
             
     def getSize(self):
-        field = "size[%s]" % self.id
+        field = "style:size[%s]" % self.id
         size = self.project.getCache().read(field, self.mtime)
         
         if size is None:

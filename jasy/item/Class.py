@@ -71,7 +71,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
     
     def __getTree(self, context=None):
         
-        field = "tree[%s]" % self.id
+        field = "script:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             Console.info("Processing class %s %s...", Console.colorize(self.id, "bold"), Console.colorize("[%s]" % context, "cyan"))
@@ -89,7 +89,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
     def __getOptimizedTree(self, permutation=None, context=None):
         """Returns an optimized tree with permutations applied"""
 
-        field = "opt-tree[%s]-%s" % (self.id, permutation)
+        field = "script:opt-tree[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             tree = copy.deepcopy(self.__getTree("%s:plain" % context))
@@ -233,7 +233,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         
         permutation = self.filterPermutation(permutation)
         
-        field = "scope[%s]-%s" % (self.id, permutation)
+        field = "script:scope[%s]-%s" % (self.id, permutation)
         scope = self.project.getCache().read(field, self.mtime)
         if scope is None:
             scope = self.__getOptimizedTree(permutation, "scope").scope
@@ -243,7 +243,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         
         
     def getApi(self, highlight=True):
-        field = "api[%s]-%s" % (self.id, highlight)
+        field = "script:api[%s]-%s" % (self.id, highlight)
         apidata = self.project.getCache().read(field, self.mtime, inMemory=False)
         if apidata is None:
             apidata = jasy.js.api.Data.ApiData(self.id, highlight)
@@ -269,7 +269,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
 
     def getHighlightedCode(self):
-        field = "highlighted[%s]" % self.id
+        field = "script:highlighted[%s]" % self.id
         source = self.project.getCache().read(field, self.mtime)
         if source is None:
             if highlight is None:
@@ -287,7 +287,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
     def getMetaData(self, permutation=None):
         permutation = self.filterPermutation(permutation)
 
-        field = "meta[%s]-%s" % (self.id, permutation)
+        field = "script:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
             meta = MetaData(self.__getOptimizedTree(permutation, "meta"))
@@ -297,7 +297,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         
         
     def getFields(self):
-        field = "fields[%s]" % (self.id)
+        field = "script:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
             fields = collectFields(self.__getTree(context="fields"))
@@ -307,7 +307,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
 
     def getTranslations(self):
-        field = "translations[%s]" % (self.id)
+        field = "script:translations[%s]" % (self.id)
         result = self.project.getCache().read(field, self.mtime)
         if result is None:
             result = jasy.js.optimize.Translation.collectTranslations(self.__getTree(context="i18n"))
@@ -332,7 +332,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         if translation and not self.getTranslations():
             translation = None
         
-        field = "compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
+        field = "script:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
             tree = self.__getOptimizedTree(permutation, context)
@@ -356,7 +356,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             
             
     def getSize(self):
-        field = "size[%s]" % self.id
+        field = "script:size[%s]" % self.id
         size = self.project.getCache().read(field, self.mtime)
         
         if size is None:
