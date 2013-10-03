@@ -117,6 +117,10 @@ def process(tree):
             Console.debug("Cleaning up left over @content at line %s" % node.line)
             node.parent.remove(node)
 
+        elif node.type == "meta":
+            Console.debug("Cleaning up left over @meta at line %s" % node.line)
+            node.parent.remove(node)
+
 
 
     def __combine(tree, top=True):
