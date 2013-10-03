@@ -103,6 +103,9 @@ class Session():
         for project in self.__projects:
             project.clean()
 
+        if self.__virtualProject:
+            self.__virtualProject.clean()
+
         Console.outdent()
 
 
