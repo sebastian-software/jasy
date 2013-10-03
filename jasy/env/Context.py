@@ -24,6 +24,9 @@ from jasy.asset.SpritePacker import SpritePacker
 from jasy.js.Resolver import Resolver as ScriptResolver
 from jasy.js.api.Writer import ApiWriter as ScriptDoc
 
+# Style Features
+from jasy.style.Resolver import Resolver as StyleResolver
+
 # HTTP Server
 from jasy.http.Server import Server
 

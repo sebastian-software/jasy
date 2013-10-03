@@ -40,7 +40,7 @@ class Resolver():
 
     def addClass(self, classNameOrItem, prepend=False):
         """
-        Adds a class by its name or via the ClassItem instance
+        Adds a class by its name or via the Class item instance
         """
 
         if type(classNameOrItem) is str:
@@ -160,4 +160,3 @@ class Resolver():
                 self.__resolveDependencies(depObj, collection)
                     
 
-                    
