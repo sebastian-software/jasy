@@ -145,7 +145,61 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
+    def getBreaks(self, permutation=None, items=None, warnings=True):
+        """
+        Returns all down-priorized dependencies. This are dependencies which are
+        required to make the module run, but are not required being available at load time.
+        """
 
+        meta = self.getMetaData(permutation)
+        result = set()
+
+        for entry in meta.breaks:
+            if entry == self.id:
+                pass
+            elif entry in items and items[entry].kind == "style":
+                result.add(items[entry])
+            elif "*" in entry:
+                reobj = re.compile(fnmatch.translate(entry))
+                for itemId in items:
+                    if itemId != self.id:
+                        if reobj.match(itemId):
+                            result.add(items[itemId])
+            elif warnings:
+                Console.warn("Missing item for break command: %s in %s", entry, self.id)                            
+
+        return result
+
+
+    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
+        """ 
+        Returns a set of dependencies seen through the given list of known 
+        classes (ignoring all unknown items in original set) and configured fields 
+        with their individual detection classes. This method also
+        makes use of the meta data (see core/MetaData.py) and the variable data 
+        (see parse/ScopeData.py).
+        """
+
+        permutation = self.filterPermutation(permutation)
+        meta = self.getMetaData(permutation)
+        result = set()
+
+        # Manually defined names/classes
+        for entry in meta.requires:
+            if entry == self.id:
+                pass
+            elif entry in items and items[entry].kind == "style":
+                result.add(items[entry])
+            elif "*" in entry:
+                reobj = re.compile(fnmatch.translate(entry))
+                for itemId in items:
+                    if itemId != self.id:
+                        if reobj.match(itemId):
+                            result.add(items[itemId])
+            elif warnings:
+                Console.warn("Missing item for require command: %s in %s", entry, self.id)
+
+        return result
 
 
 
