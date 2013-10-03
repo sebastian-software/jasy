@@ -16,17 +16,15 @@ class MetaData:
     """
     
     __slots__ = [
-        "name", 
         "requires", "optionals", "breaks", 
         "assets"
     ]
     
     def __init__(self, tree):
-        self.name = None
-        
         self.requires = set()
         self.optionals = set()
         self.breaks = set()
+
         self.assets = set()
         
         self.parse(tree)
