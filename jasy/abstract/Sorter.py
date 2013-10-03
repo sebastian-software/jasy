@@ -6,7 +6,7 @@
 
 import jasy.core.Console as Console
 
-class CircularDependency(Exception):
+class SorterError(Exception):
     """
     Error which is throws when sorting could not be done because of circular dependencies.
     """
@@ -17,6 +17,7 @@ class CircularDependency(Exception):
 class AbstractSorter:
     """
     Sorts a final list of items according to their requirements.
+    This class is not type depended e.g. is used for both scripts and styles.
     """
 
     def __init__(self, resolver, session):
@@ -116,7 +117,7 @@ class AbstractSorter:
         if item in stack:
             stack.append(item)
             msg = " >> ".join([x.getId() for x in stack[stack.index(item):]])
-            raise CircularDependency("Circular Dependency: %s" % msg)
+            raise SorterError("Circular Dependency: %s" % msg)
     
         stack.append(item)
 

@@ -7,9 +7,20 @@
 import jasy.core.Console as Console
 import jasy.item.Abstract as AbstractItem
 
+class ResolverError(Exception):
+    """
+    Error which is throws when resolving items could be be finished because of
+    items which could not be found or are of an unexpected type.
+    """
+
+    pass
+
 
 class Resolver():
-    """Resolves dependencies between items"""
+    """
+    Resolves dependencies between items. 
+    This class is not type depended e.g. is used for both scripts and styles.
+    """
 
     def __init__(self, session):
         
@@ -39,13 +50,13 @@ class Resolver():
 
         if type(nameOrItem) is str:
             if not nameOrItem in self.items:
-                raise Exception("Unknown item: %s" % nameOrItem)
+                raise ResolverError("Unknown item: %s" % nameOrItem)
 
             # Replace variable with item instance
             nameOrItem = self.items[nameOrItem]
 
         elif not isinstance(nameOrItem, AbstractItem.AbstractItem):
-            raise Exception("Invalid item: %s" % nameOrItem)
+            raise ResolverError("Invalid item: %s" % nameOrItem)
 
         if prepend:
             self.__required.insert(0, nameOrItem)
