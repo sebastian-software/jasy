@@ -231,9 +231,9 @@ class OutputManager:
         return code
 
 
-    def storeKernel(self, fileName, bootCode=""):
+    def storeKernelScript(self, fileName, bootCode=""):
 
-        Console.info("Storing kernel...")
+        Console.info("Generating kernel script...")
         Console.indent()
 
         # Export all field data for the kernel
@@ -248,7 +248,7 @@ class OutputManager:
         # Sort and compress
         sortedClasses = self.__buildClassList(classes, bootCode, inlineTranslations=True)
         
-        Console.info("Compressing %s classes...", len(sortedClasses))
+        Console.info("Compressing %s items...", len(sortedClasses))
         compressedCode = self.__compressClasses(sortedClasses)
 
         # Write file to disk
@@ -260,16 +260,16 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeLoader(self, classes, fileName, bootCode="", urlPrefix=None):
+    def storeLoaderScript(self, classes, fileName, bootCode="", urlPrefix=None):
 
-        Console.info("Storing loader...")
+        Console.info("Generating loader script...")
         Console.indent()
 
         # Build class list
         sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
             
         # Compress code
-        Console.info("Including %s classes...", len(sortedClasses))
+        Console.info("Including %s items...", len(sortedClasses))
         loaderCode = self.loadClasses(sortedClasses, urlPrefix=urlPrefix)
 
         # Write file to disk
@@ -278,16 +278,16 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeCompressed(self, classes, fileName, bootCode=""):
+    def storeCompressedScript(self, classes, fileName, bootCode=""):
 
-        Console.info("Storing compressed classes...")
+        Console.info("Generating compressed script...")
         Console.indent()
 
         # Build class list
         sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses, inlineTranslations=True)
             
         # Compress code
-        Console.info("Including %s classes...", len(sortedClasses))
+        Console.info("Including %s items...", len(sortedClasses))
         compressedCode = self.__compressClasses(sortedClasses)
 
         # Write file to disk
@@ -296,13 +296,13 @@ class OutputManager:
         Console.outdent()        
 
 
-    def storeCompressedStyleSheet(self, styles, fileName, bootCode=""):
+    def storeCompressedStylesheet(self, styles, fileName, bootCode=""):
 
-        Console.info("Storing compressed stylesheet...")
+        Console.info("Generating compressed stylesheet...")
         Console.indent()
 
         # Compress code
-        Console.info("Including %s styles...", len(styles))
+        Console.info("Including %s items...", len(styles))
         compressedCode = self.__compressStyles(styles)
 
         # Write file to disk
