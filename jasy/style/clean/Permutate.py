@@ -6,8 +6,6 @@
 import jasy.style.parse.Parser as Parser
 import jasy.core.Console as Console
 
-from jasy.style.Util import assembleDot
-
 
 def __translateToValue(code):
     """ Returns the code equivalent of the stored value for the given key """
@@ -33,14 +31,10 @@ def patch(node, permutation):
 
     modified = False
     
-    if node.type == "identifier" or node.type == "dot":
-
-        if node.type == "dot":
-            name = assembleDot(node)
-        else:
-            name = node.value
-
+    if node.type == "identifier":
+        name = node.value
         replacement = __translateToValue(permutation.get(name))
+
         if replacement:
             Console.debug("Found permutation query (%s => %s) in line %s", name, replacement, node.line)
             replacementNode = Parser.parseExpression(replacement)
