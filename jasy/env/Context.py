@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 """Global environment which is used by jasyscript.py files"""
@@ -13,17 +14,22 @@ import jasy.core.Console as Console
 import jasy.env.Task as Task
 import jasy.vcs.Repository as Repository
 
-# Classes
+# Common Classes
 from jasy.core.OutputManager import OutputManager
 from jasy.core.FileManager import FileManager
 from jasy.asset.Manager import AssetManager
 from jasy.asset.SpritePacker import SpritePacker
-from jasy.js.Resolver import Resolver
-from jasy.js.api.Writer import ApiWriter
+
+# Script Features
+from jasy.js.Resolver import Resolver as ScriptResolver
+from jasy.js.api.Writer import ApiWriter as ScriptDoc
+
+# HTTP Server
 from jasy.http.Server import Server
 
-# Commands (be careful with these, prefer modules and classes)
+# Single Commands (be careful with these, prefer modules and classes)
 from jasy.env.Task import task
+from jasy.core.Util import executeCommand
 
 # Create config object
 import jasy.core.Config as Config

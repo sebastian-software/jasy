@@ -159,3 +159,5 @@ class Resolver():
             if not depObj in collection:
                 self.__resolveDependencies(depObj, collection)
                     
+
+                    
