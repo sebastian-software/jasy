@@ -15,16 +15,12 @@ class MetaData:
     systems for optiomal cachability using Pickle
     """
     
-    __slots__ = [
-        "requires", "optionals", "breaks", 
-        "assets"
-    ]
+    __slots__ = [ "requires", "optionals", "breaks", "assets" ]
     
     def __init__(self, tree):
         self.requires = set()
         self.optionals = set()
         self.breaks = set()
-
         self.assets = set()
         
         self.parse(tree)
@@ -37,18 +33,25 @@ class MetaData:
 
         # Parse meta
         if node.type == "meta":
-            print("META: " , node)
+
+            child = node[0]
+            value = child.value
 
             if node.name == "require":
-                pass
+                self.requires.add(value)
+
             if node.name == "load":
-                pass
+                self.requires.add(value)
+                self.break.add(value)
+
             if node.name == "optional":
-                pass
+                self.optionals.add(value)
+
             if node.name == "break":
-                pass
+                self.breaks.add(value)
+
             if node.name == "asset":
-                pass
+                self.assets.add(value)
 
     
         # Parse comments
