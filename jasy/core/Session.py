@@ -103,8 +103,15 @@ class Session():
         for project in self.__projects:
             project.clean()
 
-        if self.__virtualProject:
-            self.__virtualProject.clean()
+        path = os.path.abspath(os.path.join(".jasy", "locale"))
+        if os.path.exists(path):
+            Console.info("Cleaning up locale project...")
+            shutil.rmtree(path)
+
+        path = os.path.abspath(os.path.join(".jasy", "virtual"))
+        if os.path.exists(path):
+            Console.info("Cleaning up virtual project...")
+            shutil.rmtree(path)
 
         Console.outdent()
 
