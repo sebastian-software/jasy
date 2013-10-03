@@ -10,6 +10,7 @@ import jasy.core.Console as Console
 import jasy.item.Abstract
 
 import jasy.style.Util as Util
+import jasy.style.Engine as Engine
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 
@@ -63,16 +64,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     kind = "style"
     
-    # Temporary development alias
-    def getTokens(self):
-        return self.__printTokens()
-
-    # Temporary development alias
-    def getTree(self):
-        return self.__getTree()
-
-
-
     def __getTree(self, context=None):
         """
         Returns the parsed tree
