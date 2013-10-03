@@ -20,7 +20,7 @@ import jasy.js.MetaData as MetaData
 import jasy.js.output.Compressor as Compressor
 
 from jasy import UserError
-from jasy.js.util import *
+#from jasy.js.util import *
 import jasy.core.Console as Console 
 
 try:
