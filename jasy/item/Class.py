@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import os, copy, zlib, fnmatch, re
+import os, copy, fnmatch, re
 
 import jasy.js.parse.Parser as Parser
 import jasy.js.parse.ScopeScanner as ScopeScanner
@@ -16,8 +16,8 @@ import jasy.js.api.Data
 import jasy.core.Permutation
 import jasy.item.Abstract
 
-from jasy.js.MetaData import MetaData
-from jasy.js.output.Compressor import Compressor
+import jasy.js.MetaData as MetaData
+import jasy.js.output.Compressor as Compressor
 
 from jasy import UserError
 from jasy.js.util import *
@@ -32,9 +32,6 @@ except:
 
 
 aliases = {}
-
-defaultOptimization = jasy.js.output.Optimization.Optimization("declarations", "blocks", "variables")
-defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
 
 
 def collectFields(node, keys=None):
@@ -260,7 +257,6 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             for optional in metaData.optionals:
                 apidata.removeUses(optional)
                 
-            apidata.addSize(self.getSize())
             apidata.addFields(self.getFields())
             
             self.project.getCache().store(field, apidata, self.mtime, inMemory=False)
@@ -290,7 +286,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         field = "script:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
-            meta = MetaData(self.__getOptimizedTree(permutation, "meta"))
+            meta = MetaData.MetaData(self.__getOptimizedTree(permutation, "meta"))
             self.project.getCache().store(field, meta, self.mtime)
             
         return meta
@@ -349,29 +345,9 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                     except jasy.js.output.Optimization.Error as error:
                         raise ClassError(self, "Could not compress class! %s" % error)
                 
-            compressed = Compressor(formatting).compress(tree)
+            compressed = Compressor.Compressor(formatting).compress(tree)
             self.project.getCache().store(field, compressed, self.mtime)
             
         return compressed
-            
-            
-    def getSize(self):
-        field = "script:size[%s]" % self.id
-        size = self.project.getCache().read(field, self.mtime)
-        
-        if size is None:
-            compressed = self.getCompressed(context="size")
-            optimized = self.getCompressed(permutation=defaultPermutation, optimization=defaultOptimization, context="size")
-            zipped = zlib.compress(optimized.encode("utf-8"))
-            
-            size = {
-                "compressed" : len(compressed),
-                "optimized" : len(optimized),
-                "zipped" : len(zipped)
-            }
-            
-            self.project.getCache().store(field, size, self.mtime)
-            
-        return size
-        
-        
+
+
