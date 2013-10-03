@@ -75,9 +75,9 @@ class OutputManager:
         resolver = Resolver(self.__session)
 
         for className in classes:
-            resolver.addClassName(className)
+            resolver.add(className)
 
-        self.__assetManager.deploy(resolver.getIncludedClasses(), assetFolder=assetFolder, hashNames=hashNames)
+        self.__assetManager.deploy(resolver.getIncluded(), assetFolder=assetFolder, hashNames=hashNames)
 
         Console.outdent()
 
@@ -89,15 +89,15 @@ class OutputManager:
         # 1. Add given set of classes
         resolver = Resolver(session)
         for classItem in classes:
-            resolver.addClass(classItem)
+            resolver.add(classItem)
 
         # 2. Add optional boot code
         if bootCode:
             bootClassItem = session.getVirtualItem("jasy.generated.BootCode", ClassItem, "(function(){%s})();" % bootCode, ".js")
-            resolver.addClass(bootClassItem)
+            resolver.add(bootClassItem)
 
         # 3. Check for asset usage
-        includedClasses = resolver.getIncludedClasses()
+        includedClasses = resolver.getIncluded()
         usesAssets = False
         for classItem in includedClasses:
             if classItem.getId() == "jasy.Asset":
@@ -108,7 +108,7 @@ class OutputManager:
         if usesAssets:
             assetData = self.__assetManager.export(includedClasses)
             assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
-            resolver.addClass(assetClassItem, prepend=True)
+            resolver.add(assetClassItem, prepend=True)
 
         # 5. Add translation data
         if not inlineTranslations:
@@ -117,10 +117,10 @@ class OutputManager:
                 translationData = translationBundle.export(includedClasses)
                 if translationData:
                     translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
-                    resolver.addClass(translationClassItem, prepend=True)
+                    resolver.add(translationClassItem, prepend=True)
 
         # 6. Sorting classes
-        sortedClasses = resolver.getSortedClasses()
+        sortedClasses = resolver.getSorted()
 
         # 7. Apply filter
         if filterBy:

@@ -1,65 +1,30 @@
 #
 # Jasy - Web Tooling Framework
+# Copyright 2010-2012 Zynga Inc.
 # Copyright 2013 Sebastian Werner
 #
 
-import jasy.style.Sorter as Sorter
-import jasy.core.Console as Console
+import jasy.abstract.Resolver as AbstractResolver
 import jasy.item.Style as Style
+import jasy.style.Sorter as Sorter
 
-__all__ = ["Resolver"]
 
-class Resolver():
-    """Resolves dependencies between JavaScript files"""
-
+class Resolver(AbstractResolver.Resolver):
+    
     def __init__(self, session):
-        
-        # Keep session reference
-        self.__session = session
+        super().__init__(session)
 
-        # Keep permutation reference
-        self.__permutation = session.getCurrentPermutation()
-
-        # Keep fields data locally
-        self.__fields = session.getFieldSetupClasses()
-
-        # Required classes by the user
-        self.__required = []
-
-        # Hard excluded classes (used for filtering previously included classes etc.)
-        self.__excluded = []
-        
-        # Included classes after dependency calculation
-        self.__included = []        
-
-        # Collecting all available classes
-        self.__styles = {}
         for project in session.getProjects():
-            self.__styles.update(project.getStyles())
+            self.items.update(project.getStyles())        
 
 
-    def add(self, styleNameOrItem, prepend=False):
-        """
-        Adds a style by its name or via the Style item instance
-        """
+    def getItemDependencies(self, item):
+        return item.getDependencies(self.permutation, items=self.items)
 
-        if type(styleNameOrItem) is str:
-            if not styleNameOrItem in self.__styles:
-                raise Exception("Unknown Style: %s" % styleNameOrItem)
 
-            # Replace variable with StyleItem instance
-            styleNameOrItem = self.__styles[styleNameOrItem]
+    def getSorted(self):
+        """ Returns a list of sorted classes """
 
-        elif not isinstance(styleNameOrItem, Style.StyleItem):
-            raise Exception("Invalid style item: %s" % styleNameOrItem)
+        return Sorter.Sorter(self, self.session).getSorted()
 
-        if prepend:
-            self.__required.insert(0, styleNameOrItem)
-        else:
-            self.__required.append(styleNameOrItem)
         
-        # Invalidate included list
-        self.__included = None
-        
-        return self
-

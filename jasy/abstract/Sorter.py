@@ -21,7 +21,7 @@ class AbstractSorter:
         self.resolver = resolver
         self.permutation = session.getCurrentPermutation()
         
-        classes = self.resolver.getIncludedClasses()
+        classes = self.resolver.getIncluded()
 
         # Build class name dict
         self.names = dict([(classObj.getId(), classObj) for classObj in classes])
@@ -32,7 +32,7 @@ class AbstractSorter:
         self.__sortedClasses = []
 
 
-    def getSortedClasses(self):
+    def getSorted(self):
         """ Returns the sorted class list (caches result) """
 
         if not self.__sortedClasses:
