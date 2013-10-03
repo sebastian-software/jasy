@@ -28,18 +28,24 @@ import jasy.style.output.Compressor as Compressor
 
 
 
-def collectFields(node, keys=None):
+def collectFields(node, keys=None, condition=False):
     
     if keys is None:
         keys = set()
     
-    if node.type == "select":
+    if getattr(node, "rel", None) == "condition":
+        condition = True
+
+    elif node.type == "command" and node.name == "field":
+        keys.add(node.params[0].value)
+
+    elif condition and node.type == "identifier":
         keys.add(node.value)
 
     # Process children
     for child in reversed(node):
         if child != None:
-            collectFields(child, keys)
+            collectFields(child, keys, condition)
             
     return keys
 
