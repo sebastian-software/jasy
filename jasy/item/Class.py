@@ -121,8 +121,8 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
     def getBreaks(self, permutation=None, items=None):
         """
-        Returns all down-priorized dependencies. This are dependencies which are
-        required to make the module run, but are not required being available at load time.
+        Returns all down-priorized dependencies. This are dependencies which are required to 
+        make the module work, but are not required being available before the current item.
         """
 
         meta = self.getMetaData(permutation)
@@ -147,8 +147,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         Returns a set of dependencies seen through the given list of known 
         classes (ignoring all unknown items in original set) and configured fields 
         with their individual detection classes. This method also
-        makes use of the meta data (see core/MetaData.py) and the variable data 
-        (see parse/ScopeData.py).
+        makes use of the meta data and the variable data.
         """
 
         permutation = self.filterPermutation(permutation)

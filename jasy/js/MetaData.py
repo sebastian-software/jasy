@@ -15,8 +15,7 @@ class MetaData:
     systems for optiomal cachability using Pickle
     """
     
-    __slots__ = 
-    [
+    __slots__ = [
         "name", 
         "requires", "optionals", "breaks", 
         "assets"
