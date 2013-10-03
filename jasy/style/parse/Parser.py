@@ -11,8 +11,6 @@ import jasy.style.Util as Util
 
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
-__all__ = [ "parse", "parseExpression" ]
-
 
 RE_SELECTOR_SPLIT = re.compile(r"\s*,\s*")
 

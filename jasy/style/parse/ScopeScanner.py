@@ -6,9 +6,6 @@
 import jasy.js.parse.ScopeData
 
 
-__all__ = ["scan"]
-
-
 #
 # Public API
 #
