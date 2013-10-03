@@ -73,31 +73,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-
-    def __printTokens(self, context=None):
-        """
-        Prints out a structured list of tokens 
-        """
-
-        tokenizer = Tokenizer.Tokenizer(self.getText(), self.id, 0)
-        indent = 0
-
-        while tokenizer.get() and not tokenizer.done():
-            tokenType = tokenizer.token.type 
-            tokenValue = getattr(tokenizer.token, "value", None)
-            if tokenType == "left_curly":
-                indent += 1
-                continue
-            elif tokenType == "right_curly":
-                indent -= 1
-                continue
-
-            if tokenValue is not None:
-                Console.info("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
-            else:
-                Console.info("%s%s" % (indent * "  ", tokenType))
-
-
     def __getTree(self, context=None):
         """
         Returns the parsed tree
