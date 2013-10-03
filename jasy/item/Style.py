@@ -5,7 +5,6 @@
 
 import os, copy, zlib, fnmatch, re
 
-import jasy.core.Permutation
 import jasy.core.Console as Console 
 
 import jasy.item.Abstract
@@ -24,13 +23,8 @@ import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
 
-import jasy.style.output.Optimization
-from jasy.style.output.Compressor import Compressor
+import jasy.style.output.Compressor as Compressor
 
-
-
-defaultOptimization = jasy.style.output.Optimization.Optimization()
-defaultPermutation = jasy.core.Permutation.getPermutation({"debug" : False})
 
 
 def collectFields(node, keys=None):
@@ -150,31 +144,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
-        """ 
-        Returns a set of dependencies
-        """
-
-        permutation = self.filterPermutation(permutation)
-
-        result = set()
-
-        # Match fields with current permutation and give detection items
-        # Add detection items of fields which are accessed but not permutated
-        # to the list of dependencies for this class.
-        if fields:
-            accessedFields = self.getFields()
-            if accessedFields:
-                for fieldName in accessedFields:
-                    if permutation is None or not permutation.has(fieldName):
-                        if fieldName in fields:
-                            result.add(fields[fieldName])
-
-        # TODO: Handle imports
 
 
 
-        return result
+
 
         
     def getFields(self):
@@ -301,27 +274,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         ScopeScanner.scan(tree)
 
         # DONE
-        return Compressor(formatting).compress(tree)
-
-
-            
-    def getSize(self):
-        field = "style:size[%s]" % self.id
-        size = self.project.getCache().read(field, self.mtime)
-        
-        if size is None:
-            compressed = self.getCompressed(context="size")
-            optimized = self.getCompressed(permutation=defaultPermutation, optimization=defaultOptimization, context="size")
-            zipped = zlib.compress(optimized.encode("utf-8"))
-            
-            size = {
-                "compressed" : len(compressed),
-                "optimized" : len(optimized),
-                "zipped" : len(zipped)
-            }
-            
-            self.project.getCache().store(field, size, self.mtime)
-            
-        return size
+        return Compressor.Compressor(formatting).compress(tree)
         
         
