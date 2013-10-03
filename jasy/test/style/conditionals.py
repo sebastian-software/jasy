@@ -163,9 +163,9 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')           
 
 
-    def test_variable(self):
+    def test_field(self):
         self.assertEqual(self.process('''
-            $engine = @variable(jasy.engine);
+            $engine = @field(jasy.engine);
             h2{
               content: $engine;
             }

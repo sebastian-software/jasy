@@ -82,17 +82,17 @@ def __recurser(node, permutation, inCondition=False):
     # Support inline commands
     # These are just attached to a node.type command
     elif node.type == "command":
-        if node.name == "variable":
+        if node.name == "field":
             if len(node.params) == 0:
-                raise ResolverError("Missing parameter to insert environment variable via @variable.", node)
+                raise ResolverError("Missing parameter to insert field via @field.", node)
 
             identifierNode = node.params[0]
             if identifierNode.type != "identifier":
-                raise ResolverError("Invalid parameter to @variable call: %s" % identifierNode.type, identifierNode)
+                raise ResolverError("Invalid parameter to @field call: %s" % identifierNode.type, identifierNode)
 
             identifier = identifierNode.value
             if not permutation.has(identifier):
-                raise ResolverError("Could not find environment variable %s" % identifier, identifierNode)
+                raise ResolverError("Could not find field with the name %s" % identifier, identifierNode)
 
             repl = __transform(permutation.get(identifier), identifierNode)
             node.parent.replace(node, repl)
