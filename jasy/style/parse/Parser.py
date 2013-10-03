@@ -159,6 +159,7 @@ def Statement(tokenizer, staticContext):
 
         elif tokenValue in ("require", "load", "break", "asset"):
             node = Node.Node(tokenizer, "meta")
+            node.name = tokenValue
             node.append(Expression(tokenizer, staticContext))
             return node
 
