@@ -55,7 +55,6 @@ def permutateTree(tree, permutation=None):
         tree = copy.deepcopy(tree)
 
         Resolver.process(tree, permutation)
-        ScopeScanner.scan(tree)
 
         return tree
 
