@@ -17,6 +17,7 @@ class MetaData:
     
     __slots__ = [ "requires", "optionals", "breaks", "assets" ]
     
+    
     def __init__(self, tree):
         self.requires = set()
         self.optionals = set()

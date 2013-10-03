@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import itertools, time, atexit, json, os, zlib
+import itertools, time, atexit, json, os, zlib, shutil
 import socket, uuid, getpass
 
 import jasy.core.Locale
