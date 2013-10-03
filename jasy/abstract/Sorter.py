@@ -44,7 +44,7 @@ class AbstractSorter:
                 self.__getLoadDeps(classNames[className])
 
             result = []
-            requiredClasses = self.resolver.getRequiredClasses()
+            requiredClasses = self.resolver.getRequired()
             for classObj in requiredClasses:
                 if not classObj in result:
                     # Console.debug("Start adding with: %s", classObj)

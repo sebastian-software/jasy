@@ -150,7 +150,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
+    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
         """ 
         Returns a set of dependencies
         """
@@ -159,8 +159,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         result = set()
 
-        # Match fields with current permutation and give detection classes
-        # Add detection classes of fields which are accessed but not permutated
+        # Match fields with current permutation and give detection items
+        # Add detection items of fields which are accessed but not permutated
         # to the list of dependencies for this class.
         if fields:
             accessedFields = self.getFields()
@@ -304,34 +304,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return Compressor(formatting).compress(tree)
 
 
-        
-    def getCompressedOld(self, permutation=None, optimization=None, formatting=None, context="compressed"):
-
-        return
-
-        permutation = self.filterPermutation(permutation)
-        
-        field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
-        compressed = self.project.getCache().read(field, self.mtime)
-        if compressed == None:
-            tree = self.__getOptimizedTree(permutation, context)
-            
-            # Copying original tree
-            tree = copy.deepcopy(tree)
-
-            if optimization:
-                tree = copy.deepcopy(tree)
-
-                try:
-                    optimization.apply(tree)
-                except jasy.style.output.Optimization.Error as error:
-                    raise StyleError(self, "Could not compress class! %s" % error)
-                
-            compressed = Compressor(formatting).compress(tree)
-            self.project.getCache().store(field, compressed, self.mtime)
-            
-        return compressed
-            
             
     def getSize(self):
         field = "style:size[%s]" % self.id

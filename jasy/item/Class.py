@@ -122,7 +122,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
-    def getBreaks(self, permutation=None, classes=None):
+    def getBreaks(self, permutation=None, items=None):
         """
         Returns all down-priorized dependencies. This are dependencies which are
         required to make the module run, but are not required being available at load time.
@@ -133,19 +133,19 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         result = set()
 
         for name in meta.breaks:
-            if name != self.id and name in classes and classes[name].kind == "class":
-                result.add(classes[name])
+            if name != self.id and name in items and items[name].kind == "class":
+                result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
-                for className in classes:
+                for className in items:
                     if className != self.id:
                         if reobj.match(className):
-                            result.add(classes[className])
+                            result.add(items[className])
 
         return result
 
 
-    def getDependencies(self, permutation=None, classes=None, fields=None, warnings=True):
+    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
         """ 
         Returns a set of dependencies seen through the given list of known 
         classes (ignoring all unknown items in original set) and configured fields 
@@ -174,28 +174,28 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Manually defined names/classes
         for name in meta.requires:
-            if name != self.id and name in classes and classes[name].kind == "class":
-                result.add(classes[name])
+            if name != self.id and name in items and items[name].kind == "class":
+                result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
-                for className in classes:
+                for className in items:
                     if className != self.id:
                         if reobj.match(className):
-                            result.add(classes[className])
+                            result.add(items[className])
             elif warnings:
                 Console.warn("Missing class (required): %s in %s", name, self.id)
 
         # Globally modified names (mostly relevant when working without namespaces)
         for name in scope.shared:
-            if name != self.id and name in classes and classes[name].kind == "class":
-                result.add(classes[name])
+            if name != self.id and name in items and items[name].kind == "class":
+                result.add(items[name])
         
         # Add classes from detected package access
         for package in scope.packages:
             if package in aliases:
                 className = aliases[package]
-                if className in classes:
-                    result.add(classes[className])
+                if className in items:
+                    result.add(items[className])
                     continue
             
             orig = package
@@ -203,9 +203,9 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 if package == self.id:
                     break
             
-                elif package in classes and classes[package].kind == "class":
+                elif package in items and items[package].kind == "class":
                     aliases[orig] = package
-                    result.add(classes[package])
+                    result.add(items[package])
                     break
             
                 else:
@@ -217,8 +217,8 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                     
         # Manually excluded names/classes
         for name in meta.optionals:
-            if name != self.id and name in classes and classes[name].kind == "class":
-                result.remove(classes[name])
+            if name != self.id and name in items and items[name].kind == "class":
+                result.remove(items[name])
             elif warnings:
                 Console.warn("Missing class (optional): %s in %s", name, self.id)
 
