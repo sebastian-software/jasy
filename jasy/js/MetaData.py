@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 class MetaData:
@@ -14,7 +15,12 @@ class MetaData:
     systems for optiomal cachability using Pickle
     """
     
-    __slots__ = ["name", "requires", "optionals", "breaks", "assets"]
+    __slots__ = 
+    [
+        "name", 
+        "requires", "optionals", "breaks", 
+        "assets"
+    ]
     
     def __init__(self, tree):
         self.name = None
@@ -24,11 +30,13 @@ class MetaData:
         self.breaks = set()
         self.assets = set()
         
-        self.__inspect(tree)
+        self.parseComments(tree)
         
         
-    def __inspect(self, node):
-        """ The internal inspection routine """
+    def parseComments(self, node):
+        """ 
+        The internal inspection routine to add relevant data from comments
+        """
     
         # Parse comments
         comments = getattr(node, "comments", None)
@@ -56,4 +64,5 @@ class MetaData:
         # Process children
         for child in node:
             if child is not None:
-                self.__inspect(child)
+                self.parseComments(child)
+
