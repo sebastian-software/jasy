@@ -20,7 +20,8 @@ import jasy.js.MetaData as MetaData
 import jasy.js.output.Compressor as Compressor
 
 from jasy import UserError
-#from jasy.js.util import *
+
+import jasy.js.util as Util
 import jasy.core.Console as Console 
 
 try:
@@ -42,7 +43,7 @@ def collectFields(node, keys=None):
     # Always the first parameter
     # Supported calls: jasy.Env.isSet(key, expected?), jasy.Env.getValue(key), jasy.Env.select(key, map)
     calls = ("jasy.Env.isSet", "jasy.Env.getValue", "jasy.Env.select")
-    if node.type == "dot" and node.parent.type == "call" and assembleDot(node) in calls:
+    if node.type == "dot" and node.parent.type == "call" and Util.assembleDot(node) in calls:
         keys.add(node.parent[1][0].value)
 
     # Process children
