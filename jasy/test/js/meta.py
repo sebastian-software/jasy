@@ -33,31 +33,6 @@ class Tests(unittest.TestCase):
         ''')
     
         self.assertIsInstance(meta, MetaData)
-        self.assertEqual(meta.name, None)
-        self.assertIsInstance(meta.requires, set)
-        self.assertIsInstance(meta.optionals, set)
-        self.assertIsInstance(meta.breaks, set)
-        self.assertIsInstance(meta.assets, set)
-        self.assertEqual(len(meta.requires), 0)
-        self.assertEqual(len(meta.optionals), 0)
-        self.assertEqual(len(meta.breaks), 0)
-        self.assertEqual(len(meta.assets), 0)
-        
-        
-    def test_name(self):
-
-        meta = self.process('''
-
-        /**
-         * Hello World
-         *
-         * #name(my.main.Class)
-         */
-
-        ''')
-
-        self.assertIsInstance(meta, MetaData)
-        self.assertEqual(meta.name, "my.main.Class")
         self.assertIsInstance(meta.requires, set)
         self.assertIsInstance(meta.optionals, set)
         self.assertIsInstance(meta.breaks, set)
@@ -83,7 +58,6 @@ class Tests(unittest.TestCase):
         ''')
 
         self.assertIsInstance(meta, MetaData)
-        self.assertEqual(meta.name, None)
         self.assertIsInstance(meta.requires, set)
         self.assertIsInstance(meta.optionals, set)
         self.assertIsInstance(meta.breaks, set)
@@ -112,7 +86,6 @@ class Tests(unittest.TestCase):
         ''')
 
         self.assertIsInstance(meta, MetaData)
-        self.assertEqual(meta.name, None)
         self.assertIsInstance(meta.requires, set)
         self.assertIsInstance(meta.optionals, set)
         self.assertIsInstance(meta.breaks, set)
