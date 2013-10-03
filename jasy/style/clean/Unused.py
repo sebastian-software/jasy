@@ -34,7 +34,7 @@ def cleanup(node):
     iteration = 0
     cleaned = False
     
-    Console.info("Removing unused variables...")
+    Console.debug("Removing unused variables...")
     Console.indent()
 
     while True:

@@ -18,7 +18,7 @@ def processExtends(tree):
     Console.info("Processing extend requests...")
     Console.indent()
     modified = __extend(tree)
-    Console.info("Processed %s selectors", modified)
+    Console.debug("Processed %s selectors", modified)
     Console.outdent()
 
     return modified
@@ -33,7 +33,7 @@ def processMixins(tree):
     Console.info("Merging mixins with each other...")
     Console.indent()
     modified = __process(tree, scanMixins=True)
-    Console.info("Merged %s mixins", modified)
+    Console.debug("Merged %s mixins", modified)
     Console.outdent()
 
     return modified
@@ -48,7 +48,7 @@ def processSelectors(tree):
     Console.info("Merging mixins into selectors")
     Console.indent()
     modified = __process(tree, scanMixins=False)
-    Console.info("Merged %s mixins", modified)
+    Console.debug("Merged %s mixins", modified)
     Console.outdent()
 
     return modified

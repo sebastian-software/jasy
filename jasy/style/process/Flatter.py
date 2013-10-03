@@ -176,7 +176,6 @@ def process(tree):
     __clean(tree)
     __combine(tree)
 
-    Console.info("Flattended selectors")
     Console.outdent()
 
     return
