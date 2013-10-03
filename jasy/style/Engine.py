@@ -12,7 +12,6 @@ import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Parser as Parser
 import jasy.style.parse.ScopeScanner as ScopeScanner
 
-import jasy.style.clean.Permutate as Permutate
 import jasy.style.clean.Unused as Unused
 
 import jasy.style.process.Resolver as Resolver

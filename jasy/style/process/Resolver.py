@@ -40,7 +40,7 @@ def __transform(value, name=None):
         node = Node.Node(type="string")
         node.value = value
     else:
-        raise ResolverError("Could not transform environment variable %s=%s to style value" % (name, value))
+        raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
 
     return node
 
@@ -57,7 +57,7 @@ def __recurser(node, permutation, inCondition=False):
     if inCondition:
         if node.type == "identifier":
             if not permutation.has(node.value):
-                raise ResolverError("Could not find environment variable %s" % node.value, node)
+                raise ResolverError("Could not find field %s" % node.value, node)
 
             repl = __transform(permutation.get(node.value), node.value)
             node.parent.replace(node, repl)
