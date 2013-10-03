@@ -144,48 +144,48 @@ class OutputManager:
         # 7. Apply filter
         if filterBy:
             filteredClasses = []
-            for classObj in sortedClasses:
-                if not classObj in filterBy:
-                    filteredClasses.append(classObj)
+            for item in sortedClasses:
+                if not item in filterBy:
+                    filteredClasses.append(item)
 
             sortedClasses = filteredClasses
 
         return sortedClasses
 
 
-    def __compressScripts(self, classes):
+    def __compressScripts(self, items):
         try:
             session = self.__session
             result = []
 
-            for classObj in classes:
-                compressed = classObj.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
+            for item in items:
+                compressed = item.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
 
                 if self.__addDividers:
-                    result.append("// FILE ID: %s\n%s\n\n" % (classObj.getId(), compressed))
+                    result.append("// FILE ID: %s\n%s\n\n" % (item.getId(), compressed))
                 else:
                     result.append(compressed)
                 
         except ClassError as error:
-            raise UserError("Error during class compression! %s" % error)
+            raise UserError("Error during script compression! %s" % error)
 
         return "".join(result)
 
 
-    def __generateScriptLoader(self, classes, urlPrefix=None):
+    def __generateScriptLoader(self, items, urlPrefix=None):
 
-        # For loading classes we require core.ui.Queue and core.io.Script 
+        # For loading items we require core.ui.Queue and core.io.Script 
         # being available. If they are not part of the kernel, we have to 
         # prepend them as compressed code into the resulting output.
 
         hasLoader = False
         hasQueue = False
 
-        for classObj in self.__kernelScripts:
-            className = classObj.getId()
-            if className == "core.io.Queue":
+        for item in self.__kernelScripts:
+            itemId = item.getId()
+            if itemId == "core.io.Queue":
                 hasQueue = True
-            elif className == "core.io.Script":
+            elif itemId == "core.io.Script":
                 hasLoader = True
 
         code = ""
@@ -203,14 +203,14 @@ class OutputManager:
         main = self.__session.getMain()
         files = []
 
-        for classObj in classes:
-            # Ignore already ompressed classes
-            if classObj.getId() in ("core.io.Script", "core.io.Queue"):
+        for item in items:
+            # Ignore already ompressed items
+            if item.getId() in ("core.io.Script", "core.io.Queue"):
                 continue
 
-            path = classObj.getPath()
+            path = item.getPath()
 
-            # Support for multi path classes 
+            # Support for multi path items 
             # (typically in projects with custom layout/structure e.g. 3rd party)
             if type(path) is list:
                 for singleFileName in path:
@@ -265,16 +265,16 @@ class OutputManager:
         Console.indent()
 
         # Export all field data for the kernel
-        classes = []
+        items = []
         fieldSetupClasses = self.__session.getFieldSetupClasses()
         for fieldName in fieldSetupClasses:
-            classes.append(fieldSetupClasses[fieldName])
+            items.append(fieldSetupClasses[fieldName])
 
         # Transfer all hard-wired fields into a permutation
         self.__session.setStaticPermutation()
 
         # Sort and compress
-        sortedClasses = self.__sortScriptItems(classes, bootCode, inlineTranslations=True)
+        sortedClasses = self.__sortScriptItems(items, bootCode, inlineTranslations=True)
         compressedCode = self.__compressScripts(sortedClasses)
         self.__fileManager.writeFile(fileName, compressedCode)
         self.__kernelScripts = sortedClasses
@@ -282,24 +282,24 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeLoaderScript(self, classes, fileName, bootCode="", urlPrefix=None):
+    def storeLoaderScript(self, items, fileName, bootCode="", urlPrefix=None):
 
         Console.info("Generating loader script...")
         Console.indent()
 
-        sortedClasses = self.__sortScriptItems(classes, bootCode, filterBy=self.__kernelScripts)
+        sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts)
         loaderCode = self.__generateScriptLoader(sortedClasses, urlPrefix=urlPrefix)
         self.__fileManager.writeFile(fileName, loaderCode)
 
         Console.outdent()
 
 
-    def storeCompressedScript(self, classes, fileName, bootCode=""):
+    def storeCompressedScript(self, items, fileName, bootCode=""):
 
         Console.info("Generating compressed script...")
         Console.indent()
 
-        sortedClasses = self.__sortScriptItems(classes, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
+        sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
         compressedCode = self.__compressScripts(sortedClasses)
         self.__fileManager.writeFile(fileName, compressedCode)
 
