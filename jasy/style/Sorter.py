@@ -1,6 +1,5 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2010-2012 Zynga Inc.
 # Copyright 2013 Sebastian Werner
 #
 
@@ -11,11 +10,9 @@ class Sorter(AbstractSorter.AbstractSorter):
     def __init__(self, resolver, session):
         super().__init__(resolver, session)
 
-        self.fields = session.getFieldSetupClasses()
-
 
     def getItemDependencies(self, item):
-        return item.getDependencies(self.permutation, classes=self.names, fields=self.fields, warnings=False)
+        return item.getDependencies(self.permutation, classes=self.names, warnings=False)
 
 
     def getItemBreaks(self, item):
