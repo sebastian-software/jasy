@@ -157,6 +157,11 @@ def Statement(tokenizer, staticContext):
             node.append(Expression(tokenizer, staticContext))
             return node
 
+        elif tokenValue in ("require", "load", "break", "asset"):
+            node = Node.Node(tokenizer, "meta")
+            node.append(Expression(tokenizer, staticContext))
+            return node
+
         elif tokenValue == "font-face":
             return Selector(tokenizer, staticContext)
 
