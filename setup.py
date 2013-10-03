@@ -111,6 +111,7 @@ setup(
 
   packages = [
     'jasy',
+    'jasy.abstract',
     'jasy.asset',
     'jasy.asset.sprite',
     'jasy.core',
