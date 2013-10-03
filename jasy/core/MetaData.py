@@ -42,7 +42,7 @@ class MetaData:
 
             if node.name == "load":
                 self.requires.add(value)
-                self.break.add(value)
+                self.breaks.add(value)
 
             if node.name == "optional":
                 self.optionals.add(value)
