@@ -17,6 +17,8 @@ extensions = {
     ".jpeg" : "image",
     ".jpg" : "image",
     ".gif" : "image",
+    ".webp" : "image",
+    ".jxr" : "image",
     
     ".mp3" : "audio",
     ".ogg" : "audio",
