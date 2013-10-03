@@ -29,13 +29,29 @@ class MetaData:
         self.breaks = set()
         self.assets = set()
         
-        self.parseComments(tree)
+        self.parse(tree)
         
         
-    def parseComments(self, node):
+    def parse(self, node):
         """ 
         The internal inspection routine to add relevant data from comments
         """
+
+        # Parse meta
+        if node.type == "meta":
+            print("META: " , node)
+
+            if node.name == "require":
+                pass
+            if node.name == "load":
+                pass
+            if node.name == "optional":
+                pass
+            if node.name == "break":
+                pass
+            if node.name == "asset":
+                pass
+
     
         # Parse comments
         comments = getattr(node, "comments", None)
@@ -44,24 +60,26 @@ class MetaData:
                 commentTags = comment.getTags()
                 if commentTags:
 
-                    if "name" in commentTags:
-                        self.name = list(commentTags["name"])[0]
                     if "require" in commentTags:
                         self.requires.update(commentTags["require"])
+
                     if "load" in commentTags:
                         # load is a special combination shorthand for requires + breaks
                         # This means load it but don't require it being loaded first
                         self.requires.update(commentTags["load"])
                         self.breaks.update(commentTags["load"])
+
                     if "optional" in commentTags:
                         self.optionals.update(commentTags["optional"])
+
                     if "break" in commentTags:
                         self.breaks.update(commentTags["break"])
+
                     if "asset" in commentTags:
                         self.assets.update(commentTags["asset"])
 
         # Process children
         for child in node:
             if child is not None:
-                self.parseComments(child)
+                self.parse(child)
 
