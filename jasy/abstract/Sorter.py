@@ -4,18 +4,23 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import time
 import jasy.core.Console as Console
 
-__all__ = ["Sorter"]
-
-
 class CircularDependency(Exception):
+    """
+    Error which is throws when sorting could not be done because of circular dependencies.
+    """
+
     pass
     
 
 class AbstractSorter:
+    """
+    Sorts a final list of items according to their requirements.
+    """
+
     def __init__(self, resolver, session):
+    
         # Keep items/permutation/fields reference
         # Classes is set(item, ...)
         self.resolver = resolver
@@ -81,7 +86,6 @@ class AbstractSorter:
                     self.__addSorted(depObj, result, True)
 
 
-
     def __getLoadDeps(self, item):
         """
         Returns load time dependencies of given item 
@@ -91,7 +95,6 @@ class AbstractSorter:
             self.__getLoadDepsRecurser(item, [])
 
         return self.__loadDeps[item]
-
 
 
     def __getLoadDepsRecurser(self, item, stack):

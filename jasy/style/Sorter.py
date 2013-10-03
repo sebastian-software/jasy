@@ -6,6 +6,9 @@
 import jasy.abstract.Sorter as AbstractSorter
 
 class Sorter(AbstractSorter.AbstractSorter):
+    """
+    Sorter for Style items
+    """
     
     def __init__(self, resolver, session):
         super().__init__(resolver, session)
