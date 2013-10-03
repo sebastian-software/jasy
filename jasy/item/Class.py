@@ -19,10 +19,10 @@ import jasy.item.Abstract
 import jasy.js.MetaData as MetaData
 import jasy.js.output.Compressor as Compressor
 
-from jasy import UserError
-
 import jasy.js.util as Util
 import jasy.core.Console as Console 
+
+from jasy import UserError
 
 try:
     from pygments import highlight

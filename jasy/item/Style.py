@@ -3,7 +3,7 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import os, copy, zlib, fnmatch, re
+import os, copy, fnmatch, re
 
 import jasy.core.Console as Console 
 
