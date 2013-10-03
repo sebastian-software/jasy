@@ -6,7 +6,6 @@
 import re
 import jasy.core.Console as Console
 
-__all__ = ["extractSummary"]
 
 # Used to filter first paragraph from HTML
 paragraphExtract = re.compile(r"^(.*?)(\. |\? |\! |$)")

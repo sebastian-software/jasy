@@ -9,9 +9,6 @@ import jasy.core.Console as Console
 from jasy.js.util import *
 
 
-__all__ = ["patch"]
-
-
 def __translateToJS(code):
     """ Returns the code equivalent of the stored value for the given key """
     

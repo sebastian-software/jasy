@@ -6,9 +6,6 @@
 import jasy.js.parse.Node as Node
 import jasy.core.Console as Console
 
-__all__ = ["optimize", "Error"]
-
-
 
 #
 # Public API

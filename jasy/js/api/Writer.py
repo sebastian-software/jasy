@@ -14,7 +14,6 @@ import jasy.core.Console as Console
 from jasy import UserError
 
 
-__all__ = ["ApiWriter"]
 
 itemMap = {
     "members": "member",

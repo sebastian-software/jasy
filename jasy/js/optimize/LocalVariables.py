@@ -6,8 +6,6 @@
 import string
 import jasy.js.tokenize.Lang
 
-__all__ = ["optimize", "Error"]
-
 
 
 #

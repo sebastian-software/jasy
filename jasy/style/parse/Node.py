@@ -6,6 +6,7 @@
 import jasy.parse.AbstractNode as AbstractNode
 
 class Node(AbstractNode.AbstractNode):
+    
     __slots__ = [
         # core data
         "line", "type", "tokenizer", "start", "end", "rel", "parent", 

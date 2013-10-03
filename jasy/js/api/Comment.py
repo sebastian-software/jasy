@@ -12,9 +12,6 @@ from jasy import UserError
 from jasy.js.util import *
 
 
-__all__ = ["CommentException", "Comment"]
-
-
 # Used to measure the doc indent size (with leading stars in front of content)
 docIndentReg = re.compile(r"^(\s*\*\s*)(\S*)")
 

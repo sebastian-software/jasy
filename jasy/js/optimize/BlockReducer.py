@@ -11,9 +11,6 @@ import jasy.js.parse.Lang
 import jasy.core.Console as Console
 
 
-__all__ = ["optimize", "Error"]
-
-
 class Error(Exception):
     def __init__(self, line):
         self.__line = line

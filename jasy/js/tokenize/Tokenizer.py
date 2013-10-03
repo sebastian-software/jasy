@@ -16,8 +16,6 @@ import jasy.js.tokenize.Lang as Lang
 import jasy.js.api.Comment as Comment
 import jasy.core.Console as Console
 
-__all__ = [ "Tokenizer" ]
-
 
 # Operator and punctuator mapping from token to tree node type name.
 # NB: because the lexer doesn't backtrack, all token prefixes must themselves

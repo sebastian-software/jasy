@@ -8,7 +8,6 @@ import jasy.style.Util as Util
 
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
-__all__ = [ "Compressor" ]
 
 nativeMethods = (
     "rgb", "rgba", "hsb", "hsba", 

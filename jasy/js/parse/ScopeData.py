@@ -3,7 +3,6 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-__all__ = ["ScopeData"]
 
 class ScopeData():
     """

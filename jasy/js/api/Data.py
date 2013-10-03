@@ -10,9 +10,6 @@ import jasy.core.Console as Console
 from jasy import UserError
 
 
-__all__ = ["ApiData"]
-
-
 class ApiData():
     """
     Container for all relevant API data. 

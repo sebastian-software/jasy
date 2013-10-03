@@ -6,8 +6,6 @@
 import zlib, string, re
 import jasy.core.Console as Console
 
-__all__ = ["optimize", "Error"]
-
 
 
 #

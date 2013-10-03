@@ -8,8 +8,6 @@ import jasy.js.parse.ScopeScanner as ScopeScanner
 
 import jasy.core.Console as Console
 
-__all__ = ["cleanup", "Error"]
-
 
 #
 # Public API
