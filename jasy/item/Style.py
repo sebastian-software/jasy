@@ -23,7 +23,7 @@ import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
 
-import jasy.js.MetaData as MetaData
+import jasy.core.MetaData as MetaData
 import jasy.style.output.Compressor as Compressor
 
 

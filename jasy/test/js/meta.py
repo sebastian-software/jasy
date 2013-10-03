@@ -9,7 +9,7 @@ if __name__ == "__main__":
     print("Running from %s..." % jasyroot)
 
 import jasy.js.parse.Parser as Parser
-from jasy.js.MetaData import MetaData
+from jasy.core.MetaData import MetaData
 
         
 class Tests(unittest.TestCase):

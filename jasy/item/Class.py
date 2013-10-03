@@ -16,7 +16,7 @@ import jasy.js.api.Data
 import jasy.core.Permutation
 import jasy.item.Abstract
 
-import jasy.js.MetaData as MetaData
+import jasy.core.MetaData as MetaData
 import jasy.js.output.Compressor as Compressor
 
 import jasy.js.util as Util
