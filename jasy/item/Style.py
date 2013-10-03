@@ -23,6 +23,7 @@ import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
 
+from jasy.js.MetaData import MetaData
 import jasy.style.output.Compressor as Compressor
 
 
@@ -143,8 +144,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return tree
 
 
-
-
     def getBreaks(self, permutation=None, items=None, warnings=True):
         """
         Returns all down-priorized dependencies. This are dependencies which are
@@ -202,6 +201,16 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return result
 
 
+    def getMetaData(self, permutation=None):
+        permutation = self.filterPermutation(permutation)
+
+        field = "style:meta[%s]-%s" % (self.id, permutation)
+        meta = self.project.getCache().read(field, self.mtime)
+        if meta is None:
+            meta = MetaData.MetaData(self.__getOptimizedTree(permutation, "meta"))
+            self.project.getCache().store(field, meta, self.mtime)
+            
+        return meta
 
         
     def getFields(self):
