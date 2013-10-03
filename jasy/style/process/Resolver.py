@@ -36,8 +36,8 @@ def __transform(value, name=None):
     elif isinstance(value, str):
         node = Node.Node(type="string")
         node.value = value
-    elif isinstance(value, str):
-        node = Node.Node(type="string")
+    elif isinstance(value, (float, int)):
+        node = Node.Node(type="number")
         node.value = value
     else:
         raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
