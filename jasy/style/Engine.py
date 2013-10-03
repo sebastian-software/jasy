@@ -65,7 +65,7 @@ def permutateTree(tree, permutation=None):
 
 
 
-def processTree(tree):
+def reduceTree(tree):
     """
     Applies all relevant modifications to the tree to allow compression to CSS
     """

@@ -25,7 +25,7 @@ class Tests(unittest.TestCase):
 
         tree = Engine.getTree(code, callerName)
         tree = Engine.permutateTree(tree, permutation)
-        tree = Engine.processTree(tree)
+        tree = Engine.reduceTree(tree)
 
         return Engine.compressTree(tree)
 

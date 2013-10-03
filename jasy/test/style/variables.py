@@ -30,7 +30,7 @@ class Tests(unittest.TestCase):
         callerName = inspect.stack()[1][3][5:]
 
         tree = Engine.getTree(code, callerName)
-        tree = Engine.processTree(tree)
+        tree = Engine.reduceTree(tree)
         return Engine.compressTree(tree)
 
     def test_unused(self):
