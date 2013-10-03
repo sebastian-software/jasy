@@ -12,9 +12,9 @@ class Sorter(AbstractSorter.AbstractSorter):
 
 
     def getItemDependencies(self, item):
-        return item.getDependencies(self.permutation, items=self.names, warnings=False)
+        return item.getDependencies(self.permutation, items=self.items, warnings=False)
 
 
     def getItemBreaks(self, item):
-        return item.getBreaks(self.permutation, items=self.names)
+        return item.getBreaks(self.permutation, items=self.items)
 

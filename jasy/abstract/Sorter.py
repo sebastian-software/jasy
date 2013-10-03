@@ -16,126 +16,130 @@ class CircularDependency(Exception):
 
 class AbstractSorter:
     def __init__(self, resolver, session):
-        # Keep classes/permutation/fields reference
-        # Classes is set(classObj, ...)
+        # Keep items/permutation/fields reference
+        # Classes is set(item, ...)
         self.resolver = resolver
         self.permutation = session.getCurrentPermutation()
         
-        classes = self.resolver.getIncluded()
-
-        # Build class name dict
-        self.names = dict([(classObj.getId(), classObj) for classObj in classes])
+        # Build item name dict (id => item)
+        items = self.resolver.getIncluded()
+        self.items = dict([(item.getId(), item) for item in items])
         
         # Initialize fields
         self.__loadDeps = {}
         self.__circularDeps = {}
-        self.__sortedClasses = []
+        self.__sorted = []
 
 
     def getSorted(self):
-        """ Returns the sorted class list (caches result) """
+        """
+        Returns the sorted item list (caches result) 
+        """
 
-        if not self.__sortedClasses:
-            Console.debug("Sorting classes...")
+        if not self.__sorted:
+            Console.debug("Sorting items...")
             Console.indent()
             
-            classNames = self.names
-            for className in classNames:
-                self.__getLoadDeps(classNames[className])
+            for itemId in self.items:
+                self.__getLoadDeps(self.items[itemId])
 
             result = []
-            requiredClasses = self.resolver.getRequired()
-            for classObj in requiredClasses:
-                if not classObj in result:
-                    # Console.debug("Start adding with: %s", classObj)
-                    self.__addSorted(classObj, result)
+            required = self.resolver.getRequired()
+            for item in required:
+                if not item in result:
+                    # Console.debug("Start adding with: %s", item)
+                    self.__addSorted(item, result)
 
             Console.outdent()
-            self.__sortedClasses = result
+            self.__sorted = result
 
-        return self.__sortedClasses
+        return self.__sorted
 
 
-    def __addSorted(self, classObj, result, postponed=False):
-        """ Adds a single class and its dependencies to the sorted result list """
+    def __addSorted(self, item, result, postponed=False):
+        """
+        Adds a single item and its dependencies to the sorted result list
+        """
 
-        loadDeps = self.__getLoadDeps(classObj)
+        loadDeps = self.__getLoadDeps(item)
         
         for depObj in loadDeps:
             if not depObj in result:
                 self.__addSorted(depObj, result)
 
-        if classObj in result:
+        if item in result:
             return
             
-        # Console.debug("Adding class: %s", classObj)
-        result.append(classObj)
+        # Console.debug("Adding item: %s", item)
+        result.append(item)
 
         # Insert circular dependencies as soon as possible
-        if classObj in self.__circularDeps:
-            circularDeps = self.__circularDeps[classObj]
+        if item in self.__circularDeps:
+            circularDeps = self.__circularDeps[item]
             for depObj in circularDeps:
                 if not depObj in result:
                     self.__addSorted(depObj, result, True)
 
 
 
-    def __getLoadDeps(self, classObj):
-        """ Returns load time dependencies of given class """
+    def __getLoadDeps(self, item):
+        """
+        Returns load time dependencies of given item 
+        """
 
-        if not classObj in self.__loadDeps:
-            self.__getLoadDepsRecurser(classObj, [])
+        if not item in self.__loadDeps:
+            self.__getLoadDepsRecurser(item, [])
 
-        return self.__loadDeps[classObj]
+        return self.__loadDeps[item]
 
 
 
-    def __getLoadDepsRecurser(self, classObj, stack):
+    def __getLoadDepsRecurser(self, item, stack):
         """ 
         This is the main routine which tries to control over a system
-        of unsorted classes. It directly tries to fullfil every dependency
-        a class have, but has some kind of exception based loop protection
+        of unsorted items. It directly tries to fullfil every dependency
+        a item have, but has some kind of exception based loop protection
         to prevent circular dependencies from breaking the build.
         
         It respects break information given by file specific meta data, but
         also adds custom hints where it found recursions. This lead to a valid 
-        sort, but might lead to problems between exeactly the two affected classes.
+        sort, but might lead to problems between exeactly the two affected items.
         Without doing an exact execution it's not possible to whether found out
-        which of two each-other referencing classes needs to be loaded first.
-        This is basically only interesting in cases where one class needs another
+        which of two each-other referencing items needs to be loaded first.
+        This is basically only interesting in cases where one item needs another
         during the definition phase which is not the case that often.
         """
         
-        if classObj in stack:
-            stack.append(classObj)
-            msg = " >> ".join([x.getId() for x in stack[stack.index(classObj):]])
+        if item in stack:
+            stack.append(item)
+            msg = " >> ".join([x.getId() for x in stack[stack.index(item):]])
             raise CircularDependency("Circular Dependency: %s" % msg)
     
-        stack.append(classObj)
+        stack.append(item)
 
-        classDeps = self.getItemDependencies(classObj)
-        classBreaks = self.getItemBreaks(classObj)
+        itemDeps = self.getItemDependencies(item)
+        itemBreaks = self.getItemBreaks(item)
         
         result = set()
         circular = set()
         
         # Respect manually defined breaks
         # Breaks are dependencies which are down-priorized to break
-        # circular dependencies between classes.
-        for breakObj in classBreaks:
-            if breakObj.getId() in self.names:
+        # circular dependencies between items.
+        for breakObj in itemBreaks:
+            if breakObj.getId() in self.items:
                 circular.add(breakObj)
 
-        # Now process the deps of the given class
+        # Now process the deps of the given item
         loadDeps = self.__loadDeps
-        for depObj in classDeps:
-            if depObj is classObj:
+        for depObj in itemDeps:
+            if depObj is item:
                 continue
             
             depName = depObj.getId()
             
-            if depObj in classBreaks:
-                Console.debug("Manual Break: %s => %s" % (classObj, depObj))
+            if depObj in itemBreaks:
+                Console.debug("Manual Break: %s => %s" % (item, depObj))
                 pass
             
             elif depObj in loadDeps:
@@ -153,9 +157,9 @@ class AbstractSorter:
         # dict directly as this data is already stored
         result = sorted(result, key=lambda depObj: len(self.__loadDeps[depObj]))
         
-        loadDeps[classObj] = result
+        loadDeps[item] = result
         
         if circular:
-            self.__circularDeps[classObj] = circular
+            self.__circularDeps[item] = circular
         
         return result
