@@ -87,24 +87,6 @@ class Resolver():
         return self
         
 
-    def addVirtual(self, name, text):
-        """
-        Adds a virtual aka generated class to the resolver with
-        the given name and text. 
-
-        Please note: The file name is modified to 
-        contain a checksum of the content as a postfix. This keeps
-        caches in-tact when using different contents for the same
-        file name aka different sets of assets, translations, etc.
-        The classname itself (which is modified here as said) is not
-        so much of relevance because of the situation that the virtual
-        class object is automatically added to the resolver (and sorter).
-        """
-
-        classItem = self.session.getVirtualItem(name, Class.ClassItem, text, ".js")
-        return self.add(classItem)
-
-
     def getRequired(self):
         """ Returns the user added classes - the so-called required classes. """
         
