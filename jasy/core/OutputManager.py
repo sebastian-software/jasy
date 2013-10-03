@@ -9,8 +9,10 @@ import os
 import jasy.core.Console as Console
 
 from jasy.core.Permutation import getPermutation
-from jasy.item.Class import ClassError, ClassItem
-from jasy.item.Style import StyleError, StyleItem
+from jasy.item.Class import ClassError
+from jasy.item.Class import ClassItem
+from jasy.item.Style import StyleError
+from jasy.item.Style import StyleItem
 from jasy.js.Resolver import Resolver
 
 from jasy import UserError
@@ -26,13 +28,18 @@ from jasy.core.FileManager import FileManager
 
 class OutputManager:
 
+    # --------------------------------------------------------------------------------------------
+    #   ESSENTIALS
+    # --------------------------------------------------------------------------------------------
+
     def __init__(self, session, assetManager=None, compressionLevel=1, formattingLevel=0):
 
         self.__session = session
 
         self.__assetManager = assetManager
         self.__fileManager = FileManager(session)
-        self.__kernelClasses = []
+
+        self.__kernelScripts = []
 
         self.__scriptOptimization = ScriptOptimization.Optimization()
         self.__scriptFormatting = ScriptFormatting.Formatting()
@@ -59,12 +66,18 @@ class OutputManager:
             self.__styleFormatting.enable("rule")
 
 
-    def deployAssets(self, classes, assetFolder=None, hashNames=False):
-        """
-        Deploys assets for the given classes and all their dependencies
 
-        :param classes: List of classes to deploy assets for
-        :type classes: list
+
+    # --------------------------------------------------------------------------------------------
+    #   ASSETS
+    # --------------------------------------------------------------------------------------------
+
+    def deployAssets(self, items, assetFolder=None, hashNames=False):
+        """
+        Deploys assets for the given items and all their dependencies
+
+        :param items: List of items to deploy assets for
+        :type items: list
         :param assetFolder: Destination folder of assets (defaults to {{prefix}}/asset)
         :type assetFolder: string
         """
@@ -74,22 +87,28 @@ class OutputManager:
 
         resolver = Resolver(self.__session)
 
-        for className in classes:
-            resolver.add(className)
+        for itemId in items:
+            resolver.add(itemId)
 
         self.__assetManager.deploy(resolver.getIncluded(), assetFolder=assetFolder, hashNames=hashNames)
 
         Console.outdent()
 
 
-    def __buildClassList(self, classes, bootCode=None, filterBy=None, inlineTranslations=False):
+
+
+    # --------------------------------------------------------------------------------------------
+    #   SCRIPT API
+    # --------------------------------------------------------------------------------------------
+
+    def __sortScriptItems(self, items, bootCode=None, filterBy=None, inlineTranslations=False):
 
         session = self.__session
 
-        # 1. Add given set of classes
+        # 1. Add given set of items
         resolver = Resolver(session)
-        for classItem in classes:
-            resolver.add(classItem)
+        for item in items:
+            resolver.add(item)
 
         # 2. Add optional boot code
         if bootCode:
@@ -99,8 +118,8 @@ class OutputManager:
         # 3. Check for asset usage
         includedClasses = resolver.getIncluded()
         usesAssets = False
-        for classItem in includedClasses:
-            if classItem.getId() == "jasy.Asset":
+        for item in includedClasses:
+            if item.getId() == "jasy.Asset":
                 usesAssets = True
                 break
 
@@ -119,7 +138,7 @@ class OutputManager:
                     translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
                     resolver.add(translationClassItem, prepend=True)
 
-        # 6. Sorting classes
+        # 6. Sorting items
         sortedClasses = resolver.getSorted()
 
         # 7. Apply filter
@@ -134,7 +153,7 @@ class OutputManager:
         return sortedClasses
 
 
-    def __compressClasses(self, classes):
+    def __compressScripts(self, classes):
         try:
             session = self.__session
             result = []
@@ -153,28 +172,7 @@ class OutputManager:
         return "".join(result)
 
 
-
-    def __compressStyles(self, styles):
-        try:
-            session = self.__session
-            result = []
-
-            for styleObj in styles:
-                compressed = styleObj.getCompressed(session, session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
-
-                if self.__addDividers:
-                    result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
-                else:
-                    result.append(compressed)
-                
-        except StyleError as error:
-            raise UserError("Error during stylesheet compression! %s" % error)
-
-        return "".join(result)
-
-
-
-    def loadClasses(self, classes, urlPrefix=None):
+    def __generateScriptLoader(self, classes, urlPrefix=None):
 
         # For loading classes we require core.ui.Queue and core.io.Script 
         # being available. If they are not part of the kernel, we have to 
@@ -183,7 +181,7 @@ class OutputManager:
         hasLoader = False
         hasQueue = False
 
-        for classObj in self.__kernelClasses:
+        for classObj in self.__kernelScripts:
             className = classObj.getId()
             if className == "core.io.Queue":
                 hasQueue = True
@@ -199,9 +197,8 @@ class OutputManager:
             if not hasLoader:
                 compress.append("core.io.Script")
 
-            compressedList = self.__buildClassList(compress, filterBy=self.__kernelClasses)
-            code += self.__compressClasses(compressedList)
-
+            compressedList = self.__sortScriptItems(compress, filterBy=self.__kernelScripts)
+            code += self.__compressScripts(compressedList)
 
         main = self.__session.getMain()
         files = []
@@ -231,6 +228,37 @@ class OutputManager:
         return code
 
 
+
+
+    # --------------------------------------------------------------------------------------------
+    #   STYLE API
+    # --------------------------------------------------------------------------------------------
+
+    def __compressStyles(self, styles):
+        try:
+            session = self.__session
+            result = []
+
+            for styleObj in styles:
+                compressed = styleObj.getCompressed(session, session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__styleOptimization, self.__styleFormatting)
+
+                if self.__addDividers:
+                    result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
+                else:
+                    result.append(compressed)
+                
+        except StyleError as error:
+            raise UserError("Error during stylesheet compression! %s" % error)
+
+        return "".join(result)
+
+
+
+
+    # --------------------------------------------------------------------------------------------
+    #   PUBLIC API
+    # --------------------------------------------------------------------------------------------
+
     def storeKernelScript(self, fileName, bootCode=""):
 
         Console.info("Generating kernel script...")
@@ -246,16 +274,10 @@ class OutputManager:
         self.__session.setStaticPermutation()
 
         # Sort and compress
-        sortedClasses = self.__buildClassList(classes, bootCode, inlineTranslations=True)
-        
-        Console.info("Compressing %s items...", len(sortedClasses))
-        compressedCode = self.__compressClasses(sortedClasses)
-
-        # Write file to disk
+        sortedClasses = self.__sortScriptItems(classes, bootCode, inlineTranslations=True)
+        compressedCode = self.__compressScripts(sortedClasses)
         self.__fileManager.writeFile(fileName, compressedCode)
-
-        # Remember kernel level classes
-        self.__kernelClasses = sortedClasses
+        self.__kernelScripts = sortedClasses
 
         Console.outdent()
 
@@ -265,14 +287,8 @@ class OutputManager:
         Console.info("Generating loader script...")
         Console.indent()
 
-        # Build class list
-        sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses)
-            
-        # Compress code
-        Console.info("Including %s items...", len(sortedClasses))
-        loaderCode = self.loadClasses(sortedClasses, urlPrefix=urlPrefix)
-
-        # Write file to disk
+        sortedClasses = self.__sortScriptItems(classes, bootCode, filterBy=self.__kernelScripts)
+        loaderCode = self.__generateScriptLoader(sortedClasses, urlPrefix=urlPrefix)
         self.__fileManager.writeFile(fileName, loaderCode)
 
         Console.outdent()
@@ -283,29 +299,19 @@ class OutputManager:
         Console.info("Generating compressed script...")
         Console.indent()
 
-        # Build class list
-        sortedClasses = self.__buildClassList(classes, bootCode, filterBy=self.__kernelClasses, inlineTranslations=True)
-            
-        # Compress code
-        Console.info("Including %s items...", len(sortedClasses))
-        compressedCode = self.__compressClasses(sortedClasses)
-
-        # Write file to disk
+        sortedClasses = self.__sortScriptItems(classes, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
+        compressedCode = self.__compressScripts(sortedClasses)
         self.__fileManager.writeFile(fileName, compressedCode)
 
         Console.outdent()        
 
 
-    def storeCompressedStylesheet(self, styles, fileName, bootCode=""):
+    def storeCompressedStylesheet(self, styles, fileName):
 
         Console.info("Generating compressed stylesheet...")
         Console.indent()
 
-        # Compress code
-        Console.info("Including %s items...", len(styles))
         compressedCode = self.__compressStyles(styles)
-
-        # Write file to disk
         self.__fileManager.writeFile(fileName, compressedCode)
 
         Console.outdent()
