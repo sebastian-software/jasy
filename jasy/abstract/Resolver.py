@@ -5,6 +5,8 @@
 #
 
 import jasy.core.Console as Console
+import jasy.item.Abstract as AbstractItem
+
 
 class Resolver():
     """Resolves dependencies between items"""
@@ -42,7 +44,7 @@ class Resolver():
             # Replace variable with item instance
             nameOrItem = self.items[nameOrItem]
 
-        elif not isinstance(nameOrItem, Class.ClassItem):
+        elif not isinstance(nameOrItem, AbstractItem.AbstractItem):
             raise Exception("Invalid item: %s" % nameOrItem)
 
         if prepend:
