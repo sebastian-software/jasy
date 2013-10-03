@@ -75,7 +75,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Console.info("Processing stylesheet %s %s...", Console.colorize(self.id, "bold"), Console.colorize("[%s]" % context, "cyan"))
             
             Console.indent()
-            tree = Parser.parse(self.getText(), self.id)
+            tree = Engine.getTree(self.getText(), self.id)
             Console.outdent()
             
             self.project.getCache().store(field, tree, self.mtime, True)
@@ -107,7 +107,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             if permutation:
                 Console.debug("Patching tree with permutation: %s", permutation)
                 Console.indent()
-                Permutate.patch(tree, permutation)
+                Engine.permutateTree(tree, permutation)
                 Console.outdent()
         
             self.project.getCache().store(field, tree, self.mtime, True)
