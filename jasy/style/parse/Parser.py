@@ -875,6 +875,9 @@ def UrlArgumentList(tokenizer, staticContext):
         elif tokenType == "string":
             token = tokenizer.token
             url += token.value
+        elif tokenType == "number":
+            token = tokenizer.token
+            url += "%s%s" % (token.value, getattr(token, "unit", ""))
         elif tokenType == "div":
             url += "/"
         elif tokenType == "dot":
@@ -884,7 +887,7 @@ def UrlArgumentList(tokenizer, staticContext):
             url += token.value
         else:
             token = tokenizer.token
-            print("TOKEN", token.type, getattr(token, "value", None))
+            raise SyntaxError("Invalid token in media query: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)))
 
     urlParam = Node.Node(tokenizer, "identifier")
     urlParam.value = url
