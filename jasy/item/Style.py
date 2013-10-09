@@ -81,10 +81,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         
         return tree
     
+
     
     def __getPermutatedTree(self, permutation=None):
         """
-        Returns an permutated tree
+        Returns an permutated tree: a copy of the normal tree
+        where the conditions are resolved based on the given permutation.
         """
 
         if permutation is None:
@@ -105,6 +107,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Console.outdent()
 
         return tree
+
 
 
     def getBreaks(self, permutation=None, items=None, warnings=True):
@@ -131,6 +134,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                 Console.warn("Missing item for break command: %s in %s", entry, self.id)                            
 
         return result
+
 
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
@@ -162,7 +166,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return result
 
 
+
     def getMetaData(self, permutation=None):
+        """
+        Returns the meta data of this stylesheet
+        """
+
         permutation = self.filterPermutation(permutation)
 
         field = "style:meta[%s]-%s" % (self.id, permutation)
@@ -174,7 +183,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return meta
 
         
+
     def getFields(self):
+        """
+        Returns the fields which are accessed by this stylesheet.
+        """
+
         field = "style:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
@@ -184,7 +198,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return fields
         
         
+
     def filterPermutation(self, permutation):
+        """
+        Returns a new permutation which only contains information
+        about the fields actually accessed in this stylesheet.
+        """
+
         if permutation:
             fields = self.getFields()
             if fields:
@@ -196,7 +216,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getMergedTree(self, permutation, session):
         """
-        Returns the merged (includes resolved) and optimized (permutation values injected) tree.
+        Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
 
         def resolveIncludesRecurser(node):
@@ -240,6 +260,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
     def getCompressed(self, session, permutation=None, optimization=None, formatting=None):
+        """
+        Returns the compressed CSS code of this stylesheet.
+        """
         
         field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
