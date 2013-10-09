@@ -78,7 +78,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         field = "script:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
-            Console.info("Processing class %s %s...", Console.colorize(self.id, "bold"))
+            Console.info("Processing class %s...", Console.colorize(self.id, "bold"))
             
             Console.indent()
             tree = Parser.parse(self.getText(), self.id)
