@@ -43,13 +43,13 @@ for fname in sys.argv[2:]:
     
     if job == "optimize":    
         tree = Engine.getTree(text, fname)
-        tree = Engine.processTree(tree)
+        tree = Engine.reduceTree(tree)
         print(Engine.compressTree(tree))
 
     elif job == "compress":    
         formatting = Formatting.Formatting("blocks", "whitespace", "statements", "indent")
         tree = Engine.getTree(text, fname)
-        tree = Engine.processTree(tree)
+        tree = Engine.reduceTree(tree)
         print(Engine.compressTree(tree, formatting))
         
     elif job == "tree":
