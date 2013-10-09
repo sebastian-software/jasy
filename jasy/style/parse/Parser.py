@@ -875,12 +875,14 @@ def UrlArgumentList(tokenizer, staticContext):
             url += token.value
         elif tokenType == "div":
             url += "/"
+        elif tokenType == "dot":
+            url += "."
         elif tokenType == "identifier":
             token = tokenizer.token
             url += token.value
         else:
             token = tokenizer.token
-            print("TOKEN", token.type, token.value)
+            print("TOKEN", token.type, getattr(token, "value", None))
 
     urlParam = Node.Node(tokenizer, "identifier")
     urlParam.value = url
