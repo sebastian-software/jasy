@@ -398,7 +398,7 @@ def Media(tokenizer, staticContext):
     requiresSpace = False
 
     while tokenType != "left_curly":
-        token = tokenizer.token    
+        token = tokenizer.token
 
         if tokenType == "identifier":
             if requiresSpace:
@@ -409,6 +409,8 @@ def Media(tokenizer, staticContext):
             query += ","
             requiresSpace = False
         elif tokenType == "left_paren":
+            if requiresSpace:
+                query += " "            
             query += "("
             requiresSpace = False
         elif tokenType == "right_paren":
