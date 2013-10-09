@@ -67,7 +67,7 @@ class Tests(unittest.TestCase):
                 float: left;
               }
             }
-            '''), '@media tv and(min-width:700px)and(orientation:landscape){.headline{float:left;}}')        
+            '''), '@media tv and (min-width:700px) and (orientation:landscape){.headline{float:left;}}')        
 
 
     def test_ratio(self):
@@ -77,7 +77,7 @@ class Tests(unittest.TestCase):
                  font-size: 16px;
               }
             }
-            '''), '@media screen and(min-aspect-ratio:1/1){body{font-size:16px;}}')        
+            '''), '@media screen and (min-aspect-ratio:1/1){body{font-size:16px;}}')        
 
 
 
@@ -88,7 +88,7 @@ class Tests(unittest.TestCase):
                 height: 30px;
               }
             }
-            '''), '@media handheld and(min-width:20em){header{height:30px;}}')         
+            '''), '@media handheld and (min-width:20em){header{height:30px;}}')         
 
 
     def test_reallife_pixel(self):

@@ -401,7 +401,7 @@ def Media(tokenizer, staticContext):
         token = tokenizer.token
 
         if tokenType == "identifier":
-            if requiresSpace:
+            if requiresSpace :
                 query += " "
             query += token.value
             requiresSpace = True
@@ -415,7 +415,7 @@ def Media(tokenizer, staticContext):
             requiresSpace = False
         elif tokenType == "right_paren":
             query += ")"
-            requiresSpace = False
+            requiresSpace = True
         elif tokenType == "colon":
             query += ":"
             requiresSpace = False
