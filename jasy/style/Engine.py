@@ -50,9 +50,6 @@ def permutateTree(tree, permutation=None):
 
     if permutation:
 
-        # Work on a copy
-        tree = copy.deepcopy(tree)
-
         Resolver.process(tree, permutation)
 
         return tree
