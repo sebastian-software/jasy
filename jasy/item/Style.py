@@ -63,7 +63,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     kind = "style"
     
-    def __getTree(self, context=None):
+    def __getTree(self):
         """
         Returns the parsed tree
         """
@@ -71,7 +71,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
-            Console.info("Processing stylesheet %s %s...", Console.colorize(self.id, "bold"), Console.colorize("[%s]" % context, "cyan"))
+            Console.info("Processing stylesheet %s...", Console.colorize(self.id, "bold"))
             
             Console.indent()
             tree = Engine.getTree(self.getText(), self.id)
@@ -82,32 +82,24 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         return tree
     
     
-    def __getOptimizedTree(self, permutation=None, context=None):
+    def __getPermutatedTree(self, permutation=None):
         """
-        Returns an optimized tree with permutations applied
+        Returns an permutated tree
         """
 
-        field = "style:opt-tree[%s]-%s" % (self.id, permutation)
+        if permutation is None:
+            return self.__getTree()
+
+        field = "style:permutated[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
+
         if not tree:
             tree = copy.deepcopy(self.__getTree("%s:plain" % context))
-
-            # Logging
-            msg = "Processing stylesheet %s" % Console.colorize(self.id, "bold")
-            if permutation:
-                msg += Console.colorize(" (%s)" % permutation, "grey")
-            if context:
-                msg += Console.colorize(" [%s]" % context, "cyan")
                 
-            Console.info("%s..." % msg)
+            Console.info("Permutating tree: %s", permutation)
             Console.indent()
-
-            # Apply permutation
-            if permutation:
-                Console.debug("Patching tree with permutation: %s", permutation)
-                Console.indent()
-                Engine.permutateTree(tree, permutation)
-                Console.outdent()
+            Engine.permutateTree(tree, permutation)
+            Console.outdent()
         
             self.project.getCache().store(field, tree, self.mtime, True)
             Console.outdent()
@@ -176,7 +168,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
-            meta = MetaData.MetaData(self.__getOptimizedTree(permutation, "meta"))
+            meta = MetaData.MetaData(self.__getPermutatedTree(permutation, "meta"))
             self.project.getCache().store(field, meta, self.mtime)
             
         return meta
@@ -235,7 +227,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     resolveIncludesRecurser(child)
 
         # Work is on base of optimized tree
-        tree = self.__getOptimizedTree(permutation, "includes")
+        tree = self.__getPermutatedTree(permutation, "includes")
         
         # Copying original tree
         tree = copy.deepcopy(tree)
@@ -247,12 +239,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-
-    def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
-
-        # Disable translation for caching / patching when not actually used
-        if translation and not self.getTranslations():
-            translation = None
+    def getCompressed(self, session, permutation=None, optimization=None, formatting=None):
         
         field = "style:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
@@ -271,18 +258,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, compressed, self.mtime)
 
         return compressed
-
-
-    def getTranslations(self):
-        # TODO
-        return None
-
-        field = "style:translations[%s]" % (self.id)
-        result = self.project.getCache().read(field, self.mtime)
-        if result is None:
-            result = jasy.js.optimize.Translation.collectTranslations(self.__getTree(context="i18n"))
-            self.project.getCache().store(field, result, self.mtime)
-
-        return result        
+  
 
 
