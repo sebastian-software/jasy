@@ -250,16 +250,39 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
 
-        tree = self.getMergedTree(permutation, session)
+        # Disable translation for caching / patching when not actually used
+        if translation and not self.getTranslations():
+            translation = None
+        
+        field = "style:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
+        compressed = self.project.getCache().read(field, self.mtime)
+        if compressed == None:
 
-        # Reduce tree
-        Engine.reduceTree(tree)
+            # Start with the merged tree (includes resolved)
+            tree = self.getMergedTree(permutation, session)
 
-        # Compress tree
-        compressed = Compressor.Compressor(formatting).compress(tree)
+            # Reduce tree
+            Engine.reduceTree(tree)
+
+            # Compress tree
+            compressed = Compressor.Compressor(formatting).compress(tree)
+
+            # Store in cache
+            self.project.getCache().store(field, compressed, self.mtime)
 
         return compressed
 
 
-        
-        
+    def getTranslations(self):
+        # TODO
+        return None
+
+        field = "style:translations[%s]" % (self.id)
+        result = self.project.getCache().read(field, self.mtime)
+        if result is None:
+            result = jasy.js.optimize.Translation.collectTranslations(self.__getTree(context="i18n"))
+            self.project.getCache().store(field, result, self.mtime)
+
+        return result        
+
+
