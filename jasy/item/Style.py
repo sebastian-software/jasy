@@ -50,13 +50,16 @@ def collectFields(node, keys=None, condition=False):
     return keys
 
 
+
 class StyleError(Exception):
+    
     def __init__(self, inst, msg):
         self.__msg = msg
         self.__inst = inst
         
     def __str__(self):
         return "Error processing stylesheet %s: %s" % (self.__inst, self.__msg)
+
 
 
 class StyleItem(jasy.item.Abstract.AbstractItem):
@@ -238,7 +241,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     # Use merged tree for children as well...
                     childRoot = childStyleItem.getMergedTree(permutation, session)
 
-                    # and copy it for being free to modify it
+                    # Copy it for being able to freely modify it
                     childRoot = copy.deepcopy(childRoot)
 
                     node.replace(child, childRoot)
