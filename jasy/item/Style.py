@@ -101,13 +101,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if not tree:
             tree = copy.deepcopy(self.__getTree())
                 
-            Console.info("Permutating tree: %s", permutation)
+            Console.info("Permutating tree...")
             Console.indent()
             Engine.permutateTree(tree, permutation)
             Console.outdent()
         
             self.project.getCache().store(field, tree, self.mtime, True)
-            Console.outdent()
 
         return tree
 
