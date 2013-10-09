@@ -52,7 +52,7 @@ def collectFields(node, keys=None, condition=False):
 
 
 class StyleError(Exception):
-    
+
     def __init__(self, inst, msg):
         self.__msg = msg
         self.__inst = inst
@@ -68,7 +68,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     
     def __getTree(self):
         """
-        Returns the parsed tree
+        Returns the abstract syntax tree
         """
         
         field = "style:tree[%s]" % self.id

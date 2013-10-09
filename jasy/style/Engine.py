@@ -99,6 +99,7 @@ def reduceTree(tree):
     return tree
 
 
+
 def compressTree(tree, formatting=None):
     """
     Returns the compressed result from the given tree
@@ -130,6 +131,5 @@ def printTokens(text, fileId=None):
             Console.info("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
         else:
             Console.info("%s%s" % (indent * "  ", tokenType))
-
 
 

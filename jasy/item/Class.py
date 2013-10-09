@@ -54,7 +54,9 @@ def collectFields(node, keys=None):
     return keys
 
 
+
 class ClassError(Exception):
+
     def __init__(self, inst, msg):
         self.__msg = msg
         self.__inst = inst
@@ -63,16 +65,20 @@ class ClassError(Exception):
         return "Error processing class %s: %s" % (self.__inst, self.__msg)
 
 
+
 class ClassItem(jasy.item.Abstract.AbstractItem):
     
     kind = "class"
     
-    def __getTree(self, context=None):
-        
+    def __getTree(self):
+        """
+        Returns the abstract syntax tree
+        """
+
         field = "script:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
-            Console.info("Processing class %s %s...", Console.colorize(self.id, "bold"), Console.colorize("[%s]" % context, "cyan"))
+            Console.info("Processing class %s %s...", Console.colorize(self.id, "bold"))
             
             Console.indent()
             tree = Parser.parse(self.getText(), self.id)
@@ -84,20 +90,20 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return tree
     
     
-    def __getOptimizedTree(self, permutation=None, context=None):
-        """Returns an optimized tree with permutations applied"""
+    def __getOptimizedTree(self, permutation=None):
+        """
+        Returns an optimized tree with permutations applied
+        """
 
         field = "script:opt-tree[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
-            tree = copy.deepcopy(self.__getTree("%s:plain" % context))
+            tree = copy.deepcopy(self.__getTree())
 
             # Logging
             msg = "Processing class %s" % Console.colorize(self.id, "bold")
             if permutation:
                 msg += Console.colorize(" (%s)" % permutation, "grey")
-            if context:
-                msg += Console.colorize(" [%s]" % context, "cyan")
                 
             Console.info("%s..." % msg)
             Console.indent()
@@ -118,6 +124,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             Console.outdent()
 
         return tree
+
 
 
     def getBreaks(self, permutation=None, items=None):
@@ -141,6 +148,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                             result.add(items[className])
 
         return result
+
 
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
@@ -222,6 +230,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return result
         
         
+
     def getScopeData(self, permutation=None):
         """
         Returns the top level scope object which contains information about the
@@ -233,11 +242,12 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         field = "script:scope[%s]-%s" % (self.id, permutation)
         scope = self.project.getCache().read(field, self.mtime)
         if scope is None:
-            scope = self.__getOptimizedTree(permutation, "scope").scope
+            scope = self.__getOptimizedTree(permutation).scope
             self.project.getCache().store(field, scope, self.mtime)
 
         return scope
         
+
         
     def getApi(self, highlight=True):
         field = "script:api[%s]-%s" % (self.id, highlight)
@@ -245,7 +255,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         if apidata is None:
             apidata = jasy.js.api.Data.ApiData(self.id, highlight)
             
-            tree = self.__getTree(context="api")
+            tree = self.__getTree()
             Console.indent()
             apidata.scanTree(tree)
             Console.outdent()
@@ -264,6 +274,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return apidata
 
 
+
     def getHighlightedCode(self):
         field = "script:highlighted[%s]" % self.id
         source = self.project.getCache().read(field, self.mtime)
@@ -280,37 +291,41 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         return source
 
 
+
     def getMetaData(self, permutation=None):
         permutation = self.filterPermutation(permutation)
 
         field = "script:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
-            meta = MetaData.MetaData(self.__getOptimizedTree(permutation, "meta"))
+            meta = MetaData.MetaData(self.__getOptimizedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
             
         return meta
         
+
         
     def getFields(self):
         field = "script:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
-            fields = collectFields(self.__getTree(context="fields"))
+            fields = collectFields(self.__getTree())
             self.project.getCache().store(field, fields, self.mtime)
         
         return fields
+
 
 
     def getTranslations(self):
         field = "script:translations[%s]" % (self.id)
         result = self.project.getCache().read(field, self.mtime)
         if result is None:
-            result = jasy.js.optimize.Translation.collectTranslations(self.__getTree(context="i18n"))
+            result = jasy.js.optimize.Translation.collectTranslations(self.__getTree())
             self.project.getCache().store(field, result, self.mtime)
 
         return result
         
+
         
     def filterPermutation(self, permutation):
         if permutation:
@@ -320,8 +335,9 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         return None
         
+
         
-    def getCompressed(self, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
+    def getCompressed(self, permutation=None, translation=None, optimization=None, formatting=None):
         permutation = self.filterPermutation(permutation)
 
         # Disable translation for caching / patching when not actually used
@@ -331,7 +347,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         field = "script:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
-            tree = self.__getOptimizedTree(permutation, context)
+            tree = self.__getOptimizedTree(permutation)
             
             if translation or optimization:
                 tree = copy.deepcopy(tree)
