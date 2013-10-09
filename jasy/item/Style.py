@@ -94,7 +94,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = self.project.getCache().read(field, self.mtime)
 
         if not tree:
-            tree = copy.deepcopy(self.__getTree("%s:plain" % context))
+            tree = copy.deepcopy(self.__getTree())
                 
             Console.info("Permutating tree: %s", permutation)
             Console.indent()
@@ -168,7 +168,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
-            meta = MetaData.MetaData(self.__getPermutatedTree(permutation, "meta"))
+            meta = MetaData.MetaData(self.__getPermutatedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
             
         return meta
@@ -178,7 +178,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
-            fields = collectFields(self.__getTree(context="fields"))
+            fields = collectFields(self.__getTree())
             self.project.getCache().store(field, fields, self.mtime)
         
         return fields
@@ -227,7 +227,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                     resolveIncludesRecurser(child)
 
         # Work is on base of optimized tree
-        tree = self.__getPermutatedTree(permutation, "includes")
+        tree = self.__getPermutatedTree(permutation)
         
         # Copying original tree
         tree = copy.deepcopy(tree)
@@ -241,7 +241,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getCompressed(self, session, permutation=None, optimization=None, formatting=None):
         
-        field = "style:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
+        field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
 
