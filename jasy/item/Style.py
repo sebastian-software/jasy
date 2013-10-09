@@ -248,64 +248,18 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def __resolveConditionals(self, tree):
-
-        return
-
-        # Scope Analyse von JavaScript?
-        # Alle deklarierten und zugegriffenen Variablen auf den aktuellen Selektor oder das aktuelle StyleSheet hängen?
-        # Nach jedem komplett Durchlauf durch alle Nodes überprüfen ob noch Werte übrig sind und Vorgang gegenfalls wiederholen
-        # Ermittlung von nicht zur Verfügung stehenden Variablen
-
-        def recurser(node):
-            return False
-
-
-        while recurser(tree):
-            pass
-
-        return tree
-
-
-
-
     def getCompressed(self, session, permutation=None, translation=None, optimization=None, formatting=None, context="compressed"):
 
         tree = self.getMergedTree(permutation, session)
 
-        # PHASE 1
-        # Resolving conditionals
-        self.__resolveConditionals(tree)
+        # Reduce tree
+        Engine.reduceTree(tree)
 
-        # PHASE 2
-        # Trivial cleanups
-        ScopeScanner.scan(tree)
-        Unused.cleanup(tree)
+        # Compress tree
+        compressed = Compressor.Compressor(formatting).compress(tree)
 
-        # PHASE 3
-        # Resolve all mixins
-        Mixins.processExtends(tree)
-        Mixins.processMixins(tree)
-        Mixins.processSelectors(tree)
+        return compressed
 
-        # PHASE 4
-        # Post mixin cleanups
-        ScopeScanner.scan(tree)
-        Unused.cleanup(tree)
 
-        # PHASE 5
-        # Compute variables
-        Variables.compute(tree)
-
-        # PHASE 6
-        # Flattening selectors
-        Flatter.process(tree)
-
-        # PHASE 7
-        # Post scan to remove (hopefully) all variable/mixin access
-        ScopeScanner.scan(tree)
-
-        # DONE
-        return Compressor.Compressor(formatting).compress(tree)
         
         
