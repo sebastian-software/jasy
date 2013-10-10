@@ -1,3 +1,42 @@
+Jasy 1.5-beta1
+==============
+
+## Stylesheets (**boom**)
+
+- Added new stylesheet infrastructure:
+  - Revamped script APIs to be more explicitely oriented on scripts to make room for adding matching APIs for stylesheet processing e.g. `storeKernelScript()` instead of `storeKernel()`, `storeLoaderScript()` instead of `storeLoader()`, etc.
+  - Added abstract Classes `Resolver`, `Sorter` and `Node` to being used by both the stylesheet and script infrastructure. Therefor changed a few APIs to match generic usability of methods e.g. `add()` instead of `addClass()`, `getSorted()` instead of `getSortedClasses()`, etc.
+  - Added new API to output manager `storeCompressedStylesheet(styles)` for compressing a sorted set of stylesheets.
+  - Styles are being loaded from the source folder `styles` and should be typically written out to `css` (by convention).
+  - Changed conventions to unify stylesheets and scripts: Put all your generated JavaScript files into `js` instead of `script` to match the file extension. This typically requires minor changes to the way these files are loaded into the HTML e.g. via `ScriptLoader`.
+  - Important: Stylesheets will not be part of the asset handling anymore. You have to generate the CSS files in both `source` and `build` targets. There might also be changes required for loading other assets like images from within such a stylesheet. Asset handling for stylesheets is not yet included.
+
+## Optimizations:
+
+- Added abstract `FlagSet` class which is used for storing the flags for optimization and formatting settings in a unified way.
+- Removed `name` support in `MetaData` as this is mainly not used anymore through the introduction of `content` sections inside `jasyproject` files.
+- Reworked API documentation to be compatible with readthedocs.org. Published to http://jasy.readthedocs.org/en/latest/
+- Improved session cleanup logic so if you ever wondered about caching issues for generated virtual files or locales these should be gone now. Cleaning now removes generated/virtual classes as well. No worry: These will be automatically re-generated when needed.
+
+
+
+
+
+## Changes:
+
+- Let travis.ci use Python-3.3 instead of Python-3.2
+
+
+
+
+Jasy 1.1.1
+==========
+
+- Minor bugfixes in HTTP handling
+- Minor bugfixes in JavaScript optimizer for declarations
+
+
+
 Jasy 1.1.0
 ==========
 
