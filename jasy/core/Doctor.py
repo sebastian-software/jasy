@@ -16,25 +16,25 @@ except ImportError:
 needs = [
     {
         "packageName": "Pygments",
-        "minVersion": "1.5",
+        "minVersion": "1.6",
         "installPath": "'pip3 install Pygments'",
         "updatePath": "'pip3 install --upgrade pygments'"
     },
     {
         "packageName": "polib",
-        "minVersion": "1.0.2",
+        "minVersion": "1.0.3",
         "installPath": "'pip3 install polib'",
         "updatePath": "'pip3 install --upgrade polib'"
     },
     {
         "packageName": "requests",
-        "minVersion": "1.1",
+        "minVersion": "2.0",
         "installPath": "'pip3 install requests'",
         "updatePath": "'pip3 install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
-        "minVersion": "3.2",
+        "minVersion": "3.2.4",
         "installPath": "'pip install CherryPy'",
         "updatePath": "'pip3 install --upgrade CherryPy'"
     },
@@ -61,8 +61,8 @@ optionals = [
     },
     {
         "packageName": "pillow",
-        "minVersion": "2.0.0",
-        "installPath": "'pip3 install git+https://github.com/python-imaging/Pillow.git'",
+        "minVersion": "2.2.0",
+        "installPath": "'pip3 install Pillow'",
         "updatePath": ""
     }
 ]
