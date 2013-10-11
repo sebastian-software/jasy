@@ -304,6 +304,23 @@ class Session():
 
         return counter
 
+
+
+    def executeCommand(self, command, params=None):
+        """
+        Executes the given command and returns the result
+        """
+
+        env = self.__commandEnvironment
+
+        if not command in env:
+            raise UserError("Unsupport command %s" % command)
+
+        if params:
+            return env[command](*params)
+        else:
+            return env[command]()
+
         
         
     def getProjects(self):

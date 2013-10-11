@@ -306,7 +306,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             tree = self.getMergedTree(session, permutation)
 
             # Reduce tree
-            Engine.reduceTree(tree)
+            Engine.reduceTree(tree, session)
 
             # Compress tree
             compressed = Compressor.Compressor(formatting).compress(tree)

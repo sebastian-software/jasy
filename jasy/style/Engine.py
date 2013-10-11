@@ -61,7 +61,7 @@ def permutateTree(tree, permutation=None):
 
 
 
-def reduceTree(tree):
+def reduceTree(tree, session=None):
     """
     Applies all relevant modifications to the tree to allow compression to CSS
     """
@@ -91,7 +91,7 @@ def reduceTree(tree):
 
     # PHASE 6+++
     # Run custom methods
-    Methods.execute(tree)
+    Methods.execute(tree, session)
 
     # PHASE 7
     # Flattening selectors

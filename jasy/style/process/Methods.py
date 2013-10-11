@@ -13,21 +13,24 @@ class MethodError(Exception):
         Exception.__init__(self, "Method Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
-def execute(tree):
+def execute(tree, session):
+    if session is None:
+        return
+
     Console.info("Executing methods...")
     Console.indent()
 
-    __executeRecurser(tree)
+    __executeRecurser(tree, session)
 
     Console.outdent()
 
 
-def __executeRecurser(node):
+def __executeRecurser(node, session):
 
     # Worked on copy to prevent issues during length changes (due removing/adding children, etc.)
     for child in list(node):
         if child is not None:
-            __executeRecurser(child)
+            __executeRecurser(child, session)
 
 
     if node.type == "system":
@@ -35,4 +38,7 @@ def __executeRecurser(node):
         params = [ param.value for param in node.params ]
 
         print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
+
+        result = session.executeCommand(command, params)
+        print("Result: %s" % result)
 
