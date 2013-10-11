@@ -27,7 +27,12 @@ import jasy.core.MetaData as MetaData
 import jasy.style.output.Compressor as Compressor
 
 
-def resolveIncludesRecurser(node, session):
+def includeGenerator(node, session):
+    """
+    A generator which yiels style items and include nodes
+    for every include in the given root node
+    """
+
     for child in node:
         if child.type == "include":
             valueNode = child[0]
@@ -45,7 +50,7 @@ def resolveIncludesRecurser(node, session):
             yield item, child
 
         else:
-            resolveIncludesRecurser(child, session)
+            includeGenerator(child, session)
 
 
 
@@ -249,7 +254,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = self.__getPermutatedTree(permutation)        
 
         # Run the actual resolver engine and figure out newest mtime
-        for item, include in resolveIncludesRecurser(tree, session):
+        for item, include in includeGenerator(tree, session):
 
             mtime = max(mtime, item.getMergedMtime(session, permutation))
 
@@ -271,7 +276,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = copy.deepcopy(tree)
 
         # Run the actual resolver engine
-        for item, include in resolveIncludesRecurser(tree, session):
+        for item, include in includeGenerator(tree, session):
 
             # Use merged tree for children as well...
             childRoot = item.getMergedTree(session, permutation)
