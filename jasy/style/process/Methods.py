@@ -42,3 +42,9 @@ def __executeRecurser(node, session):
         result = session.executeCommand(command, params)
         print("Result: %s" % result)
 
+        repl = Node.Node(type="identifier")
+        repl.value = result
+
+        node.parent.replace(node, repl)
+
+
