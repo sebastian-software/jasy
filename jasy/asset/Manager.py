@@ -38,10 +38,10 @@ class AssetManager:
         self.__session = session
 
         # Stores manager contextual asset information (like relative paths)
-        data = self.__data = {}
+        self.__data = {}
         
         # Registry for profiles aka asset groups
-        profiles = self.__profiles = []
+        self.__profiles = []
         
         # Loop though all projects and merge assets
         assets = self.__assets = {}
@@ -50,11 +50,20 @@ class AssetManager:
         
         self.__processSprites()
         self.__processAnimations()
+        self.__addCommands()
+
+        Console.outdent()
+        Console.info("Activated %s assets", len(assets))
 
 
-        ## Commands
 
-        main = self.__session.getMain()
+    def __addCommands(self):
+        session = self.__session
+        profiles = self.__profiles
+        data = self.__data
+        assets = self.__assets
+
+        main = session.getMain()
 
         def assetCmd(fileId):
             if not fileId in assets:
@@ -100,16 +109,9 @@ class AssetManager:
                 return asset.exportData()[1]
 
 
-
         session.addCommand("jasy.asset", assetCmd)
         session.addCommand("jasy.width", widthCmd)
-        session.addCommand("jasy.height", heightCmd)
-
-
-
-        
-        Console.outdent()
-        Console.info("Activated %s assets", len(assets))
+        session.addCommand("jasy.height", heightCmd)        
 
 
 
