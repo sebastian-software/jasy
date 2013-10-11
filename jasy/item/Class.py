@@ -5,6 +5,9 @@
 
 import os, copy, fnmatch, re
 
+import jasy.core.MetaData as MetaData
+import jasy.core.Console as Console 
+import jasy.item.Abstract
 import jasy.js.parse.Parser as Parser
 import jasy.js.parse.ScopeScanner as ScopeScanner
 import jasy.js.clean.DeadCode
@@ -13,14 +16,8 @@ import jasy.js.clean.Permutate
 import jasy.js.optimize.Translation
 import jasy.js.output.Optimization
 import jasy.js.api.Data
-import jasy.core.Permutation
-import jasy.item.Abstract
-
-import jasy.core.MetaData as MetaData
 import jasy.js.output.Compressor as Compressor
-
 import jasy.js.util as Util
-import jasy.core.Console as Console 
 
 from jasy import UserError
 
