@@ -290,8 +290,13 @@ class Session():
 
         # Method for being used as a decorator to share methods to the outside
         def share(func):
+            name = "%s.%s" % (objectName, func.__name__)
+            if name in env:
+                raise Exception("Overwriting commands is not supported! Tried with: %s!" % name)
+
+            env[name] = func
+
             nonlocal counter
-            env["%s.%s" % (objectName, func.__name__)] = func
             counter += 1
 
             return func        
@@ -303,6 +308,23 @@ class Session():
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
 
         return counter
+
+
+
+    def addCommand(self, name, func):
+        """
+        Registers the given function as a new command
+        """
+
+        if len(name.split(".")) != 2:
+            raise Exception("Command names should always match namespace.name! Tried with: %s!" % name)
+
+        env = self.__commandEnvironment
+
+        if name in env:
+            raise Exception("Overwriting commands is not supported! Command=%s" % name)
+
+        env[name] = func
 
 
 
