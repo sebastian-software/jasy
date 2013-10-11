@@ -57,17 +57,53 @@ class AssetManager:
         main = self.__session.getMain()
 
         def assetCmd(fileId):
-            print("Looking up %s" % fileId)
             if not fileId in assets:
                 raise Exception("Did not found asset with ID %s" % fileId)
 
             asset = assets[fileId]
             entry = data[fileId]
 
-            print("Found %s: %s %s" % (fileId, asset, entry))
+            profile = profiles[entry["p"]]
+
+            if "root" in profile:
+                root = profile["root"]
+            else:
+                root = ""
+
+            # Figure out URL
+            # Priority of approaches: stored url => hash based => id based
+            if "u" in entry:
+                url = root + entry["u"]
+            elif "h" in entry:
+                url = root + entry["h"] + asset.extension
+            else:
+                url = root + fileId
+
+            return "url(%s)" % url
             
+            
+        def widthCmd(fileId):
+            if not fileId in assets:
+                raise Exception("Did not found asset with ID %s" % fileId)
+
+            asset = assets[fileId]
+            if asset.isImage():
+                return asset.exportData()[0]
+
+
+        def heightCmd(fileId):
+            if not fileId in assets:
+                raise Exception("Did not found asset with ID %s" % fileId)
+
+            asset = assets[fileId]
+            if asset.isImage():
+                return asset.exportData()[1]
+
+
 
         session.addCommand("jasy.asset", assetCmd)
+        session.addCommand("jasy.width", widthCmd)
+        session.addCommand("jasy.height", heightCmd)
 
 
 
