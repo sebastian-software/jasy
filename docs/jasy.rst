@@ -14,6 +14,7 @@ Subpackages
 
 .. toctree::
 
+    jasy.abstract
     jasy.asset
     jasy.core
     jasy.env

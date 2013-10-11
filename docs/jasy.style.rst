@@ -9,6 +9,22 @@ style Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`Resolver` Module
+----------------------
+
+.. automodule:: jasy.style.Resolver
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`Sorter` Module
+--------------------
+
+.. automodule:: jasy.style.Sorter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`Util` Module
 ------------------
 

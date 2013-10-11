@@ -78,6 +78,6 @@ Subpackages
 
 .. toctree::
 
-    jasy.test.js
+    jasy.test.script
     jasy.test.style
 

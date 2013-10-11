@@ -1,14 +1,6 @@
 js Package
 ==========
 
-:mod:`MetaData` Module
-----------------------
-
-.. automodule:: jasy.js.MetaData
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`Resolver` Module
 ----------------------
 

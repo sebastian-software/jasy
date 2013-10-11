@@ -49,18 +49,26 @@ style Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`parent-reference` Module
-------------------------------
+:mod:`parentreference` Module
+-----------------------------
 
-.. automodule:: jasy.test.style.parent-reference
+.. automodule:: jasy.test.style.parentreference
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`selector-css3` Module
----------------------------
+:mod:`selectorcss3` Module
+--------------------------
 
-.. automodule:: jasy.test.style.selector-css3
+.. automodule:: jasy.test.style.selectorcss3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`strings` Module
+---------------------
+
+.. automodule:: jasy.test.style.strings
     :members:
     :undoc-members:
     :show-inheritance:

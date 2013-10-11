@@ -97,6 +97,14 @@ core Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`MetaData` Module
+----------------------
+
+.. automodule:: jasy.core.MetaData
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`Options` Module
 ---------------------
 
