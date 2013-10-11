@@ -37,7 +37,7 @@ res = loader.discover(test_dir, pattern='*.py')
 
 logging.getLogger().setLevel(logging.ERROR)
 
-result = unittest.TextTestRunner(verbosity=2).run(res)
+result = unittest.TextTestRunner(verbosity=1).run(res)
 
 if result.failures:
 	sys.exit(1)
