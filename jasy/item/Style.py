@@ -27,6 +27,27 @@ import jasy.core.MetaData as MetaData
 import jasy.style.output.Compressor as Compressor
 
 
+def resolveIncludesRecurser(node, session):
+    for child in node:
+        if child.type == "include":
+            valueNode = child[0]
+            if valueNode.type in ("string", "identifier"):
+                includeName = valueNode.value
+            elif valueNode.type == "dot":
+                includeName = Util.assembleDot(valueNode)
+            else:
+                raise Exception("Invalid include: %s" % valueNode)
+
+            item = session.getStyleByName(includeName)
+            if item is None:
+                raise Exception("Did not find style sheet: %s" % item.name)
+
+            yield item, child
+
+        else:
+            resolveIncludesRecurser(child, session)
+
+
 
 def collectFields(node, keys=None, condition=False):
     
@@ -216,37 +237,29 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         
 
 
-    def getMergedTree(self, permutation, session):
+    def getMergedMtime(self, session, permutation=None):
+        """
+        Returns the newest modification date of the stylesheet (respecting all includes)
+        """
+
+        mtime = self.mtime
+
+        # Work is on base of optimized tree
+        tree = self.__getPermutatedTree(permutation)        
+
+        # Run the actual resolver engine and figure out newest mtime
+        for item, include in resolveIncludesRecurser(tree, session):
+
+            mtime = max(mtime, item.getMergedMtime(session, permutation))
+
+        return mtime
+
+
+
+    def getMergedTree(self, session, permutation=None):
         """
         Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
-
-        def resolveIncludesRecurser(node):
-            for child in node:
-                if child.type == "include":
-                    valueNode = child[0]
-                    if valueNode.type in ("string", "identifier"):
-                        includeName = valueNode.value
-                    elif valueNode.type == "dot":
-                        includeName = Util.assembleDot(valueNode)
-                    else:
-                        raise Exception("Invalid include: %s" % valueNode)
-
-                    childStyleItem = session.getStyleByName(includeName)
-
-                    if childStyleItem is None:
-                        raise Exception("Did not find style sheet: %s" % includeName)
-
-                    # Use merged tree for children as well...
-                    childRoot = childStyleItem.getMergedTree(permutation, session)
-
-                    # Copy it for being able to freely modify it
-                    childRoot = copy.deepcopy(childRoot)
-
-                    node.replace(child, childRoot)
-
-                else:
-                    resolveIncludesRecurser(child)
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
@@ -255,7 +268,16 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = copy.deepcopy(tree)
 
         # Run the actual resolver engine
-        resolveIncludesRecurser(tree)
+        for item, include in resolveIncludesRecurser(tree, session):
+
+            # Use merged tree for children as well...
+            childRoot = item.getMergedTree(session, permutation)
+
+            # Copy it for being able to freely modify it
+            childRoot = copy.deepcopy(childRoot)
+
+            # Then replace it with include node
+            include.parent.replace(include, childRoot)            
 
         return tree
 
@@ -267,11 +289,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         """
         
         field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
-        compressed = self.project.getCache().read(field, self.mtime)
+        mtime = self.getMergedMtime(session, permutation)
+        compressed = self.project.getCache().read(field, mtime)
         if compressed == None:
 
             # Start with the merged tree (includes resolved)
-            tree = self.getMergedTree(permutation, session)
+            tree = self.getMergedTree(session, permutation)
 
             # Reduce tree
             Engine.reduceTree(tree)
@@ -280,7 +303,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             compressed = Compressor.Compressor(formatting).compress(tree)
 
             # Store in cache
-            self.project.getCache().store(field, compressed, self.mtime)
+            self.project.getCache().store(field, compressed, mtime)
 
         return compressed
   
