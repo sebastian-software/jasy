@@ -1,31 +1,49 @@
 Jasy 1.5-beta1
 ==============
 
-## Stylesheets (**boom**)
+## Stylesheets
 
-- Added new stylesheet infrastructure:
-  - Revamped script APIs to be more explicitely oriented on scripts to make room for adding matching APIs for stylesheet processing e.g. `storeKernelScript()` instead of `storeKernel()`, `storeLoaderScript()` instead of `storeLoader()`, etc.
-  - Added abstract Classes `Resolver`, `Sorter` and `Node` to being used by both the stylesheet and script infrastructure. Therefor changed a few APIs to match generic usability of methods e.g. `add()` instead of `addClass()`, `getSorted()` instead of `getSortedClasses()`, etc.
-  - Added new API to output manager `storeCompressedStylesheet(styles)` for compressing a sorted set of stylesheets.
-  - Styles are being loaded from the source folder `styles` and should be typically written out to `css` (by convention).
-  - Changed conventions to unify stylesheets and scripts: Put all your generated JavaScript files into `js` instead of `script` to match the file extension. This typically requires minor changes to the way these files are loaded into the HTML e.g. via `ScriptLoader`.
-  - Important: Stylesheets will not be part of the asset handling anymore. You have to generate the CSS files in both `source` and `build` targets. There might also be changes required for loading other assets like images from within such a stylesheet. Asset handling for stylesheets is not yet included.
+### Short Feature Overview
 
-## Optimizations:
+There is a fullblown CSS parser/compressor with custom features you know from LESS, Sass and Stylus. There are still a few (small and big) outstanding features but this is a good start:
 
+- Added full blown CSS-like parser with added features like includes, dependencies, mixins, extends and variables.
+- Added AST reducer to reduce custom style format into something CSS compatible.
+- Added compressor for AST to generated CSS out of the reduced tree. Supports both compressed output and some basic formatting with line breaks.
+- Styles are being loaded from the source folder `styles` and should be typically written out to `css` (by convention).
+- Important: These stylesheets are not be part of the asset handling anymore. You have to generate the CSS files in both `source` and `build` targets. There might also be changes required for loading other assets like images from within such a stylesheet. Asset handling for stylesheets is not yet included.
+
+### Changes to other APIs
+
+To support the new stylesheet feature changes to other APIs were required:
+
+- Revamped script APIs to be more explicitely oriented on scripts to make room for adding matching APIs for stylesheet processing e.g. `storeKernelScript()` instead of `storeKernel()`, `storeLoaderScript()` instead of `storeLoader()`, etc.
+- Added abstract Classes `Resolver`, `Sorter` and `Node` to being used by both the stylesheet and script infrastructure. Therefor changed a few APIs to match generic usability of methods e.g. `add()` instead of `addClass()`, `getSorted()` instead of `getSortedClasses()`, etc.
+- Added new API to output manager `storeCompressedStylesheet(styles)` for compressing a sorted set of stylesheets.
+- Changed conventions to unify stylesheets and scripts: Put all your generated JavaScript files into `js` instead of `script` to match the file extension. This typically requires minor changes to the way these files are loaded into the HTML e.g. via `ScriptLoader`.
 - Added abstract `FlagSet` class which is used for storing the flags for optimization and formatting settings in a unified way.
 - Removed `name` support in `MetaData` as this is mainly not used anymore through the introduction of `content` sections inside `jasyproject` files.
-- Reworked API documentation to be compatible with readthedocs.org. Published to http://jasy.readthedocs.org/en/latest/
-- Improved session cleanup logic so if you ever wondered about caching issues for generated virtual files or locales these should be gone now. Cleaning now removes generated/virtual classes as well. No worry: These will be automatically re-generated when needed.
 
 
-
-
-
-## Changes:
+## Other Changes/Optimizations:
 
 - Let travis.ci use Python-3.3 instead of Python-3.2
+- Reworked API documentation to be compatible with readthedocs.org. Published to http://jasy.readthedocs.org/en/latest/
+- Improved session cleanup logic so if you ever wondered about caching issues for generated virtual files or locales these should be gone now. Cleaning now removes generated/virtual classes as well. No worry: These will be automatically re-generated when needed.
+- Added new `jasy.version` field into each build to have client side access to the version of Jasy used during the build.
+- Added `executeCommand` to the `jasyscript.py` environment automatically.
+- Added support for "not" type handling in `DeadCode` elimination for JavaScript.
+- Added asset handling support for JPEG-XR and WEBP image formats
 
+## Fixes/Cleanups:
+
+- Fixed HTTP server support for WOFF fonts to send the correct mime type
+- Some internal optimizations for importing own modules making code cleaner and more robust
+- Removed pretty useless "context" info when generating/processing AST trees and simplified code in `ClassItem`.
+- Prefixed all cache items in `ClassItem` and `StyleItem` with either "script" or "style" to prevent conflicts between same IDs between these types.
+- Removed "size" info (about compressed/permutated file size) from `ClassItem` and API data
+- Cleanup of hoisting code in JavaScript parser. This was some old code from Narcissus and was never actually used because of the `ScopeAnalyzer` in Jasy which does somewhat the same and is also used during tree updates during the different optimization steps.
+- Cleanup of `save()` and `rewind()` of the JavaScript `Tokenizer` which were never actually used.
 
 
 
