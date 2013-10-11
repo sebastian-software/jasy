@@ -164,7 +164,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         elif tokenValue == "font-face":
-            return Selector(tokenizer, staticContext)
+            return FontFace(tokenizer, staticContext)
 
         # Special case: Support keyframe command with engine prefix
         elif tokenValue == "keyframes" or tokenValue.endswith("-keyframes"):
@@ -370,6 +370,17 @@ def KeyFrames(tokenizer, staticContext):
         # Next process content of selector
         blockNode = Block(tokenizer, staticContext)
         frameNode.append(blockNode, "rules")
+
+    return node
+
+
+def FontFace(tokenizer, staticContext):
+
+    # Like a selector but store as a different type
+
+    node = node = Node.Node(tokenizer, "fontface")
+    childNode = Block(tokenizer, staticContext)
+    node.append(childNode, "rules")
 
     return node
 
