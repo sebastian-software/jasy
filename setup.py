@@ -134,7 +134,7 @@ setup(
     'jasy.style.process',
     'jasy.style.tokenize',
     'jasy.test',
-    'jasy.test.js',
+    'jasy.test.script',
     'jasy.test.style',
     'jasy.vcs',
   ],
