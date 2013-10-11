@@ -18,6 +18,7 @@ import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
+import jasy.style.process.Methods as Methods
 
 import jasy.style.output.Optimization as Optimization
 import jasy.style.output.Formatting as Formatting
@@ -87,6 +88,10 @@ def reduceTree(tree):
     # PHASE 6
     # Compute variables
     Variables.compute(tree)
+
+    # PHASE 6+++
+    # Run custom methods
+    Methods.execute(tree)
 
     # PHASE 7
     # Flattening selectors

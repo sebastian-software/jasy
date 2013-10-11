@@ -1,0 +1,38 @@
+#
+# Jasy - Web Tooling Framework
+# Copyright 2013 Sebastian Werner
+#
+
+import copy, re
+import jasy.style.parse.Node as Node
+import jasy.core.Console as Console
+
+
+class MethodError(Exception):
+    def __init__(self, message, node):
+        Exception.__init__(self, "Method Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
+
+
+def execute(tree):
+    Console.info("Executing methods...")
+    Console.indent()
+
+    __executeRecurser(tree)
+
+    Console.outdent()
+
+
+def __executeRecurser(node):
+
+    # Worked on copy to prevent issues during length changes (due removing/adding children, etc.)
+    for child in list(node):
+        if child is not None:
+            __executeRecurser(child)
+
+
+    if node.type == "system":
+        command = node.name
+        params = [ param.value for param in node.params ]
+
+        print("Looking for command: %s(%s)" % (command, ", ".join(params)))
+
