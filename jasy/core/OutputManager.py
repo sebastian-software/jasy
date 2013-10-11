@@ -58,13 +58,16 @@ class OutputManager:
             self.__scriptOptimization.enable("privates")
 
         if formattingLevel > 0:
-            self.__styleFormatting.enable("selector")
+            self.__styleFormatting.enable("blocks")
 
         if formattingLevel > 1:
             self.__scriptFormatting.enable("semicolon")
             self.__scriptFormatting.enable("comma")
-            self.__styleFormatting.enable("rule")
+            self.__styleFormatting.enable("statements")
 
+        if formattingLevel > 2:
+            self.__styleFormatting.enable("whitespace")
+            self.__styleFormatting.enable("indent")
 
 
 
