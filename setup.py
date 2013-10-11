@@ -31,11 +31,11 @@ if uses == "distribute":
     "test_suite" : "jasy.test",
 
     "install_requires" : [ 
-      "Pygments>=1.5", 
-      "polib>=1.0", 
-      "requests>=1.1", 
+      "Pygments>=1.6", 
+      "polib>=1.0.3", 
+      "requests>=2", 
       "CherryPy>=3.2.4", 
-      "PyYAML>=3" 
+      "PyYAML>=3.10" 
     ],
 
     "extras_require" : {
