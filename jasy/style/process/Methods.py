@@ -34,5 +34,5 @@ def __executeRecurser(node):
         command = node.name
         params = [ param.value for param in node.params ]
 
-        print("Looking for command: %s(%s)" % (command, ", ".join(params)))
+        print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
 
