@@ -97,7 +97,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('span::first-line { content: "AFTER" }'), 'span::first-line{content:"AFTER";}')
 
     def test_tag_child(self):
-        self.assertEqual(self.process('h1 span { font-size: 0.6em }'), 'h1 span{font-size:.6em;}')
+        self.assertEqual(self.process('h1 span { font-size: 0.6em }'), 'h1 span{font-size:0.6em;}')
 
     def test_tag_multi(self):
         self.assertEqual(self.process('h1, h2 { color: red }'), 'h1,h2{color:red;}')
