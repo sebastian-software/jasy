@@ -314,6 +314,12 @@ class OutputManager:
         Console.info("Generating compressed stylesheet...")
         Console.indent()
 
+        # Resolve placeholders first
+        fileName = self.__session.expandFileName(fileName)
+        relativeToMain = self.__session.getMain().toRelativeUrl(fileName)
+
+        print("STYLE RELATIVE: %s=>%s" % (fileName, relative))
+
         compressedCode = self.__compressStyles(styles)
         self.__fileManager.writeFile(fileName, compressedCode)
 

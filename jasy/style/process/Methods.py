@@ -8,6 +8,14 @@ import jasy.style.parse.Node as Node
 import jasy.core.Console as Console
 
 
+builtin = set([
+    "rgb",
+    "rgba",
+    "hsl",
+    "hsb"
+])
+
+
 class MethodError(Exception):
     def __init__(self, message, node):
         Exception.__init__(self, "Method Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
@@ -35,9 +43,15 @@ def __executeRecurser(node, session):
 
     if node.type == "system":
         command = node.name
+
+        if command in builtin:
+            return
+
         params = [ param.value for param in node.params ]
 
         print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
+
+
 
         result = session.executeCommand(command, params)
         print("Result: %s" % result)
