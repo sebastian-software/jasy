@@ -122,7 +122,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if not tree:
             tree = copy.deepcopy(self.__getTree())
                 
-            Console.info("Permutating tree...")
+            Console.debug("Permutating tree...")
             Console.indent()
             Engine.permutateTree(tree, permutation)
             Console.outdent()
@@ -243,6 +243,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         """
 
         mtime = self.mtime
+        permutation = self.filterPermutation(permutation)
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)        
@@ -260,6 +261,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         """
         Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
+
+        permutation = self.filterPermutation(permutation)
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
@@ -290,8 +293,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         
         field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         mtime = self.getMergedMtime(session, permutation)
+
         compressed = self.project.getCache().read(field, mtime)
-        if compressed == None:
+        if compressed is None:
 
             # Start with the merged tree (includes resolved)
             tree = self.getMergedTree(session, permutation)
