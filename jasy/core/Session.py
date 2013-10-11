@@ -68,7 +68,7 @@ class Session():
         """
 
         self.__scriptEnvironment = scriptEnvironment
-        self.__commandEnvironment = commandEnvironment
+        self.__commandEnvironment = {}
         self.__updateRepositories = updateRepositories
 
         if autoInitialize and jasy.core.Config.findConfig("jasyproject"):
@@ -221,7 +221,7 @@ class Session():
             # Import command methods
             commandPath = os.path.join(project.getPath(), "jasycommand.py")
             if os.path.exists(commandPath):
-                self.loadCommands(project.getName(), commandPath, doc="Commands of project %s" % project.getName())
+                self.loadCommands(project.getName(), commandPath)
 
             # Import project defined fields which might be configured using "activateField()"
             fields = project.getFields()
@@ -291,7 +291,7 @@ class Session():
         # Method for being used as a decorator to share methods to the outside
         def share(func):
             nonlocal counter
-            setattr(env, "%s.%s" % (objectName, func.__name__), func)
+            env["%s.%s" % (objectName, func.__name__)] = func
             counter += 1
 
             return func        
