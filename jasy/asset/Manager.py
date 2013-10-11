@@ -38,10 +38,10 @@ class AssetManager:
         self.__session = session
 
         # Stores manager contextual asset information (like relative paths)
-        self.__data = {}
+        data = self.__data = {}
         
         # Registry for profiles aka asset groups
-        self.__profiles = []
+        profiles = self.__profiles = []
         
         # Loop though all projects and merge assets
         assets = self.__assets = {}
@@ -50,13 +50,37 @@ class AssetManager:
         
         self.__processSprites()
         self.__processAnimations()
+
+
+        ## Commands
+
+        main = self.__session.getMain()
+
+        def assetCmd(fileId):
+            print("Looking up %s" % fileId)
+            if not fileId in assets:
+                raise Exception("Did not found asset with ID %s" % fileId)
+
+            asset = assets[fileId]
+            entry = data[fileId]
+
+            print("Found %s: %s %s" % (fileId, asset, entry))
+            
+
+        session.addCommand("jasy.asset", assetCmd)
+
+
+
         
         Console.outdent()
         Console.info("Activated %s assets", len(assets))
 
 
+
     def __processSprites(self):
-        """Processes jasysprite.json files to merge sprite data into asset registry"""
+        """
+        Processes jasysprite.json/yaml files to merge sprite data into asset registry
+        """
         
         assets = self.__assets
         configs = [fileId for fileId in assets if assets[fileId].isImageSpriteConfig()]
@@ -75,7 +99,7 @@ class AssetManager:
             try:
                 spriteConfig = asset.getParsedObject();
             except ValueError as err:
-                raise UserError("Could not parse jasysprite.json at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasysprite.json/yaml at %s: %s" % (fileId, err))
                 
             Console.indent()
             for spriteImage in spriteConfig:
@@ -144,7 +168,7 @@ class AssetManager:
             try:
                 config = json.loads(asset.getText())
             except ValueError as err:
-                raise UserError("Could not parse jasyanimation.json at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasyanimation.json/yaml at %s: %s" % (fileId, err))
             
             for relPath in config:
                 imageId = "%s/%s" % (base, relPath)
@@ -219,6 +243,7 @@ class AssetManager:
             self.__addRuntimeData(items)
         
         return unique
+
     
     
     def addSourceProfile(self, urlPrefix="", override=False):
