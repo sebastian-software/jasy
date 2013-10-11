@@ -57,16 +57,18 @@ class Session():
         self.__translationBundles = {}
         
 
-    def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
+    def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None, commandEnvironment=None):
         """
         Initialize the actual session with projects
 
         :param autoInitialize: Whether the projects should be automatically added when the current folder contains a valid Jasy project.
         :param updateRepositories: Whether to update repositories of all project dependencies.
         :param scriptEnvironment: API object as being used for loadLibrary to add Python features offered by projects.
+        :param commandEnvironment: API object as being used for loadCommands to add Python features for any item nodes.
         """
 
         self.__scriptEnvironment = scriptEnvironment
+        self.__commandEnvironment = commandEnvironment
         self.__updateRepositories = updateRepositories
 
         if autoInitialize and jasy.core.Config.findConfig("jasyproject"):
@@ -216,6 +218,11 @@ class Session():
             if os.path.exists(libraryPath):
                 self.loadLibrary(project.getName(), libraryPath, doc="Library of project %s" % project.getName())
 
+            # Import command methods
+            commandPath = os.path.join(project.getPath(), "jasycommand.py")
+            if os.path.exists(commandPath):
+                self.loadCommands(project.getName(), commandPath, doc="Commands of project %s" % project.getName())
+
             # Import project defined fields which might be configured using "activateField()"
             fields = project.getFields()
             for name in fields:
@@ -269,6 +276,34 @@ class Session():
         self.__scriptEnvironment[objectName] = exportedModule
 
         return counter
+
+
+
+    def loadCommands(self, objectName, fileName, encoding="utf-8"):
+        """
+        Loads new commands into the command environment for being available
+        to all script, style and template preprocessing.
+        """
+
+        counter = 0
+        env = self.__commandEnvironment
+
+        # Method for being used as a decorator to share methods to the outside
+        def share(func):
+            nonlocal counter
+            setattr(env, "%s.%s" % (objectName, func.__name__), func)
+            counter += 1
+
+            return func        
+
+        # Execute given file. Using clean new global environment
+        # but add additional decorator for allowing to define shared methods
+        # and the session object (self).
+        code = open(fileName, "r", encoding=encoding).read()
+        exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
+
+        return counter
+
         
         
     def getProjects(self):
