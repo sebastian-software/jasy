@@ -107,7 +107,7 @@ pygments_style = 'sphinx'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-if release == version:
+if release != version:
   html_title = 'Jasy %s (%s)' % (version, release[len(version)+1:])
 else:
   html_title = 'Jasy %s' % version
