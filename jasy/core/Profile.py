@@ -80,11 +80,11 @@ class Profile():
     def setHashAssets(self, enable):
         self.__hashAssets = enable
 
-    def getLoadScriptSource(self):
-        return self.__loadScriptSource
+    def getUseSource(self):
+        return self.__useSource
 
-    def setLoadScriptSource(self, enable):
-        self.__loadScriptSource = enable
+    def setUseSource(self, enable):
+        self.__useSource = enable
 
 
 
@@ -121,7 +121,7 @@ class Profile():
         parts = self.__parts
 
         # Initialize shared objects
-        assetManager = AssetManager.AssetManager(self.__session).addSourceProfile()
+        assetManager = AssetManager.AssetManager(self.__session)
         outputManager = OutputManager.OutputManager(self.__session, assetManager, 
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)
@@ -131,6 +131,10 @@ class Profile():
         styleFolder = self.__styleFolder.replace("{{destination}}", self.__destinationFolder)
         assetFolder = self.__assetFolder.replace("{{destination}}", self.__destinationFolder)
         templateFolder = self.__templateFolder.replace("{{destination}}", self.__destinationFolder)
+
+
+        if self.__useSource:
+            assetManager.addSourceProfile()
 
 
         if "kernel" in parts:
