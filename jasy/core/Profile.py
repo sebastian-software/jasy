@@ -4,6 +4,9 @@
 #
 
 import jasy.core.Console as Console
+import jasy.core.OutputManager as OutputManager
+import jasy.core.FileManager as FileManager
+import jasy.asset.Manager as AssetManager
 
 
 class Profile():
@@ -117,12 +120,27 @@ class Profile():
 
         parts = self.__parts
 
+        # Initialize shared objects
+        assetManager = AssetManager.AssetManager(self.__session).addSourceProfile()
+        outputManager = OutputManager.OutputManager(self.__session, assetManager, 
+            compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
+        fileManager = FileManager.FileManager(self.__session)
+
+
+        scriptFolder = self.__scriptFolder.replace("{{destination}}", self.__destinationFolder)
+        styleFolder = self.__styleFolder.replace("{{destination}}", self.__destinationFolder)
+        assetFolder = self.__assetFolder.replace("{{destination}}", self.__destinationFolder)
+        templateFolder = self.__templateFolder.replace("{{destination}}", self.__destinationFolder)
+
+
         if "kernel" in parts:
 
             Console.info("Building part kernel...")
             Console.indent()
 
-
+            # Store kernel script
+            kernelClass = parts["kernel"]["class"]
+            outputManager.storeKernelScript("%s/kernel.js" % scriptFolder, bootCode="%s.boot();" % kernelClass)
 
             Console.outdent()
 
