@@ -6,8 +6,9 @@
 
 """Global environment which is used by jasyscript.py files"""
 
-# Session
+# Session & Profile
 from jasy.env.State import session
+from jasy.env.State import profile
 
 # Modules
 import jasy.core.Console as Console
