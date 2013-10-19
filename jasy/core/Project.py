@@ -349,7 +349,8 @@ class Project():
                     dirNames.remove(dirName)
 
                 # Filter sub projects
-                if os.path.exists(os.path.join(dirPath, dirName, "jasyproject.json")):
+                projectConfBase = os.path.join(dirPath, dirName, "jasyproject.")
+                if os.path.exists(projectConfBase + "json") or os.path.exists(projectConfBase + "yaml"):
                     dirNames.remove(dirName)
                     
             relDirPath = os.path.relpath(dirPath, path)
