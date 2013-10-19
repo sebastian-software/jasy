@@ -156,11 +156,13 @@ class Profile():
 
         for permutation in self.__session.permutate():
 
-            if "main" in parts:
+            for part in parts:
 
-                part = "main"
+                if part == "kernel":
+                    continue
+                    
 
-                Console.info("Building part main...")
+                Console.info("Building part %s..." % part)
                 Console.indent()
 
 
@@ -188,19 +190,6 @@ class Profile():
                 Console.outdent()
                 Console.outdent()
 
-
-
-
-            for part in parts:
-
-                if part in ("kernel", "main"):
-                    continue
-
-                Console.info("Building part %s", part)
-                Console.indent()
-
-
-                Console.outdent()
 
 
 
