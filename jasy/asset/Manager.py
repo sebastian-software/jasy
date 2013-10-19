@@ -69,6 +69,9 @@ class AssetManager:
             if not fileId in assets:
                 raise Exception("Did not found asset with ID %s" % fileId)
 
+            if not fileId in data:
+                raise Exception("The asset with ID %s is not included in this build" % fileId)
+
             asset = assets[fileId]
             entry = data[fileId]
 
