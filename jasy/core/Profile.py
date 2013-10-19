@@ -29,6 +29,7 @@ class Profile():
     __templateFolder = None
 
     __hashAssets = False
+    __useSource = False
 
     __compressionLevel = 0
     __formattingLevel = 5
@@ -48,6 +49,12 @@ class Profile():
 
     def setDestinationFolder(self, folder):
         self.__destinationFolder = folder
+
+    def getDestinationUrl(self):
+        return self.__destinationUrl
+
+    def setDestinationUrl(self, url):
+        self.__destinationUrl = url        
 
 
 
@@ -160,7 +167,7 @@ class Profile():
 
                 if part == "kernel":
                     continue
-                    
+
 
                 Console.info("Building part %s..." % part)
                 Console.indent()
