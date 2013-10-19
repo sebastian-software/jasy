@@ -6,7 +6,12 @@
 import jasy.core.Console as Console
 import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
+
 import jasy.asset.Manager as AssetManager
+
+import jasy.js.Resolver as ScriptResolver
+import jasy.style.Resolver as StyleResolver
+
 
 
 class Profile():
@@ -153,10 +158,38 @@ class Profile():
 
             if "main" in parts:
 
+                part = "main"
+
                 Console.info("Building part main...")
                 Console.indent()
 
+
+                # SCRIPT
+
+                partClass = parts[part]["class"]
+                Console.info("Generating script (%s)...", partClass)
+                Console.indent()
+
+                classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
+                outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
+
                 Console.outdent()
+
+
+                # STYLE
+
+                partStyle = parts[part]["style"]
+                Console.info("Generating style (%s)...", partStyle)
+                Console.indent()
+
+                styleItems = StyleResolver.Resolver(self.__session).add(partStyle).getSorted()
+                outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (styleFolder, part))
+
+                Console.outdent()
+                Console.outdent()
+
+
+
 
             for part in parts:
 
@@ -164,8 +197,10 @@ class Profile():
                     continue
 
                 Console.info("Building part %s", part)
+                Console.indent()
 
 
+                Console.outdent()
 
 
 
