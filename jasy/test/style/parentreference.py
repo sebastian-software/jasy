@@ -65,7 +65,17 @@ class Tests(unittest.TestCase):
                 color: red;
               }
             }
-            '''), 'header h1:first-child{color:red;}')        
+            '''), 'header h1:first-child{color:red;}')
+
+
+    def test_attribute(self):
+        self.assertEqual(self.process('''
+            li{
+              &[selected]{
+                color: blue;
+              }
+            }
+            '''), 'li[selected]{color:blue;}')
 
 
 
