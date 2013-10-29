@@ -406,7 +406,15 @@ class Tests(unittest.TestCase):
             .box:nth-child(${cell}n){
               color: red;
             }
-            '''), '.box:nth-child(4n){color:red;}')           
+            '''), '.box:nth-child(4n){color:red;}')
+
+
+    def test_complex_font_setting(self):
+        self.assertEqual(self.process('''
+            html {
+                font: 300 1.125em/1.5 sans-serif;
+            }
+        '''), 'html{font:300 1.125em/1.5 sans-serif;}')
 
 
 if __name__ == '__main__':
