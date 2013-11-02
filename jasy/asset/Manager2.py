@@ -80,15 +80,12 @@ class AssetManager():
 
             entry = {}
 
-            asset = assets[fileId]
-            entry["t"] = asset.getType(short=True)
+            assetItem = assets[fileId]
+            entry["t"] = assetItem.getType(short=True)
 
-            assetData = asset.exportData()
+            assetData = assetItem.exportData()
             if assetData:
                 entry["d"] = assetData
-
-            #if fileId in data:
-            #    entry.update(data[fileId])
 
             result[fileId] = entry
 
@@ -99,10 +96,8 @@ class AssetManager():
         Console.info("Exported %s assets", len(result))
 
         return json.dumps({
-            "assets" : self.__structurize(result)
-            #,
-            #"profiles" : self.__profiles,
-            #"sprites" : self.__sprites
+            "assets" : self.__structurize(result),
+            "profile" : self.__profile.exportData()
         }, indent=2, sort_keys=True)
 
 
