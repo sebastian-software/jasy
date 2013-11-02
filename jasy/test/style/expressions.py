@@ -121,7 +121,7 @@ class Tests(unittest.TestCase):
     def test_ie_filter(self):
         self.assertEqual(self.process('''
             .rotate{
-              filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+              filter: raw("progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
             }
             '''), '.rotate{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}')
 

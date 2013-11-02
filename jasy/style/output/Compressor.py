@@ -228,6 +228,17 @@ class Compressor:
         return "/"
 
 
+    def type_raw(self, node):
+        child = node[0]
+        result = self.compress(child)
+
+        # Remove string quotes
+        if child.type == "string":
+            result = result[1:-1]
+
+        return result
+
+
     def type_list(self, node):
         return " ".join([ self.compress(child) for child in node ])
 

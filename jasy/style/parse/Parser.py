@@ -870,10 +870,12 @@ def MemberExpression(tokenizer, staticContext):
                 childNode.name = node.value
 
                 # Special processing of URL commands
-                if node.value == "url":
-                    childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
+                if node.value == "raw":
+                    childNode = RawArgument(tokenizer, staticContext)
                 elif node.value == "expr":
                     childNode = ExpressionArgument(tokenizer, staticContext)
+                elif node.value == "url":
+                    childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
@@ -890,6 +892,18 @@ def MemberExpression(tokenizer, staticContext):
             return node
 
         node = childNode
+
+    return node
+
+
+def RawArgument(tokenizer, staticContext):
+    if tokenizer.match("right_paren", True):
+        raise SyntaxError("Expected expression", tokenizer)
+
+    node = Node.Node(tokenizer, "raw")
+    node.append(PrimaryExpression(tokenizer, staticContext))
+
+    tokenizer.mustMatch("right_paren")
 
     return node
 
