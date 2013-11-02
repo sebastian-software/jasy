@@ -3,6 +3,8 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import os.path
+
 import jasy.core.Console as Console
 import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
@@ -132,6 +134,12 @@ class Profile():
 
 
 
+    def exportData(self):
+        return {
+            "root" : self.getDestinationUrl() : self.getDestinationFolder()
+        }
+
+
     def build(self):
 
         parts = self.__parts
@@ -155,7 +163,7 @@ class Profile():
 
         if "kernel" in parts:
 
-            self.__workingPath = scriptFolder
+            self.__workingPath = self.__destinationFolder
 
             Console.info("Building part kernel...")
             Console.indent()
@@ -181,7 +189,7 @@ class Profile():
 
                 # SCRIPT
 
-                self.__workingPath = scriptFolder
+                self.__workingPath = self.__destinationFolder
 
                 partClass = parts[part]["class"]
                 Console.info("Generating script (%s)...", partClass)
