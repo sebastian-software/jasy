@@ -55,7 +55,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px 20px 30px;}')
 
 
-    def test_simple_multi_minus(self):
+    def test_simple_expr_minus(self):
         self.assertEqual(self.process('''
             h2{
               margin: expr(10px - 20px);
@@ -63,7 +63,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:-10px;}')
 
 
-    def test_simple_multi_plus(self):
+    def test_simple_expr_plus(self):
         self.assertEqual(self.process('''
             h2{
               margin: expr(10px + 20px);
@@ -71,7 +71,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:30px;}')
 
 
-    def test_simple_multi_minus_unary(self):
+    def test_simple_unary_minus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px -20px;
@@ -79,7 +79,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_multi_plus_unary(self):
+    def test_simple_unary_plus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px +20px;
@@ -87,7 +87,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px +20px;}')
 
 
-    def test_simple_multi_minus_compact(self):
+    def test_simple_expr_minus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: expr(10px-20px);
@@ -95,14 +95,14 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:-10px;}')
 
 
-    def test_simple_multi_plus_compact(self):
+    def test_simple_expr_plus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: expr(10px+20px);
             }
             '''), 'h2{margin:30px;}')
 
-    def test_simple_multi_minus_compact_noexpr(self):
+    def test_simple_noexpr_minus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px-20px;
@@ -110,7 +110,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_multi_plus_compact_noexpr(self):
+    def test_simple_noexpr_plus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px+20px;
