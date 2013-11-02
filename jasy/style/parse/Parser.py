@@ -851,6 +851,8 @@ def MemberExpression(tokenizer, staticContext):
                 # Special processing of URL commands
                 if node.value == "url":
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
+                elif node.value == "expr":
+                    childNode.append(ExpressionArgument(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
@@ -867,6 +869,16 @@ def MemberExpression(tokenizer, staticContext):
             return node
 
         node = childNode
+
+    return node
+
+
+def ExpressionArgument(tokenizer, staticContext):
+    if tokenizer.match("right_paren", True):
+        raise SyntaxError("Expected expression", tokenizer)
+
+    node = AddExpression(tokenizer, staticContext)
+    tokenizer.mustMatch("right_paren")
 
     return node
 
@@ -898,7 +910,7 @@ def UrlArgumentList(tokenizer, staticContext):
             url += token.value
         else:
             token = tokenizer.token
-            raise SyntaxError("Invalid token in media query: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)))
+            raise SyntaxError("Invalid token in URL parameter: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)))
 
     urlParam = Node.Node(tokenizer, "identifier")
     urlParam.value = url
