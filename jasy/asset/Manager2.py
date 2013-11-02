@@ -6,7 +6,9 @@
 import os, fnmatch, re, json
 
 from jasy import UserError
+
 import jasy.core.Console as Console
+import jasy.core.File as File
 
 
 class AssetManager():
@@ -18,6 +20,7 @@ class AssetManager():
 
         self.__profile = profile
         self.__session = session
+        self.__copylist = set()
 
         # Loop though all projects and merge assets
         assets = self.__assets = {}
@@ -34,26 +37,27 @@ class AssetManager():
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
-        asset = self.__assets[fileId]
-        return "url(%s)" % os.path.relpath(asset.getPath(), self.__profile.getWorkingPath())
+        assetItem = self.__assets[fileId]
+        self.__copylist.add(assetItem)
+        return "url(%s)" % os.path.relpath(assetItem.getPath(), self.__profile.getWorkingPath())
 
 
     def getAssetWidth(self, fileId):
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
-        asset = self.__assets[fileId]
-        if asset.isImage():
-            return asset.exportData()[0]
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            return assetItem.exportData()[0]
 
 
     def getAssetHeight(self, fileId):
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
-        asset = self.__assets[fileId]
-        if asset.isImage():
-            return asset.exportData()[1]
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            return assetItem.exportData()[1]
 
 
     def __addCommands(self):
@@ -61,6 +65,24 @@ class AssetManager():
         self.__session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId))
         self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId))
 
+
+
+    def copyAssets(self, destination, hashNames):
+        Console.info("Copying assets...")
+        counter = 0
+        for assetItem in self.__copylist:
+            srcFile = assetItem.getPath()
+
+            # Support for hashed file names instead of real names
+            if hashNames:
+                dstFile = os.path.join(destination, "%s%s" % (assetItem.getChecksum(), assetItem.extension))
+            else:
+                dstFile = os.path.join(destination, fileId.replace("/", os.sep))
+
+            if File.syncfile(srcFile, dstFile):
+                counter += 1
+
+        Console.info("Copyied %s assets.", counter)
 
 
     def exportToJson(self, items=None):
@@ -81,6 +103,7 @@ class AssetManager():
             entry = {}
 
             assetItem = assets[fileId]
+            self.__copylist.add(assetItem)
             entry["t"] = assetItem.getType(short=True)
 
             assetData = assetItem.exportData()

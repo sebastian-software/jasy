@@ -34,6 +34,7 @@ class Profile():
     __workingPath = None
 
     __hashAssets = False
+    __copyAssets = False
     __useSource = False
 
     __compressionLevel = 0
@@ -98,6 +99,12 @@ class Profile():
     def setHashAssets(self, enable):
         self.__hashAssets = enable
 
+    def getCopyAssets(self):
+        return self.__copyAssets
+
+    def setCopyAssets(self, enable):
+        self.__copyAssets = enable
+
     def getUseSource(self):
         return self.__useSource
 
@@ -136,7 +143,7 @@ class Profile():
 
     def exportData(self):
         return {
-            "root" : self.getDestinationUrl() : self.getDestinationFolder()
+            "root" : self.getDestinationUrl() or self.getDestinationFolder()
         }
 
 
@@ -216,6 +223,8 @@ class Profile():
                 Console.outdent()
 
 
+        if self.__copyAssets:
+            assetManager.copyAssets(assetFolder, self.__hashAssets)
 
 
 
