@@ -852,7 +852,7 @@ def MemberExpression(tokenizer, staticContext):
                 if node.value == "url":
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 elif node.value == "expr":
-                    childNode.append(ExpressionArgument(tokenizer, staticContext), "params")
+                    childNode = ExpressionArgument(tokenizer, staticContext)
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
