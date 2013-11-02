@@ -38,8 +38,18 @@ class AssetManager():
             raise Exception("Did not found asset with ID %s" % fileId)
 
         assetItem = self.__assets[fileId]
+
+        # Add asset item to tracking list for copy process
         self.__copylist.add(assetItem)
-        return "url(%s)" % os.path.relpath(assetItem.getPath(), self.__profile.getWorkingPath())
+
+        # Check for whether files are being copied over to somewhere
+        # or whether we use the relative URL to the source folder
+        if self.__profile.getCopyAssets():
+            url = os.path.join(self.__profile.getAssetFolder(), self.__computeDestinationName(assetItem))
+        else:
+            url = os.path.relpath(assetItem.getPath(), self.__profile.getWorkingPath())
+
+        return "url(%s)" % url
 
 
     def getAssetWidth(self, fileId):
@@ -67,22 +77,25 @@ class AssetManager():
 
 
 
+    def __computeDestinationName(self, assetItem):
+        if self.__profile.getHashAssets():
+            return "%s%s" % (assetItem.getChecksum(), assetItem.extension)
+        else:
+            return assetItem.getId().replace("/", os.sep)
+
+
     def copyAssets(self, destination, hashNames):
         Console.info("Copying assets...")
         counter = 0
+
         for assetItem in self.__copylist:
             srcFile = assetItem.getPath()
-
-            # Support for hashed file names instead of real names
-            if hashNames:
-                dstFile = os.path.join(destination, "%s%s" % (assetItem.getChecksum(), assetItem.extension))
-            else:
-                dstFile = os.path.join(destination, fileId.replace("/", os.sep))
+            dstFile = os.path.join(destination, self.__computeDestinationName(assetItem))
 
             if File.syncfile(srcFile, dstFile):
                 counter += 1
 
-        Console.info("Copyied %s assets.", counter)
+        Console.info("Copied %s assets.", counter)
 
 
     def exportToJson(self, items=None):
