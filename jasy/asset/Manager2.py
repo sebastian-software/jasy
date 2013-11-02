@@ -88,9 +88,11 @@ class AssetManager():
         Console.info("Copying assets...")
         counter = 0
 
+        assetFolder = self.__profile.getAssetFolder()
+
         for assetItem in self.__copylist:
             srcFile = assetItem.getPath()
-            dstFile = os.path.join(destination, self.__computeDestinationName(assetItem))
+            dstFile = os.path.join(assetFolder, self.__computeDestinationName(assetItem))
 
             if File.syncfile(srcFile, dstFile):
                 counter += 1

@@ -65,25 +65,25 @@ class Profile():
 
 
     def getStyleFolder(self):
-        return self.__styleFolder
+        return self.__styleFolder.replace("{{destination}}", self.__destinationFolder)
 
     def setStyleFolder(self, folder):
         self.__styleFolder = folder
 
     def getScriptFolder(self):
-        return self.__scriptFolder
+        return self.__scriptFolder.replace("{{destination}}", self.__destinationFolder)
 
     def setScriptFolder(self, folder):
         self.__scriptFolder = folder
 
     def getAssetFolder(self):
-        return self.__assetFolder
+        return self.__assetFolder.replace("{{destination}}", self.__destinationFolder)
 
     def setAssetFolder(self, folder):
         self.__assetFolder = folder
 
     def getTemplateFolder(self):
-        return self.__templateFolder
+        return self.__templateFolder.replace("{{destination}}", self.__destinationFolder)
 
     def setTemplateFolder(self, folder):
         self.__templateFolder = folder
@@ -158,15 +158,10 @@ class Profile():
         fileManager = FileManager.FileManager(self.__session)
 
 
-        scriptFolder = self.__scriptFolder.replace("{{destination}}", self.__destinationFolder)
-        styleFolder = self.__styleFolder.replace("{{destination}}", self.__destinationFolder)
-        assetFolder = self.__assetFolder.replace("{{destination}}", self.__destinationFolder)
-        templateFolder = self.__templateFolder.replace("{{destination}}", self.__destinationFolder)
-
-
-        if self.__useSource:
-            assetManager.addSourceProfile()
-
+        scriptFolder = self.getScriptFolder()
+        styleFolder = self.getStyleFolder()
+        assetFolder = self.getAssetFolder()
+        templateFolder = self.getTemplateFolder()
 
         if "kernel" in parts:
 
