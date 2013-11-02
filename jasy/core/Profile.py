@@ -87,7 +87,7 @@ class Profile():
 
 
 
-    def getWorkingPath():
+    def getWorkingPath(self):
         return self.__workingPath
 
     def getHashAssets(self):
