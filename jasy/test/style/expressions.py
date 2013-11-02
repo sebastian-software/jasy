@@ -102,7 +102,20 @@ class Tests(unittest.TestCase):
             }
             '''), 'h2{margin:30px;}')
 
+    def test_simple_multi_minus_compact_noexpr(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px-20px;
+            }
+            '''), 'h2{margin:10px -20px;}')
 
+
+    def test_simple_multi_plus_compact_noexpr(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: 10px+20px;
+            }
+            '''), 'h2{margin:10px +20px;}')
 
 
 
