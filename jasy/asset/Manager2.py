@@ -45,7 +45,7 @@ class AssetManager():
         # Check for whether files are being copied over to somewhere
         # or whether we use the relative URL to the source folder
         if self.__profile.getCopyAssets():
-            url = os.path.join(self.__profile.getAssetFolder(), self.__computeDestinationName(assetItem))
+            url = self.__computeDestinationPath(assetItem)
         else:
             url = os.path.relpath(assetItem.getPath(), self.__profile.getWorkingPath())
 
@@ -76,23 +76,24 @@ class AssetManager():
         self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId))
 
 
+    def __computeDestinationPath(self, assetItem):
+        assetFolder = self.__profile.getAssetFolder()
 
-    def __computeDestinationName(self, assetItem):
         if self.__profile.getHashAssets():
-            return "%s%s" % (assetItem.getChecksum(), assetItem.extension)
+            fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
         else:
-            return assetItem.getId().replace("/", os.sep)
+            fileName = assetItem.getId().replace("/", os.sep)
+
+        return assetFolder + "/" + fileName
 
 
     def copyAssets(self, destination, hashNames):
         Console.info("Copying assets...")
+
         counter = 0
-
-        assetFolder = self.__profile.getAssetFolder()
-
         for assetItem in self.__copylist:
             srcFile = assetItem.getPath()
-            dstFile = os.path.join(assetFolder, self.__computeDestinationName(assetItem))
+            dstFile = self.__computeDestinationPath(assetItem)
 
             if File.syncfile(srcFile, dstFile):
                 counter += 1
