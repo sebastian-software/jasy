@@ -132,7 +132,7 @@ class Profile():
         parts = self.__parts
 
         # Initialize shared objects
-        assetManager = AssetManager.AssetManager(self.__session)
+        assetManager = AssetManager.AssetManager(self.__session, self)
         outputManager = OutputManager.OutputManager(self.__session, assetManager,
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)

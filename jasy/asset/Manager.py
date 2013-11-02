@@ -29,13 +29,14 @@ class AssetManager:
     are added to the exported data later on.
     """
 
-    def __init__(self, session):
+    def __init__(self, session, profile):
 
         Console.info("Initializing assets...")
         Console.indent()
 
         # Store session reference (one asset manager per session)
         self.__session = session
+        self.__profile = profile
 
         # Stores manager contextual asset information (like relative paths)
         self.__data = {}
@@ -59,7 +60,8 @@ class AssetManager:
 
     def __addCommands(self):
         session = self.__session
-        profiles = self.__profiles
+        profile = self.__profile
+
         data = self.__data
         assets = self.__assets
 
@@ -70,25 +72,10 @@ class AssetManager:
                 raise Exception("Did not found asset with ID %s" % fileId)
 
             asset = assets[fileId]
-            entry = data[fileId]
+            print("Looking up asset: %s" % fileId, asset)
 
-            profile = profiles[entry["p"]]
-
-            if "root" in profile:
-                root = profile["root"]
-            else:
-                root = ""
-
-            # Figure out URL
-            # Priority of approaches: stored url => hash based => id based
-            if "u" in entry:
-                url = root + entry["u"]
-            elif "h" in entry:
-                url = root + entry["h"] + asset.extension
-            else:
-                url = root + fileId
-
-            return "url(%s)" % url
+            resultPath = None
+            return "url(%s)" % os.path.relpath(asset.getPath(), resultPath)
 
 
         def widthCmd(fileId):
