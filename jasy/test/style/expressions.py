@@ -115,7 +115,7 @@ class Tests(unittest.TestCase):
             h2{
               margin: 10px+20px;
             }
-            '''), 'h2{margin:30px;}')
+            '''), 'h2{margin:10px +20px;}')
 
 
     def test_ie_filter(self):
