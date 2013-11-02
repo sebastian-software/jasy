@@ -73,7 +73,7 @@ class Tests(unittest.TestCase):
                 font-size: 70%;
               }
             }
-            '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')        
+            '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')
 
 
     def test_local_extend_with_media(self):
@@ -94,7 +94,7 @@ class Tests(unittest.TestCase):
             color: #333;
           }
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
-        
+
 
     def test_local_extend_with_inner_media(self):
       self.assertEqual(self.process('''
@@ -106,7 +106,7 @@ class Tests(unittest.TestCase):
               @media print{
                 font-size: 20pt;
                 color: #111;
-              }              
+              }
             }
 
             $font;
@@ -190,7 +190,7 @@ class Tests(unittest.TestCase):
                 color: blue;
               }
             }
-            
+
             h1{
               $font;
               color: black;
@@ -240,7 +240,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -259,7 +259,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -271,7 +271,7 @@ class Tests(unittest.TestCase):
               $font(2, 3);
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')  
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
     def test_mixin_param_missing(self):
@@ -281,7 +281,7 @@ class Tests(unittest.TestCase):
             self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -293,7 +293,7 @@ class Tests(unittest.TestCase):
               $font();
               color: red;
             }
-            ''')      
+            ''')
 
         self.assertRaises(Variables.VariableError, wrapper)
 
@@ -302,7 +302,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -321,7 +321,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -337,15 +337,15 @@ class Tests(unittest.TestCase):
             h3{
               $font();
               color: green;
-            }            
-            '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')        
+            }
+            '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')
 
 
     def test_mixin_param_transparent_units(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -357,7 +357,7 @@ class Tests(unittest.TestCase):
               $font(2px);
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')   
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
     def test_mixin_param_mixed_units(self):
@@ -367,7 +367,7 @@ class Tests(unittest.TestCase):
             self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -379,9 +379,9 @@ class Tests(unittest.TestCase):
               $font(3rem);
               color: red;
             }
-            ''')      
+            ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)        
+        self.assertRaises(Variables.VariableError, wrapper)
 
 
 
@@ -389,7 +389,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -408,7 +408,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -420,7 +420,7 @@ class Tests(unittest.TestCase):
               $font( 2 + 3px );
               color: red;
             }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:75px;color:red;}')           
+            '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:75px;color:red;}')
 
 
     def test_mixin_param_uses_extend(self):
@@ -431,7 +431,7 @@ class Tests(unittest.TestCase):
 
             $font($size){
               $arial;
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
             }
 
             h1{
@@ -443,13 +443,13 @@ class Tests(unittest.TestCase):
               $font(2);
               color: red;
             }
-            '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:30px;color:red;}')          
+            '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:30px;color:red;}')
 
 
     def test_mixin_param_name_conflicts(self):
         self.assertEqual(self.process('''
             $style($size, $color){
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
               color: $color;
             }
 
@@ -458,13 +458,13 @@ class Tests(unittest.TestCase):
               $style(3, blue);
               background: $color;
             }
-            '''), 'h1{font-size:45px;color:blue;background:yellow;}')        
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')
 
 
     def test_mixin_param_name_conflicts_default_ignore(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
               color: $color;
             }
 
@@ -473,13 +473,13 @@ class Tests(unittest.TestCase):
               $style(3, blue);
               background: $color;
             }
-            '''), 'h1{font-size:45px;color:blue;background:yellow;}')            
+            '''), 'h1{font-size:45px;color:blue;background:yellow;}')
 
 
     def test_mixin_param_name_conflicts_default_use(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
               color: $color;
             }
 
@@ -496,7 +496,7 @@ class Tests(unittest.TestCase):
             $titleColor = orange;
 
             $style($size, $color=$titleColor){
-              font-size: 15px * $size;
+              font-size: expr(15px * $size);
               color: $color;
               border-bottom: 1px solid $titleColor;
             }
@@ -504,7 +504,7 @@ class Tests(unittest.TestCase):
             h1{
               $style(3);
             }
-            '''), 'h1{font-size:45px;color:orange;border-bottom:1px solid orange;}')        
+            '''), 'h1{font-size:45px;color:orange;border-bottom:1px solid orange;}')
 
 
     def test_mixin_wrong_place_call(self):
@@ -521,7 +521,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Parser.SyntaxError, wrapper)        
+        self.assertRaises(Parser.SyntaxError, wrapper)
 
 
     def test_mixin_wrong_place_variable(self):
@@ -538,7 +538,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)      
+        self.assertRaises(Variables.VariableError, wrapper)
 
 
     def test_mixin_content(self):
@@ -566,7 +566,7 @@ class Tests(unittest.TestCase):
               $icon();
 
               color: blue;
-            }            
+            }
             '''), 'h1::before,h2::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;}h1::before{margin-right:2px;margin-top:1px;}h2{color:blue;}')
 
 
@@ -587,7 +587,7 @@ class Tests(unittest.TestCase):
                 content: "|";
               }
             }
-            '''), 'h1::after{content:"|";}h1::before{content:"|";}')        
+            '''), 'h1::after{content:"|";}h1::before{content:"|";}')
 
 
     def test_mixin_content_with_param(self):
@@ -626,7 +626,7 @@ class Tests(unittest.TestCase):
               &::after{
                 width: $width;
                 height: $height;
-                
+
                 @content;
               }
             }
@@ -636,7 +636,7 @@ class Tests(unittest.TestCase):
                 content: "|";
               }
             }
-            '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')     
+            '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')
 
 
     def test_mixin_local_override(self):
@@ -651,7 +651,7 @@ class Tests(unittest.TestCase):
             h1{
               $icon($size) {
                 margin-right: $size;
-                margin-top: $size/2;
+                margin-top: expr($size/2);
               }
 
               $icon(2px);
@@ -676,7 +676,7 @@ class Tests(unittest.TestCase):
 
               $icon;
             }
-            '''), 'h1{margin-right:2px;margin-top:1px;}')        
+            '''), 'h1{margin-right:2px;margin-top:1px;}')
 
 
     def test_extend_or_mixin(self):
@@ -697,11 +697,11 @@ class Tests(unittest.TestCase):
             .messagebox{
               $box(green);
             }
-            '''), '.errorbox,.seconderrorbox{color:red;border:1px solid red;}.messagebox{color:green;border:1px solid green;}')             
+            '''), '.errorbox,.seconderrorbox{color:red;border:1px solid red;}.messagebox{color:green;border:1px solid green;}')
 
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 
