@@ -63,7 +63,7 @@ class AssetManager():
 
 
 
-    def export(self, classes=None):
+    def exportToJson(self, items=None):
         """
         Exports asset data for usage at the client side. Utilizes JavaScript
         class jasy.Asset to inject data into the client at runtime.
@@ -73,7 +73,7 @@ class AssetManager():
         assets = self.__assets
 
         result = {}
-        filterExpr = self.__compileFilterExpr(classes) if classes else None
+        filterExpr = self.__compileFilterExpr(items) if items else None
         for fileId in assets:
             if filterExpr and not filterExpr.match(fileId):
                 continue
