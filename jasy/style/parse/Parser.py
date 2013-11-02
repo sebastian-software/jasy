@@ -316,7 +316,7 @@ def Property(tokenizer, staticContext):
 
     # Add all values until we find a semicolon or right curly
     while tokenizer.peek() not in ("semicolon", "right_curly"):
-        childNode = Expression(tokenizer, staticContext)
+        childNode = UnaryExpression(tokenizer, staticContext)
 
         node.append(childNode)
 
@@ -744,7 +744,7 @@ def EqualityExpression(tokenizer, staticContext):
 def RelationalExpression(tokenizer, staticContext):
     # Uses of the in operator in shiftExprs are always unambiguous,
     # so unset the flag that prohibits recognizing it.
-    node = UnaryExpression(tokenizer, staticContext)
+    node = AddExpression(tokenizer, staticContext)
     if node.type == "identifier":
         return node
 
