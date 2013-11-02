@@ -9,7 +9,7 @@ from jasy import UserError
 import jasy.core.File as File
 
 class AbstractItem:
-    
+
     id = None
     project = None
     kind = "item"
@@ -25,7 +25,7 @@ class AbstractItem:
 
     def attach(self, path):
         self.__path = path
-        
+
         entry = None
 
         try:
@@ -35,18 +35,18 @@ class AbstractItem:
                     entryTime = os.stat(entry).st_mtime
                     if entryTime > mtime:
                         mtime = entryTime
-                    
+
                 self.mtime = mtime
-        
+
             else:
                 entry = path
                 self.mtime = os.stat(entry).st_mtime
-            
+
         except OSError as oserr:
             raise UserError("Invalid item path: %s" % entry)
-        
+
         return self
-        
+
     def getId(self):
         """Returns a unique identify of the class. Typically as it is stored inside the project."""
         return self.id
@@ -91,23 +91,23 @@ class AbstractItem:
 
     def getText(self, encoding="utf-8"):
         """Reads the file (as UTF-8) and returns the text"""
-        
+
         if self.__text is not None:
             return self.__text
 
         if self.__path is None:
             return None
-        
+
         if type(self.__path) == list:
             return "".join([open(filename, mode="r", encoding=encoding).read() for filename in self.__path])
         else:
             return open(self.__path, mode="r", encoding=encoding).read()
-    
+
     def getChecksum(self, mode="rb"):
         """Returns the SHA1 checksum of the item"""
-        
+
         return File.sha1(open(self.getPath(), mode))
-    
+
 
     # Map Python built-ins
     __repr__ = getId
