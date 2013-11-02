@@ -19,21 +19,21 @@ def parseExpression(source, fileId=None, line=1):
     # Convert source into expression statement to be friendly to the Tokenizer
     if not source.endswith(";"):
         source = source + ";"
-    
+
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext()
-    
+
     return Expression(tokenizer, staticContext)
 
 
-def parse(source, fileId=None, line=1):    
+def parse(source, fileId=None, line=1):
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext()
     node = Sheet(tokenizer, staticContext)
-    
+
     # store fileId on top-level node
     node.fileId = tokenizer.fileId
-    
+
     # add missing comments e.g. empty file with only a comment etc.
     # if there is something non-attached by an inner node it is attached to
     # the top level node, which is not correct, but might be better than
@@ -42,7 +42,7 @@ def parse(source, fileId=None, line=1):
         addComments(node[-1], None, tokenizer.getComments())
     else:
         addComments(node, None, tokenizer.getComments())
-    
+
     if not tokenizer.done():
         raise SyntaxError("Unexpected end of file", tokenizer)
 
@@ -62,17 +62,17 @@ class StaticContext(object):
         self.blockId = 0
         self.statementStack = []
 
-        
+
 
 def Sheet(tokenizer, staticContext):
     """Parses the toplevel and rule bodies."""
     node = Statements(tokenizer, staticContext)
-    
+
     # change type from "block" to "sheet" for style root
     node.type = "sheet"
-    
+
     return node
-    
+
 
 
 def Statements(tokenizer, staticContext):
@@ -103,7 +103,7 @@ def Block(tokenizer, staticContext):
     tokenizer.mustMatch("left_curly")
     node = Statements(tokenizer, staticContext)
     tokenizer.mustMatch("right_curly")
-    
+
     return node
 
 
@@ -113,7 +113,7 @@ def Statement(tokenizer, staticContext):
 
     tokenType = tokenizer.get(True)
     tokenValue = getattr(tokenizer.token, "value", "")
-    
+
 
     if tokenType == "left_curly":
         node = Statements(tokenizer, staticContext)
@@ -136,7 +136,7 @@ def Statement(tokenizer, staticContext):
                     # Process like an "if" and append as elsePart
                     tokenizer.unget()
                     elsePart = Statement(tokenizer, staticContext)
-                    node.append(elsePart, "elsePart")        
+                    node.append(elsePart, "elsePart")
 
                 if elseTokenValue == "else":
                     comments = tokenizer.getComments()
@@ -187,7 +187,7 @@ def Statement(tokenizer, staticContext):
             if nextTokenType == "left_paren":
                 tokenizer.unget()
                 node = Expression(tokenizer, staticContext)
-                return node            
+                return node
 
         # It's hard to differentiate between selectors and properties.
         # The strategy is to look for these next symbols as they define if the tokens
@@ -272,7 +272,7 @@ def Statement(tokenizer, staticContext):
 
         else:
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
-            
+
 
     elif tokenType == "semicolon":
         node = Node.Node(tokenizer, "semicolon")
@@ -318,7 +318,7 @@ def Property(tokenizer, staticContext):
     while tokenizer.peek() not in ("semicolon", "right_curly"):
         childNode = Expression(tokenizer, staticContext)
 
-        node.append(childNode)    
+        node.append(childNode)
 
     return node
 
@@ -340,7 +340,7 @@ def KeyFrames(tokenizer, staticContext):
 
     node = Node.Node(tokenizer, "keyframes")
     node.vendor = Util.extractVendor(tokenizer.token.value)
-    
+
     # Use param as name on keyframes
     tokenizer.get()
     node.name = tokenizer.token.value
@@ -348,15 +348,15 @@ def KeyFrames(tokenizer, staticContext):
     tokenizer.mustMatch("left_curly")
 
     while tokenizer.get() != "right_curly":
-        
+
         # Parse frame as block
         frameNode = Node.Node(tokenizer, "frame")
         token = tokenizer.token
         frameNode.value = "%s%s" % (token.value, getattr(token, "unit", ""))
         node.append(frameNode)
 
-        # Process comma separated values for 
-        while True:            
+        # Process comma separated values for
+        while True:
             if tokenizer.peek() != "comma":
                 break
             else:
@@ -421,7 +421,7 @@ def Media(tokenizer, staticContext):
             requiresSpace = False
         elif tokenType == "left_paren":
             if requiresSpace:
-                query += " "            
+                query += " "
             query += "("
             requiresSpace = False
         elif tokenType == "right_paren":
@@ -441,7 +441,7 @@ def Media(tokenizer, staticContext):
         elif tokenType == "number":
             if requiresSpace:
                 query += " "
-            query += "%s%s" % (token.value, getattr(token, "unit", ""))            
+            query += "%s%s" % (token.value, getattr(token, "unit", ""))
             requiresSpace = True
         else:
             raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
@@ -455,7 +455,7 @@ def Media(tokenizer, staticContext):
     # Next process content of selector
     tokenizer.unget()
     childNode = Block(tokenizer, staticContext)
-    node.append(childNode, "rules")    
+    node.append(childNode, "rules")
 
     return node
 
@@ -485,9 +485,9 @@ def Selector(tokenizer, staticContext):
 
         if tokenType in ("identifier", "colon", "dot", "ampersand", "command"):
             if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
-                selector += " "     
+                selector += " "
 
-            nospace = False       
+            nospace = False
 
             if tokenType == "identifier":
                 selector += token.value
@@ -573,7 +573,7 @@ def Variable(tokenizer, staticContext):
     - mixin declaration
     - mixin call
     """
-    
+
     name = tokenizer.token.value
 
     # e.g. $foo = 1
@@ -598,7 +598,7 @@ def Variable(tokenizer, staticContext):
                     initializerList.append(OrExpression(tokenizer, staticContext))
 
             else:
-                node.append(initializerNode, "initializer")        
+                node.append(initializerNode, "initializer")
 
         # Ignore trailing comma... handle it like a follow up expression
         if tokenizer.peek("comma"):
@@ -629,7 +629,7 @@ def Variable(tokenizer, staticContext):
         elif tokenizer.peek() == "lt":
             # Ignore smaller symbol / Jump to block
             tokenizer.get()
-            node.append(Block(tokenizer, staticContext), "rules")            
+            node.append(Block(tokenizer, staticContext), "rules")
 
         return node
 
@@ -658,7 +658,7 @@ def ParenExpression(tokenizer, staticContext):
 
 def Expression(tokenizer, staticContext):
     """
-    Top-down expression parser matched against SpiderMonkey for original JS 
+    Top-down expression parser matched against SpiderMonkey for original JS
     parsing and modified to match styles.
     """
 
@@ -672,10 +672,10 @@ def Expression(tokenizer, staticContext):
         while True:
             childNode = node[len(node)-1]
             node.append(AssignExpression(tokenizer, staticContext))
-            
+
             if not tokenizer.match("comma"):
                 break
-                
+
     return node
 
 
@@ -692,7 +692,7 @@ def AssignExpression(tokenizer, staticContext):
         pass
     else:
         raise SyntaxError("Bad left-hand side of assignment", tokenizer)
-        
+
     node.assignOp = tokenizer.token.assignOp
     node.append(lhs)
     node.append(AssignExpression(tokenizer, staticContext))
@@ -702,7 +702,7 @@ def AssignExpression(tokenizer, staticContext):
 
 def OrExpression(tokenizer, staticContext):
     node = AndExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("or"):
         childNode = Node.Node(tokenizer, "or")
         childNode.append(node)
@@ -726,7 +726,7 @@ def AndExpression(tokenizer, staticContext):
 
 def EqualityExpression(tokenizer, staticContext):
     node = RelationalExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("eq") or tokenizer.match("ne"):
         childNode = Node.Node(tokenizer)
         childNode.append(node)
@@ -744,7 +744,7 @@ def EqualityExpression(tokenizer, staticContext):
 def RelationalExpression(tokenizer, staticContext):
     # Uses of the in operator in shiftExprs are always unambiguous,
     # so unset the flag that prohibits recognizing it.
-    node = AddExpression(tokenizer, staticContext)
+    node = UnaryExpression(tokenizer, staticContext)
     if node.type == "identifier":
         return node
 
@@ -758,7 +758,7 @@ def RelationalExpression(tokenizer, staticContext):
 
         childNode.append(express)
         node = childNode
-    
+
     return node
 
 
@@ -789,7 +789,7 @@ def AddExpression(tokenizer, staticContext):
             raise SyntaxError("Invalid expression", tokenizer)
 
         childNode.append(express)
-        node = childNode            
+        node = childNode
 
     return node
 
@@ -821,10 +821,10 @@ def UnaryExpression(tokenizer, staticContext):
             tokenType = "unary_plus"
         elif tokenType == "minus":
             tokenType = "unary_minus"
-            
+
         node = Node.Node(tokenizer, tokenType)
         node.append(UnaryExpression(tokenizer, staticContext))
-    
+
     else:
         tokenizer.unget()
         node = MemberExpression(tokenizer, staticContext)
@@ -853,7 +853,7 @@ def MemberExpression(tokenizer, staticContext):
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
-            
+
             elif node.type == "command":
                 childNode = Node.Node(tokenizer, "command")
                 childNode.name = node.name
@@ -873,7 +873,7 @@ def MemberExpression(tokenizer, staticContext):
 
 def UrlArgumentList(tokenizer, staticContext):
     node = Node.Node(tokenizer, "list")
-    
+
     if tokenizer.match("right_paren", True):
         return node
 
@@ -909,11 +909,11 @@ def UrlArgumentList(tokenizer, staticContext):
 
 def ArgumentList(tokenizer, staticContext):
     node = Node.Node(tokenizer, "list")
-    
+
     if tokenizer.match("right_paren", True):
         return node
-    
-    while True:    
+
+    while True:
         childNode = AssignExpression(tokenizer, staticContext)
         node.append(childNode)
         if not tokenizer.match("comma"):
@@ -942,17 +942,18 @@ def PrimaryExpression(tokenizer, staticContext):
 
     elif tokenType == "command":
         node = Node.Node(tokenizer, tokenType)
-        node.name = tokenizer.token.value        
+        node.name = tokenizer.token.value
 
-    elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string"]:
+    elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string", "div"]:
         node = Node.Node(tokenizer, tokenType)
         if tokenType in ("identifier", "string", "number"):
             node.value = tokenizer.token.value
         if tokenType == "number" and hasattr(tokenizer.token, "unit"):
             node.unit = tokenizer.token.unit
-
         if tokenType == "string":
             node.quote = tokenizer.token.quote
+        if tokenType == "div":
+            node.type = "slash"
 
     else:
         raise SyntaxError("Missing operand. Found type: %s" % tokenType, tokenizer)
@@ -967,24 +968,24 @@ def PrimaryExpression(tokenizer, staticContext):
 def addComments(currNode, prevNode, comments):
     if not comments:
         return
-        
+
     currComments = []
     prevComments = []
     for comment in comments:
         # post comments - for previous node
         if comment.context == "inline":
             prevComments.append(comment)
-            
+
         # all other comment styles are attached to the current one
         else:
             currComments.append(comment)
-    
+
     # Merge with previously added ones
     if hasattr(currNode, "comments"):
         currNode.comments.extend(currComments)
     else:
         currNode.comments = currComments
-    
+
     if prevNode:
         if hasattr(prevNode, "comments"):
             prevNode.comments.extend(prevComments)
