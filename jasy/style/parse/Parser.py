@@ -912,7 +912,9 @@ def ExpressionArgument(tokenizer, staticContext):
     if tokenizer.match("right_paren", True):
         raise SyntaxError("Expected expression", tokenizer)
 
-    node = AddExpression(tokenizer, staticContext)
+    node = Node.Node(tokenizer, "expr")
+    node.append(AddExpression(tokenizer, staticContext))
+
     tokenizer.mustMatch("right_paren")
 
     return node

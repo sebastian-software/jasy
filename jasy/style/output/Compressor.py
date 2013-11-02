@@ -228,6 +228,11 @@ class Compressor:
         return "/"
 
 
+    def type_expr(self, node):
+        child = node[0]
+        return self.compress(child)
+
+
     def type_raw(self, node):
         child = node[0]
         result = self.compress(child)
