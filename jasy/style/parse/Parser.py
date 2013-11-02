@@ -316,7 +316,7 @@ def Property(tokenizer, staticContext):
 
     # Add all values until we find a semicolon or right curly
     while tokenizer.peek() not in ("semicolon", "right_curly"):
-        childNode = UnaryExpression(tokenizer, staticContext)
+        childNode = ValueExpression(tokenizer, staticContext)
 
         node.append(childNode)
 
@@ -656,10 +656,31 @@ def ParenExpression(tokenizer, staticContext):
     return node
 
 
+def ValueExpression(tokenizer, staticContext):
+    """
+    Top-down expression parser for rule values in stylestyles.
+    """
+
+    node = UnaryExpression(tokenizer, staticContext)
+
+    if tokenizer.match("comma"):
+        childNode = Node.Node(tokenizer, "comma")
+        childNode.append(node)
+        node = childNode
+
+        while True:
+            childNode = node[len(node)-1]
+            node.append(UnaryExpression(tokenizer, staticContext))
+
+            if not tokenizer.match("comma"):
+                break
+
+    return node
+
+
 def Expression(tokenizer, staticContext):
     """
-    Top-down expression parser matched against SpiderMonkey for original JS
-    parsing and modified to match styles.
+    Top-down expression parser for stylestyles.
     """
 
     node = AssignExpression(tokenizer, staticContext)
