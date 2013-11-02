@@ -30,43 +30,39 @@ class AssetManager():
         Console.info("Activated %s assets", len(assets))
 
 
+
+    def getAssetUrl(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        asset = self.__assets[fileId]
+        return "url(%s)" % os.path.relpath(asset.getPath(), self.__profile.getWorkingPath())
+
+
+    def getAssetWidth(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        asset = self.__assets[fileId]
+        if asset.isImage():
+            return asset.exportData()[0]
+
+
+    def getAssetHeight(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        asset = self.__assets[fileId]
+        if asset.isImage():
+            return asset.exportData()[1]
+
+
     def __addCommands(self):
         session = self.__session
         profile = self.__profile
 
-        data = self.__data
-        assets = self.__assets
-
-        main = session.getMain()
-
-        def assetCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            asset = assets[fileId]
-            return "url(%s)" % os.path.relpath(asset.getPath(), resultPath)
-
-
-        def widthCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            asset = assets[fileId]
-            if asset.isImage():
-                return asset.exportData()[0]
-
-
-        def heightCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            asset = assets[fileId]
-            if asset.isImage():
-                return asset.exportData()[1]
-
-
-        session.addCommand("jasy.asset", assetCmd)
-        session.addCommand("jasy.width", widthCmd)
-        session.addCommand("jasy.height", heightCmd)
+        session.addCommand("jasy.asset", lambda fileId: self.getAssetUrl(fileId))
+        session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId))
+        session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId))
 
 

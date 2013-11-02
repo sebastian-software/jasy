@@ -7,7 +7,7 @@ import jasy.core.Console as Console
 import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
 
-import jasy.asset.Manager as AssetManager
+import jasy.asset.Manager2 as AssetManager
 
 import jasy.js.Resolver as ScriptResolver
 import jasy.style.Resolver as StyleResolver
@@ -27,6 +27,9 @@ class Profile():
     __scriptFolder = None
     __assetFolder = None
     __templateFolder = None
+
+    # Currently selected output path
+    __workingPath = None
 
     __hashAssets = False
     __useSource = False
@@ -84,6 +87,8 @@ class Profile():
 
 
 
+    def getWorkingPath():
+        return self.__workingPath
 
     def getHashAssets(self):
         return self.__hashAssets
@@ -132,7 +137,7 @@ class Profile():
         parts = self.__parts
 
         # Initialize shared objects
-        assetManager = AssetManager.AssetManager(self.__session, self)
+        assetManager = AssetManager.AssetManager(self, self.__session)
         outputManager = OutputManager.OutputManager(self.__session, assetManager,
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)
@@ -149,6 +154,8 @@ class Profile():
 
 
         if "kernel" in parts:
+
+            self.__workingPath = scriptFolder
 
             Console.info("Building part kernel...")
             Console.indent()
@@ -174,6 +181,8 @@ class Profile():
 
                 # SCRIPT
 
+                self.__workingPath = scriptFolder
+
                 partClass = parts[part]["class"]
                 Console.info("Generating script (%s)...", partClass)
                 Console.indent()
@@ -185,6 +194,8 @@ class Profile():
 
 
                 # STYLE
+
+                self.__workingPath = styleFolder
 
                 partStyle = parts[part]["style"]
                 Console.info("Generating style (%s)...", partStyle)
