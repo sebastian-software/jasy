@@ -132,7 +132,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Engine.permutateTree(tree, permutation)
             Console.outdent()
 
-            self.project.getCache().store(field, tree, self.mtime, True)
+            # self.project.getCache().store(field, tree, self.mtime, True)
 
         return tree
 
@@ -312,7 +312,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             compressed = Compressor.Compressor(formatting).compress(tree)
 
             # Store in cache
-            self.project.getCache().store(field, compressed, mtime)
+            # self.project.getCache().store(field, compressed, mtime)
 
         return compressed
 
