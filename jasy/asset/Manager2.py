@@ -87,6 +87,10 @@ class AssetManager():
 
 
     def __addCommands(self):
+        """
+        Registers session commands for usage in template and stylesheets
+        """
+
         self.__session.addCommand("jasy.asset", lambda fileId: self.getAssetUrl(fileId))
         self.__session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId))
         self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId))
@@ -109,6 +113,12 @@ class AssetManager():
 
 
     def copyAssets(self):
+        """
+        Copies assets from their source folder to the configured
+        destination folder. Does apply file name transformations
+        during copying when requested.
+        """
+
         Console.info("Copying assets...")
 
         counter = 0
