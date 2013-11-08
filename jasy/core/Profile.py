@@ -22,13 +22,14 @@ class Profile():
     """
 
     __destinationFolder = None
+    __destinationUrl = None
 
     __parts = None
 
-    __styleFolder = None
-    __scriptFolder = None
-    __assetFolder = None
-    __templateFolder = None
+    __styleFolder = "{{destination}}/css"
+    __scriptFolder = "{{destination}}/js"
+    __assetFolder = "{{destination}}/asset"
+    __templateFolder = "{{destination}}/tmpl"
 
     # Currently selected output path
     __workingPath = None
