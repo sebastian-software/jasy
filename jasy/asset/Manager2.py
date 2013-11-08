@@ -77,14 +77,17 @@ class AssetManager():
 
 
     def __computeDestinationPath(self, assetItem):
-        assetFolder = self.__profile.getAssetFolder()
+        profile = self.__profile
 
-        if self.__profile.getHashAssets():
+        # Asset folder relative to current working folder
+        relativeToAssetFolder = os.path.relpath(profile.getAssetFolder(), profile.getWorkingPath())
+
+        if profile.getHashAssets():
             fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
         else:
             fileName = assetItem.getId().replace("/", os.sep)
 
-        return assetFolder + "/" + fileName
+        return relativeToAssetFolder + "/" + fileName
 
 
     def copyAssets(self, destination, hashNames):
