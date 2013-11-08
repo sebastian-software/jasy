@@ -49,7 +49,8 @@ class AssetManager():
         else:
             url = assetItem.getPath()
 
-        url = os.path.relpath(url, profile.getWorkingPath())
+        # Make URL relative to current working path
+        url = os.path.relpath(url, self.__profile.getWorkingPath())
 
         return "url(%s)" % url
 
