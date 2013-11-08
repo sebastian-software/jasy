@@ -12,7 +12,9 @@ builtin = set([
     "rgb",
     "rgba",
     "hsl",
-    "hsb"
+    "hsb",
+    "url",
+    "format"
 ])
 
 
