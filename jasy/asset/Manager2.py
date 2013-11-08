@@ -34,6 +34,10 @@ class AssetManager():
 
 
     def getAssetUrl(self, fileId):
+        """
+        Returns the asset URL for the given item relative to the current working path
+        """
+
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
@@ -56,6 +60,10 @@ class AssetManager():
 
 
     def getAssetWidth(self, fileId):
+        """
+        Returns the width (image width) of the given item
+        """
+
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
@@ -65,6 +73,10 @@ class AssetManager():
 
 
     def getAssetHeight(self, fileId):
+        """
+        Returns the width (image height) of the given item
+        """
+
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
 
@@ -80,6 +92,10 @@ class AssetManager():
 
 
     def __computeDestinationPath(self, assetItem):
+        """
+        Returns the path of the given asset item including the asset folder path
+        """
+
         profile = self.__profile
         assetFolder = profile.getAssetFolder()
 
@@ -91,7 +107,7 @@ class AssetManager():
         return assetFolder + "/" + fileName
 
 
-    def copyAssets(self, destination, hashNames):
+    def copyAssets(self):
         Console.info("Copying assets...")
 
         counter = 0

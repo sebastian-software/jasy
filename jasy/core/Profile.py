@@ -219,7 +219,7 @@ class Profile():
 
 
         if self.__copyAssets:
-            assetManager.copyAssets(assetFolder, self.__hashAssets)
+            assetManager.copyAssets()
 
 
 
