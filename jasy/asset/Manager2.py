@@ -47,7 +47,9 @@ class AssetManager():
         if self.__profile.getCopyAssets():
             url = self.__computeDestinationPath(assetItem)
         else:
-            url = os.path.relpath(assetItem.getPath(), self.__profile.getWorkingPath())
+            url = assetItem.getPath()
+
+        url = os.path.relpath(url, profile.getWorkingPath())
 
         return "url(%s)" % url
 
@@ -78,16 +80,14 @@ class AssetManager():
 
     def __computeDestinationPath(self, assetItem):
         profile = self.__profile
-
-        # Asset folder relative to current working folder
-        relativeToAssetFolder = os.path.relpath(profile.getAssetFolder(), profile.getWorkingPath())
+        assetFolder = profile.getAssetFolder()
 
         if profile.getHashAssets():
             fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
         else:
             fileName = assetItem.getId().replace("/", os.sep)
 
-        return relativeToAssetFolder + "/" + fileName
+        return assetFolder + "/" + fileName
 
 
     def copyAssets(self, destination, hashNames):
