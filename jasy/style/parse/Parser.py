@@ -874,7 +874,7 @@ def MemberExpression(tokenizer, staticContext):
                     childNode = RawArgument(tokenizer, staticContext)
                 elif node.value == "expr":
                     childNode = ExpressionArgument(tokenizer, staticContext)
-                elif node.value == "url":
+                elif node.value in ("url", "jasy.asset"):
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
