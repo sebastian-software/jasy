@@ -49,12 +49,9 @@ def __executeRecurser(node, session):
 
         params = [ param.value for param in node.params ]
 
-        print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
-
-
-
+        # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
         result = session.executeCommand(command, params)
-        print("Result: %s" % result)
+        # print("Result: %s" % result)
 
         repl = Node.Node(type="identifier")
         repl.value = result

@@ -27,6 +27,7 @@ class AssetManager():
         for project in self.__session.getProjects():
             assets.update(project.getAssets())
 
+        # Register system commands for accessing asset paths, asset dimensions, etc.
         self.__addCommands()
 
         Console.outdent()
