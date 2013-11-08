@@ -9,12 +9,47 @@ import jasy.core.Console as Console
 
 
 builtin = set([
+    # Colors
     "rgb",
     "rgba",
     "hsl",
     "hsb",
+
+    # URLs
     "url",
-    "format"
+
+    # Webfonts
+    "format",
+
+    # Transforms
+    "matrix",
+    "translate",
+    "translateX",
+    "translateY",
+    "scale",
+    "scaleX",
+    "scaleY",
+    "rotate",
+    "skewX",
+    "skewY",
+
+    # 3D Transforms
+    "matrix3d",
+    "translate3d",
+    "translateZ",
+    "scale3d",
+    "scaleZ",
+    "rotate3d",
+    "rotateX",
+    "rotateY",
+    "rotateZ",
+    "perspective",
+
+    # Gradients
+    "linear-gradient",
+    "radial-gradient",
+    "repeating-linear-gradient",
+    "repeating-radial-gradient"
 ])
 
 
@@ -46,10 +81,18 @@ def __executeRecurser(node, session):
     if node.type == "system":
         command = node.name
 
-        if command in builtin:
+        # Filter all built-in commands and all vendor prefixed ones
+        if command in builtin or command.startswith("-"):
             return
 
-        params = [ param.value for param in node.params ]
+        params = []
+        for param in node.params:
+            if param.type == "unary_minus":
+                value = -param[0].value
+            else:
+                value = param.value
+
+            params.append(value)
 
         # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
         result = session.executeCommand(command, params)
