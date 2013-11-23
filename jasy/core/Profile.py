@@ -199,7 +199,11 @@ class Profile():
                 Console.indent()
 
                 classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
-                outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
+
+                if self.__useSource:
+                    outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
+                else:
+                    outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
 
                 Console.outdent()
 
