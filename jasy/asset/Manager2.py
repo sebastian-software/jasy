@@ -102,7 +102,7 @@ class AssetManager():
         """
 
         profile = self.__profile
-        assetFolder = profile.getAssetFolder()
+        assetFolder = os.path.join(profile.getDestinationFolder(), profile.getAssetFolder())
 
         if profile.getHashAssets():
             fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
@@ -141,6 +141,9 @@ class AssetManager():
         # Processing assets
         assets = self.__assets
 
+        # Destination folder for assets
+        assetPath = os.path.join(self.__profile.getDestinationFolder(), self.__profile.getAssetFolder());
+
         result = {}
         filterExpr = self.__compileFilterExpr(items) if items else None
         for fileId in assets:
@@ -155,13 +158,20 @@ class AssetManager():
 
             assetItem = assets[fileId]
             self.__copylist.add(assetItem)
-            entry["t"] = assetItem.getType(short=True)
 
             if self.__profile.getUseSource():
-                entry["u"] = os.path.relpath(assetItem.getPath(), self.__profile.getAssetFolder())
+                # Compute relative folder from asset location to even external
+                # locations (e.g. auto cloned remote projects)
+                entry["u"] = os.path.relpath(assetItem.getPath(), assetPath)
             elif self.__profile.getHashAssets():
+                # Export checksum (SHA1 encoded as URL-safe Base62)
                 entry["h"] = assetItem.getChecksum()
 
+            # Store file type as analyzed by asset item
+            entry["t"] = assetItem.getType(short=True)
+
+            # Store additional data figured out by asset item e.g.
+            # image dimensions, video format, play duration, ...
             assetData = assetItem.exportData()
             if assetData:
                 entry["d"] = assetData

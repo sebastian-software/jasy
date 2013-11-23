@@ -77,16 +77,16 @@ class Profile():
 
 
 
-    def getStyleFolder(self):
+    def getCssFolder(self):
         return "%s/%s" % (self.__destinationFolder, self.__cssFolder)
 
-    def setStyleFolder(self, folder):
+    def setCssFolder(self, folder):
         self.__cssFolder = folder
 
-    def getScriptFolder(self):
+    def getJsFolder(self):
         return "%s/%s" % (self.__destinationFolder, self.__jsFolder)
 
-    def setScriptFolder(self, folder):
+    def setJsFolder(self, folder):
         self.__jsFolder = folder
 
     def getAssetFolder(self):
