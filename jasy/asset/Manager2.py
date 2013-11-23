@@ -148,6 +148,10 @@ class AssetManager():
                 continue
 
             entry = {}
+            # t = file type
+            # u = full file url
+            # h = file hash (based on content)
+            # d = asset data (image size, etc.)
 
             assetItem = assets[fileId]
             self.__copylist.add(assetItem)

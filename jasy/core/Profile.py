@@ -3,13 +3,19 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import jasy
+
 import os.path
+import time, socket, uuid, getpass
 
 import jasy.core.Console as Console
 import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
+import jasy.core.Util as Util
 
 import jasy.asset.Manager2 as AssetManager
+
+import jasy.item.Class as ClassItem
 
 import jasy.js.Resolver as ScriptResolver
 import jasy.style.Resolver as StyleResolver
@@ -26,10 +32,10 @@ class Profile():
 
     __parts = None
 
-    __styleFolder = "{{destination}}/css"
-    __scriptFolder = "{{destination}}/js"
-    __assetFolder = "{{destination}}/asset"
-    __templateFolder = "{{destination}}/tmpl"
+    __templateFolder = "tmpl"
+    __jsFolder = "js"
+    __cssFolder = "css"
+    __assetFolder = "asset"
 
     # Currently selected output path
     __workingPath = None
@@ -42,12 +48,18 @@ class Profile():
     __formattingLevel = 5
 
 
+    __timeStamp = None
+    __timeHash = None
 
 
     def __init__(self, session):
 
         self.__session = session
         self.__parts = {}
+
+        # Behaves like Date.now() in JavaScript: UTC date in milliseconds
+        self.__timeStamp = int(round(time.time() * 1000))
+        self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
 
 
@@ -66,25 +78,25 @@ class Profile():
 
 
     def getStyleFolder(self):
-        return self.__styleFolder.replace("{{destination}}", self.__destinationFolder)
+        return "%s/%s" % (self.__destinationFolder, self.__cssFolder)
 
     def setStyleFolder(self, folder):
-        self.__styleFolder = folder
+        self.__cssFolder = folder
 
     def getScriptFolder(self):
-        return self.__scriptFolder.replace("{{destination}}", self.__destinationFolder)
+        return "%s/%s" % (self.__destinationFolder, self.__jsFolder)
 
     def setScriptFolder(self, folder):
-        self.__scriptFolder = folder
+        self.__jsFolder = folder
 
     def getAssetFolder(self):
-        return self.__assetFolder.replace("{{destination}}", self.__destinationFolder)
+        return "%s/%s" % (self.__destinationFolder, self.__assetFolder)
 
     def setAssetFolder(self, folder):
         self.__assetFolder = folder
 
     def getTemplateFolder(self):
-        return self.__templateFolder.replace("{{destination}}", self.__destinationFolder)
+        return "%s/%s" % (self.__destinationFolder, self.__templateFolder)
 
     def setTemplateFolder(self, folder):
         self.__templateFolder = folder
@@ -154,7 +166,7 @@ class Profile():
 
         # Initialize shared objects
         assetManager = AssetManager.AssetManager(self, self.__session)
-        outputManager = OutputManager.OutputManager(self.__session, assetManager,
+        outputManager = OutputManager.OutputManager(self, self.__session, assetManager,
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)
 
@@ -228,6 +240,67 @@ class Profile():
 
 
 
+
+    def __getEnvironmentId(self):
+        """
+        Returns a build ID based on environment variables and state
+        """
+
+        hostName = socket.gethostname()
+        hostId = uuid.getnode()
+        userName = getpass.getuser()
+
+        return "host:%s|id:%s|user:%s" % (hostName, hostId, userName)
+
+
+    def getSetupClasses(self):
+        """
+        Returns a list of (virtual) classes which are relevant for initial setup.
+        """
+
+        setups = {}
+
+        # Add user configured fields from session
+        setups.update(self.__session.getFieldSetupClasses())
+
+
+
+        # Info about actual build
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.env",4,"%s"' % self.__getEnvironmentId())
+        setups["jasy.build.env"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.rev",4,"%s"' % self.__session.getMain().getRevision())
+        setups["jasy.build.rev"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
+        setups["jasy.build.time"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        # Version of Jasy which was used for build
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.version",4,"%s"' % jasy.__version__)
+        setups["jasy.version"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        # Destination URL e.g. CDN
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.__destinationUrl or ""))
+        setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        # Folder names inside destination
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.template",4,"%s"' % (self.__templateFolder or ""))
+        setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.js",4,"%s"' % (self.__jsFolder or ""))
+        setups["jasy.folder.js"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.css",4,"%s"' % (self.__cssFolder or ""))
+        setups["jasy.folder.css"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.asset",4,"%s"' % (self.__assetFolder or ""))
+        setups["jasy.folder.asset"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+
+        return setups
 
 
 

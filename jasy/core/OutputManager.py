@@ -32,9 +32,10 @@ class OutputManager:
     #   ESSENTIALS
     # --------------------------------------------------------------------------------------------
 
-    def __init__(self, session, assetManager=None, compressionLevel=1, formattingLevel=0):
+    def __init__(self, profile, session, assetManager=None, compressionLevel=1, formattingLevel=0):
 
         self.__session = session
+        self.__profile = profile
 
         self.__assetManager = assetManager
         self.__fileManager = FileManager(session)
@@ -267,11 +268,8 @@ class OutputManager:
         Console.info("Generating kernel script...")
         Console.indent()
 
-        # Export all field data for the kernel
-        items = []
-        fieldSetupClasses = self.__session.getFieldSetupClasses()
-        for fieldName in fieldSetupClasses:
-            items.append(fieldSetupClasses[fieldName])
+        # Export all profile data for the kernel
+        items = self.__profile.getSetupClasses().values()
 
         # Transfer all hard-wired fields into a permutation
         self.__session.setStaticPermutation()
