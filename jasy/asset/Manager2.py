@@ -153,6 +153,9 @@ class AssetManager():
             self.__copylist.add(assetItem)
             entry["t"] = assetItem.getType(short=True)
 
+            if self.__profile.getHashAssets():
+                entry["h"] = assetItem.getChecksum()
+
             assetData = assetItem.exportData()
             if assetData:
                 entry["d"] = assetData
