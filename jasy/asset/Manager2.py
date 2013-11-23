@@ -153,7 +153,9 @@ class AssetManager():
             self.__copylist.add(assetItem)
             entry["t"] = assetItem.getType(short=True)
 
-            if self.__profile.getHashAssets():
+            if self.__profile.getUseSource():
+                entry["u"] = os.path.relpath(assetItem.getPath(), self.__profile.getAssetFolder())
+            elif self.__profile.getHashAssets():
                 entry["h"] = assetItem.getChecksum()
 
             assetData = assetItem.exportData()
