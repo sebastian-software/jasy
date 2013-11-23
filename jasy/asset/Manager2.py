@@ -168,9 +168,15 @@ class AssetManager():
 
         Console.info("Exported %s assets", len(result))
 
+        url = self.__profile.getDestinationUrl()
+        if url:
+            root = "%s/%s/" % (url, "asset")
+        else:
+            root = "asset/"
+
         return json.dumps({
             "assets" : self.__structurize(result),
-            "profile" : self.__profile.exportData()
+            "profile" : {"root":root}
         }, indent=2, sort_keys=True)
 
 
