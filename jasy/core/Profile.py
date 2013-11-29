@@ -64,7 +64,7 @@ class Profile():
 
 
     def getDestinationPath(self):
-        return self.__destinationPath
+        return self.__destinationPath or self.__session.getCurrentPrefix()
 
     def setDestinationPath(self, folder):
         self.__destinationPath = folder
@@ -73,6 +73,10 @@ class Profile():
         return self.__destinationUrl
 
     def setDestinationUrl(self, url):
+        # Fix missing end slash
+        if not url.endswith("/"):
+            url += "/"
+
         self.__destinationUrl = url
 
 
@@ -170,7 +174,7 @@ class Profile():
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)
 
-        destinationFolder = self.__destinationPath
+        destinationFolder = self.getDestinationPath()
 
         jsFolder = os.path.join(destinationFolder, self.__jsFolder)
         cssFolder = os.path.join(destinationFolder, self.__cssFolder)
@@ -179,7 +183,7 @@ class Profile():
 
         if "kernel" in parts:
 
-            self.__workingPath = self.__destinationPath
+            self.__workingPath = self.getDestinationPath()
 
             Console.info("Building part kernel...")
             Console.indent()
@@ -198,14 +202,13 @@ class Profile():
                 if part == "kernel":
                     continue
 
-
                 Console.info("Building part %s..." % part)
                 Console.indent()
 
 
                 # SCRIPT
 
-                self.__workingPath = self.__destinationPath
+                self.__workingPath = self.getDestinationPath()
 
                 partClass = parts[part]["class"]
                 Console.info("Generating script (%s)...", partClass)
@@ -284,7 +287,7 @@ class Profile():
 
         # Destination URL e.g. CDN
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.__destinationUrl or ""))
+        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.getDestinationUrl() or ""))
         setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
         # Folder names inside destination
