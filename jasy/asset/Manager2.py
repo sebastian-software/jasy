@@ -102,7 +102,7 @@ class AssetManager():
         """
 
         profile = self.__profile
-        assetFolder = os.path.join(profile.getDestinationFolder(), profile.getAssetFolder())
+        assetFolder = os.path.join(profile.getDestinationPath(), profile.getAssetFolder())
 
         if profile.getHashAssets():
             fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
@@ -142,7 +142,10 @@ class AssetManager():
         assets = self.__assets
 
         # Destination folder for assets
-        assetPath = os.path.join(self.__profile.getDestinationFolder(), self.__profile.getAssetFolder());
+        print("DEST-PATH: %s" % self.__profile.getDestinationPath())
+        print("ASSET FOLDER: %s" % self.__profile.getAssetFolder())
+
+        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetFolder());
 
         result = {}
         filterExpr = self.__compileFilterExpr(items) if items else None

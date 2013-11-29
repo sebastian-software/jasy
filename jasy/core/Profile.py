@@ -27,7 +27,7 @@ class Profile():
     Configuration object for the build profile of the current task
     """
 
-    __destinationFolder = None
+    __destinationPath = None
     __destinationUrl = None
 
     __parts = None
@@ -63,11 +63,11 @@ class Profile():
 
 
 
-    def getDestinationFolder(self):
-        return self.__destinationFolder
+    def getDestinationPath(self):
+        return self.__destinationPath
 
-    def setDestinationFolder(self, folder):
-        self.__destinationFolder = folder
+    def setDestinationPath(self, folder):
+        self.__destinationPath = folder
 
     def getDestinationUrl(self):
         return self.__destinationUrl
@@ -78,25 +78,25 @@ class Profile():
 
 
     def getCssFolder(self):
-        return "%s/%s" % (self.__destinationFolder, self.__cssFolder)
+        return self.__cssFolder
 
     def setCssFolder(self, folder):
         self.__cssFolder = folder
 
     def getJsFolder(self):
-        return "%s/%s" % (self.__destinationFolder, self.__jsFolder)
+        return self.__jsFolder
 
     def setJsFolder(self, folder):
         self.__jsFolder = folder
 
     def getAssetFolder(self):
-        return "%s/%s" % (self.__destinationFolder, self.__assetFolder)
+        return self.__assetFolder
 
     def setAssetFolder(self, folder):
         self.__assetFolder = folder
 
     def getTemplateFolder(self):
-        return "%s/%s" % (self.__destinationFolder, self.__templateFolder)
+        return self.__templateFolder
 
     def setTemplateFolder(self, folder):
         self.__templateFolder = folder
@@ -170,22 +170,23 @@ class Profile():
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         fileManager = FileManager.FileManager(self.__session)
 
+        destinationFolder = self.__destinationPath
 
-        scriptFolder = self.getScriptFolder()
-        styleFolder = self.getStyleFolder()
-        assetFolder = self.getAssetFolder()
-        templateFolder = self.getTemplateFolder()
+        jsFolder = os.path.join(destinationFolder, self.__jsFolder)
+        cssFolder = os.path.join(destinationFolder, self.__cssFolder)
+        assetFolder = os.path.join(destinationFolder, self.__assetFolder)
+        templateFolder = os.path.join(destinationFolder, self.__templateFolder)
 
         if "kernel" in parts:
 
-            self.__workingPath = self.__destinationFolder
+            self.__workingPath = self.__destinationPath
 
             Console.info("Building part kernel...")
             Console.indent()
 
             # Store kernel script
             kernelClass = parts["kernel"]["class"]
-            outputManager.storeKernelScript("%s/kernel.js" % scriptFolder, bootCode="%s.boot();" % kernelClass)
+            outputManager.storeKernelScript("%s/kernel.js" % jsFolder, bootCode="%s.boot();" % kernelClass)
 
             Console.outdent()
 
@@ -204,7 +205,7 @@ class Profile():
 
                 # SCRIPT
 
-                self.__workingPath = self.__destinationFolder
+                self.__workingPath = self.__destinationPath
 
                 partClass = parts[part]["class"]
                 Console.info("Generating script (%s)...", partClass)
@@ -213,23 +214,23 @@ class Profile():
                 classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
 
                 if self.__useSource:
-                    outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
+                    outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsFolder, part), "new %s;" % partClass)
                 else:
-                    outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (scriptFolder, part), "new %s;" % partClass)
+                    outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsFolder, part), "new %s;" % partClass)
 
                 Console.outdent()
 
 
                 # STYLE
 
-                self.__workingPath = styleFolder
+                self.__workingPath = cssFolder
 
                 partStyle = parts[part]["style"]
                 Console.info("Generating style (%s)...", partStyle)
                 Console.indent()
 
                 styleItems = StyleResolver.Resolver(self.__session).add(partStyle).getSorted()
-                outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (styleFolder, part))
+                outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssFolder, part))
 
                 Console.outdent()
                 Console.outdent()
