@@ -41,7 +41,10 @@ def collectFields(node, keys=None):
     # Supported calls: jasy.Env.isSet(key, expected?), jasy.Env.getValue(key), jasy.Env.select(key, map)
     calls = ("jasy.Env.isSet", "jasy.Env.getValue", "jasy.Env.select")
     if node.type == "dot" and node.parent.type == "call" and Util.assembleDot(node) in calls:
-        keys.add(node.parent[1][0].value)
+        stringNode = node.parent[1][0]
+        if stringNode.type != "string":
+            raise Exception("Could not handle non string type in jasy.Env call at line: %s" % node.line)
+        keys.add(stringNode.value)
 
     # Process children
     for child in reversed(node):
@@ -306,7 +309,11 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         field = "script:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
-            fields = collectFields(self.__getTree())
+            try:
+                fields = collectFields(self.__getTree())
+            except Exception as ex:
+                raise Exception("Unable to collect fields in file %s: %s" % (self.id, ex))
+
             self.project.getCache().store(field, fields, self.mtime)
 
         return fields
