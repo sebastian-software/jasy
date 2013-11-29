@@ -49,10 +49,10 @@ class AssetManager():
 
         # Check for whether files are being copied over to somewhere
         # or whether we use the relative URL to the source folder
-        if self.__profile.getCopyAssets():
-            url = self.__computeDestinationPath(assetItem)
-        else:
+        if self.__profile.getUseSource():
             url = assetItem.getPath()
+        else:
+            url = self.__computeDestinationPath(assetItem)
 
         # Make URL relative to current working path
         url = os.path.relpath(url, self.__profile.getWorkingPath())
