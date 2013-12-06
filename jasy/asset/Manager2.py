@@ -158,6 +158,28 @@ class AssetManager():
             return spriteData[2]
 
 
+    def getAnimationColumns(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            pass
+
+        return 11
+
+
+    def getAnimationRows(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            pass
+
+        return 1
+
+
     def __addCommands(self):
         """
         Registers session commands for usage in template and stylesheets
@@ -166,12 +188,15 @@ class AssetManager():
         self.__session.addCommand("asset.url", lambda fileId: self.getAssetUrl(fileId), "url")
         self.__session.addCommand("asset.width", lambda fileId: self.getAssetWidth(fileId), "px")
         self.__session.addCommand("asset.height", lambda fileId: self.getAssetHeight(fileId), "px")
+
         self.__session.addCommand("sprite.url", lambda fileId: self.getSpriteUrl(fileId), "url")
         self.__session.addCommand("sprite.left", lambda fileId: self.getSpriteLeft(fileId), "px")
         self.__session.addCommand("sprite.top", lambda fileId: self.getSpriteTop(fileId), "px")
         self.__session.addCommand("sprite.width", lambda fileId: self.getSpriteWidth(fileId), "px")
         self.__session.addCommand("sprite.height", lambda fileId: self.getSpriteHeight(fileId), "px")
 
+        self.__session.addCommand("animation.columns", lambda fileId: self.getAnimationColumns(fileId), "number")
+        self.__session.addCommand("animation.rows", lambda fileId: self.getAnimationRows(fileId), "number")
 
 
     def __processSprites(self):
