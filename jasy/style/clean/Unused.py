@@ -42,7 +42,7 @@ def cleanup(node):
 
         modified = __cleanup(node)
         if modified > 0:
-            Console.info("Removed %s unused variables", modified)
+            Console.debug("Removed %s unused variables", modified)
             ScopeScanner.scan(node)
             cleaned = True
         else:
