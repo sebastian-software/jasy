@@ -125,8 +125,12 @@ def __computeOperation(first, second, parent, operator, values):
             else:
                 raise VariableError("For list operations both lists have to have the same length!", parent)
 
+        # Wait for system calls executing first
+        elif first.type == "system":
+            return None
+
         else:
-            raise VariableError("Unsupported operation", parent)
+            raise VariableError("Unsupported operation on %s" % first.type, parent)
 
 
     elif first.type == "list" and second.type != "list":
