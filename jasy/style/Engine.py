@@ -85,13 +85,17 @@ def reduceTree(tree, session=None):
     ScopeScanner.scan(tree)
     Unused.cleanup(tree)
 
-    # PHASE 6
+    # PHASE 6 A
     # Compute variables
     Variables.compute(tree)
 
-    # PHASE 6+++
+    # PHASE 6 B
     # Run custom methods
     Methods.execute(tree, session)
+
+    # PHASE 6 C
+    # Compute variables (again)
+    Variables.compute(tree)
 
     # PHASE 7
     # Flattening selectors
