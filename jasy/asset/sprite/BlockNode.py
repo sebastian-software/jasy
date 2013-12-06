@@ -4,10 +4,11 @@
 #
 
 class BlockNode():
-    
+
     def __init__(self, parent, x, y, w, h):
 
         parent.nodes.append(self)
+
         self.x = x
         self.y = y
         self.w = w

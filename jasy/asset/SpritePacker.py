@@ -211,7 +211,7 @@ class SpritePacker():
 
         # try to skip senseless generation of way to small sprites
         baseArea = sum([minWidth * minHeight for i in self.files])
-        while baseArea / (minWidth * minHeight) >= 20: # bascially an estimate of the number of sheets needed
+        while baseArea / (minWidth * minHeight) >= 20: # basically an estimate of the number of sheets needed
             minWidth *= 2
             minHeight *= 2
 
@@ -222,7 +222,6 @@ class SpritePacker():
 
         if autorotate:
             methods = list(itertools.product(sorts, sizes, rotationDiff))
-
         else:
             methods = list(itertools.product(sorts, sizes, [(0, 0)]))
 

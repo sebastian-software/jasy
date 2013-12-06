@@ -6,7 +6,7 @@
 from jasy.asset.sprite.BlockNode import BlockNode
 
 class BlockPacker():
-    
+
     def __init__(self, w = 0, h = 0):
 
         self.nodes = []
@@ -18,9 +18,11 @@ class BlockPacker():
             self.autogrow = True
             self.root = None
 
+
     def getUnused(self):
         return [b for b in self.nodes if not b.used]
-        
+
+
     def fit(self, blocks):
 
         length = len(blocks)
@@ -31,14 +33,15 @@ class BlockPacker():
             self.root = BlockNode(self, 0, 0, w, h)
 
         for block in blocks:
-            
+
             node = self.findNode(self.root, block.w, block.h)
             if node:
                 block.fit = self.splitNode(node, block.w, block.h)
 
             elif self.autogrow:
                 block.fit = self.growNode(block.w, block.h)
-        
+
+
     def findNode(self, root, w, h):
 
         if (root.used):
@@ -50,6 +53,7 @@ class BlockPacker():
         else:
             return None
 
+
     def splitNode(self, node, w, h):
         node.used = True
         node.down = BlockNode(self, node.x, node.y + h, node.w, node.h - h)
@@ -58,7 +62,6 @@ class BlockPacker():
 
 
     def growNode(self, w, h):
-        
         canGrowDown  = w <= self.root.w
         canGrowRight = h <= self.root.h
 
@@ -79,14 +82,14 @@ class BlockPacker():
 
         else:
             return None
-    
+
 
     def growRight(self, w, h):
         root = Node(self, 0, 0, self.root.w + w, self.root.h)
         root.used = True
         root.down = self.root
         root.right = BlockNode(self, self.root.w, 0, w, self.root.h)
-        
+
         self.root = root
 
         node = self.findNode(self.root, w, h)
@@ -103,7 +106,7 @@ class BlockPacker():
         root.used = True
         root.down = BlockNode(self, 0, self.root.h, self.root.w, h)
         root.right = self.root
-        
+
         self.root = root
 
         node = self.findNode(self.root, w, h)
