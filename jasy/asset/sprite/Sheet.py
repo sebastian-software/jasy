@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 from jasy import UserError
@@ -43,13 +44,13 @@ class SpriteSheet():
 
 
     def export(self, projectId=''):
-        
+
         data = {}
 
         for block in self.blocks:
 
             info = block.toJSON()
-            
+
             data[block.image.relPath] = info
 
             for d in block.duplicates:
@@ -73,16 +74,13 @@ class SpriteSheet():
             res = Image.open(block.image.src)
 
             x, y = block.fit.x, block.fit.y
-            if block.rotated:
-                Console.debug('%s is rotated' % block.image.src)
-                res = res.rotate(90)
 
             img.paste(res, (x, y))
             del res
 
             if debug:
                 x, y, w, h = block.fit.x, block.fit.y, block.w, block.h
-                draw.rectangle((x, y , x + w , y + h), outline=(0, 0, 255, 255) if block.rotated else (255, 0, 0, 255))
+                draw.rectangle((x, y , x + w , y + h), outline=(255, 0, 0, 255))
 
         if debug:
             for i, block in enumerate(self.packer.getUnused()):

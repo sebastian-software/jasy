@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 from jasy.asset.ImageInfo import ImgInfo
@@ -160,14 +161,13 @@ class SpritePacker():
         del img
 
         # TODO crop transparent "borders"
-        # TODO allow for rotation
 
         self.files.append(SpriteFile(w, h, relPath, fullPath, checksum))
 
         Console.debug('- Found image "%s" (%dx%dpx)' % (relPath, w, h))
 
 
-    def packBest(self, autorotate=False):
+    def packBest(self):
         """Pack blocks into a sprite sheet by trying multiple settings."""
 
         sheets, extraBlocks = [], []
@@ -191,13 +191,11 @@ class SpritePacker():
             return (block.w * block.h, block.w, block.h, block.image.checksum)
 
         sorts = [sortHeight, sortWidth, sortArea]
-        rotationDiff = [(0, 0), (1.4, 0), (0, 1.4), (1.4, 1.4)] # rotate by 90 degrees if either b / a > value
 
         # Determine minimum size for spritesheet generation
         # by averaging the widths and heights of all images
         # while taking the ones in the sorted middile higher into account
         # then the ones at the outer edges of the spectirum
-
 
         l = len(self.files)
         mw = [(l - abs(i - l / 2)) / l * v for i, v in enumerate(sorted([i.width for i in self.files]))]
@@ -206,33 +204,27 @@ class SpritePacker():
         minWidth = max(128, math.pow(2, math.ceil(math.log(sum(mw) / l, 2))))
         minHeight = max(128, math.pow(2, math.ceil(math.log(sum(mh) / l, 2))))
 
-        #baseArea = sum([(l - abs(i - l / 2)) / l * v for i, v in enumerate(sorted([i.width * i.height for i in self.files]))])
-
-
         # try to skip senseless generation of way to small sprites
         baseArea = sum([minWidth * minHeight for i in self.files])
         while baseArea / (minWidth * minHeight) >= 20: # basically an estimate of the number of sheets needed
             minWidth *= 2
             minHeight *= 2
 
-        Console.debug('- Minimal size is %dx%dpx' % (minWidth, minHeight))
+        Console.debug('Minimal size is %dx%dpx' % (minWidth, minHeight))
 
         sizes = list(itertools.product([w for w in [128, 256, 512, 1024, 2048] if w >= minWidth],
                                        [h for h in [128, 256, 512, 1024, 2048] if h >= minHeight]))
 
-        if autorotate:
-            methods = list(itertools.product(sorts, sizes, rotationDiff))
-        else:
-            methods = list(itertools.product(sorts, sizes, [(0, 0)]))
+        methods = list(itertools.product(sorts, sizes))
 
         Console.debug('Packing sprite sheet variants...')
         Console.indent()
 
         scores = []
-        for sort, size, rotation in methods:
+        for sort, size in methods:
 
             # pack with current settings
-            sh, ex, _ = self.pack(size[0], size[1], sort, silent=True, rotate=rotation)
+            sh, ex, _ = self.pack(size[0], size[1], sort, silent=True)
 
             if len(sh):
                 score = PackerScore(sh, ex)
@@ -259,7 +251,7 @@ class SpritePacker():
         return sheets, len(scores)
 
 
-    def pack(self, width=1024, height=1024, sort=None, silent=False, rotate=(0, 0)):
+    def pack(self, width=1024, height=1024, sort=None, silent=False):
         """Packs all sprites within the pack into sheets of the given size."""
 
         Console.debug('Packing %d images...' % len(self.files))
@@ -272,29 +264,12 @@ class SpritePacker():
             f.block = None
 
             if not f.checksum in checkBlocks:
-
-                # check for rotation
-                ow = f.width
-                oh = f.height
-
-                rot = False
-
-                if rotate[0] != 0:
-                    if ow / oh > rotate[0]:
-                        rot = True
-
-                elif rotate[1] != 0:
-                    if oh / ow > rotate[1]:
-                        rot = True
-
-                w, h = (oh, ow) if rot else (ow, oh)
-
-                checkBlocks[f.checksum] = f.block = Block(w, h, f, rot)
+                checkBlocks[f.checksum] = f.block = Block(f.width, f.height, f)
                 allBlocks.append(f.block)
 
             else:
                 src = checkBlocks[f.checksum]
-                Console.debug('  - Detected duplicate of "%s" (using "%s" as reference)' % (f.relPath, src.image.relPath))
+                Console.debug('Detected duplicate of "%s" (using "%s" as reference)' % (f.relPath, src.image.relPath))
 
                 src.duplicates.append(f)
                 duplicateCount += 1
@@ -369,13 +344,13 @@ class SpritePacker():
         self.dataFormat = format;
 
 
-    def generate(self, path='', autorotate=False, debug=False):
+    def generate(self, path='', debug=False):
         """Generate sheets/variants"""
 
         Console.info('Generating sprite sheet variants...')
         Console.indent()
 
-        sheets, count = self.packBest(autorotate)
+        sheets, count = self.packBest()
 
         # Write PNG files
         data = {}
@@ -397,7 +372,7 @@ class SpritePacker():
 
 
 
-    def packDir(self, path='', recursive=True, autorotate=False, debug=False):
+    def packDir(self, path='', recursive=True, debug=False):
         """Pack images inside a dir into sprite sheets"""
 
         Console.info('Packing sprites in: %s' % os.path.join(self.base, path))
@@ -408,7 +383,7 @@ class SpritePacker():
         Console.info('Found %d images' % len(self.files))
 
         if len(self.files) > 0:
-            self.generate(path, autorotate, debug)
+            self.generate(path, debug)
 
         Console.outdent()
 

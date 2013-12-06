@@ -1,18 +1,19 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 class Block():
 
-    def __init__(self, w, h, image, rotated=False):
+    def __init__(self, w, h, image=False):
         self.w = w
         self.h = h
-        self.fit = None
         self.image = image
+
+        self.fit = None
         self.duplicates = []
         self.area = w * h
-        self.rotated = rotated
 
     def toJSON(self):
         if self.fit:
@@ -21,8 +22,7 @@ class Block():
                 "top": self.fit.y,
                 "width": self.image.width,
                 "height": self.image.height,
-                "checksum": self.image.checksum,
-                "rotation": -90 if self.rotated else 0
+                "checksum": self.image.checksum
             }
 
         else:
@@ -31,6 +31,6 @@ class Block():
                 "top": 0,
                 "width": self.w,
                 "height": self.h,
-                "rotation": 0
+                "checksum": None
             }
 
