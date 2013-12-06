@@ -57,7 +57,7 @@ class AssetManager():
         # Make URL relative to current working path
         url = os.path.relpath(url, self.__profile.getWorkingPath())
 
-        return "url(%s)" % url
+        return url
 
 
     def getAssetWidth(self, fileId):
