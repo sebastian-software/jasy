@@ -33,9 +33,9 @@ from jasy.env.State import session
 
 session.init()
 
-session.addCommand("jasy.asset", lambda fileId: "url(resolved/%s)" % fileId)
-session.addCommand("jasy.width", lambda fileId: 42)
-session.addCommand("jasy.height", lambda fileId: 38)
+session.addCommand("jasy.asset", lambda fileId: "resolved/%s" % fileId, "url")
+session.addCommand("jasy.width", lambda fileId: 42, "px")
+session.addCommand("jasy.height", lambda fileId: 38, "px")
 
 class Tests(unittest.TestCase):
 
