@@ -15,15 +15,9 @@ try:
 
 except ImportError as err1:
 
-    try:
-        import Image
-        import ImageDraw
-        Console.debug("Using classic PIL")
-
-    except ImportError as err2:
-        Image = None
-        ImageDraw = None
-        Console.debug("No support for either Pillow or PIL!")
+    Image = None
+    ImageDraw = None
+    Console.debug("No support for Pillow (PIL)!")
 
 class SpriteSheet():
 
@@ -43,14 +37,13 @@ class SpriteSheet():
         return len(self.blocks)
 
 
-    def export(self, projectId=''):
+    def export(self):
 
         data = {}
 
         for block in self.blocks:
 
             info = block.toJSON()
-
             data[block.image.relPath] = info
 
             for d in block.duplicates:
@@ -66,8 +59,6 @@ class SpriteSheet():
 
         img = Image.new('RGBA', (self.width, self.height))
         draw = ImageDraw.Draw(img)
-
-        #draw.rectangle((0, 0, self.width, self.height), fill=(255, 255, 0, 255))
 
         # Load images and pack them in
         for block in self.blocks:

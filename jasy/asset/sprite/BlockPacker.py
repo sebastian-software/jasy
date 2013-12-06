@@ -12,15 +12,16 @@ class BlockPacker():
 
         self.nodes = []
         self.autogrow = False
+
         if w > 0 and h > 0:
             self.root = BlockNode(self, 0, 0, w, h)
-
         else:
             self.autogrow = True
             self.root = None
 
 
     def getUnused(self):
+
         return [b for b in self.nodes if not b.used]
 
 
@@ -56,13 +57,16 @@ class BlockPacker():
 
 
     def splitNode(self, node, w, h):
+
         node.used = True
         node.down = BlockNode(self, node.x, node.y + h, node.w, node.h - h)
         node.right = BlockNode(self, node.x + w, node.y, node.w - w, h)
+
         return node
 
 
     def growNode(self, w, h):
+
         canGrowDown  = w <= self.root.w
         canGrowRight = h <= self.root.h
 
@@ -71,16 +75,12 @@ class BlockPacker():
 
         if shouldGrowRight:
             return self.growRight(w, h)
-
         elif shouldGrowDown:
             return self.growDown(w, h)
-
         elif canGrowRight:
             return self.growRight(w, h)
-
         elif canGrowDown:
             return self.growDown(w, h)
-
         else:
             return None
 
@@ -97,7 +97,6 @@ class BlockPacker():
 
         if node:
             return self.splitNode(node, w, h)
-
         else:
             return None
 
@@ -114,7 +113,6 @@ class BlockPacker():
 
         if node:
             return self.splitNode(node, w, h)
-
         else:
             return None
 
