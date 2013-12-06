@@ -13,7 +13,7 @@ from jasy.core.Config import writeConfig
 
 import jasy.core.Console as Console
 
-import os, json, itertools, math
+import os, itertools, math
 
 
 class PackerScore():
