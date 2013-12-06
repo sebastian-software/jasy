@@ -86,14 +86,27 @@ class AssetManager():
             return assetItem.exportData()[1]
 
 
+    def getSpriteUrl(self, fileId):
+        return "foobar"
+
+    def getSpriteLeft(self, fileId):
+        return -20
+
+    def getSpriteTop(self, fileId):
+        return -62
+
+
     def __addCommands(self):
         """
         Registers session commands for usage in template and stylesheets
         """
 
-        self.__session.addCommand("jasy.asset", lambda fileId: self.getAssetUrl(fileId), "url")
-        self.__session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId), "px")
-        self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId), "px")
+        self.__session.addCommand("asset.url", lambda fileId: self.getAssetUrl(fileId), "url")
+        self.__session.addCommand("asset.width", lambda fileId: self.getAssetWidth(fileId), "px")
+        self.__session.addCommand("asset.height", lambda fileId: self.getAssetHeight(fileId), "px")
+        self.__session.addCommand("sprite.url", lambda fileId: self.getSpriteUrl(fileId), "url")
+        self.__session.addCommand("sprite.left", lambda fileId: self.getSpriteLeft(fileId), "px")
+        self.__session.addCommand("sprite.top", lambda fileId: self.getSpriteTop(fileId), "px")
 
 
     def __computeDestinationPath(self, assetItem):
