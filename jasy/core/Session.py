@@ -304,7 +304,7 @@ class Session():
 
 
 
-    def addCommand(self, name, func):
+    def addCommand(self, name, func, restype=None):
         """
         Registers the given function as a new command
         """
@@ -317,7 +317,10 @@ class Session():
         if name in env:
             raise Exception("Overwriting commands is not supported! Command=%s" % name)
 
-        env[name] = func
+        env[name] = {
+            "func" : func,
+            "restype" : restype
+        }
 
 
 
@@ -331,10 +334,15 @@ class Session():
         if not command in env:
             raise UserError("Unsupport command %s" % command)
 
+        entry = env[command]
+        restype = entry["restype"]
+
         if params:
-            return env[command](*params)
+            result = entry["func"](*params)
         else:
-            return env[command]()
+            result = entry["func"]()
+
+        return result, restype
 
 
 

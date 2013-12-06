@@ -91,9 +91,9 @@ class AssetManager():
         Registers session commands for usage in template and stylesheets
         """
 
-        self.__session.addCommand("jasy.asset", lambda fileId: self.getAssetUrl(fileId))
-        self.__session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId))
-        self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId))
+        self.__session.addCommand("jasy.asset", lambda fileId: self.getAssetUrl(fileId), "url")
+        self.__session.addCommand("jasy.width", lambda fileId: self.getAssetWidth(fileId), "px")
+        self.__session.addCommand("jasy.height", lambda fileId: self.getAssetHeight(fileId), "px")
 
 
     def __computeDestinationPath(self, assetItem):
