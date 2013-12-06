@@ -29,13 +29,21 @@ h2{
 }
 """
 
+from jasy.env.State import session
+
+session.init()
+
+session.addCommand("jasy.asset", lambda fileId: "url(resolved/%s)" % fileId)
+session.addCommand("jasy.width", lambda fileId: 42)
+session.addCommand("jasy.height", lambda fileId: 38)
+
 class Tests(unittest.TestCase):
 
     def process(self, code):
         callerName = inspect.stack()[1][3][5:]
 
         tree = Engine.getTree(code, callerName)
-        tree = Engine.reduceTree(tree)
+        tree = Engine.reduceTree(tree, session)
         return Engine.compressTree(tree)
 
     def test_extend(self):
@@ -253,6 +261,24 @@ class Tests(unittest.TestCase):
               color: red;
             }
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
+
+
+    def test_mixin_param_forcall(self):
+        self.assertEqual(self.process('''
+            $icon($fullywild){
+              background: jasy.asset($fullywild);
+            }
+
+            h1{
+              $icon("foo/bar.gif");
+              color: blue;
+            }
+
+            h2{
+              $icon("foo/rotate.gif");
+              color: red;
+            }
+            '''), 'h1{background:url(resolved/foo/bar.gif);color:blue;}h2{background:url(resolved/foo/rotate.gif);color:red;}')
 
 
     def test_mixin_param_toomany(self):
