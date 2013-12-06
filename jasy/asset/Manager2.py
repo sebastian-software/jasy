@@ -164,9 +164,8 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            pass
-
-        return 11
+            animationData = assetItem.exportData()[3]
+            return animationData[0]
 
 
     def getAnimationRows(self, fileId):
@@ -175,9 +174,8 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            pass
-
-        return 1
+            animationData = assetItem.exportData()[3]
+            return animationData[1]
 
 
     def __addCommands(self):
