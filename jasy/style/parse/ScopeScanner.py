@@ -46,7 +46,7 @@ def __scanNode(node, data):
 
     elif node.type == "variable":
         # Ignore parameter names (of inner functions, these are handled by __scanScope)
-        if node.parent.type == "list" and getattr(node.parent, "rel", None) == "params":
+        if node.parent.type == "list" and getattr(node.parent, "rel", None) == "params" and node.parent.parent.type == "mixin":
             pass
 
         # Ignore non first identifiers in dot-chains
