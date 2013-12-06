@@ -9,6 +9,7 @@ from jasy import UserError
 
 import jasy.core.Console as Console
 import jasy.core.File as File
+import jasy.core.Util as Util
 
 
 class AssetManager():
