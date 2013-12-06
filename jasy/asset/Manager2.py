@@ -183,8 +183,6 @@ class AssetManager():
         Console.outdent()
         self.__sprites = sprites
 
-        print("SPRITES", sprites)
-
 
     def __computeDestinationPath(self, assetItem):
         """
