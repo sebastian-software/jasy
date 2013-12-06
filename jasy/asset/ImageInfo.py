@@ -4,9 +4,10 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import struct, hashlib
+import struct
 
 import jasy.core.Console as Console
+import jasy.core.File as File
 
 """
 Contains image format detection classes. Once the format is detect it supports image size detection, too.
@@ -35,12 +36,7 @@ class ImgFile(object):
         self.fp.close()
 
     def getChecksum(self):
-
-        self.fp.seek(0)
-        m = hashlib.md5()
-        m.update(self.fp.read())
-
-        return m.hexdigest()
+        return File.sha1(self.fp)
 
     def __del__(self):
         self.close()
