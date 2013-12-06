@@ -43,7 +43,7 @@ def getTargetFolder(url, version=None):
     :param version: Version to use
     :type url: string
     """
-    
+
     if Git.isUrl(url):
 
         version = Git.expandVersion(version)
@@ -109,7 +109,7 @@ def getRevision(path=None):
 
         if cur == os.getcwd():
             break
-        
+
     os.chdir(old)
 
     return revision

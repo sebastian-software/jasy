@@ -73,7 +73,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')        
+            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')
 
 
     def test_if_else_false(self):
@@ -102,7 +102,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;outline:none;}p{color:black;}')           
+            '''), 'h1{font-size:20px;outline:none;}p{color:black;}')
 
 
     def test_if_else_false_paren(self):
@@ -160,7 +160,7 @@ class Tests(unittest.TestCase):
                 color: black;
               }
             }
-            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')           
+            '''), 'h1{font-size:20px;outline:1px solid red;}p{color:red;}')
 
 
     def test_field(self):
@@ -177,5 +177,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

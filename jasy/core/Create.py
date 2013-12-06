@@ -30,7 +30,7 @@ def getFirstSubFolder(start):
 fieldPattern = re.compile(r"\$\${([_a-z][_a-z0-9\.]*)}", re.IGNORECASE | re.VERBOSE)
 
 def massFilePatcher(path, data):
-    
+
     # Convert method with access to local data
     def convertPlaceholder(mo):
         field = mo.group(1)
@@ -39,10 +39,10 @@ def massFilePatcher(path, data):
         # Verify that None means missing
         if value is None and not data.has(field):
             raise ValueError('No value for placeholder "%s"' % field)
-    
+
         # Requires value being a string
         return str(value)
-        
+
     # Patching files recursively
     Console.info("Patching files...")
     Console.indent()
@@ -53,16 +53,16 @@ def massFilePatcher(path, data):
         for dirname in dirNames:
             if dirname.startswith("."):
                 dirNames.remove(dirname)
-        
+
         for fileName in fileNames:
             filePath = os.path.join(dirPath, fileName)
             fileRel = os.path.normpath(os.path.join(relpath, fileName))
-            
+
             Console.debug("Processing: %s..." % fileRel)
 
             fileHandle = open(filePath, "r", encoding="utf-8", errors="surrogateescape")
             fileContent = []
-            
+
             # Parse file line by line to detect binary files early and omit
             # fully loading them into memory
             try:
@@ -71,10 +71,10 @@ def massFilePatcher(path, data):
                 for line in fileHandle:
                     if '\0' in line:
                         isBinary = True
-                        break 
+                        break
                     else:
                         fileContent.append(line)
-        
+
                 if isBinary:
                     Console.debug("Ignoring binary file: %s", fileRel)
                     continue
@@ -95,11 +95,11 @@ def massFilePatcher(path, data):
             # Only write file if there where any changes applied
             if resultContent != fileContent:
                 Console.info("Updating: %s...", Console.colorize(fileRel, "bold"))
-                
+
                 fileHandle = open(filePath, "w", encoding="utf-8", errors="surrogateescape")
                 fileHandle.write(resultContent)
                 fileHandle.close()
-                
+
     Console.outdent()
 
 

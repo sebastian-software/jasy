@@ -56,28 +56,28 @@ class CommentException(Exception):
 class Comment():
     """
     Comment class is attached to parsed nodes and used to store all comment related information.
-    
+
     The class supports a new Markdown and TomDoc inspired dialect to make developers life easier and work less repeative.
     """
-    
+
     # Relation to code
     context = None
-    
+
     # Dictionary of tags
     tags = None
-    
+
     # Dictionary of params
     params = None
 
     # List of return types
     returns = None
-    
+
     # Static type
     type = None
-    
+
     # Collected text of the comment (without the extracted doc relevant data)
     text = None
-    
+
     # Text with extracted / parsed data
     __processedText = None
 
@@ -87,15 +87,15 @@ class Comment():
     # Text / Code Blocks in the comment
     __blocks = None
 
-    
+
     def __init__(self, text, context=None, lineNo=0, indent="", fileId=None):
 
         # Store context (relation to code)
         self.context = context
-        
+
         # Store fileId
         self.fileId = fileId
-        
+
         # Figure out the type of the comment based on the starting characters
 
         # Inline comments
@@ -103,7 +103,7 @@ class Comment():
             # "// hello" => "   hello"
             text = "  " + text[2:]
             self.variant = "single"
-            
+
         # Doc comments
         elif text.startswith("/**"):
             # "/** hello */" => "    hello "
@@ -115,13 +115,13 @@ class Comment():
             # "/*! hello */" => "    hello "
             text = "   " + text[3:-2]
             self.variant = "protected"
-            
+
         # A normal multiline comment
         elif text.startswith("/*"):
             # "/* hello */" => "   hello "
             text = "  " + text[2:-2]
             self.variant = "multi"
-            
+
         else:
             raise CommentException("Invalid comment text: %s" % text, lineNo)
 
@@ -162,22 +162,22 @@ class Comment():
                 else:
                     plainText += "\n\n" + b["text"] + "\n\n"
 
-            # The without any annotations 
+            # The without any annotations
             self.text = plainText.strip()
 
 
     def __splitBlocks(self, text):
         """
         Splits up text and code blocks in comments.
-        
-        This will try to use Misaka for Markdown parsing if available and will 
+
+        This will try to use Misaka for Markdown parsing if available and will
         fallback to a simpler implementation in order to allow processing of
         doc parameters and links without Misaka being installed.
         """
 
         if not Text.supportsMarkdown:
             return self.__splitSimple(text)
-        
+
         marked = Text.markdownToHtml(text)
 
         def unescape(html):
@@ -241,7 +241,7 @@ class Comment():
 
             else:
                 i += 1
-            
+
         # append the rest of the comment as text
         parts.append({
             "type": "comment",
@@ -253,13 +253,13 @@ class Comment():
 
     def __splitSimple(self, text):
         """Splits comment text and code blocks by manually parsing a subset of markdown"""
-        
+
         inCode = False
         oldIndent = 0
         parts = []
         wasEmpty = False
         wasList = False
-        
+
         lineNo = 0
         lines = text.split("\n")
 
@@ -277,7 +277,7 @@ class Comment():
                     if not wasList:
                         oldIndent = indent
                         inCode = True
-                    
+
                         parts.append({
                             "type": "comment",
                             "text": "\n".join(lines[lineNo:s])
@@ -311,7 +311,7 @@ class Comment():
             "type": "code" if inCode else "comment",
             "text": "\n".join(lines[lineNo:])
         })
-        
+
         return parts
 
 
@@ -344,30 +344,30 @@ class Comment():
             return self.__highlightedText
 
         else:
-            
+
             if self.__processedText is None:
-            
+
                 processedText = ""
 
                 for block in self.__blocks:
 
                     if block["type"] == "comment":
-                        processedText += Text.markdownToHtml(block["processed"]) 
+                        processedText += Text.markdownToHtml(block["processed"])
                     else:
                         processedText += "\n%s\n\n" % block["text"]
 
                 self.__processedText = processedText.strip()
 
             return self.__processedText
-    
-    
+
+
     def hasContent(self):
         return self.variant == "doc" and len(self.text)
-    
+
 
     def getTags(self):
         return self.tags
-        
+
 
     def hasTag(self, name):
         if not self.tags:
@@ -380,7 +380,7 @@ class Comment():
         """
         Outdent multi line comment text and filtering empty lines
         """
-        
+
         lines = []
 
         # First, split up the comments lines and remove the leading indentation
@@ -393,31 +393,31 @@ class Comment():
                 lines.append("")
 
             else:
-                # Only warn for doc comments, otherwise it might just be code commented out 
+                # Only warn for doc comments, otherwise it might just be code commented out
                 # which is sometimes formatted pretty crazy when commented out
                 if self.variant == "doc":
                     Console.warn("Could not outdent doc comment at line %s in %s", startLineNo+lineNo, self.fileId)
-                    
+
                 return text
 
-        # Find first line with real content, then grab the one after it to get the 
-        # characters which need 
+        # Find first line with real content, then grab the one after it to get the
+        # characters which need
         outdentString = ""
         for lineNo, line in enumerate(lines):
 
             if line != "" and line.strip() != "":
                 matchedDocIndent = docIndentReg.match(line)
-                
+
                 if not matchedDocIndent:
                     # As soon as we find a non doc indent like line we stop
                     break
-                    
+
                 elif matchedDocIndent.group(2) != "":
-                    # otherwise we look for content behind the indent to get the 
+                    # otherwise we look for content behind the indent to get the
                     # correct real indent (with spaces)
                     outdentString = matchedDocIndent.group(1)
                     break
-                
+
             lineNo += 1
 
         # Process outdenting to all lines (remove the outdentString from the start of the lines)
@@ -432,25 +432,25 @@ class Comment():
 
                 else:
                     if not line.startswith(outdentString):
-                        
-                        # Only warn for doc comments, otherwise it might just be code commented out 
+
+                        # Only warn for doc comments, otherwise it might just be code commented out
                         # which is sometimes formatted pretty crazy when commented out
                         if self.variant == "doc":
                             Console.warn("Invalid indentation in doc comment at line %s in %s", startLineNo+lineNo, self.fileId)
-                        
+
                     else:
                         lines[lineNo] = line[outdentStringLen:]
 
         # Merge final lines and remove leading and trailing new lines
         return "\n".join(lines).strip("\n")
-            
-            
+
+
     def __processDoc(self, text, startLineNo):
 
         text = self.__extractStaticType(text)
         text = self.__extractReturns(text)
         text = self.__extractTags(text)
-        
+
         # Collapse new empty lines at start/end
         text = text.strip("\n\t ")
 
@@ -464,7 +464,7 @@ class Comment():
             nonlocal parsed
             nonlocal last
 
-            start, end = match.span() 
+            start, end = match.span()
             before = text[last:start]
             parsed += self.__processParams(before) + match.group(1)
             last = end
@@ -477,13 +477,13 @@ class Comment():
         text = self.__processLinks(parsed)
 
         return text
-            
+
 
     def __splitTypeList(self, decl):
-        
+
         if decl is None:
             return decl
-        
+
         splitted = listSplit.split(decl.strip())
 
         result = []
@@ -494,22 +494,22 @@ class Comment():
             if entry.endswith("[]"):
                 isArray = True
                 entry = entry[:-2]
-            
-            store = { 
-                "name" : entry 
+
+            store = {
+                "name" : entry
             }
-            
+
             if isArray:
                 store["array"] = True
-                
+
             if entry in builtinTypes:
                 store["builtin"] = True
-                
+
             if entry in pseudoTypes:
                 store["pseudo"] = True
-            
+
             result.append(store)
-            
+
         return result
 
 
@@ -522,11 +522,11 @@ class Comment():
         def collectReturn(match):
             self.returns = self.__splitTypeList(match.group(1))
             return ""
-            
+
         return returnMatcher.sub(collectReturn, text)
-        
-        
-        
+
+
+
     def __extractStaticType(self, text):
         """
         Extracts leading type defintion (when value is a static type)
@@ -537,15 +537,15 @@ class Comment():
             return ""
 
         return typeMatcher.sub(collectType, text)
-        
-        
-        
+
+
+
     def __extractTags(self, text):
         """
-        Extract all tags inside the give doc comment. These are replaced from 
+        Extract all tags inside the give doc comment. These are replaced from
         the text and collected inside the "tags" key as a dict.
         """
-        
+
         def collectTags(match):
              if not self.tags:
                  self.tags = {}
@@ -563,10 +563,10 @@ class Comment():
              return ""
 
         return tagMatcher.sub(collectTags, text)
-                
-        
+
+
     def __processParams(self, text):
-        
+
         def collectParams(match):
 
             paramName = match.group(1)
@@ -574,10 +574,10 @@ class Comment():
             paramDynamic = match.group(4) is not None
             paramOptional = match.group(5) is not None
             paramDefault = match.group(7)
-            
+
             if paramTypes:
                 paramTypes = self.__splitTypeList(paramTypes)
-            
+
             if self.params is None:
                 self.params = {}
 
@@ -593,7 +593,7 @@ class Comment():
 
                 # Add new entries and overwrite if a type is defined in this entry
                 if not mapName in params or paramTypes is not None:
-                
+
                     # Make sure to not overwrite something like @options {Object} with the type of @options.x {Number}
                     if i == len(names) - 1:
 
@@ -601,13 +601,13 @@ class Comment():
 
                         if paramTypes is not None:
                             paramEntry["type"] = paramTypes
-                        
+
                         if paramDynamic:
                             paramEntry["dynamic"] = paramDynamic
-                            
+
                         if paramOptional:
                             paramEntry["optional"] = paramOptional
-                            
+
                         if paramDefault is not None:
                             paramEntry["default"] = paramDefault
 
@@ -626,18 +626,18 @@ class Comment():
                     params = paramEntry["fields"]
 
             return '<code class="param">%s</code>' % fullName
-            
+
         return paramMatcher.sub(collectParams, text)
-        
-        
+
+
     def __processLinks(self, text):
-        
+
         def formatTypes(match):
-            
+
             parsedSection = match.group(3)
             parsedFile = match.group(4)
             parsedItem = match.group(6)
-            
+
             # Do not match {}
             if parsedSection is None and parsedFile is None and parsedItem is None:
                 return match.group(1)
@@ -645,30 +645,30 @@ class Comment():
             # Minor corrections
             if parsedSection and not parsedItem:
                 parsedSection = ""
-            
+
             attr = ""
             link = ""
             label = ""
-            
+
             if parsedSection:
                 link += '%s:' % parsedSection
-            
+
             if parsedFile:
                 link += parsedFile
                 label += parsedFile
-                
+
             if parsedItem:
                 link += "~%s" % parsedItem
                 if label == "":
                     label = parsedItem
                 else:
                     label += "#%s" % parsedItem
-                
+
             # add link to attributes list
             attr += ' href="#%s"' % link
-            
+
             # build final HTML
             return '<a%s><code>%s</code></a>' % (attr, label)
 
         return linkMatcher.sub(formatTypes, text)
-        
+

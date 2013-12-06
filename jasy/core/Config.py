@@ -29,25 +29,25 @@ def findConfig(fileName):
             if os.path.exists(fileName + tryExt):
                 return fileName + tryExt
 
-        return None  
+        return None
 
     if os.path.exists(fileName) and fileExt in (".json", ".yaml"):
-        return fileName  
+        return fileName
     else:
         return None
 
 
 def loadConfig(fileName, encoding="utf-8"):
     """
-    Loads the given configuration file (filename without extension) and 
-    returns the parsed object structure 
+    Loads the given configuration file (filename without extension) and
+    returns the parsed object structure
     """
 
     configName = findConfig(fileName)
     if configName is None:
         raise UserError("Unsupported config file: %s" % fileName)
 
-    fileHandle = open(configName, mode="r", encoding=encoding)    
+    fileHandle = open(configName, mode="r", encoding=encoding)
 
     fileExt = os.path.splitext(configName)[1]
     if fileExt == ".json":
@@ -264,7 +264,7 @@ class Config:
 
     def get(self, name, default=None):
         """
-        Returns the value of the given field or None when field is not set 
+        Returns the value of the given field or None when field is not set
         """
 
         if not "." in name:
@@ -279,7 +279,7 @@ class Config:
             else:
                 return None
 
-        return getKey(current, splits[-1], default)        
+        return getKey(current, splits[-1], default)
 
 
     def ask(self, question, name, accept=None, required=True, default=None, force=False, parse=True):

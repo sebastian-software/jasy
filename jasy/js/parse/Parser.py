@@ -5,7 +5,7 @@
 
 #
 # License: MPL 1.1/GPL 2.0/LGPL 2.1
-# Authors: 
+# Authors:
 #   - Brendan Eich <brendan@mozilla.org> (Original JavaScript) (2004-2010)
 #   - Sebastian Werner <info@sebastian-werner.net> (Python Port) (2010-2012)
 #
@@ -19,14 +19,14 @@ __all__ = [ "parse", "parseExpression" ]
 def parseExpression(source, fileId=None, line=1, builder=None):
     if builder == None:
         builder = jasy.js.parse.VanillaBuilder.VanillaBuilder()
-    
+
     # Convert source into expression statement to be friendly to the Tokenizer
     if not source.endswith(";"):
         source = source + ";"
-    
+
     tokenizer = jasy.js.tokenize.Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext(False, builder)
-    
+
     return Expression(tokenizer, staticContext)
 
 
@@ -34,14 +34,14 @@ def parseExpression(source, fileId=None, line=1, builder=None):
 def parse(source, fileId=None, line=1, builder=None):
     if builder == None:
         builder = jasy.js.parse.VanillaBuilder.VanillaBuilder()
-    
+
     tokenizer = jasy.js.tokenize.Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext(False, builder)
     node = Script(tokenizer, staticContext)
-    
+
     # store fileId on top-level node
     node.fileId = tokenizer.fileId
-    
+
     # add missing comments e.g. empty file with only a comment etc.
     # if there is something non-attached by an inner node it is attached to
     # the top level node, which is not correct, but might be better than
@@ -50,7 +50,7 @@ def parse(source, fileId=None, line=1, builder=None):
         builder.COMMENTS_add(node[-1], None, tokenizer.getComments())
     else:
         builder.COMMENTS_add(node, None, tokenizer.getComments())
-    
+
     if not tokenizer.done():
         raise SyntaxError("Unexpected end of file", tokenizer)
 
@@ -69,28 +69,28 @@ class StaticContext(object):
     def __init__(self, inFunction, builder):
         # Whether this is inside a function, mostly True, only for top-level scope it's False
         self.inFunction = inFunction
-        
+
         self.hasEmptyReturn = False
         self.hasReturnWithValue = False
         self.isGenerator = False
         self.blockId = 0
         self.builder = builder
         self.statementStack = []
-        
+
         # Sets to store variable uses
         # self.functions = set()
         # self.variables = set()
-        
+
         # Status
         # self.needsHoisting = False
         self.bracketLevel = 0
         self.curlyLevel = 0
         self.parenLevel = 0
         self.hookLevel = 0
-        
+
         # Configure strict ecmascript 3 mode
         self.ecma3OnlyMode = False
-        
+
         # Status flag during parsing
         self.inForLoopInit = False
 
@@ -98,16 +98,16 @@ class StaticContext(object):
 def Script(tokenizer, staticContext):
     """Parses the toplevel and def bodies."""
     node = Statements(tokenizer, staticContext)
-    
+
     # change type from "block" to "script" for script root
     node.type = "script"
-    
+
     # copy over data from compiler context
     # node.functions = staticContext.functions
     # node.variables = staticContext.variables
 
     return node
-    
+
 
 def nest(tokenizer, staticContext, node, func, end=None):
     """Statement stack and nested statement handler."""
@@ -115,7 +115,7 @@ def nest(tokenizer, staticContext, node, func, end=None):
     node = func(tokenizer, staticContext)
     staticContext.statementStack.pop()
     end and tokenizer.mustMatch(end)
-    
+
     return node
 
 
@@ -154,7 +154,7 @@ def Block(tokenizer, staticContext):
     tokenizer.mustMatch("left_curly")
     node = Statements(tokenizer, staticContext)
     tokenizer.mustMatch("right_curly")
-    
+
     return node
 
 
@@ -166,24 +166,24 @@ def Statement(tokenizer, staticContext):
 
     # Cases for statements ending in a right curly return early, avoiding the
     # common semicolon insertion magic after this switch.
-    
+
     if tokenType == "function":
         # "declared_form" extends functions of staticContext, "statement_form" doesn'tokenizer.
         if len(staticContext.statementStack) > 1:
             kind = "statement_form"
         else:
             kind = "declared_form"
-        
+
         return FunctionDefinition(tokenizer, staticContext, True, kind)
-        
-        
+
+
     elif tokenType == "left_curly":
         node = Statements(tokenizer, staticContext)
         tokenizer.mustMatch("right_curly")
-        
+
         return node
-        
-        
+
+
     elif tokenType == "if":
         node = builder.IF_build(tokenizer)
         builder.IF_setCondition(node, ParenExpression(tokenizer, staticContext))
@@ -198,10 +198,10 @@ def Statement(tokenizer, staticContext):
 
         staticContext.statementStack.pop()
         builder.IF_finish(node)
-        
+
         return node
-        
-        
+
+
     elif tokenType == "switch":
         # This allows CASEs after a "default", which is in the standard.
         node = builder.SWITCH_build(tokenizer)
@@ -210,23 +210,23 @@ def Statement(tokenizer, staticContext):
 
         tokenizer.mustMatch("left_curly")
         tokenType = tokenizer.get()
-        
+
         while tokenType != "right_curly":
             if tokenType == "default":
                 if node.defaultIndex >= 0:
                     raise SyntaxError("More than one switch default", tokenizer)
-                    
+
                 childNode = builder.DEFAULT_build(tokenizer)
                 builder.SWITCH_setDefaultIndex(node, len(node)-1)
                 tokenizer.mustMatch("colon")
                 builder.DEFAULT_initializeStatements(childNode, tokenizer)
-                
+
                 while True:
                     tokenType=tokenizer.peek(True)
                     if tokenType == "case" or tokenType == "default" or tokenType == "right_curly":
                         break
                     builder.DEFAULT_addStatement(childNode, Statement(tokenizer, staticContext))
-                
+
                 builder.DEFAULT_finish(childNode)
 
             elif tokenType == "case":
@@ -240,7 +240,7 @@ def Statement(tokenizer, staticContext):
                     if tokenType == "case" or tokenType == "default" or tokenType == "right_curly":
                         break
                     builder.CASE_addStatement(childNode, Statement(tokenizer, staticContext))
-                
+
                 builder.CASE_finish(childNode)
 
             else:
@@ -253,32 +253,32 @@ def Statement(tokenizer, staticContext):
         builder.SWITCH_finish(node)
 
         return node
-        
+
 
     elif tokenType == "for":
         node = builder.FOR_build(tokenizer)
         forBlock = None
-        
+
         if tokenizer.match("identifier") and tokenizer.token.value == "each":
             builder.FOR_rebuildForEach(node)
-            
+
         tokenizer.mustMatch("left_paren")
         tokenType = tokenizer.peek()
         childNode = None
-        
+
         if tokenType != "semicolon":
             staticContext.inForLoopInit = True
-            
+
             if tokenType == "var" or tokenType == "const":
                 tokenizer.get()
                 childNode = Variables(tokenizer, staticContext)
-            
+
             elif tokenType == "let":
                 tokenizer.get()
 
                 if tokenizer.peek() == "left_paren":
                     childNode = LetBlock(tokenizer, staticContext, False)
-                    
+
                 else:
                     # Let in for head, we need to add an implicit block
                     # around the rest of the for.
@@ -286,72 +286,72 @@ def Statement(tokenizer, staticContext):
                     staticContext.blockId += 1
                     staticContext.statementStack.append(forBlock)
                     childNode = Variables(tokenizer, staticContext, forBlock)
-                
+
             else:
                 childNode = Expression(tokenizer, staticContext)
-            
+
             staticContext.inForLoopInit = False
 
         if childNode and tokenizer.match("in"):
             builder.FOR_rebuildForIn(node)
             builder.FOR_setObject(node, Expression(tokenizer, staticContext), forBlock)
-            
+
             if childNode.type == "var" or childNode.type == "let":
                 if len(childNode) != 1:
                     raise SyntaxError("Invalid for..in left-hand side", tokenizer)
 
                 builder.FOR_setIterator(node, childNode, forBlock)
-                
+
             else:
                 builder.FOR_setIterator(node, childNode, forBlock)
 
         else:
             builder.FOR_setSetup(node, childNode)
             tokenizer.mustMatch("semicolon")
-            
+
             if node.isEach:
                 raise SyntaxError("Invalid for each..in loop", tokenizer)
-                
+
             if tokenizer.peek() == "semicolon":
                 builder.FOR_setCondition(node, None)
             else:
                 builder.FOR_setCondition(node, Expression(tokenizer, staticContext))
-            
+
             tokenizer.mustMatch("semicolon")
-            
+
             if tokenizer.peek() == "right_paren":
                 builder.FOR_setUpdate(node, None)
-            else:    
+            else:
                 builder.FOR_setUpdate(node, Expression(tokenizer, staticContext))
-        
+
         tokenizer.mustMatch("right_paren")
         builder.FOR_setBody(node, nest(tokenizer, staticContext, node, Statement))
-        
+
         if forBlock:
             builder.BLOCK_finish(forBlock)
             staticContext.statementStack.pop()
-    
+
         builder.FOR_finish(node)
         return node
-        
-        
+
+
     elif tokenType == "while":
         node = builder.WHILE_build(tokenizer)
-        
+
         builder.WHILE_setCondition(node, ParenExpression(tokenizer, staticContext))
         builder.WHILE_setBody(node, nest(tokenizer, staticContext, node, Statement))
         builder.WHILE_finish(node)
-        
-        return node                                    
-        
-        
+
+        return node
+
+
     elif tokenType == "do":
         node = builder.DO_build(tokenizer)
-        
+
         builder.DO_setBody(node, nest(tokenizer, staticContext, node, Statement, "while"))
         builder.DO_setCondition(node, ParenExpression(tokenizer, staticContext))
         builder.DO_finish(node)
-        
+
         if not staticContext.ecma3OnlyMode:
             # <script language="JavaScript"> (without version hints) may need
             # automatic semicolon insertion without a newline after do-while.
@@ -360,17 +360,17 @@ def Statement(tokenizer, staticContext):
             return node
 
         # NO RETURN
-      
-      
+
+
     elif tokenType == "break" or tokenType == "continue":
         if tokenType == "break":
-            node = builder.BREAK_build(tokenizer) 
+            node = builder.BREAK_build(tokenizer)
         else:
             node = builder.CONTINUE_build(tokenizer)
 
         if tokenizer.peekOnSameLine() == "identifier":
             tokenizer.get()
-            
+
             if tokenType == "break":
                 builder.BREAK_setLabel(node, tokenizer.token.value)
             else:
@@ -388,21 +388,21 @@ def Statement(tokenizer, staticContext):
                 if getattr(statementStack[i], "label", None) == label:
                     break
 
-            # 
+            #
             # Both break and continue to label need to be handled specially
             # within a labeled loop, so that they target that loop. If not in
             # a loop, then break targets its labeled statement. Labels can be
             # nested so we skip all labels immediately enclosing the nearest
             # non-label statement.
-            # 
+            #
             while i < len(statementStack) - 1 and statementStack[i+1].type == "label":
                 i += 1
-                
+
             if i < len(statementStack) - 1 and getattr(statementStack[i+1], "isLoop", False):
                 i += 1
             elif tokenType == "continue":
                 raise SyntaxError("Invalid continue", tokenizer)
-                
+
         else:
             while True:
                 i -= 1
@@ -414,67 +414,67 @@ def Statement(tokenizer, staticContext):
 
                 if getattr(statementStack[i], "isLoop", False) or (tokenType == "break" and statementStack[i].type == "switch"):
                     break
-        
+
         if tokenType == "break":
             builder.BREAK_finish(node)
         else:
             builder.CONTINUE_finish(node)
-        
+
         # NO RETURN
 
 
     elif tokenType == "try":
         node = builder.TRY_build(tokenizer)
         builder.TRY_setTryBlock(node, Block(tokenizer, staticContext))
-        
+
         while tokenizer.match("catch"):
             childNode = builder.CATCH_build(tokenizer)
             tokenizer.mustMatch("left_paren")
             nextTokenType = tokenizer.get()
-            
+
             if nextTokenType == "left_bracket" or nextTokenType == "left_curly":
                 # Destructured catch identifiers.
                 tokenizer.unget()
                 exception = DestructuringExpression(tokenizer, staticContext, True)
-            
+
             elif nextTokenType == "identifier":
                 exception = builder.CATCH_wrapException(tokenizer)
-            
+
             else:
                 raise SyntaxError("Missing identifier in catch", tokenizer)
-                
+
             builder.CATCH_setException(childNode, exception)
-            
+
             if tokenizer.match("if"):
                 if staticContext.ecma3OnlyMode:
                     raise SyntaxError("Illegal catch guard", tokenizer)
-                    
+
                 if node.getChildrenLength() > 0 and not node.getUnrelatedChildren()[0].guard:
                     raise SyntaxError("Guarded catch after unguarded", tokenizer)
-                    
+
                 builder.CATCH_setGuard(childNode, Expression(tokenizer, staticContext))
-                
+
             else:
                 builder.CATCH_setGuard(childNode, None)
-            
+
             tokenizer.mustMatch("right_paren")
-            
+
             builder.CATCH_setBlock(childNode, Block(tokenizer, staticContext))
             builder.CATCH_finish(childNode)
-            
+
             builder.TRY_addCatch(node, childNode)
-        
+
         builder.TRY_finishCatches(node)
-        
+
         if tokenizer.match("finally"):
             builder.TRY_setFinallyBlock(node, Block(tokenizer, staticContext))
-            
+
         if node.getChildrenLength() == 0 and not hasattr(node, "finallyBlock"):
             raise SyntaxError("Invalid try statement", tokenizer)
-            
+
         builder.TRY_finish(node)
         return node
-        
+
 
     elif tokenType == "catch" or tokenType == "finally":
         raise SyntaxError(tokens[tokenType] + " without preceding try", tokenizer)
@@ -482,16 +482,16 @@ def Statement(tokenizer, staticContext):
 
     elif tokenType == "throw":
         node = builder.THROW_build(tokenizer)
-        
+
         builder.THROW_setException(node, Expression(tokenizer, staticContext))
         builder.THROW_finish(node)
-        
+
         # NO RETURN
 
 
     elif tokenType == "return":
         node = returnOrYield(tokenizer, staticContext)
-        
+
         # NO RETURN
 
 
@@ -507,31 +507,31 @@ def Statement(tokenizer, staticContext):
 
     elif tokenType == "var" or tokenType == "const":
         node = Variables(tokenizer, staticContext)
-        
+
         # NO RETURN
-        
+
 
     elif tokenType == "let":
         if tokenizer.peek() == "left_paren":
             node = LetBlock(tokenizer, staticContext, True)
         else:
             node = Variables(tokenizer, staticContext)
-        
+
         # NO RETURN
-        
+
 
     elif tokenType == "debugger":
         node = builder.DEBUGGER_build(tokenizer)
-        
+
         # NO RETURN
-        
+
 
     elif tokenType == "newline" or tokenType == "semicolon":
         node = builder.SEMICOLON_build(tokenizer)
 
         builder.SEMICOLON_setExpression(node, None)
         builder.SEMICOLON_finish(tokenizer)
-        
+
         return node
 
 
@@ -543,21 +543,21 @@ def Statement(tokenizer, staticContext):
             if tokenType == "colon":
                 label = tokenizer.token.value
                 statementStack = staticContext.statementStack
-               
+
                 i = len(statementStack)-1
                 while i >= 0:
                     if getattr(statementStack[i], "label", None) == label:
                         raise SyntaxError("Duplicate label", tokenizer)
-                    
+
                     i -= 1
-               
+
                 tokenizer.get()
                 node = builder.LABEL_build(tokenizer)
-                
+
                 builder.LABEL_setLabel(node, label)
                 builder.LABEL_setStatement(node, nest(tokenizer, staticContext, node, Statement))
                 builder.LABEL_finish(node)
-                
+
                 return node
 
         # Expression statement.
@@ -567,9 +567,9 @@ def Statement(tokenizer, staticContext):
         builder.SEMICOLON_setExpression(node, Expression(tokenizer, staticContext))
         node.end = node.expression.end
         builder.SEMICOLON_finish(node)
-        
+
         # NO RETURN
-        
+
 
     MagicalSemicolon(tokenizer)
     return node
@@ -579,13 +579,13 @@ def Statement(tokenizer, staticContext):
 def MagicalSemicolon(tokenizer):
     if tokenizer.line == tokenizer.token.line:
         tokenType = tokenizer.peekOnSameLine()
-    
+
         if tokenType != "end" and tokenType != "newline" and tokenType != "semicolon" and tokenType != "right_curly":
             raise SyntaxError("Missing ; before statement", tokenizer)
-    
+
     tokenizer.match("semicolon")
 
-    
+
 
 def returnOrYield(tokenizer, staticContext):
     builder = staticContext.builder
@@ -594,13 +594,13 @@ def returnOrYield(tokenizer, staticContext):
     if tokenType == "return":
         if not staticContext.inFunction:
             raise SyntaxError("Return not in function", tokenizer)
-            
+
         node = builder.RETURN_build(tokenizer)
-        
+
     else:
         if not staticContext.inFunction:
             raise SyntaxError("Yield not in function", tokenizer)
-            
+
         staticContext.isGenerator = True
         node = builder.YIELD_build(tokenizer)
 
@@ -611,7 +611,7 @@ def returnOrYield(tokenizer, staticContext):
             staticContext.hasReturnWithValue = True
         else:
             builder.YIELD_setValue(node, AssignExpression(tokenizer, staticContext))
-        
+
     elif tokenType == "return":
         staticContext.hasEmptyReturn = True
 
@@ -631,14 +631,14 @@ def returnOrYield(tokenizer, staticContext):
 def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
     builder = staticContext.builder
     functionNode = builder.FUNCTION_build(tokenizer)
-    
+
     if tokenizer.match("identifier"):
         builder.FUNCTION_setName(functionNode, tokenizer.token.value)
     elif requireName:
         raise SyntaxError("Missing def identifier", tokenizer)
 
     tokenizer.mustMatch("left_paren")
-    
+
     if not tokenizer.match("right_paren"):
         builder.FUNCTION_initParams(functionNode, tokenizer)
         prevParamNode = None
@@ -648,21 +648,21 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
                 # Destructured formal parameters.
                 tokenizer.unget()
                 paramNode = DestructuringExpression(tokenizer, staticContext)
-                
+
             elif tokenType == "identifier":
                 paramNode = builder.FUNCTION_wrapParam(tokenizer)
-                
+
             else:
                 raise SyntaxError("Missing formal parameter", tokenizer)
-                
+
             builder.FUNCTION_addParam(functionNode, tokenizer, paramNode)
             builder.COMMENTS_add(paramNode, prevParamNode, tokenizer.getComments())
-        
+
             if not tokenizer.match("comma"):
                 break
-                
+
             prevParamNode = paramNode
-        
+
         tokenizer.mustMatch("right_paren")
 
     # Do we have an expression closure or a normal body?
@@ -672,7 +672,7 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
         tokenizer.unget()
 
     childContext = StaticContext(True, builder)
-    
+
     if staticContext.inFunction:
         # Inner functions don't reset block numbering, only functions at
         # the top level of the program do.
@@ -682,7 +682,7 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
         builder.FUNCTION_setBody(functionNode, AssignExpression(tokenizer, staticContext))
         if staticContext.isGenerator:
             raise SyntaxError("Generator returns a value", tokenizer)
-            
+
     else:
         builder.FUNCTION_hoistVars(childContext.blockId)
         builder.FUNCTION_setBody(functionNode, Script(tokenizer, childContext))
@@ -692,39 +692,39 @@ def FunctionDefinition(tokenizer, staticContext, requireName, functionForm):
 
     functionNode.end = tokenizer.token.end
     functionNode.functionForm = functionForm
-    
+
     builder.COMMENTS_add(functionNode.body, functionNode.body, tokenizer.getComments())
     builder.FUNCTION_finish(functionNode, staticContext)
-    
+
     return functionNode
 
 
 
 def Variables(tokenizer, staticContext, letBlock=None):
     """Parses a comma-separated list of var declarations (and maybe initializations)."""
-    
+
     builder = staticContext.builder
     if tokenizer.token.type == "var":
         build = builder.VAR_build
         addDecl = builder.VAR_addDecl
         finish = builder.VAR_finish
         childContext = staticContext
-            
+
     elif tokenizer.token.type == "const":
         build = builder.CONST_build
         addDecl = builder.CONST_addDecl
         finish = builder.CONST_finish
         childContext = staticContext
-        
+
     elif tokenizer.token.type == "let" or tokenizer.token.type == "left_paren":
         build = builder.LET_build
         addDecl = builder.LET_addDecl
         finish = builder.LET_finish
-        
+
         if not letBlock:
             statementStack = staticContext.statementStack
             i = len(statementStack) - 1
-            
+
             # a BLOCK *must* be found.
             while statementStack[i].type != "block":
                 i -= 1
@@ -738,12 +738,12 @@ def Variables(tokenizer, staticContext, letBlock=None):
 
             else:
                 childContext = statementStack[i]
-            
+
         else:
             childContext = letBlock
 
     node = build(tokenizer)
-    
+
     while True:
         tokenType = tokenizer.get()
 
@@ -752,20 +752,20 @@ def Variables(tokenizer, staticContext, letBlock=None):
         # IDENTIFIER to mean both identifier declarations and destructured
         # declarations.
         childNode = builder.DECL_build(tokenizer)
-        
+
         if tokenType == "left_bracket" or tokenType == "left_curly":
             # Pass in childContext if we need to add each pattern matched into
             # its variables, else pass in staticContext.
             # Need to unget to parse the full destructured expression.
             tokenizer.unget()
             builder.DECL_setNames(childNode, DestructuringExpression(tokenizer, staticContext, True, childContext))
-            
+
             if staticContext.inForLoopInit and tokenizer.peek() == "in":
                 addDecl(node, childNode, childContext)
-                if tokenizer.match("comma"): 
+                if tokenizer.match("comma"):
                     continue
-                else: 
-                    break            
+                else:
+                    break
 
             tokenizer.mustMatch("assign")
             if tokenizer.token.assignOp:
@@ -775,15 +775,15 @@ def Variables(tokenizer, staticContext, letBlock=None):
             builder.DECL_setInitializer(childNode, AssignExpression(tokenizer, staticContext))
             builder.DECL_finish(childNode)
             addDecl(node, childNode, childContext)
-            
+
             # Copy over names for variable list
             # for nameNode in childNode.names:
             #    childContext.variables.add(nameNode.value)
-                
-            if tokenizer.match("comma"): 
+
+            if tokenizer.match("comma"):
                 continue
-            else: 
-                break            
+            else:
+                break
 
         if tokenType != "identifier":
             raise SyntaxError("Missing variable name", tokenizer)
@@ -800,16 +800,16 @@ def Variables(tokenizer, staticContext, letBlock=None):
             builder.DECL_setInitializer(childNode, initializerNode)
 
         builder.DECL_finish(childNode)
-        
+
         # If we directly use the node in "let" constructs
         # if not hasattr(childContext, "variables"):
         #    childContext.variables = set()
-        
+
         # childContext.variables.add(childNode.name)
-        
+
         if not tokenizer.match("comma"):
             break
-        
+
     finish(node)
     return node
 
@@ -837,7 +837,7 @@ def LetBlock(tokenizer, staticContext, isStatement):
     if isStatement:
         childNode = Block(tokenizer, staticContext)
         builder.LETBLOCK_setBlock(node, childNode)
-        
+
     else:
         childNode = AssignExpression(tokenizer, staticContext)
         builder.LETBLOCK_setExpression(node, childNode)
@@ -849,7 +849,7 @@ def LetBlock(tokenizer, staticContext, isStatement):
 def checkDestructuring(tokenizer, staticContext, node, simpleNamesOnly=None, data=None):
     if node.type == "array_comp":
         raise SyntaxError("Invalid array comprehension left-hand side", tokenizer)
-        
+
     if node.type != "array_init" and node.type != "object_init":
         return
 
@@ -858,23 +858,23 @@ def checkDestructuring(tokenizer, staticContext, node, simpleNamesOnly=None, dat
     for child in node:
         if child == None:
             continue
-        
+
         if child.type == "property_init":
             lhs = child[0]
             rhs = child[1]
         else:
             lhs = None
             rhs = None
-            
-    
+
+
         if rhs and (rhs.type == "array_init" or rhs.type == "object_init"):
             checkDestructuring(tokenizer, staticContext, rhs, simpleNamesOnly, data)
-            
+
         if lhs and simpleNamesOnly:
             # In declarations, lhs must be simple names
             if lhs.type != "identifier":
                 raise SyntaxError("Missing name in pattern", tokenizer)
-                
+
             elif data:
                 childNode = builder.DECL_build(tokenizer)
                 builder.DECL_setName(childNode, lhs.value)
@@ -885,7 +885,7 @@ def checkDestructuring(tokenizer, staticContext, node, simpleNamesOnly=None, dat
 
                 # Each pattern needs to be added to variables.
                 # data.variables.add(childNode.name)
-                
+
 
 # JavaScript 1.7
 def DestructuringExpression(tokenizer, staticContext, simpleNamesOnly=None, data=None):
@@ -903,20 +903,20 @@ def GeneratorExpression(tokenizer, staticContext, expression):
     builder.GENERATOR_setExpression(node, expression)
     builder.GENERATOR_setTail(node, comprehensionTail(tokenizer, staticContext))
     builder.GENERATOR_finish(node)
-    
+
     return node
 
 
 # JavaScript 1.7 Comprehensions Tails (Generators / Arrays)
 def comprehensionTail(tokenizer, staticContext):
     builder = staticContext.builder
-    
+
     # tokenizer.token.type must be "for"
     body = builder.COMPTAIL_build(tokenizer)
-    
+
     while True:
         node = builder.FOR_build(tokenizer)
-        
+
         # Comprehension tails are always for..in loops.
         builder.FOR_rebuildForIn(node)
         if tokenizer.match("identifier"):
@@ -927,7 +927,7 @@ def comprehensionTail(tokenizer, staticContext):
                 tokenizer.unget()
 
         tokenizer.mustMatch("left_paren")
-        
+
         tokenType = tokenizer.get()
         if tokenType == "left_bracket" or tokenType == "left_curly":
             tokenizer.unget()
@@ -937,7 +937,7 @@ def comprehensionTail(tokenizer, staticContext):
         elif tokenType == "identifier":
             # Removed variable/declaration substructure in Python port.
             # Variable declarations are not allowed here. So why process them in such a way?
-            
+
             # declaration = builder.DECL_build(tokenizer)
             # builder.DECL_setName(declaration, tokenizer.token.value)
             # builder.DECL_finish(declaration)
@@ -948,18 +948,18 @@ def comprehensionTail(tokenizer, staticContext):
 
             # Don't add to variables since the semantics of comprehensions is
             # such that the variables are in their own def when desugared.
-            
+
             identifier = builder.PRIMARY_build(tokenizer, "identifier")
             builder.FOR_setIterator(node, identifier)
 
         else:
             raise SyntaxError("Missing identifier", tokenizer)
-        
+
         tokenizer.mustMatch("in")
         builder.FOR_setObject(node, Expression(tokenizer, staticContext))
         tokenizer.mustMatch("right_paren")
         builder.COMPTAIL_addFor(body, node)
-        
+
         if not tokenizer.match("for"):
             break
 
@@ -987,10 +987,10 @@ def ParenExpression(tokenizer, staticContext):
     if tokenizer.match("for"):
         if node.type == "yield" and not node.parenthesized:
             raise SyntaxError("Yield " + err, tokenizer)
-            
+
         if node.type == "comma" and not node.parenthesized:
             raise SyntaxError("Generator " + err, tokenizer)
-            
+
         node = GeneratorExpression(tokenizer, staticContext, node)
 
     tokenizer.mustMatch("right_paren")
@@ -1012,10 +1012,10 @@ def Expression(tokenizer, staticContext):
             if childNode.type == "yield" and not childNode.parenthesized:
                 raise SyntaxError("Yield expression must be parenthesized", tokenizer)
             builder.COMMA_addOperand(node, AssignExpression(tokenizer, staticContext))
-            
+
             if not tokenizer.match("comma"):
                 break
-                
+
         builder.COMMA_finish(node)
 
     return node
@@ -1044,7 +1044,7 @@ def AssignExpression(tokenizer, staticContext):
         pass
     else:
         raise SyntaxError("Bad left-hand side of assignment", tokenizer)
-        
+
     builder.ASSIGN_setAssignOp(node, tokenizer.token.assignOp)
     builder.ASSIGN_addOperand(node, lhs)
     builder.ASSIGN_addOperand(node, AssignExpression(tokenizer, staticContext))
@@ -1069,20 +1069,20 @@ def ConditionalExpression(tokenizer, staticContext):
         staticContext.inForLoopInit = False
         builder.HOOK_setThenPart(node, AssignExpression(tokenizer, staticContext))
         staticContext.inForLoopInit = oldLoopInit
-        
+
         if not tokenizer.match("colon"):
             raise SyntaxError("Missing : after ?", tokenizer)
-            
+
         builder.HOOK_setElsePart(node, AssignExpression(tokenizer, staticContext))
         builder.HOOK_finish(node)
 
     return node
-    
+
 
 def OrExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = AndExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("or"):
         childNode = builder.OR_build(tokenizer)
         builder.OR_addOperand(childNode, node)
@@ -1110,7 +1110,7 @@ def AndExpression(tokenizer, staticContext):
 def BitwiseOrExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = BitwiseXorExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("bitwise_or"):
         childNode = builder.BITWISEOR_build(tokenizer)
         builder.BITWISEOR_addOperand(childNode, node)
@@ -1124,7 +1124,7 @@ def BitwiseOrExpression(tokenizer, staticContext):
 def BitwiseXorExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = BitwiseAndExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("bitwise_xor"):
         childNode = builder.BITWISEXOR_build(tokenizer)
         builder.BITWISEXOR_addOperand(childNode, node)
@@ -1152,7 +1152,7 @@ def BitwiseAndExpression(tokenizer, staticContext):
 def EqualityExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = RelationalExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("eq") or tokenizer.match("ne") or tokenizer.match("strict_eq") or tokenizer.match("strict_ne"):
         childNode = builder.EQUALITY_build(tokenizer)
         builder.EQUALITY_addOperand(childNode, node)
@@ -1178,7 +1178,7 @@ def RelationalExpression(tokenizer, staticContext):
         builder.RELATIONAL_addOperand(childNode, ShiftExpression(tokenizer, staticContext))
         builder.RELATIONAL_finish(childNode)
         node = childNode
-    
+
     staticContext.inForLoopInit = oldLoopInit
 
     return node
@@ -1187,7 +1187,7 @@ def RelationalExpression(tokenizer, staticContext):
 def ShiftExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = AddExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("lsh") or tokenizer.match("rsh") or tokenizer.match("ursh"):
         childNode = builder.SHIFT_build(tokenizer)
         builder.SHIFT_addOperand(childNode, node)
@@ -1201,7 +1201,7 @@ def ShiftExpression(tokenizer, staticContext):
 def AddExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = MultiplyExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("plus") or tokenizer.match("minus"):
         childNode = builder.ADD_build(tokenizer)
         builder.ADD_addOperand(childNode, node)
@@ -1215,7 +1215,7 @@ def AddExpression(tokenizer, staticContext):
 def MultiplyExpression(tokenizer, staticContext):
     builder = staticContext.builder
     node = UnaryExpression(tokenizer, staticContext)
-    
+
     while tokenizer.match("mul") or tokenizer.match("div") or tokenizer.match("mod"):
         childNode = builder.MULTIPLY_build(tokenizer)
         builder.MULTIPLY_addOperand(childNode, node)
@@ -1233,7 +1233,7 @@ def UnaryExpression(tokenizer, staticContext):
     if tokenType in ["delete", "void", "typeof", "not", "bitwise_not", "plus", "minus"]:
         node = builder.UNARY_build(tokenizer)
         builder.UNARY_addOperand(node, UnaryExpression(tokenizer, staticContext))
-    
+
     elif tokenType == "increment" or tokenType == "decrement":
         # Prefix increment/decrement.
         node = builder.UNARY_build(tokenizer)
@@ -1262,13 +1262,13 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
     if tokenizer.match("new"):
         node = builder.MEMBER_build(tokenizer)
         builder.MEMBER_addOperand(node, MemberExpression(tokenizer, staticContext, False))
-        
+
         if tokenizer.match("left_paren"):
             builder.MEMBER_rebuildNewWithArgs(node)
             builder.MEMBER_addOperand(node, ArgumentList(tokenizer, staticContext))
-        
+
         builder.MEMBER_finish(node)
-    
+
     else:
         node = PrimaryExpression(tokenizer, staticContext)
 
@@ -1276,7 +1276,7 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
         tokenType = tokenizer.get()
         if tokenType == "end":
             break
-        
+
         if tokenType == "dot":
             childNode = builder.MEMBER_build(tokenizer)
             builder.MEMBER_addOperand(childNode, node)
@@ -1307,20 +1307,20 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
 def ArgumentList(tokenizer, staticContext):
     builder = staticContext.builder
     node = builder.LIST_build(tokenizer)
-    
+
     if tokenizer.match("right_paren", True):
         return node
-    
-    while True:    
+
+    while True:
         childNode = AssignExpression(tokenizer, staticContext)
         if childNode.type == "yield" and not childNode.parenthesized and tokenizer.peek() == "comma":
             raise SyntaxError("Yield expression must be parenthesized", tokenizer)
-            
+
         if tokenizer.match("for"):
             childNode = GeneratorExpression(tokenizer, staticContext, childNode)
             if len(node) > 1 or tokenizer.peek(True) == "comma":
                 raise SyntaxError("Generator expression must be parenthesized", tokenizer)
-        
+
         builder.LIST_addOperand(node, childNode)
         if not tokenizer.match("comma"):
             break
@@ -1344,7 +1344,7 @@ def PrimaryExpression(tokenizer, staticContext):
             tokenType = tokenizer.peek(True)
             if tokenType == "right_bracket":
                 break
-        
+
             if tokenType == "comma":
                 tokenizer.get()
                 builder.ARRAYINIT_addElement(node, None)
@@ -1362,7 +1362,7 @@ def PrimaryExpression(tokenizer, staticContext):
             builder.ARRAYCOMP_setExpression(childNode, node[0])
             builder.ARRAYCOMP_setTail(childNode, comprehensionTail(tokenizer, staticContext))
             node = childNode
-        
+
         builder.COMMENTS_add(node, node, tokenizer.getComments())
         tokenizer.mustMatch("right_bracket")
         builder.PRIMARY_finish(node)
@@ -1375,26 +1375,26 @@ def PrimaryExpression(tokenizer, staticContext):
                 tokenType = tokenizer.get()
                 tokenValue = getattr(tokenizer.token, "value", None)
                 comments = tokenizer.getComments()
-                
+
                 if tokenValue in ("get", "set") and tokenizer.peek() == "identifier":
                     if staticContext.ecma3OnlyMode:
                         raise SyntaxError("Illegal property accessor", tokenizer)
-                        
+
                     fd = FunctionDefinition(tokenizer, staticContext, True, "expressed_form")
                     builder.OBJECTINIT_addProperty(node, fd)
-                    
+
                 else:
                     if tokenType == "identifier" or tokenType == "number" or tokenType == "string":
                         id = builder.PRIMARY_build(tokenizer, "identifier")
                         builder.PRIMARY_finish(id)
-                        
+
                     elif tokenType == "right_curly":
                         if staticContext.ecma3OnlyMode:
                             raise SyntaxError("Illegal trailing ,", tokenizer)
-                            
+
                         tokenizer.unget()
                         break
-                            
+
                     else:
                         if tokenValue in jasy.js.tokenize.Lang.keywords:
                             id = builder.PRIMARY_build(tokenizer, "identifier")
@@ -1402,7 +1402,7 @@ def PrimaryExpression(tokenizer, staticContext):
                         else:
                             print("Value is '%s'" % tokenValue)
                             raise SyntaxError("Invalid property name", tokenizer)
-                    
+
                     if tokenizer.match("colon"):
                         childNode = builder.PROPERTYINIT_build(tokenizer)
                         builder.COMMENTS_add(childNode, node, comments)
@@ -1410,14 +1410,14 @@ def PrimaryExpression(tokenizer, staticContext):
                         builder.PROPERTYINIT_addOperand(childNode, AssignExpression(tokenizer, staticContext))
                         builder.PROPERTYINIT_finish(childNode)
                         builder.OBJECTINIT_addProperty(node, childNode)
-                        
+
                     else:
                         # Support, e.g., |var {staticContext, y} = o| as destructuring shorthand
                         # for |var {staticContext: staticContext, y: y} = o|, per proposed JS2/ES4 for JS1.8.
                         if tokenizer.peek() != "comma" and tokenizer.peek() != "right_curly":
                             raise SyntaxError("Missing : after property", tokenizer)
                         builder.OBJECTINIT_addProperty(node, id)
-                    
+
                 if not tokenizer.match("comma"):
                     break
 

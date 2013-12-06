@@ -12,7 +12,7 @@ import jasy.vcs.Repository as Repository
 class Tests(unittest.TestCase):
 
     def test_git_urls(self):
-        
+
         self.assertEqual(Repository.isUrl("foo"), False)
         self.assertEqual(Repository.isUrl("../bar"), False)
         self.assertEqual(Repository.isUrl("https://faz.net?x=1"), False)
@@ -26,7 +26,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(Repository.isUrl("git://gitorious.org/qt/qtdeclarative.git"), True)
         self.assertEqual(Repository.isUrl("git+git://gitorious.org/qt/qtdeclarative.git"), True)
         self.assertEqual(Repository.isUrl("https://git.gitorious.org/qt/qtdeclarative.git"), True)
-    
+
 
 
 if __name__ == '__main__':

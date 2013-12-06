@@ -14,40 +14,40 @@ import jasy.js.api.Comment as Comment
 # be valid tokens (e.g. !== is acceptable because its prefixes are the valid
 # tokens != and !).
 operatorNames = {
-    '<'   : 'lt', 
-    '>'   : 'gt', 
-    '<='  : 'le', 
-    '>='  : 'ge', 
-    '!='  : 'ne', 
-    '!'   : 'not', 
-    '=='  : 'eq', 
+    '<'   : 'lt',
+    '>'   : 'gt',
+    '<='  : 'le',
+    '>='  : 'ge',
+    '!='  : 'ne',
+    '!'   : 'not',
+    '=='  : 'eq',
 
-    '+'   : 'plus', 
-    '*'   : 'mul', 
-    '-'   : 'minus', 
-    '/'   : 'div', 
-    '%'   : 'mod', 
+    '+'   : 'plus',
+    '*'   : 'mul',
+    '-'   : 'minus',
+    '/'   : 'div',
+    '%'   : 'mod',
     '$'   : 'dollar',
     '^'   : 'carat',
     '|'   : 'pipe',
 
-    ','   : 'comma', 
-    ';'   : 'semicolon', 
-    ':'   : 'colon', 
-    '='   : 'assign', 
+    ','   : 'comma',
+    ';'   : 'semicolon',
+    ':'   : 'colon',
+    '='   : 'assign',
     '&'   : 'ampersand',
-    '~'   : 'tilde',  
+    '~'   : 'tilde',
     '@'   : 'at',
     '?'   : 'questionmark',
 
-    '&&'  : 'and', 
-    '||'  : 'or', 
+    '&&'  : 'and',
+    '||'  : 'or',
 
-    ')'   : 'right_paren', 
-    '('   : 'left_paren', 
-    '['   : 'left_bracket', 
-    ']'   : 'right_bracket', 
-    '{'   : 'left_curly', 
+    ')'   : 'right_paren',
+    '('   : 'left_paren',
+    '['   : 'left_bracket',
+    ']'   : 'right_bracket',
+    '{'   : 'left_curly',
     '}'   : 'right_curly'
 }
 
@@ -60,7 +60,7 @@ assignOperators = ["+", "-", "*", "/", "%", "?"]
 # Classes
 #
 
-class Token: 
+class Token:
     __slots__ = ["type", "start", "line", "assignOp", "end", "value", "unit", "quote"]
 
 
@@ -92,7 +92,7 @@ class Tokenizer(object):
         # We need to set scanOperand to true here because the first thing
         # might be a regexp.
         return self.peek(True) == "end"
-        
+
 
     def match(self, tokenType, scanOperand=False):
         return self.get(scanOperand) == tokenType or self.unget()
@@ -101,13 +101,13 @@ class Tokenizer(object):
     def mustMatch(self, tokenType):
         if not self.match(tokenType):
             raise ParseError("Missing " + tokenType, self.fileId, self.line)
-            
+
         return self.token
 
 
     def find(self, anyOf):
         point = self.save()
-        
+
         while True:
             tokenType = self.get()
             if tokenType in anyOf:
@@ -128,7 +128,7 @@ class Tokenizer(object):
         else:
             tokenType = self.get(scanOperand)
             self.unget()
-            
+
         return tokenType
 
 
@@ -137,14 +137,14 @@ class Tokenizer(object):
         tokenType = self.peek(scanOperand)
         self.scanNewlines = False
         return tokenType
-        
+
 
     def getComments(self):
         if self.comments:
             comments = self.comments
             self.comments = []
             return comments
-            
+
         return None
 
 
@@ -155,21 +155,21 @@ class Tokenizer(object):
 
         # Whether this is the first called as happen on start parsing a file (eat leading comments/white space)
         startOfFile = self.cursor is 0
-        
+
         indent = ""
 
         self.skippedSpaces = False
         self.skippedComments = False
         self.skippedLineBreaks = False
-        
+
         while (True):
             if len(input) > self.cursor:
                 ch = input[self.cursor]
             else:
                 break
-                
+
             self.cursor += 1
-            
+
             if len(input) > self.cursor:
                 next = input[self.cursor]
             else:
@@ -179,7 +179,7 @@ class Tokenizer(object):
                 self.line += 1
                 indent = ""
                 self.skippedLineBreaks = True
-                
+
             elif ch == "/" and next == "*":
                 self.cursor += 1
                 self.skippedComments = True
@@ -194,36 +194,36 @@ class Tokenizer(object):
                 else:
                     # comment for maybe multiple following lines of code, but not that important (no visual white space divider)
                     mode = "block"
-                    
+
                 while (True):
                     try:
                         ch = input[self.cursor]
                         self.cursor += 1
                     except IndexError:
                         raise ParseError("Unterminated comment", self.fileId, self.line)
-                        
+
                     if ch == "*":
                         next = input[self.cursor]
                         if next == "/":
                             text += "*/"
                             self.cursor += 1
                             break
-                            
+
                     elif ch == "\n":
                         self.line += 1
-                        
+
                     text += ch
-                    
-                
+
+
                 # Filter escaping on slash-star combinations in comment text
                 text = text.replace("*\/", "*/")
-                
+
                 try:
                     self.comments.append(Comment.Comment(text, mode, commentStartLine, indent, self.fileId))
                 except Comment.CommentException as commentError:
                     Console.error("Ignoring comment in %s: %s", self.fileId, commentError)
-                    
-                    
+
+
             elif ch == "/" and next == "/":
                 self.cursor += 1
                 self.skippedComments = True
@@ -236,7 +236,7 @@ class Tokenizer(object):
                 else:
                     # comment for maybe multiple following lines of code, but not that important (no visual white space divider)
                     mode = "block"
-                    
+
                 while (True):
                     try:
                         ch = input[self.cursor]
@@ -248,9 +248,9 @@ class Tokenizer(object):
                     if ch == "\n":
                         self.line += 1
                         break
-                    
+
                     text += ch
-                    
+
                 try:
                     self.comments.append(Comment.Comment(text, mode, self.line-1, "", self.fileId))
                 except Comment.CommentException:
@@ -279,17 +279,17 @@ class Tokenizer(object):
                 self.cursor += 1
                 if not (ch >= "0" and ch <= "9"):
                     break
-                
+
             self.cursor -= 1
             token.value = float(input[token.start:self.cursor])
-            
+
         elif ch == "x" or ch == "X":
             while(True):
                 ch = input[self.cursor]
                 self.cursor += 1
                 if not ((ch >= "0" and ch <= "9") or (ch >= "a" and ch <= "f") or (ch >= "A" and ch <= "F")):
                     break
-                    
+
             self.cursor -= 1
             token.value = input[token.start:self.cursor]
 
@@ -299,8 +299,8 @@ class Tokenizer(object):
 
         unit = self.lexUnit()
         if unit:
-            token.unit = unit            
-    
+            token.unit = unit
+
 
     def lexNumber(self, ch):
         token = self.token
@@ -311,12 +311,12 @@ class Tokenizer(object):
         while(True):
             ch = input[self.cursor]
             self.cursor += 1
-            
+
             if ch == "." and not floating:
                 floating = True
                 ch = input[self.cursor]
                 self.cursor += 1
-                
+
             if not (ch >= "0" and ch <= "9"):
                 break
 
@@ -357,7 +357,7 @@ class Tokenizer(object):
         token = self.token
         input = self.source
         next = input[self.cursor]
-        
+
         if next >= "0" and next <= "9":
             while (True):
                 ch = input[self.cursor]
@@ -397,7 +397,7 @@ class Tokenizer(object):
 
         token.value = str(input[token.start+1:self.cursor-1])
         token.quote = input[token.start]
-    
+
 
     def lexOp(self, ch):
         token = self.token
@@ -409,13 +409,13 @@ class Tokenizer(object):
                 next = input[self.cursor]
             except IndexError:
                 break
-                
+
             if (op + next) in operatorNames:
                 self.cursor += 1
                 op += next
             else:
                 break
-        
+
         try:
             next = input[self.cursor]
         except IndexError:
@@ -426,7 +426,7 @@ class Tokenizer(object):
             token.type = "assign"
             token.assignOp = operatorNames[op]
             op += "="
-            
+
         elif op in operatorNames:
             token.type = operatorNames[op]
             token.assignOp = None
@@ -457,7 +457,7 @@ class Tokenizer(object):
 
                 if not ((ch >= "a" and ch <= "z") or (ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9") or ch == "_" or ch == "-" or ch == "."):
                     break
-                    
+
         except IndexError:
             self.cursor += 1
             pass
@@ -481,7 +481,7 @@ class Tokenizer(object):
             # Check whether next character would be the required curly brace
             if input[self.cursor] != "}":
                 raise ParseError("Invalid variable block identifier: %s" % identifier, self.fileId, self.line)
-        
+
             # Jump over closing curly brace
             self.cursor += 1
 
@@ -502,7 +502,7 @@ class Tokenizer(object):
 
 
     def get(self, scanOperand=False):
-        """ 
+        """
         It consumes input *only* if there is no lookahead.
         Dispatches to the appropriate lexing function depending on the input.
         """
@@ -570,30 +570,30 @@ class Tokenizer(object):
 
         elif ch >= "1" and ch <= "9":
             self.lexNumber(ch)
-        
+
         elif ch == "0":
             self.lexZeroNumber(ch)
-        
+
         elif ch == '"' or ch == "'":
             self.lexString(ch)
-        
+
         else:
             raise ParseError("Illegal token: %s (Code: %s) - Next: %s (Code: %s)" % (ch, ord(ch), nextCh, nextCh and ord(nextCh)), self.fileId, self.line)
 
         token.end = self.cursor
         return token.type
-        
+
 
     def unget(self):
         """ Match depends on unget returning undefined."""
         self.lookahead += 1
-        
-        if self.lookahead == 4: 
+
+        if self.lookahead == 4:
             raise ParseError("PANIC: too much lookahead!", self.fileId, self.line)
-        
+
         self.tokenIndex = (self.tokenIndex - 1) & 3
-        
-    
+
+
     def save(self):
         return {
             "cursor" : self.cursor,
@@ -607,7 +607,7 @@ class Tokenizer(object):
             "skippedLineBreaks": self.skippedLineBreaks
         }
 
-    
+
     def rewind(self, point):
         self.cursor = point["cursor"]
         self.tokenIndex = point["tokenIndex"]

@@ -12,7 +12,7 @@ import jasy.core.Text as Text
 class Tests(unittest.TestCase):
 
     def test_markdown(self):
-        
+
         self.assertEqual(Text.markdownToHtml("*emphased*"), "<p><em>emphased</em></p>\n")
         self.assertEqual(Text.markdownToHtml("**bold**"), "<p><strong>bold</strong></p>\n")
 
@@ -33,7 +33,7 @@ Paragraph 2
 - Item 1
 - Item 2
 - Item 3
-        """), "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>\n")        
+        """), "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>\n")
 
         self.assertEqual(Text.markdownToHtml("""
 1. Item 1
@@ -46,7 +46,7 @@ Paragraph 2
 ```js
 alert("hello");
 ```
-        """)), 
+        """)),
 '''<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">alert</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">);</span>
 </pre></div>
 </td></tr></table>

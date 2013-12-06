@@ -24,13 +24,13 @@ class Tests(unittest.TestCase):
 
     def test_if_trueish(self):
         self.assertEqual(self.process('if (true) x++;'), 'x++;')
-        
+
     def test_if_falsy(self):
         self.assertEqual(self.process('if (false) x++;'), '')
 
     def test_if_equal_true(self):
         self.assertEqual(self.process('if (2==2) x++;'), 'x++;')
-        
+
     def test_if_equal_false(self):
         self.assertEqual(self.process('if (2==3) x++;'), '')
 
@@ -39,31 +39,31 @@ class Tests(unittest.TestCase):
 
     def test_if_identical_false(self):
         self.assertEqual(self.process('if (2===3) x++;'), '')
-        
+
     def test_if_not_trueish(self):
         self.assertEqual(self.process('if (!true) x++;'), '')
-        
+
     def test_if_not_falsy(self):
         self.assertEqual(self.process('if (!false) x++;'), 'x++;')
-        
+
     def test_if_trueish_and_trueish(self):
         self.assertEqual(self.process('if (true && true) x++;'), 'x++;')
 
     def test_if_falsy_and_falsy(self):
         self.assertEqual(self.process('if (false && false) x++;'), '')
-        
+
     def test_if_trueish_and_falsy(self):
         self.assertEqual(self.process('if (true && false) x++;'), '')
 
     def test_if_falsy_and_trueish(self):
         self.assertEqual(self.process('if (false && true) x++;'), '')
-        
+
     def test_if_unknown_and_falsy(self):
         self.assertEqual(self.process('if (x && false) x++;'), '')
 
     def test_if_unknown_and_trueish(self):
         self.assertEqual(self.process('if (x && true) x++;'), 'if(x&&true)x++;')
-        
+
     def test_if_falsy_and_unknown(self):
         self.assertEqual(self.process('if (false && x) x++;'), '')
 
@@ -98,4 +98,4 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)    
+    unittest.TextTestRunner(verbosity=2).run(suite)

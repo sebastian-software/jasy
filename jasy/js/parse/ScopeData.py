@@ -7,7 +7,7 @@
 class ScopeData():
     """
     Used by core/Variables.py to store the resulting statistics data efficiently. Contains information about:
-    
+
     * Declared Variables (declared)
     * Modified Variables (modified)
     * Shared
@@ -66,9 +66,8 @@ class ScopeData():
 
     def increment(self, name, by=1):
         """ Small helper so simplify adding variables to "accessed" dict """
-        
+
         if not name in self.accessed:
             self.accessed[name] = by
         else:
             self.accessed[name] += by
-            

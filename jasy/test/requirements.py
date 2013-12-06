@@ -21,7 +21,7 @@ class Tests(unittest.TestCase):
         return open(os.path.join(path, fileName), mode="r", encoding="utf-8").read()
 
     def createjpyaml(self, path, requirements):
-        content = """name: myproject  
+        content = """name: myproject
 requires:"""
         for r in requirements:
             content += r
@@ -129,7 +129,7 @@ requires:"""
         subrequires = requires[0].getRequires()
         self.assertEqual(subrequires[0].getName(), "framework")
 
-    
+
     def test_subrequirement_classes(self):
         session = Session.Session()
         session.addProject(self.createProject([self.createRequirement("engine", [self.createSubRequirement("framework")])]))

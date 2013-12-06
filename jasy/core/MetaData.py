@@ -5,30 +5,30 @@
 #
 
 class MetaData:
-    """ 
-    Data structure to hold all meta information. 
-    
-    A instance of this class is typically created by processing all 
+    """
+    Data structure to hold all meta information.
+
+    A instance of this class is typically created by processing all
     meta data relevant tags of all doc comments in the given node structure.
 
-    Hint: Must be a clean data class without links to other 
+    Hint: Must be a clean data class without links to other
     systems for optiomal cachability using Pickle
     """
-    
+
     __slots__ = [ "requires", "optionals", "breaks", "assets" ]
-    
-    
+
+
     def __init__(self, tree):
         self.requires = set()
         self.optionals = set()
         self.breaks = set()
         self.assets = set()
-        
+
         self.parse(tree)
-        
-        
+
+
     def parse(self, node):
-        """ 
+        """
         The internal inspection routine to add relevant data from comments
         """
 
@@ -54,7 +54,7 @@ class MetaData:
             if node.name == "asset":
                 self.assets.add(value)
 
-    
+
         # Parse comments
         comments = getattr(node, "comments", None)
         if comments:

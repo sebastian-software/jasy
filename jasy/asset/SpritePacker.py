@@ -18,7 +18,7 @@ import os, json, itertools, math
 class PackerScore():
 
     def __init__(self, sheets, external):
-        
+
         self.sheets = sheets
         self.external = external
 
@@ -30,7 +30,7 @@ class PackerScore():
         self.area = int(sum([s.area for s in sheets]) * 0.0001)
         self.exArea = sum([s.area for s in external]) * 0.0001
         self.usedArea = int(sum([s.usedArea for s in sheets]) * 0.0001)
-        self.count = len(sheets) 
+        self.count = len(sheets)
 
         # we only factor in left out images
         # if their size is less than 50% of the total spritesheet size we have right now
@@ -89,7 +89,7 @@ class SpritePacker():
         self.files = []
         self.types = types
         self.dataFormat = 'yaml';
-    
+
     def clear(self):
         """
         Removes all generated sprite files found in the base directory
@@ -97,19 +97,19 @@ class SpritePacker():
 
         Console.info("Cleaning sprite files...")
         Console.indent()
-        
+
         for dirPath, dirNames, fileNames in os.walk(self.base):
             for fileName in fileNames:
                 if fileName.startswith("jasysprite"):
                     filePath = os.path.join(dirPath, fileName)
                     Console.debug("Removing file: %s", filePath)
                     os.remove(filePath)
-        
+
         Console.outdent()
 
     def addDir(self, directory, recursive=False):
         """Adds all images within a directory to the sprite packer."""
-        
+
         path = os.path.join(self.base, directory)
         if not os.path.exists(path):
             return
@@ -131,18 +131,18 @@ class SpritePacker():
                 # Filter dotted directories like .git, .bzr, .hg, .svn, etc.
                 if dirName.startswith("."):
                     dirNames.remove(dirName)
-                    
+
             relDirPath = os.path.relpath(dirPath, path)
 
             # Add all the files within the dir
             for fileName in fileNames:
-                
+
                 if fileName[0] == "." or fileName.split('.')[-1] not in self.types or fileName.startswith('jasysprite'):
                     continue
-                    
+
                 relPath = os.path.normpath(os.path.join(relDirPath, fileName)).replace(os.sep, "/")
                 fullPath = os.path.join(dirPath, fileName)
-                
+
                 self.addFile(relPath, fullPath)
 
 
@@ -152,7 +152,7 @@ class SpritePacker():
         fileType = relPath.split('.')[-1]
         if fileType not in self.types:
             raise Exception('Unsupported image format: %s' % fileType)
-        
+
         # Load image and grab required information
         img = ImgInfo(fullPath)
         w, h = img.getSize()
@@ -179,7 +179,7 @@ class SpritePacker():
             'count': 10000000000000,
             'eff': 0
         }
-        
+
         # Sort Functions
         def sortHeight(block):
             return (block.w, block.h, block.image.checksum)
@@ -252,17 +252,17 @@ class SpritePacker():
             Console.debug('- ' + str(i))
 
         sheets, external = scores[0].data()
-        
+
         if external:
             for block in external:
                 Console.info('Ignored file %s (%dx%dpx)' % (block.image.relPath, block.w, block.h))
-        
+
         return sheets, len(scores)
 
 
     def pack(self, width=1024, height=1024, sort=None, silent=False, rotate=(0, 0)):
         """Packs all sprites within the pack into sheets of the given size."""
-        
+
         Console.debug('Packing %d images...' % len(self.files))
 
         allBlocks = []
@@ -273,7 +273,7 @@ class SpritePacker():
             f.block = None
 
             if not f.checksum in checkBlocks:
-                
+
                 # check for rotation
                 ow = f.width
                 oh = f.height
@@ -287,7 +287,7 @@ class SpritePacker():
                 elif rotate[1] != 0:
                     if oh / ow > rotate[1]:
                         rot = True
-                
+
                 w, h = (oh, ow) if rot else (ow, oh)
 
                 checkBlocks[f.checksum] = f.block = Block(w, h, f, rot)
@@ -340,7 +340,7 @@ class SpritePacker():
             # Pack stuff
             packer = BlockPacker(width, height)
             packer.fit(sortedSprites)
-            
+
             # Filter fit vs non-fit blocks
             blocks = [s for s in sortedSprites if not s.fit]
             fitBlocks = [s for s in sortedSprites if s.fit]
@@ -357,7 +357,7 @@ class SpritePacker():
             else:
                 Console.debug('Only one image fit into sheet, ignoring.')
                 extraBlocks.append(fitBlocks[0])
-                
+
             Console.outdent()
 
         Console.debug('Packed %d images into %d sheets. %d images were found to be too big and did not fit.' % (fitted, len(sheets), len(extraBlocks)))
@@ -372,10 +372,10 @@ class SpritePacker():
 
     def generate(self, path='', autorotate=False, debug=False):
         """Generate sheets/variants"""
-        
+
         Console.info('Generating sprite sheet variants...')
         Console.indent()
-        
+
         sheets, count = self.packBest(autorotate)
 
         # Write PNG files
@@ -388,7 +388,7 @@ class SpritePacker():
             # Export
             sheet.write(os.path.join(self.base, path, name), debug)
             data[name] = sheet.export()
-            
+
         Console.outdent()
 
         # Generate JSON/YAML
@@ -403,14 +403,14 @@ class SpritePacker():
 
         Console.info('Packing sprites in: %s' % os.path.join(self.base, path))
         Console.indent()
-        
+
         self.files = []
         self.addDir(path, recursive=recursive)
         Console.info('Found %d images' % len(self.files))
 
         if len(self.files) > 0:
             self.generate(path, autorotate, debug)
-            
+
         Console.outdent()
 
 

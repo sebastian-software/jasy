@@ -20,16 +20,16 @@ def extractSummary(text):
         matched = paragraphExtract.match(text)
     except TypeError:
         matched = None
-        
+
     if matched:
         summary = matched.group(1)
         if summary is not None:
             if not summary.endswith((".", "!", "?")):
                 summary = summary.strip() + "."
             return summary
-            
+
     else:
         Console.warn("Unable to extract summary for: %s", text)
-    
+
     return None
-    
+

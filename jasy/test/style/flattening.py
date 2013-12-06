@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
               .rule2a{
                 color: green;
               }
-            
+
               .rule2b{
                 color: blue;
               }
@@ -95,7 +95,7 @@ class Tests(unittest.TestCase):
                 color: green;
               }
             }
-          
+
             .rule2b{
               @media print{
                 color: blue;
@@ -117,7 +117,7 @@ class Tests(unittest.TestCase):
                 color: red;
               }
             }
-  
+
             .rule5{
               color: white;
             }
@@ -151,7 +151,7 @@ class Tests(unittest.TestCase):
             }
             '''), 'body{color:black;font-weight:normal;}')
 
-        
+
     def test_merge_media_and_selector(self):
         self.assertEqual(self.process('''
             @media print{
@@ -193,5 +193,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

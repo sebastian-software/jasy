@@ -5,7 +5,7 @@
 
 #
 # License: MPL 1.1/GPL 2.0/LGPL 2.1
-# Authors: 
+# Authors:
 #   - Brendan Eich <brendan@mozilla.org> (Original JavaScript) (2004-2010)
 #   - Sebastian Werner <info@sebastian-werner.net> (Python Port) (2010)
 #
@@ -14,28 +14,28 @@ import jasy.js.parse.Node
 
 class VanillaBuilder:
     """The vanilla AST builder."""
-    
+
     def COMMENTS_add(self, currNode, prevNode, comments):
         if not comments:
             return
-            
+
         currComments = []
         prevComments = []
         for comment in comments:
             # post comments - for previous node
             if comment.context == "inline":
                 prevComments.append(comment)
-                
+
             # all other comment styles are attached to the current one
             else:
                 currComments.append(comment)
-        
+
         # Merge with previously added ones
         if hasattr(currNode, "comments"):
             currNode.comments.extend(currComments)
         else:
             currNode.comments = currComments
-        
+
         if prevNode:
             if hasattr(prevNode, "comments"):
                 prevNode.comments.extend(prevComments)
@@ -44,7 +44,7 @@ class VanillaBuilder:
         else:
             # Don't loose the comment in tree (if not previous node is there, attach it to this node)
             currNode.comments.extend(prevComments)
-    
+
     def IF_build(self, tokenizer):
         return jasy.js.parse.Node.Node(tokenizer, "if")
 
@@ -218,7 +218,7 @@ class VanillaBuilder:
     def CATCH_build(self, tokenizer):
         node = jasy.js.parse.Node.Node(tokenizer, "catch")
         return node
-        
+
     def CATCH_wrapException(self, tokenizer):
         node = jasy.js.parse.Node.Node(tokenizer, "exception")
         node.value = tokenizer.token.value
@@ -318,7 +318,7 @@ class VanillaBuilder:
                 node.type = "getter"
             else:
                 node.type = "setter"
-                
+
         return node
 
     def FUNCTION_setName(self, node, identifier):
@@ -326,15 +326,15 @@ class VanillaBuilder:
 
     def FUNCTION_initParams(self, node, tokenizer):
         node.append(jasy.js.parse.Node.Node(tokenizer, "list"), "params")
-        
+
     def FUNCTION_wrapParam(self, tokenizer):
         param = jasy.js.parse.Node.Node(tokenizer)
         param.value = tokenizer.token.value
         return param
-        
+
     def FUNCTION_addParam(self, node, tokenizer, expression):
         node.params.append(expression)
-        
+
     def FUNCTION_setExpressionClosure(self, node, expressionClosure):
         node.expressionClosure = expressionClosure
 
@@ -343,7 +343,7 @@ class VanillaBuilder:
         params = getattr(node, "params", None)
         #if params:
         #    statement.params = [param.value for param in params]
-            
+
         node.append(statement, "body")
 
     def FUNCTION_hoistVars(self, x):
@@ -565,7 +565,7 @@ class VanillaBuilder:
             tokenizer.token.type = "unary_plus"
         elif tokenizer.token.type == "minus":
             tokenizer.token.type = "unary_minus"
-            
+
         return jasy.js.parse.Node.Node(tokenizer)
 
     def UNARY_addOperand(self, node, childNode):
@@ -597,7 +597,7 @@ class VanillaBuilder:
         node = jasy.js.parse.Node.Node(tokenizer, tokenType)
         if tokenType in ("identifier", "string", "regexp", "number"):
             node.value = tokenizer.token.value
-            
+
         return node
 
     def PRIMARY_finish(self, node):
@@ -614,13 +614,13 @@ class VanillaBuilder:
 
     def ARRAYCOMP_build(self, tokenizer):
         return jasy.js.parse.Node.Node(tokenizer, "array_comp")
-    
+
     def ARRAYCOMP_setExpression(self, node, expression):
         node.append(expression, "expression")
-    
+
     def ARRAYCOMP_setTail(self, node, childNode):
         node.append(childNode, "tail")
-    
+
     def ARRAYCOMP_finish(self, node):
         pass
 
@@ -674,4 +674,3 @@ class VanillaBuilder:
 
     def setHoists(self, id, vds):
         pass
-        

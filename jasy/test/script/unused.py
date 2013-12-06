@@ -14,7 +14,7 @@ import jasy.js.output.Compressor as Compressor
 import jasy.js.clean.Unused as Unused
 
 
-        
+
 class Tests(unittest.TestCase):
 
     def process(self, code):
@@ -33,7 +33,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=4;func(x)}'
-        )        
+        )
 
     def test_var_multi_last(self):
         """ y is unused. Removes list entry. """
@@ -45,7 +45,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=4;func(x)}'
-        )        
+        )
 
     def test_var_multi_first(self):
         """ y is unused. Removes list entry."""
@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=4;func(x)}'
-        )        
+        )
 
     def test_var_dep_closure(self):
         """ Removes y first and in a second run removes x as well. """
@@ -72,7 +72,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){}'
         )
-        
+
 
     def test_var_ief(self):
         """  """
@@ -85,8 +85,8 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){(function(){return 4+5})()}'
-        )        
-        
+        )
+
     def test_var_ief_middle(self):
         """  """
         self.assertEqual(self.process(
@@ -99,7 +99,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){(function(){return 4+5})()}'
         )
-        
+
     def test_var_ief_end(self):
         """  """
         self.assertEqual(self.process(
@@ -111,9 +111,9 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){(function(){return 4+5})()}'
-        )        
-        
-        
+        )
+
+
 
     def test_var_ief_noparens(self):
         """  """
@@ -126,7 +126,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){(function(){return 4+5})()}'
-        )        
+        )
 
     def test_var_ief_noparens_middle(self):
         """  """
@@ -152,13 +152,13 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){(function(){return 4+5})()}'
-        )        
-        
-        
-        
+        )
+
+
+
     def test_object(self):
         """ Non expressions must be protected with parens. """
-        
+
         self.assertEqual(self.process(
         '''
         function abc() {
@@ -167,9 +167,9 @@ class Tests(unittest.TestCase):
            };
         };
         '''
-        ), 
+        ),
         'function abc(){({x:1})};')
-        
+
     def test_object_multi(self):
         """ Non expressions must be protected with parens. """
 
@@ -183,8 +183,8 @@ class Tests(unittest.TestCase):
            };
         };
         '''
-        ), 
-        'function abc(){({x:1});({x:2})};')        
+        ),
+        'function abc(){({x:1});({x:2})};')
 
     def test_object_multi_others(self):
         """ Non expressions must be protected with parens. """
@@ -200,7 +200,7 @@ class Tests(unittest.TestCase):
            return str;
         };
         '''
-        ), 
+        ),
         'function abc(){({x:1});var str="hello";({x:2});return str};')
 
     def test_var_dep_blocks(self):
@@ -224,7 +224,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function a(x,y){return y+1}'
-        )        
+        )
 
     def test_params_middle(self):
         """ y is unused but could not be removed. """
@@ -236,7 +236,7 @@ class Tests(unittest.TestCase):
             '''),
             'function a(x,y,z){return x+z}'
         )
-        
+
     def test_params_last(self):
         """ y is unused and can be removed """
         self.assertEqual(self.process(
@@ -246,7 +246,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function a(x){return x+1}'
-        )        
+        )
 
     def test_func_named_called(self):
         self.assertEqual(self.process(
@@ -257,7 +257,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){function x(){}x()}'
-        )        
+        )
 
     def test_func_named_unused(self):
         self.assertEqual(self.process(
@@ -268,7 +268,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){}'
         )
-        
+
     def test_func_called(self):
         self.assertEqual(self.process(
             '''
@@ -278,7 +278,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=function(){};x()}'
-        )        
+        )
 
     def test_func_unused(self):
         self.assertEqual(self.process(
@@ -294,13 +294,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             '''
             function wrapper() {
-              (function x() { 
-                return 3; 
+              (function x() {
+                return 3;
               })();
             }
             '''),
             'function wrapper(){(function(){return 3})()}'
-        )        
+        )
 
     def test_var_vs_named(self):
         self.assertEqual(self.process(
@@ -308,11 +308,11 @@ class Tests(unittest.TestCase):
             function wrapper() {
               var x = function y() {};
               x();
-            }            
+            }
             '''),
             'function wrapper(){var x=function(){};x()}'
-        ) 
-        
+        )
+
     def test_var_vs_named_inner(self):
         self.assertEqual(self.process(
             '''
@@ -321,11 +321,11 @@ class Tests(unittest.TestCase):
                 setTimeout(y, 100);
               };
               x();
-            }            
+            }
             '''),
             'function wrapper(){var x=function y(){setTimeout(y,100)};x()}'
-        )        
-        
+        )
+
     def test_named_vs_var(self):
         self.assertEqual(self.process(
             '''
@@ -338,7 +338,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){y()}'
-        )               
+        )
 
     def test_var_same_inner_outer(self):
         self.assertEqual(self.process(
@@ -357,10 +357,10 @@ class Tests(unittest.TestCase):
             function x() {};
             function wrapper() {
               function x() {};
-            }            
+            }
             '''),
             'function x(){};function wrapper(){}'
-        )        
+        )
 
     def test_global_var(self):
         self.assertEqual(self.process(
@@ -368,16 +368,16 @@ class Tests(unittest.TestCase):
             var x = 4;
             '''),
             'var x=4;'
-        )        
-        
+        )
+
     def test_global_func(self):
         self.assertEqual(self.process(
             '''
             function x() {};
             '''),
             'function x(){};'
-        )        
-        
+        )
+
     def test_func_expressed_form_named_inner(self):
         self.assertEqual(self.process(
             '''
@@ -390,7 +390,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=function y(){y()};x()}'
-        )        
+        )
 
     def test_func_expressed_form_named(self):
         self.assertEqual(self.process(
@@ -405,27 +405,27 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var x=function(){z()};x()}'
-        )        
-    
+        )
+
     def test_outdent_multi_var(self):
         self.assertEqual(self.process(
             '''
             var a = function d(b) {
               var c = d(), x = 3, y = x, z = y;
-            };            
+            };
             '''),
             'var a=function d(){d()};'
-        )        
+        )
 
     def test_outdent_multi_var(self):
         self.assertEqual(self.process(
             '''
             var a = function d(b) {
               var c = d(), g = 3, x = b(), y = x, z = y;
-            };            
+            };
             '''),
             'var a=function d(b){d();b()};'
-        )        
+        )
 
     def test_outdent(self):
         self.assertEqual(self.process(
@@ -436,8 +436,8 @@ class Tests(unittest.TestCase):
             '''),
             'var a=function d(){d()};'
         )
-        
-        
+
+
 
 
 

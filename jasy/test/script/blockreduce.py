@@ -64,8 +64,8 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function x(){if(something){x++;while(warm);return x}y++}'
-        ) 
-               
+        )
+
 
     def test_elseinline_throw(self):
         self.assertEqual(self.process(
@@ -86,8 +86,8 @@ class Tests(unittest.TestCase):
             '''),
             'function x(){if(something){x++;while(warm);throw new Error("Wrong data!")}y++}'
         )
-        
-    
+
+
     def test_elseinline_elseif(self):
         self.assertEqual(self.process(
             '''
@@ -108,12 +108,12 @@ class Tests(unittest.TestCase):
                 while(c);
                 return 2;
               }
-            }            
+            }
             '''),
             'function x(){if(something){while(a);return 0}if(xxx){while(b);return 1}while(c);return 2}'
         )
-        
-        
+
+
     def test_elseinline_elseif_nolast(self):
         self.assertEqual(self.process(
             '''
@@ -133,12 +133,12 @@ class Tests(unittest.TestCase):
               {
                 i++;
               }
-            }            
+            }
             '''),
             'function x(){if(something){while(a);return 0}if(xxx){while(b);return 1}i++}'
-        ) 
-        
-        
+        )
+
+
     def test_elseinline_cascaded(self):
         self.assertEqual(self.process(
             '''
@@ -175,9 +175,9 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function x(){if(something){while(x);return 0}if(xxx){if(test2()){while(x);return 1}if(test3()){while(x);return 2}while(x);return 3}while(x);return 4}'
-        )        
+        )
 
-     
+
 
     def test_if_deep_if(self):
         self.assertEqual(self.process(
@@ -195,7 +195,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'if(something)for(g in h){x++;if(otherthing){y++;while(bar);}}'
-        )        
+        )
 
     def test_loop_brackets(self):
         self.assertEqual(self.process(
@@ -229,7 +229,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(code){switch(code){case null:case 0:return true;case -1:return false}}'
-        )        
+        )
 
     def test_if_else_cascaded(self):
         self.assertEqual(self.process(
@@ -255,7 +255,7 @@ class Tests(unittest.TestCase):
             '''),
             'something?condition?(somethingCase1a(),somethingCase1b()):(somethingCase2a(),somethingCase2b()):(otherStuffA(),otherStuffB());'
         )
-        
+
     def test_if_else_expression(self):
         self.assertEqual(self.process(
             '''
@@ -269,7 +269,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'foo?x++:x--;'
-        )        
+        )
 
     def test_if_else_both_empty(self):
         self.assertEqual(self.process(
@@ -299,14 +299,14 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){if(something)while(x);}'
-        )        
+        )
 
     def test_if_else_while_if(self):
         self.assertEqual(self.process(
             '''
             if(first)
             {
-              while(second) 
+              while(second)
               {
                 if(x)
                 {
@@ -320,7 +320,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'if(first)while(second)x&&x++;else y++;'
-        )        
+        )
 
     def test_if_empty_else(self):
         self.assertEqual(self.process(
@@ -332,13 +332,13 @@ class Tests(unittest.TestCase):
               }
               else
               {
-                while(x); 
+                while(x);
               }
             }
             '''),
             'function wrapper(){if(!something)while(x);}'
-        )      
-        
+        )
+
     def test_if_empty_else_two(self):
         self.assertEqual(self.process(
             '''
@@ -349,12 +349,12 @@ class Tests(unittest.TestCase):
               }
               else
               {
-                while(x); 
+                while(x);
               }
             }
             '''),
             'function wrapper(){if(!(something&&otherthing))while(x);}'
-        )          
+        )
 
     def test_ifoptimize_assign_late(self):
         self.assertEqual(self.process(
@@ -375,7 +375,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'something&&(x=4);'
-        )        
+        )
 
     def test_ifoptimize_crazy(self):
         self.assertEqual(self.process(
@@ -387,7 +387,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             'if(something){}'),
             'something;'
-        )        
+        )
 
     def test_mergeassign_assign(self):
         self.assertEqual(self.process(
@@ -414,7 +414,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'x+=something?3:4;'
-        )        
+        )
 
     def test_mergeassign_object(self):
         self.assertEqual(self.process(
@@ -427,7 +427,7 @@ class Tests(unittest.TestCase):
             '''),
             'obj.foo.bar=something?"hello":"world";'
         )
-    
+
     def test_mergereturn(self):
         self.assertEqual(self.process(
             '''
@@ -447,7 +447,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             'x=(4*5)+4;'),
             'x=24;'
-        )        
+        )
 
     def test_parens_assign(self):
         self.assertEqual(self.process(
@@ -463,7 +463,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'while(fn=readyList[i++])fn.call(document,jQuery);'
-        )        
+        )
 
     def test_parens_directexec(self):
         self.assertEqual(self.process(
@@ -475,13 +475,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             'var x = (new some.special.Item).setText("Hello World");'),
             'var x=(new some.special.Item).setText("Hello World");'
-        )        
+        )
 
     def test_parens_new_args(self):
         self.assertEqual(self.process(
             'var x = new some.special.Item("param").setText("Hello World");'),
             'var x=new some.special.Item("param").setText("Hello World");'
-        )        
+        )
 
     def test_parens_return(self):
         self.assertEqual(self.process(
@@ -492,10 +492,10 @@ class Tests(unittest.TestCase):
             '''),
             'function x(){return somemethod()&&othermethod()!=null}'
         )
-        
+
     def test_parens_numberoper(self):
         self.assertEqual(self.process('''(23).pad(2);'''), '(23).pad(2);')
-        
+
     def test_single_command_if_block(self):
         self.assertEqual(self.process(
             '''
@@ -551,5 +551,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)    
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

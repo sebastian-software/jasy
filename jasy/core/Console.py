@@ -42,7 +42,7 @@ def colorize(text, color="red"):
     # Note: Cygwin has a different platform value
     if sys.platform == "win32":
         return text
-        
+
     entry = __colors[color]
     return "%s%s%s" % (entry[0], text, entry[1])
 
@@ -56,7 +56,7 @@ __level = 0
 
 def __format(text):
     global __level
-    
+
     if __level == 0 or text == "":
         return text
     elif __level == 1:
@@ -77,17 +77,17 @@ def indent():
 
 def outdent(all=False):
     """
-    Decrements global indenting level. 
+    Decrements global indenting level.
     Should be called whenever leaving a structural logging section.
     """
 
     global __level
-    
+
     if all:
         __level = 0
     else:
         __level -= 1
-    
+
 def error(text, *argv):
     """Outputs an error message (visible by default)"""
 
@@ -113,7 +113,7 @@ def header(title):
 
     global __level
     __level = 0
-    
+
     logging.info("")
     logging.info(colorize(colorize(">>> %s" % title.upper(), "blue"), "bold"))
     logging.info(colorize("-------------------------------------------------------------------------------", "blue"))

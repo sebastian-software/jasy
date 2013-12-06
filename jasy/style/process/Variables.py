@@ -122,7 +122,7 @@ def __computeOperation(first, second, parent, operator, values):
 
                     repl.append(childRepl)
 
-                return repl                
+                return repl
 
             else:
                 raise VariableError("For list operations both lists have to have the same length!", parent)
@@ -141,7 +141,7 @@ def __computeOperation(first, second, parent, operator, values):
             repl.append(childRepl)
 
         return repl
- 
+
 
     elif first.type != "list" and second.type == "list":
         repl = Node.Node(type="list")
@@ -210,7 +210,7 @@ def __computeRecurser(node, scope, values):
 
     # Update values of variable
     elif (node.type == "declaration" and hasattr(node, "initializer")) or node.type == "assign":
-        
+
         if node.type == "declaration":
             name = node.name
             init = node.initializer
@@ -232,7 +232,7 @@ def __computeRecurser(node, scope, values):
             else:
                 raise VariableError("Got no valid return value to replace operation", node)
 
-        else:        
+        else:
             # Update internal variable mapping
             values[name] = init
 
@@ -263,12 +263,12 @@ def __computeRecurser(node, scope, values):
 
             value = values[name]
             if value is None:
-                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)          
+                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)
 
             if value.type == "identifier":
                 return value.value
             elif value.type == "string":
-                return value.value  
+                return value.value
             elif value.type == "number":
                 return "%s%s" % (value.value, getattr(value, "unit", ""))
             else:

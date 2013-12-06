@@ -25,16 +25,16 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 
 def enableCrossDomain():
     # See also: https://developer.mozilla.org/En/HTTP_Access_Control
-    
+
     # Allow requests from all locations
     cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-   
+
     # Allow all methods supported by urlfetch
     cherrypy.response.headers["Access-Control-Allow-Methods"] = "GET, POST, HEAD, PUT, DELETE"
-    
+
     # Allow cache-control and our custom headers
-    cherrypy.response.headers["Access-Control-Allow-Headers"] = "Cache-Control, X-Proxy-Authorization, X-Requested-With"    
-    
+    cherrypy.response.headers["Access-Control-Allow-Headers"] = "Cache-Control, X-Proxy-Authorization, X-Requested-With"
+
     # Cache allowence for cross domain for 7 days
     cherrypy.response.headers["Access-Control-Max-Age"] = "604800"
 
@@ -45,7 +45,7 @@ def findIndex(path):
         rel = os.path.join(path, candidate)
         if os.path.exists(rel):
             return candidate
-            
+
     return None
 
 def noBodyProcess():
@@ -59,13 +59,13 @@ cherrypy.tools.noBodyProcess = cherrypy.Tool('before_request_body', noBodyProces
 #
 
 class Proxy(object):
-    
+
     def __init__(self, id, config):
         self.id = id
         self.config = config
         self.host = getKey(config, "host")
         self.auth = getKey(config, "auth")
-        
+
         self.enableDebug = getKey(config, "debug", False)
         self.enableMirror = getKey(config, "mirror", False)
         self.enableOffline = getKey(config, "offline", False)
@@ -74,22 +74,22 @@ class Proxy(object):
             self.mirror = Cache.Cache(os.getcwd(), ".jasy/mirror-%s" % self.id, hashkeys=True)
 
         Console.info('Proxy "%s" => "%s" [debug:%s|mirror:%s|offline:%s]', self.id, self.host, self.enableDebug, self.enableMirror, self.enableOffline)
-        
-        
+
+
     # These headers will be blocked between header copies
     __blockHeaders = CaseInsensitiveDict.fromkeys([
-        "content-encoding", 
-        "content-length", 
-        "connection", 
-        "keep-alive", 
-        "proxy-authenticate", 
-        "proxy-authorization", 
-        "transfer-encoding", 
-        "remote-addr", 
+        "content-encoding",
+        "content-length",
+        "connection",
+        "keep-alive",
+        "proxy-authenticate",
+        "proxy-authorization",
+        "transfer-encoding",
+        "remote-addr",
         "host"
     ])
-    
-    
+
+
     @cherrypy.expose
     @cherrypy.tools.noBodyProcess()
     def default(self, *args, **query):
@@ -97,18 +97,18 @@ class Proxy(object):
         This method returns the content of existing files on the file system.
         Query string might be used for cache busting and are otherwise ignored.
         """
-        
+
         url = self.config["host"] + "/".join(args)
         result = None
         body = None
-        
+
         # Try using offline mirror if feasible
         if self.enableMirror and cherrypy.request.method == "GET":
             mirrorId = "%s[%s]" % (url, json.dumps(query, separators=(',',':'), sort_keys=True))
             result = self.mirror.read(mirrorId)
             if result is not None and self.enableDebug:
                 Console.info("Mirrored: %s" % url)
-            
+
         if cherrypy.request.method in ("POST", "PUT"):
             body = cherrypy.request.body.fp.read()
 
@@ -116,7 +116,7 @@ class Proxy(object):
         if self.enableOffline and result is None:
             Console.info("Offline: %s" % url)
             raise cherrypy.NotFound(url)
-        
+
         # Load URL from remote server
         if result is None:
 
@@ -125,31 +125,31 @@ class Proxy(object):
             for name in cherrypy.request.headers:
                 if not name in self.__blockHeaders:
                     headers[name] = cherrypy.request.headers[name]
-            
+
             # Load URL from remote host
             try:
                 if self.enableDebug:
                     Console.info("Requesting: %s [%s]", url, cherrypy.request.method)
-                    
+
                 # Apply headers for basic HTTP authentification
                 if "X-Proxy-Authorization" in headers:
                     headers["Authorization"] = headers["X-Proxy-Authorization"]
-                    del headers["X-Proxy-Authorization"]                
-                    
+                    del headers["X-Proxy-Authorization"]
+
                 # Add headers for different authentification approaches
                 if self.auth:
-                    
+
                     # Basic Auth
                     if self.auth["method"] == "basic":
                         headers["Authorization"] = b"Basic " + base64.b64encode(("%s:%s" % (self.auth["user"], self.auth["password"])).encode("ascii"))
-                    
+
                 # We disable verifícation of SSL certificates to be more tolerant on test servers
                 result = requests.request(cherrypy.request.method, url, params=query, headers=headers, data=body, verify=False)
-                
+
             except Exception as err:
                 if self.enableDebug:
                     Console.info("Request failed: %s", err)
-                    
+
                 raise cherrypy.HTTPError(403)
 
             # Storing result into mirror
@@ -158,7 +158,7 @@ class Proxy(object):
                 # Wrap result into mirrorable entry
                 resultCopy = Result(result.headers, result.content, result.status_code)
                 self.mirror.store(mirrorId, resultCopy)
-        
+
 
         # Copy response headers to our reponse
         for name in result.headers:
@@ -170,15 +170,15 @@ class Proxy(object):
 
         # Append special header to all responses
         cherrypy.response.headers["X-Jasy-Version"] = jasyVersion
-        
+
         # Enable cross domain access to this server
         enableCrossDomain()
 
         return result.content
-        
-        
+
+
 class Static(object):
-    
+
     def __init__(self, id, config, mimeTypes=None):
         self.id = id
         self.config = config
@@ -187,34 +187,34 @@ class Static(object):
         self.enableDebug = getKey(config, "debug", False)
 
         Console.info('Static "%s" => "%s" [debug:%s]', self.id, self.root, self.enableDebug)
-        
+
     @cherrypy.expose
     def default(self, *args, **query):
         """
         This method returns the content of existing files on the file system.
         Query string might be used for cache busting and are otherwise ignored.
         """
-        
+
         # Append special header to all responses
         cherrypy.response.headers["X-Jasy-Version"] = jasyVersion
-        
+
         # Enable cross domain access to this server
         enableCrossDomain()
-        
+
         # When it's a file name in the local folder... load it
         if args:
             path = os.path.join(*args)
         else:
             path = "index.html"
-        
+
         path = os.path.join(self.root, path)
-        
+
         # Check for existance first
         if os.path.isfile(path):
             if self.enableDebug:
                 Console.info("Serving file: %s", path)
 
-            # Default content type to autodetection by Python mimetype API            
+            # Default content type to autodetection by Python mimetype API
             contentType = None
 
             # Support overriding by extensions
@@ -225,17 +225,17 @@ class Static(object):
                     contentType = self.mimeTypes[extension] + "; charset=" + locale.getpreferredencoding()
 
             return cherrypy.lib.static.serve_file(os.path.abspath(path), content_type=contentType)
-            
+
         # Otherwise return a classic 404
         else:
             if self.enableDebug:
                 Console.warn("File at location %s not found at %s!", path, os.path.abspath(path))
-            
+
             raise cherrypy.NotFound(path)
-        
-# 
+
+#
 # ADDITIONAL MIME TYPES
-# 
+#
 
 additionalContentTypes = {
     "js": "application/javascript",
@@ -304,7 +304,7 @@ class Server:
                 "tools.encode.on" : True,
                 "tools.encode.encoding" : "utf-8"
             },
-            
+
             "/" : {
                 "log.screen" : False
             }
@@ -315,7 +315,7 @@ class Server:
         # Build dict of content types to override native mimetype detection
         combinedTypes = {}
         combinedTypes.update(additionalContentTypes)
-        if mimeTypes:    
+        if mimeTypes:
             combinedTypes.update(mimeTypes)
 
         # Update global config
@@ -324,11 +324,11 @@ class Server:
         # Somehow this screen disabling does not work
         # This hack to disable all access/error logging works
         def empty(*param, **args): pass
-        def inspect(*param, **args): 
+        def inspect(*param, **args):
             if args["severity"] > 20:
                 Console.error("Critical error occoured:")
                 Console.error(param[0])
-        
+
         cherrypy.log.access = empty
         cherrypy.log.error = inspect
         cherrypy.log.screen = False
@@ -350,7 +350,7 @@ class Server:
         """
 
         Console.info("Adding routes...")
-        Console.indent()        
+        Console.indent()
 
         for key in routes:
             entry = routes[key]
@@ -358,7 +358,7 @@ class Server:
                 node = Proxy(key, entry)
             else:
                 node = Static(key, entry, mimeTypes=self.__root.mimeTypes)
-            
+
             setattr(self.__root, key, node)
 
         Console.outdent()
@@ -366,19 +366,19 @@ class Server:
 
     def start(self):
         """
-        Starts the web server and blocks execution. 
+        Starts the web server and blocks execution.
 
         Note: This stops further execution of the current task or method.
         """
 
         app = cherrypy.tree.mount(self.__root, "", self.__config)
         cherrypy.process.plugins.PIDFile(cherrypy.engine, ".jasy/server-%s" % self.__port).subscribe()
-        
+
         cherrypy.engine.start()
         Console.info("Started HTTP server at port %s... [PID=%s]", self.__port, os.getpid())
         Console.indent()
         cherrypy.engine.block()
 
         Console.outdent()
-        Console.info("Stopped HTTP server at port %s.", self.__port)  
+        Console.info("Stopped HTTP server at port %s.", self.__port)
 

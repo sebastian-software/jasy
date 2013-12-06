@@ -11,35 +11,35 @@ if __name__ == "__main__":
 import jasy.js.parse.Parser as Parser
 
 
-        
+
 class Tests(unittest.TestCase):
 
     def process(self, code):
         node = Parser.parse(code)
         return node
-        
-        
+
+
 
     #
     # SINGLE COMMENTS
-    #        
-    
+    #
+
     def test_single(self):
-        
+
         parsed = self.process('''
-        
+
         // Single Comment
         singleCommentCmd();
-        
+
         ''')
-        
+
         self.assertEqual(parsed[0].type, "semicolon")
         self.assertEqual(isinstance(parsed[0].comments, list), True)
         self.assertEqual(len(parsed[0].comments), 1)
-        
+
         self.assertEqual(parsed[0].comments[0].variant, "single")
         self.assertEqual(parsed[0].comments[0].text, "Single Comment")
-        
+
 
     def test_single_unbound(self):
 
@@ -52,7 +52,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed.comments), 1)
 
         self.assertEqual(parsed.comments[0].variant, "single")
-        self.assertEqual(parsed.comments[0].text, "Single Comment")        
+        self.assertEqual(parsed.comments[0].text, "Single Comment")
 
 
     def test_single_unbound_nobreak(self):
@@ -64,9 +64,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed.comments), 1)
 
         self.assertEqual(parsed.comments[0].variant, "single")
-        self.assertEqual(parsed.comments[0].text, "Single Comment")        
+        self.assertEqual(parsed.comments[0].text, "Single Comment")
 
-        
+
     def test_single_two(self):
 
         parsed = self.process('''
@@ -86,13 +86,13 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[1].variant, "single")
         self.assertEqual(parsed[0].comments[1].text, "Single2 Comment")
-        
-        
-        
+
+
+
     #
     # SINGLE COMMENTS :: CONTEXT
     #
-        
+
     def test_single_context_inline(self):
 
         parsed = self.process('''singleCommentCmd(); // Single Inline Comment''')
@@ -103,28 +103,13 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "single")
         self.assertEqual(parsed[0].comments[0].context, "inline")
-        
-        
+
+
     def test_single_context_block_before(self):
 
         parsed = self.process('''
-        singleCommentCmd(); 
+        singleCommentCmd();
         // Single Block Comment
-        ''')
-
-        self.assertEqual(parsed[0].type, "semicolon")
-        self.assertEqual(isinstance(parsed[0].comments, list), True)
-        self.assertEqual(len(parsed[0].comments), 1)
-
-        self.assertEqual(parsed[0].comments[0].variant, "single")
-        self.assertEqual(parsed[0].comments[0].context, "block")   
-        
-        
-    def test_single_context_block_after(self):
-
-        parsed = self.process('''
-        // Single Block Comment
-        singleCommentCmd(); 
         ''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -133,14 +118,29 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "single")
         self.assertEqual(parsed[0].comments[0].context, "block")
-        
-        
+
+
+    def test_single_context_block_after(self):
+
+        parsed = self.process('''
+        // Single Block Comment
+        singleCommentCmd();
+        ''')
+
+        self.assertEqual(parsed[0].type, "semicolon")
+        self.assertEqual(isinstance(parsed[0].comments, list), True)
+        self.assertEqual(len(parsed[0].comments), 1)
+
+        self.assertEqual(parsed[0].comments[0].variant, "single")
+        self.assertEqual(parsed[0].comments[0].context, "block")
+
+
     def test_single_context_section(self):
 
         parsed = self.process('''
-        
+
         // Single Section Comment
-        singleCommentCmd(); 
+        singleCommentCmd();
         ''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -149,13 +149,13 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "single")
         self.assertEqual(parsed[0].comments[0].context, "section")
-        
-        
-        
+
+
+
     #
     # MULTI COMMENTS
     #
-        
+
     def test_multi(self):
 
         parsed = self.process('''
@@ -170,9 +170,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
-        self.assertEqual(parsed[0].comments[0].text, "Multi Comment")        
-        
-        
+        self.assertEqual(parsed[0].comments[0].text, "Multi Comment")
+
+
     def test_multi_unbound(self):
 
         parsed = self.process('''
@@ -184,9 +184,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed.comments), 1)
 
         self.assertEqual(parsed.comments[0].variant, "multi")
-        self.assertEqual(parsed.comments[0].text, "Multi Comment")        
-        
-        
+        self.assertEqual(parsed.comments[0].text, "Multi Comment")
+
+
     def test_multi_unbound_nobreak(self):
 
         parsed = self.process('''/* Multi Comment */''')
@@ -196,9 +196,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed.comments), 1)
 
         self.assertEqual(parsed.comments[0].variant, "multi")
-        self.assertEqual(parsed.comments[0].text, "Multi Comment")        
-        
-        
+        self.assertEqual(parsed.comments[0].text, "Multi Comment")
+
+
     def test_multi_two(self):
 
         parsed = self.process('''
@@ -215,11 +215,11 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
         self.assertEqual(parsed[0].comments[0].text, "Multi Comment1")
-        
+
         self.assertEqual(parsed[0].comments[1].variant, "multi")
         self.assertEqual(parsed[0].comments[1].text, "Multi Comment2")
-        
-        
+
+
     def test_multi_multiline(self):
 
         parsed = self.process('''
@@ -237,8 +237,8 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
         self.assertEqual(parsed[0].comments[0].text, "   Multi\n   Comment\n   Test")
-        
-        
+
+
     def test_multi_multiline_otherbreaks(self):
 
         parsed = self.process('''
@@ -246,7 +246,7 @@ class Tests(unittest.TestCase):
         /*
           Multi
           Comment
-          Test 
+          Test
         */
         multiCommentCmd();
 
@@ -258,13 +258,13 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
         self.assertEqual(parsed[0].comments[0].text, "  Multi\n  Comment\n  Test")
-    
-    
-    
+
+
+
     #
     # MULTI COMMENTS :: CONTEXT
     #
-            
+
     def test_multi_context_inline(self):
 
         parsed = self.process('''multiCommentCmd(); /* Multi Inline Comment */''')
@@ -275,13 +275,13 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
         self.assertEqual(parsed[0].comments[0].context, "inline")
-        
-        
+
+
     def test_multi_context_inline_multiline(self):
 
         parsed = self.process('''
-        multiCommentCmd(); /* 
-          Multi Inline Comment 
+        multiCommentCmd(); /*
+          Multi Inline Comment
         */''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -289,13 +289,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
-        self.assertEqual(parsed[0].comments[0].context, "inline")        
+        self.assertEqual(parsed[0].comments[0].context, "inline")
 
 
     def test_multi_context_block_before(self):
 
         parsed = self.process('''
-        multiCommentCmd(); 
+        multiCommentCmd();
         /* Multi Block Comment */
         ''')
 
@@ -304,14 +304,14 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
-        self.assertEqual(parsed[0].comments[0].context, "block")   
+        self.assertEqual(parsed[0].comments[0].context, "block")
 
 
     def test_multi_context_block_after(self):
 
         parsed = self.process('''
         /* Multi Block Comment */
-        multiCommentCmd(); 
+        multiCommentCmd();
         ''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -327,7 +327,7 @@ class Tests(unittest.TestCase):
         parsed = self.process('''
 
         /* Multi Section Comment */
-        multiCommentCmd(); 
+        multiCommentCmd();
         ''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -335,9 +335,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "multi")
-        self.assertEqual(parsed[0].comments[0].context, "section")    
-    
-    
+        self.assertEqual(parsed[0].comments[0].context, "section")
+
+
 
 
     #
@@ -358,15 +358,15 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "protected")
-        self.assertEqual(parsed[0].comments[0].text, "Protected Comment")    
+        self.assertEqual(parsed[0].comments[0].text, "Protected Comment")
 
 
     def test_protected_newline(self):
 
         parsed = self.process('''
 
-        /*! 
-        Protected Comment 
+        /*!
+        Protected Comment
         */
         protectedCommentCmd();
 
@@ -378,7 +378,7 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "protected")
         self.assertEqual(parsed[0].comments[0].text, "Protected Comment")
-            
+
 
     def test_protected_jquery(self):
 
@@ -414,7 +414,7 @@ class Tests(unittest.TestCase):
     #
     # ATTACHMENT
     #
-    
+
     def test_missing_node(self):
 
         parsed = self.process('''
@@ -432,20 +432,20 @@ class Tests(unittest.TestCase):
         ''')
 
         self.assertEqual(parsed.type, "script")
-        
+
         self.assertEqual(isinstance(parsed[0].comments, list), True)
         self.assertEqual(len(parsed[0].comments), 1)
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].text, "Root Doc")
 
 
-    
+
 
 
     #
     # DOC COMMENTS
     #
-    
+
     def test_doc(self):
 
         parsed = self.process('''
@@ -462,8 +462,8 @@ class Tests(unittest.TestCase):
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), "<p>Doc Comment</p>\n")
         self.assertEqual(parsed[0].comments[0].text, "Doc Comment")
-        
-        
+
+
     def test_doc_unbound(self):
 
         parsed = self.process('''
@@ -477,8 +477,8 @@ class Tests(unittest.TestCase):
         self.assertEqual(parsed.comments[0].variant, "doc")
         self.assertEqual(parsed.comments[0].getHtml(), "<p>Doc Comment</p>\n")
         self.assertEqual(parsed.comments[0].text, "Doc Comment")
-        
-        
+
+
     def test_doc_unbound_nobreak(self):
 
         parsed = self.process('''/** Doc Comment */''')
@@ -510,7 +510,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), "<p>Doc Comment</p>\n")
         self.assertEqual(parsed[0].comments[0].text, "Doc Comment")
-        
+
 
     def test_doc_multiline_three(self):
 
@@ -532,9 +532,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), "<p>Doc Comment Line 1\nDoc Comment Line 2\nDoc Comment Line 3</p>\n")
         self.assertEqual(parsed[0].comments[0].text, "Doc Comment Line 1\nDoc Comment Line 2\nDoc Comment Line 3")
-        
-        
-        
+
+
+
     def test_doc_multiline_clean(self):
 
         parsed = self.process('''
@@ -601,8 +601,8 @@ class Tests(unittest.TestCase):
         self.assertEqual(comment.getHtml(), "<p>Returns the sum of x and y.</p>\n")
         self.assertEqual(comment.text, "Returns the sum of x and y.")
         self.assertEqual(comment.returns[0]["name"], "Number")
-        
-        
+
+
     def test_doc_return_twotypes(self):
 
         parsed = self.process('''
@@ -624,25 +624,25 @@ class Tests(unittest.TestCase):
         self.assertEqual(comment.text, "Returns the sum of x and y.")
         self.assertEqual(comment.returns[0]["name"], "Number")
         self.assertEqual(comment.returns[1]["name"], "String")
-    
-    
-    
+
+
+
     #
     # DOC COMMENTS :: TAGS
     #
 
     def test_doc_tags(self):
-        
+
         parsed = self.process('''
-        
+
         /**
          * Hello World
          *
          * #deprecated #public #use(future) #use(current)
          */
-        
+
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
@@ -652,16 +652,16 @@ class Tests(unittest.TestCase):
         self.assertEqual(comment.variant, "doc")
         self.assertEqual(comment.getHtml(), "<p>Hello World</p>\n")
         self.assertEqual(comment.text, "Hello World")
-        
+
         self.assertEqual(comment.tags["deprecated"], True)
         self.assertEqual(comment.tags["public"], True)
         self.assertEqual(type(comment.tags["use"]), set)
         self.assertEqual("future" in comment.tags["use"], True)
         self.assertEqual("current" in comment.tags["use"], True)
         self.assertEqual("xxx" in comment.tags["use"], False)
-        
-    
-    
+
+
+
     def test_doc_tags_clean(self):
 
         parsed = self.process('''
@@ -680,7 +680,7 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(comment.variant, "doc")
         self.assertEqual(comment.text, "")
-    
+
         self.assertEqual(comment.tags["deprecated"], True)
         self.assertEqual(comment.tags["public"], True)
         self.assertEqual(type(comment.tags["use"]), set)
@@ -688,8 +688,8 @@ class Tests(unittest.TestCase):
         self.assertEqual("current" in comment.tags["use"], True)
         self.assertEqual("xxx" in comment.tags["use"], False)
 
-    
-    
+
+
     #
     # DOC COMMENTS :: LINKS
     #
@@ -697,24 +697,24 @@ class Tests(unittest.TestCase):
     def test_doc_links(self):
 
         parsed = self.process('''
-        
+
         /**
          * Link to cool {z.core.Style} class. Looks at this method {core.io.Asset#toUri} to translate local
          * asset IDs to something usable in the browser.
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
 
         comment = parsed.comments[0]
-        
+
         self.assertEqual(comment.getHtml(), '<p>Link to cool <a href="#z.core.Style"><code>z.core.Style</code></a> class. Looks at this method <a href="#core.io.Asset~toUri"><code>core.io.Asset#toUri</code></a> to translate local\nasset IDs to something usable in the browser.</p>\n')
         self.assertEqual(comment.text, 'Link to cool z.core.Style class. Looks at this method core.io.Asset#toUri to translate local\nasset IDs to something usable in the browser.')
-    
-    
+
+
     def test_doc_links_primitive(self):
 
         parsed = self.process('''
@@ -732,7 +732,7 @@ class Tests(unittest.TestCase):
         comment = parsed.comments[0]
 
         self.assertEqual(comment.getHtml(), '<p>You can either use <a href="#String"><code>String</code></a> or <a href="#Map"><code>Map</code></a> types as primitive data types.</p>\n')
-        self.assertEqual(comment.text, 'You can either use String or Map types as primitive data types.')    
+        self.assertEqual(comment.text, 'You can either use String or Map types as primitive data types.')
 
 
     def test_doc_links_type(self):
@@ -758,19 +758,19 @@ class Tests(unittest.TestCase):
     def test_doc_links_object_alike(self):
 
         parsed = self.process('''
-        
+
         /**
          * {event:foo} an foo event that looks like a json structure.
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
 
         comment = parsed.comments[0]
-        
+
         self.assertEqual(comment.getHtml(), '<p><a href="#foo"><code>foo</code></a> an foo event that looks like a json structure.</p>\n')
         self.assertEqual(comment.text, 'foo an foo event that looks like a json structure.')
 
@@ -781,16 +781,16 @@ class Tests(unittest.TestCase):
     def test_doc_links_in_code_block(self):
 
         parsed = self.process('''
-        
+
         /**
          * Foo event example code:
-         * 
+         *
          *     var e = {event:foo};
          *     var e = {};
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
@@ -799,21 +799,21 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(comment.getHtml(), '<p>Foo event example code:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n2</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="p">{</span><span class="nx">event</span><span class="o">:</span><span class="nx">foo</span><span class="p">};</span>\n<span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="p">{};</span>\n</pre></div>\n</td></tr></table>\n')
         self.assertEqual(comment.text, 'Foo event example code:\n\n    var e = {event:foo};\n    var e = {};')
-    
+
 
     def test_doc_params_in_code_block(self):
 
         parsed = self.process('''
-        
+
         /**
          * Email example code:
-         * 
+         *
          *     var foo = 'hello@bla.org';
          *     var test = "foo@blub.net";
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
@@ -827,25 +827,25 @@ class Tests(unittest.TestCase):
     def test_multi_code_blocks(self):
 
         parsed = self.process('''
-        
+
         /**
          * Some code example:
-         * 
+         *
          *     // A code block with empty lines in it
          *
          *     if (true) {
-         *  
+         *
          *     } else {
-         *      
+         *
          *     }
          *
          *  Another code block:
-         *  
+         *
          *      console.log('Hello World');
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
@@ -859,7 +859,7 @@ class Tests(unittest.TestCase):
 
         self.maxDiff = None
         parsed = self.process('''
-        
+
         /**
          * Some code:
          *
@@ -877,13 +877,13 @@ class Tests(unittest.TestCase):
          *  - __anotherListItem__
          *
          *      More text.
-         *      
+         *
          *          console.log("More code")
          *
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
@@ -899,28 +899,28 @@ class Tests(unittest.TestCase):
     #
     # DOC COMMENTS :: PARAMS
     #
-    
+
     def test_doc_params(self):
 
         parsed = self.process('''
-        
+
         /**
          * {Boolean} Returns whether @x {Number} is bigger than @y {Number}. The optional @cache {Boolean?false} controls whether caching should be enabled.
          * Also see @extra {String | Array ?} which is normally pretty useless
          */
 
         ''')
-        
+
         self.assertEqual(parsed.type, "script")
         self.assertEqual(isinstance(parsed.comments, list), True)
         self.assertEqual(len(parsed.comments), 1)
 
         comment = parsed.comments[0]
-    
+
         self.assertEqual(comment.variant, "doc")
         self.assertEqual(comment.getHtml(), '<p>Returns whether <code class="param">x</code> is bigger than <code class="param">y</code>. The optional <code class="param">cache</code> controls whether caching should be enabled.\nAlso see <code class="param">extra</code> which is normally pretty useless</p>\n')
         self.assertEqual(comment.text, 'Returns whether x is bigger than y. The optional cache controls whether caching should be enabled.\nAlso see extra which is normally pretty useless')
-        
+
         self.assertEqual(type(comment.params), dict)
 
         self.assertEqual(type(comment.params["x"]), dict)
@@ -946,9 +946,9 @@ class Tests(unittest.TestCase):
         self.assertNotIn("default", comment.params["y"])
         self.assertEqual(comment.params["cache"]["default"], "false")
         self.assertNotIn("default", comment.params["extra"])
-        
-        
-        
+
+
+
     def test_doc_params_dynamic(self):
 
         parsed = self.process('''
@@ -973,9 +973,9 @@ class Tests(unittest.TestCase):
         self.assertNotIn("optional", comment.params["number"])
         self.assertTrue(comment.params["number"]["dynamic"])
         self.assertNotIn("default", comment.params["number"])
-        
-        
-        
+
+
+
     def test_doc_params_dynamic_default(self):
 
         parsed = self.process('''
@@ -1001,9 +1001,9 @@ class Tests(unittest.TestCase):
         self.assertTrue(comment.params["number"]["optional"])
         self.assertTrue(comment.params["number"]["dynamic"])
         self.assertEqual(comment.params["number"]["default"], "0")
-        
-        
-        
+
+
+
     def test_doc_params_dynamic_multi(self):
 
         parsed = self.process('''
@@ -1029,9 +1029,9 @@ class Tests(unittest.TestCase):
         self.assertNotIn("optional", comment.params["number"])
         self.assertTrue(comment.params["number"]["dynamic"])
         self.assertNotIn("default", comment.params["number"])
-        
-        
-        
+
+
+
     def test_doc_params_dynamic_multi_spacey(self):
 
         parsed = self.process('''
@@ -1056,10 +1056,10 @@ class Tests(unittest.TestCase):
         self.assertEqual(comment.params["number"]["type"][1]["name"], "Integer")
         self.assertNotIn("optional", comment.params["number"])
         self.assertTrue(comment.params["number"]["dynamic"])
-        self.assertNotIn("default", comment.params["number"])       
-        
-        
-        
+        self.assertNotIn("default", comment.params["number"])
+
+
+
     def test_doc_params_namespaced(self):
 
         parsed = self.process('''
@@ -1102,9 +1102,9 @@ class Tests(unittest.TestCase):
         self.assertNotIn("default", comment.params["x"])
         self.assertNotIn("default", comment.params["y"])
         self.assertEqual(comment.params["cache"]["default"], "false")
-        self.assertNotIn("default", comment.params["extra"])        
-        
-        
+        self.assertNotIn("default", comment.params["extra"])
+
+
     def test_doc_params_lazytypes(self):
 
         parsed = self.process('''
@@ -1130,9 +1130,9 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(comment.variant, "doc")
         self.assertEqual(comment.getHtml(), '<p>Returns whether <code class="param">x</code> is bigger than <code class="param">y</code>.</p>\n\n<p>Parameters:</p>\n\n<ul>\n<li><code class="param">x</code></li>\n<li><code class="param">y</code></li>\n<li><code class="param">cache</code></li>\n<li><code class="param">extra</code></li>\n</ul>\n')
-        
+
         self.assertEqual(comment.text, 'Returns whether x is bigger than y.\n\nParameters:\n\n- x\n- y\n- cache\n- extra')
-        
+
         self.assertEqual(type(comment.params), dict)
 
         self.assertEqual(type(comment.params["x"]), dict)
@@ -1155,9 +1155,9 @@ class Tests(unittest.TestCase):
         self.assertNotIn("default", comment.params["y"])
         self.assertEqual(comment.params["cache"]["default"], "false")
         self.assertNotIn("default", comment.params["extra"])
-        
-        
-        
+
+
+
     def test_doc_params_firstloose(self):
 
         parsed = self.process('''
@@ -1195,8 +1195,8 @@ class Tests(unittest.TestCase):
 
         self.assertNotIn("default", comment.params["x"])
         self.assertNotIn("default", comment.params["y"])
-        
-        
+
+
     def test_doc_params_firstwin(self):
 
         parsed = self.process('''
@@ -1234,8 +1234,8 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(comment.params["x"]["default"], "13")
         self.assertNotIn("default", comment.params["y"])
-        
-    
+
+
     def test_doc_params_maps(self):
 
         parsed = self.process('''
@@ -1325,11 +1325,11 @@ class Tests(unittest.TestCase):
         self.assertEqual(comment.params["options"]["fields"]["foo"]["fields"]["x"]["type"][0]["name"], "String")
         self.assertEqual(comment.params["options"]["fields"]["foo"]["fields"]["y"]["type"][0]["name"], "Number")
 
-    
+
     #
     # DOC COMMENTS :: MARKDOWN
     #
-    
+
     def test_doc_markdown_formatting(self):
 
         parsed = self.process('''
@@ -1346,21 +1346,21 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
-        self.assertEqual(parsed[0].comments[0].getHtml(), "<p>This is some <strong>important</strong> text about <em>Jasy</em>.</p>\n")    
-    
+        self.assertEqual(parsed[0].comments[0].getHtml(), "<p>This is some <strong>important</strong> text about <em>Jasy</em>.</p>\n")
+
     def test_doc_markdown_quote(self):
 
         parsed = self.process('''
 
         /**
          * Items:
-         * 
+         *
          * - Data
          *
          *     > This is a block quote
          */
         docCommentCmd();
-         
+
          ''')
 
         self.assertEqual(parsed[0].type, "semicolon")
@@ -1370,7 +1370,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), "<p>Items:</p>\n\n<ul>\n<li><p>Data</p>\n\n<blockquote>\n<p>This is a block quote</p>\n</blockquote></li>\n</ul>\n")
 
-    
+
     def test_doc_markdown_smartypants(self):
 
         parsed = self.process('''
@@ -1394,14 +1394,14 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), "<p>Text formatting with &#39;quotes&#39; is pretty nice, too&hellip;</p>\n\n<p>It possible to use &ldquo;different styles&rdquo; here &ndash; to improve clarity.</p>\n\n<p>Still it keeps code like <code>this.foo()</code> intact.</p>\n\n<p>It&#39;s also capable of detecting these things: &ldquo;Joe&#39;s Restaurant&rdquo;.</p>\n")
-    
+
     def test_doc_markdown_formatting_code(self):
 
         parsed = self.process('''
 
         /**
          * This is some example code:
-         *     
+         *
          *     var name = 'jasy';
          */
         docCommentCmd();
@@ -1414,7 +1414,7 @@ class Tests(unittest.TestCase):
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), '<p>This is some example code:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">\'jasy\'</span><span class="p">;</span>\n</pre></div>\n</td></tr></table>\n')
-    
+
 
     #
     # DOC COMMENTS :: CODE
@@ -1434,17 +1434,17 @@ class Tests(unittest.TestCase):
         docCommentCmd();
 
         ''')
-        
+
         self.assertEqual(parsed[0].type, "semicolon")
         self.assertEqual(isinstance(parsed[0].comments, list), True)
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
         self.assertEqual(parsed[0].comments[0].getHtml(), '<p>Some code example:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n2\n3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">())</span> <span class="p">{</span>\n  <span class="nx">self</span><span class="p">.</span><span class="nx">callCommand</span><span class="p">(</span><span class="s2">"reload"</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>\n<span class="p">}</span>\n</pre></div>\n</td></tr></table>\n')
-        
 
 
-        
+
+
     def test_doc_markdown_code_single_blockquote(self):
 
         parsed = self.process('''
@@ -1463,9 +1463,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
-        self.assertEqual(parsed[0].comments[0].getHtml(), '<p>Some code example:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">self</span><span class="p">.</span><span class="nx">callCommand</span><span class="p">(</span><span class="s2">"reload"</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>\n</pre></div>\n</td></tr></table>\n')    
-        
-        
+        self.assertEqual(parsed[0].comments[0].getHtml(), '<p>Some code example:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">self</span><span class="p">.</span><span class="nx">callCommand</span><span class="p">(</span><span class="s2">"reload"</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>\n</pre></div>\n</td></tr></table>\n')
+
+
     def test_doc_markdown_code_single_inline(self):
 
         parsed = self.process('''
@@ -1482,7 +1482,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed[0].comments), 1)
 
         self.assertEqual(parsed[0].comments[0].variant, "doc")
-        self.assertEqual(parsed[0].comments[0].getHtml(), '<p>Some code example: <code>self.callCommand(&quot;reload&quot;, true);</code></p>\n')            
+        self.assertEqual(parsed[0].comments[0].getHtml(), '<p>Some code example: <code>self.callCommand(&quot;reload&quot;, true);</code></p>\n')
 
 
     def test_doc_markdown_code_html(self):
@@ -1515,5 +1515,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)      
-    
+    unittest.TextTestRunner(verbosity=2).run(suite)
+

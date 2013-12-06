@@ -4,12 +4,12 @@
 #
 
 import jasy.style.Util as Util
-import jasy.core.Console as Console 
+import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
 
 def process(tree):
     """
-    Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...` 
+    Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...`
     """
 
     Console.info("Flattening selectors...")
@@ -17,7 +17,7 @@ def process(tree):
 
     def __flatter(node, dest):
         """
-        Moves all selectors to the top tree node while keeping media queries intact 
+        Moves all selectors to the top tree node while keeping media queries intact
         and/or making them CSS2 compatible (regarding formatting)
         """
 
@@ -57,7 +57,7 @@ def process(tree):
 
                 mediaBlock = Node.Node(None, "block")
                 mediaNode.append(mediaBlock, "rules")
-                
+
                 mediaBlock.append(node)
                 node = mediaNode
 
@@ -70,7 +70,7 @@ def process(tree):
 
                 selectorBlock = Node.Node(None, "block")
                 selectorNode.append(selectorBlock, "rules")
-                
+
                 # Move all rules from local block into selector block
                 for mediaChild in list(node.rules):
                     if mediaChild:

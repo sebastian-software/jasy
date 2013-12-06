@@ -13,7 +13,7 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     """
     Executes the given process and outputs failMessage when errors happen.
 
-    :param args: 
+    :param args:
     :type args: str or list
     :param failMessage: Message for exception when command fails
     :type failMessage: str
@@ -36,7 +36,7 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
 
     Console.debug("Executing command: %s", " ".join(args))
     Console.indent()
-    
+
     # Using shell on Windows to resolve binaries like "git"
     if not wrapOutput:
         returnValue = subprocess.call(args, shell=sys.platform == "win32")
@@ -45,7 +45,7 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     else:
         output = tempfile.TemporaryFile(mode="w+t")
         returnValue = subprocess.call(args, stdout=output, stderr=output, shell=sys.platform == "win32")
-            
+
         output.seek(0)
         result = output.read().strip("\n\r")
         output.close()
@@ -55,13 +55,13 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
 
     if returnValue != 0 and failMessage:
         raise Exception("Error during executing shell command: %s (%s)" % (failMessage, result))
-    
+
     if wrapOutput:
         for line in result.splitlines():
             Console.debug(line)
-    
+
     Console.outdent()
-    
+
     return result
 
 
@@ -78,9 +78,9 @@ def generateChecksum(key, method="base62"):
     Generates a unique SHA1 based hash/checksum encoded
     as Base62 or Hex depending on the given parameters.
 
-    :param key: 
+    :param key:
     :type key: str
-    :param method: 
+    :param method:
     :type method: str
     """
 
@@ -98,7 +98,7 @@ def generateChecksum(key, method="base62"):
     if method == "base62":
         return Base62.encodeArrayToString(sha1.digest())
     else:
-        return sha1.hexdigest()    
+        return sha1.hexdigest()
 
 
 def getKey(data, key, default=None):
@@ -128,7 +128,7 @@ def __camelizeHelper(match):
 
 def __hyphenateHelper(match):
     return "-%s" % match.group(1).lower()
-    
+
 def camelize(str):
     """
     Returns a camelized version of the incoming string: foo-bar-baz => fooBarBaz
@@ -143,5 +143,5 @@ def hyphenate(str):
     :param str: Input string
     """
 
-    return __REGEXP_HYPHENATE.sub(__hyphenateHelper, str)    
+    return __REGEXP_HYPHENATE.sub(__hyphenateHelper, str)
 

@@ -56,14 +56,14 @@ def read(name, encoding="utf-8"):
     content = handle.read()
     handle.close()
 
-    return content    
+    return content
 
 def write(dst, content, encoding="utf-8"):
     """Writes the content to the destination file name"""
-    
+
     # First test for existance of destination directory
     mkdir(os.path.dirname(dst))
-    
+
     # Open file handle and write
     handle = open(dst, mode="w", encoding=encoding)
     handle.write(content)
@@ -71,23 +71,23 @@ def write(dst, content, encoding="utf-8"):
 
 def syncfile(src, dst):
     """Same as cp() but only do copying when source file is newer than target file"""
-    
+
     if not os.path.isfile(src):
         raise Exception("No such file: %s" % src)
-    
+
     try:
         dst_mtime = os.path.getmtime(dst)
         src_mtime = os.path.getmtime(src)
-        
+
         # Only accecpt equal modification time as equal as copyFile()
         # syncs over the mtime from the source.
         if src_mtime == dst_mtime:
             return False
-        
+
     except OSError:
         # destination file does not exist, so mtime check fails
         pass
-        
+
     return cp(src, dst)
 
 def sha1(fileOrPath, block_size=2**20):

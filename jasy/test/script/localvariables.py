@@ -25,43 +25,43 @@ class Tests(unittest.TestCase):
 
     def test_basic(self):
         self.assertEqual(self.process(
-            'function test(para1, para2) { var result = para1 + para2; return result; }'), 
+            'function test(para1, para2) { var result = para1 + para2; return result; }'),
             'function test(c,b){var a=c+b;return a}'
         )
 
     def test_args(self):
         self.assertEqual(self.process(
             '''
-            function wrapper(obj, foo, hello) { 
-              obj[foo]().hello; 
+            function wrapper(obj, foo, hello) {
+              obj[foo]().hello;
             }
-            '''), 
+            '''),
             'function wrapper(a,b,c){a[b]().hello}'
         )
 
     def test_accessor_names(self):
         self.assertEqual(self.process(
           '''
-          function outer(alpha, beta, gamma) 
-          { 
-            function inner() {} 
-            var result = alpha * beta + gamma; 
-            var doNot = result.alpha.beta.gamma; 
-            return result * outer(alpha, beta, gamma); 
+          function outer(alpha, beta, gamma)
+          {
+            function inner() {}
+            var result = alpha * beta + gamma;
+            var doNot = result.alpha.beta.gamma;
+            return result * outer(alpha, beta, gamma);
           }
-          '''), 
+          '''),
           'function outer(d,c,b){function e(){}var a=d*c+b;var f=a.alpha.beta.gamma;return a*outer(d,c,b)}'
         )
-        
+
     def test_bind(self):
         self.assertEqual(self.process(
             '''
-            function bind(func, self, varargs) 
-            { 
-              return this.create(func, { 
-                self : self, 
-                args : null 
-              }); 
+            function bind(func, self, varargs)
+            {
+              return this.create(func, {
+                self : self,
+                args : null
+              });
             };
             '''),
             'function bind(b,a,c){return this.create(b,{self:a,args:null})};'
@@ -159,12 +159,12 @@ class Tests(unittest.TestCase):
               try{
                 access.an.object[param1];
 
-              } 
+              }
               catch(except)
               {
                 alert(except + param1)
               }
-            }            
+            }
             '''),
             'function wrapper(a){var c="hello";try{access.an.object[a]}catch(b){alert(b+a)}}'
         )
@@ -199,10 +199,10 @@ class Tests(unittest.TestCase):
             '''
             function wrapper()
             {
-              if (x > y) {  
-                let gamma = 12.7 + y;  
-                i = gamma * x;  
-              } 
+              if (x > y) {
+                let gamma = 12.7 + y;
+                i = gamma * x;
+              }
             }
             '''),
             'function wrapper(){if(x>y){let a=12.7+y;i=a*x}}'
@@ -213,11 +213,11 @@ class Tests(unittest.TestCase):
             r'''
             function wrapper()
             {
-              var x = 5;  
-              var y = 0;  
-              document.write(let(x = x + 10, y = 12) x + y + "<br>\n");  
-              document.write(x+y + "<br>\n");  
-            }            
+              var x = 5;
+              var y = 0;
+              document.write(let(x = x + 10, y = 12) x + y + "<br>\n");
+              document.write(x+y + "<br>\n");
+            }
             '''),
             r'function wrapper(){var a=5;var b=0;document.write(let(a=a+10,b=12)a+b+"<br>\n");document.write(a+b+"<br>\n")}'
         )
@@ -239,7 +239,7 @@ class Tests(unittest.TestCase):
             '''),
             r'function wrapper(){var a=5;var b=0;let(a=a+10,b=12,c=3){print(a+b+c+"\n")}print((a+b)+"\n")}'
         )
-        
+
     def test_reuse_different(self):
         self.assertEqual(self.process(
             '''

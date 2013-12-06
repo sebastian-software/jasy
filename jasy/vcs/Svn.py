@@ -9,9 +9,9 @@ from jasy.core.Util import executeCommand
 import jasy.core.Console as Console
 
 def getRevision(path=None):
-	"""Returns the last revision/hash of the svn.""" 
+	"""Returns the last revision/hash of the svn."""
 
-	return executeCommand("svnversion", "Could not figure out SVN revision. Is there a valid SVN repository?", path=path)  
+	return executeCommand("svnversion", "Could not figure out SVN revision. Is there a valid SVN repository?", path=path)
 
 
 def getBranch(path=None):
@@ -36,7 +36,7 @@ def getBranch(path=None):
 
 
 def getInfo(path=None):
-	textResult = executeCommand("svn info", "Could not figure out SVN info. Is there a valid SVN repository?", path=path)  
+	textResult = executeCommand("svn info", "Could not figure out SVN info. Is there a valid SVN repository?", path=path)
 	parsedResult = yaml.load(textResult)
 
 	return parsedResult

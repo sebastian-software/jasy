@@ -37,9 +37,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(cache.read("test"), 1337)
         cache.close()
         cache2 = Cache.Cache(tempDirectory)
-        self.assertEqual(cache2.read("test"), 1337)   
+        self.assertEqual(cache2.read("test"), 1337)
 
-    def test_clear(self):     
+    def test_clear(self):
 
         tempDirectory = tempfile.TemporaryDirectory().name
         os.makedirs(tempDirectory)
@@ -48,10 +48,10 @@ class Tests(unittest.TestCase):
         self.assertEqual(cache.read("test"), 1337)
         cache.close()
         cache2 = Cache.Cache(tempDirectory)
-        cache2.clear()      
+        cache2.clear()
         cache2.close()
         cache3 = Cache.Cache(tempDirectory)
-        self.assertEqual(cache3.read("test"), None)   
+        self.assertEqual(cache3.read("test"), None)
 
     def test_store_iMfalse_and_read_iMtrue(self):
 

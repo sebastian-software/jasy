@@ -19,16 +19,16 @@ unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 class Compressor:
     __semicolonSymbol = ";"
     __commaSymbol = ","
-    
+
 
     def __init__(self, format=None):
         if format:
             if format.has("semicolon"):
                 self.__semicolonSymbol = ";\n"
-            
+
             if format.has("comma"):
                 self.__commaSymbol = ",\n"
-            
+
         self.__forcedSemicolon = False
 
 
@@ -40,7 +40,7 @@ class Compressor:
     def compress(self, node):
         type = node.type
         result = None
-    
+
         if type in self.__simple:
             result = type
         elif type in self.__prefixes:
@@ -48,27 +48,27 @@ class Compressor:
                 result = self.compress(node[0]) + self.__prefixes[node.type]
             else:
                 result = self.__prefixes[node.type] + self.compress(node[0])
-        
+
         elif type in self.__dividers:
             first = self.compress(node[0])
             second = self.compress(node[1])
             divider = self.__dividers[node.type]
-            
+
             # Fast path
             if node.type not in ("plus", "minus"):
                 result = "%s%s%s" % (first, divider, second)
-                
+
             # Special code for dealing with situations like x + ++y and y-- - x
             else:
                 result = first
                 if first.endswith(divider):
                     result += " "
-            
+
                 result += divider
-            
+
                 if second.startswith(divider):
                     result += " "
-                
+
                 result += second
 
         else:
@@ -76,25 +76,25 @@ class Compressor:
                 result = getattr(self, "type_%s" % type)(node)
             except AttributeError:
                 raise Exception("Script compressor does not support type '%s' from line %s in file %s" % (type, node.line, node.getFileName()))
-            
+
         if getattr(node, "parenthesized", None):
             return "(%s)" % result
         else:
             return result
-    
-    
-    
+
+
+
     #
     # Helpers
     #
-    
+
     def __statements(self, node):
         result = []
         for child in node:
             result.append(self.compress(child))
 
         return "".join(result)
-    
+
     def __handleForcedSemicolon(self, node):
         if node.type == "semicolon" and not hasattr(node, "expression"):
             self.__forcedSemicolon = True
@@ -103,7 +103,7 @@ class Compressor:
         if not result.endswith(self.__semicolonSymbol):
             if self.__forcedSemicolon:
                 self.__forcedSemicolon = False
-        
+
             return result + self.__semicolonSymbol
 
         else:
@@ -113,7 +113,7 @@ class Compressor:
         if self.__forcedSemicolon:
             self.__forcedSemicolon = False
             return result
-    
+
         if result.endswith(self.__semicolonSymbol):
             return result[:-len(self.__semicolonSymbol)]
         else:
@@ -123,7 +123,7 @@ class Compressor:
     #
     # Data
     #
-    
+
     __simple_property = re.compile(r"^[a-zA-Z_$][a-zA-Z0-9_$]*$")
     __number_property = re.compile(r"^[0-9]+$")
 
@@ -154,7 +154,7 @@ class Compressor:
         "bitwise_and" : '&'
     }
 
-    __prefixes = {    
+    __prefixes = {
         "increment"   : "++",
         "decrement"   : "--",
         "bitwise_not" : '~',
@@ -181,7 +181,7 @@ class Compressor:
     #
     # Expressions
     #
-    
+
     def type_comma(self, node):
         return self.__commaSymbol.join(map(self.compress, node))
 
@@ -203,15 +203,15 @@ class Compressor:
             key = self.type_string(node[0])
 
         return "%s:%s" % (key, value)
-        
+
     def type_array_init(self, node):
         def helper(child):
             return self.compress(child) if child != None else ""
-    
+
         return "[%s]" % ",".join(map(helper, node))
 
     def type_array_comp(self, node):
-        return "[%s %s]" % (self.compress(node.expression), self.compress(node.tail))    
+        return "[%s %s]" % (self.compress(node.expression), self.compress(node.tail))
 
     def type_string(self, node):
         # Omit writing real high unicode character which are not supported well by browsers
@@ -230,7 +230,7 @@ class Compressor:
             # Convert zero-prefix
             if value.startswith("0.") and len(value) > 2:
                 value = value[1:]
-                
+
             # Convert zero postfix
             elif value.endswith(".0"):
                 value = value[:-2]
@@ -257,7 +257,7 @@ class Compressor:
         if names:
             result = self.compress(names)
         else:
-            result = node.name    
+            result = node.name
 
         initializer = getattr(node, "initializer", None)
         if initializer:
@@ -268,7 +268,7 @@ class Compressor:
     def type_assign(self, node):
         assignOp = getattr(node, "assignOp", None)
         operator = "=" if not assignOp else self.__dividers[assignOp] + "="
-    
+
         return self.compress(node[0]) + operator + self.compress(node[1])
 
     def type_call(self, node):
@@ -276,7 +276,7 @@ class Compressor:
 
     def type_new_with_args(self, node):
         result = "new %s" % self.compress(node[0])
-        
+
         # Compress new Object(); => new Object;
         if len(node[1]) > 0:
             result += "(%s)" % self.compress(node[1])
@@ -284,12 +284,12 @@ class Compressor:
             parent = getattr(node, "parent", None)
             if parent and parent.type is "dot":
                 result += "()"
-            
+
         return result
 
     def type_exception(self, node):
         return node.value
-    
+
     def type_generator(self, node):
         """ Generator Expression """
         result = self.compress(getattr(node, "expression"))
@@ -306,26 +306,26 @@ class Compressor:
         if guard:
             result += "if(%s)" % self.compress(guard)
 
-        return result    
-    
+        return result
+
     def type_in(self, node):
         first = self.compress(node[0])
         second = self.compress(node[1])
-    
+
         if first.endswith("'") or first.endswith('"'):
             pattern = "%sin %s"
         else:
             pattern = "%s in %s"
-    
+
         return pattern % (first, second)
-    
+
     def type_instanceof(self, node):
         first = self.compress(node[0])
         second = self.compress(node[1])
 
-        return "%s instanceof %s" % (first, second)    
-    
-    
+        return "%s instanceof %s" % (first, second)
+
+
 
     #
     # Statements :: Core
@@ -333,14 +333,14 @@ class Compressor:
 
     def type_block(self, node):
         return "{%s}" % self.__removeSemicolon(self.__statements(node))
-    
+
     def type_let_block(self, node):
         begin = "let(%s)" % ",".join(map(self.compress, node.variables))
         if hasattr(node, "block"):
             end = self.compress(node.block)
         elif hasattr(node, "expression"):
-            end = self.compress(node.expression)    
-    
+            end = self.compress(node.expression)
+
         return begin + end
 
     def type_const(self, node):
@@ -377,35 +377,35 @@ class Compressor:
             result = "get"
         else:
             result = "function"
-        
+
         name = getattr(node, "name", None)
         if name:
             result += " %s" % name
-    
+
         params = getattr(node, "params", None)
         result += "(%s)" % self.compress(params) if params else "()"
-    
+
         # keep expression closure format (may be micro-optimized for other code, too)
         if getattr(node, "expressionClosure", False):
             result += self.compress(node.body)
         else:
             result += "{%s}" % self.__removeSemicolon(self.compress(node.body))
-        
+
         return result
 
     def type_getter(self, node):
         return self.type_function(node)
-    
+
     def type_setter(self, node):
         return self.type_function(node)
-    
+
     def type_return(self, node):
         result = "return"
         if hasattr(node, "value"):
             valueCode = self.compress(node.value)
 
             # Micro optimization: Don't need a space when a block/map/array/group/strings are returned
-            if not valueCode.startswith(("(","[","{","'",'"',"!","-","/")): 
+            if not valueCode.startswith(("(","[","{","'",'"',"!","-","/")):
                 result += " "
 
             result += valueCode
@@ -416,14 +416,14 @@ class Compressor:
 
     #
     # Statements :: Exception Handling
-    #            
-    
+    #
+
     def type_throw(self, node):
         return self.__addSemicolon("throw %s" % self.compress(node.exception))
 
     def type_try(self, node):
         result = "try%s" % self.compress(node.tryBlock)
-    
+
         for catch in node:
             if catch.type == "catch":
                 if hasattr(catch, "guard"):
@@ -440,8 +440,8 @@ class Compressor:
 
     #
     # Statements :: Loops
-    #    
-    
+    #
+
     def type_while(self, node):
         result = "while(%s)%s" % (self.compress(node.condition), self.compress(node.body))
         self.__handleForcedSemicolon(node.body)
@@ -455,7 +455,7 @@ class Compressor:
         body = self.compress(node.body)
         if not body.startswith("{"):
             body = "{%s}" % body
-        
+
         return self.__addSemicolon("do%swhile(%s)" % (body, self.compress(node.condition)))
 
 
@@ -469,19 +469,19 @@ class Compressor:
             body = self.compress(body)
         else:
             body = ""
-        
+
         result = "for"
         if node.isEach:
             result += " each"
-    
+
         result += "(%s in %s)%s" % (self.__removeSemicolon(self.compress(node.iterator)), self.compress(node.object), body)
-    
+
         if body:
             self.__handleForcedSemicolon(node.body)
-        
+
         return result
-    
-    
+
+
     def type_for(self, node):
         setup = getattr(node, "setup", None)
         condition = getattr(node, "condition", None)
@@ -495,10 +495,10 @@ class Compressor:
 
         self.__handleForcedSemicolon(node.body)
         return result
-    
-       
-       
-    #       
+
+
+
+    #
     # Statements :: Conditionals
     #
 
@@ -507,14 +507,14 @@ class Compressor:
         condition = node.condition
         thenPart = node.thenPart
         elsePart = node.elsePart
-    
+
         if condition.type == "not":
             [thenPart,elsePart] = [elsePart,thenPart]
             condition = condition[0]
-    
+
         return "%s?%s:%s" % (self.compress(condition), self.compress(thenPart), self.compress(elsePart))
-    
-    
+
+
     def type_if(self, node):
         result = "if(%s)%s" % (self.compress(node.condition), self.compress(node.thenPart))
 
@@ -523,16 +523,16 @@ class Compressor:
             result += "else"
 
             elseCode = self.compress(elsePart)
-        
+
             # Micro optimization: Don't need a space when the child is a block
             # At this time the brace could not be part of a map declaration (would be a syntax error)
             if not elseCode.startswith(("{", "(", ";")):
-                result += " "        
-            
+                result += " "
+
             result += elseCode
-        
+
             self.__handleForcedSemicolon(elsePart)
-        
+
         return result
 
 
@@ -549,14 +549,13 @@ class Compressor:
                 result += "default:"
             else:
                 continue
-        
+
             for statement in case.statements:
                 temp = self.compress(statement)
                 if len(temp) > 0:
                     result += self.__addSemicolon(temp)
-        
+
         return "%s}" % self.__removeSemicolon(result)
-        
 
 
-        
+
