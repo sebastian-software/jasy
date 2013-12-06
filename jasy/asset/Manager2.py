@@ -89,14 +89,71 @@ class AssetManager():
             return assetItem.exportData()[1]
 
 
+    def getSpriteId(self, fileId):
+        """
+        Returns the sprite asset which contains the image with the given ID
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            spriteIndex = spriteData[0]
+            return self.__sprites[spriteIndex]
+
+
     def getSpriteUrl(self, fileId):
-        return "foobar"
+        """
+        Returns the left position of the image on the sprite sheet
+        """
+
+        return self.getAssetUrl(self.getSpriteId(fileId))
+
+
+    def getSpriteWidth(self, fileId):
+        """
+        Returns the left position of the image on the sprite sheet
+        """
+
+        return self.getAssetWidth(self.getSpriteId(fileId))
+
+
+    def getSpriteHeight(self, fileId):
+        """
+        Returns the left position of the image on the sprite sheet
+        """
+
+        return self.getAssetHeight(self.getSpriteId(fileId))
+
 
     def getSpriteLeft(self, fileId):
-        return -20
+        """
+        Returns the left position of the image on the sprite sheet
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            return spriteData[1]
+
 
     def getSpriteTop(self, fileId):
-        return -62
+        """
+        Returns the top position of the image on the sprite sheet
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            return spriteData[2]
 
 
     def __addCommands(self):
@@ -110,6 +167,8 @@ class AssetManager():
         self.__session.addCommand("sprite.url", lambda fileId: self.getSpriteUrl(fileId), "url")
         self.__session.addCommand("sprite.left", lambda fileId: self.getSpriteLeft(fileId), "px")
         self.__session.addCommand("sprite.top", lambda fileId: self.getSpriteTop(fileId), "px")
+        self.__session.addCommand("sprite.width", lambda fileId: self.getSpriteWidth(fileId), "px")
+        self.__session.addCommand("sprite.height", lambda fileId: self.getSpriteHeight(fileId), "px")
 
 
 
