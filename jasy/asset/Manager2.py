@@ -30,6 +30,9 @@ class AssetManager():
         # Register system commands for accessing asset paths, asset dimensions, etc.
         self.__addCommands()
 
+        self.__processSprites()
+        #self.__processAnimations()
+
         Console.outdent()
         Console.info("Activated %s assets", len(assets))
 
@@ -107,6 +110,80 @@ class AssetManager():
         self.__session.addCommand("sprite.url", lambda fileId: self.getSpriteUrl(fileId), "url")
         self.__session.addCommand("sprite.left", lambda fileId: self.getSpriteLeft(fileId), "px")
         self.__session.addCommand("sprite.top", lambda fileId: self.getSpriteTop(fileId), "px")
+
+
+
+    def __processSprites(self):
+        """
+        Processes jasysprite.json/yaml files to merge sprite data into asset registry
+        """
+
+        assets = self.__assets
+        configs = [fileId for fileId in assets if assets[fileId].isImageSpriteConfig()]
+
+        if configs:
+            Console.info("Processing %s image sprite configs...", len(configs))
+
+        sprites = []
+        Console.indent()
+        for fileId in configs:
+            Console.debug("Processing %s...", fileId)
+
+            asset = assets[fileId]
+            spriteBase = os.path.dirname(fileId)
+
+            try:
+                spriteConfig = asset.getParsedObject();
+            except ValueError as err:
+                raise UserError("Could not parse jasysprite.json/yaml at %s: %s" % (fileId, err))
+
+            Console.indent()
+            for spriteImage in spriteConfig:
+                spriteImageId = "%s/%s" % (spriteBase, spriteImage)
+
+                singleRelPaths = spriteConfig[spriteImage]
+                Console.debug("Image %s combines %s images", spriteImageId, len(singleRelPaths))
+
+                for singleRelPath in singleRelPaths:
+                    singleId = "%s/%s" % (spriteBase, singleRelPath)
+                    singleData = singleRelPaths[singleRelPath]
+
+                    if singleId in assets:
+                        singleAsset = assets[singleId]
+                    else:
+                        Console.info("Creating new asset: %s", singleId)
+                        singleAsset = jasy.item.Asset.AssetItem(None)
+                        assets[singleId] = singleAsset
+
+                    if not spriteImageId in sprites:
+                        spriteImageIndex = len(sprites)
+                        sprites.append(spriteImageId)
+                    else:
+                        spriteImageIndex = sprites.index(spriteImageId)
+
+                    singleAsset.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
+
+                    if "width" in singleData and "height" in singleData:
+                        singleAsset.addImageDimensionData(singleData["width"], singleData["height"])
+
+                    # Verify that sprite sheet is up-to-date
+                    if "checksum" in singleData:
+                        fileChecksum = singleAsset.getChecksum()
+                        storedChecksum = singleData["checksum"]
+
+                        Console.debug("Checksum Compare: %s <=> %s", fileChecksum[0:6], storedChecksum[0:6])
+
+                        if storedChecksum != fileChecksum:
+                            raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs.", singleId)
+
+            Console.outdent()
+            Console.debug("Deleting sprite config from assets: %s", fileId)
+            del assets[fileId]
+
+        Console.outdent()
+        self.__sprites = sprites
+
+        print("SPRITES", sprites)
 
 
     def __computeDestinationPath(self, assetItem):
