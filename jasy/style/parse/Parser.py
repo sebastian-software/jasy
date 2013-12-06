@@ -947,7 +947,10 @@ def UrlArgumentList(tokenizer, staticContext):
             url += token.value
         elif tokenType == "variable":
             # Fast path when variable present
-            node.append(Node.Node(tokenizer))
+            token = tokenizer.token
+            var = Node.Node(tokenizer)
+            var.name = token.value
+            node.append(var)
             tokenizer.mustMatch("right_paren")
             return node
         else:
