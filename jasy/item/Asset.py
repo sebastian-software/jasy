@@ -41,6 +41,8 @@ extensions = {
     ".afm" : "font",
 
     ".json" : "text",
+    ".yaml" : "text",
+    ".md" : "text",
     ".svg" : "text",
     ".txt" : "text",
     ".csv" : "text",
