@@ -21,6 +21,7 @@ class Block():
                 "top": self.fit.y,
                 "width": self.image.width,
                 "height": self.image.height,
+                "checksum": self.image.checksum,
                 "rotation": -90 if self.rotated else 0
             }
 
