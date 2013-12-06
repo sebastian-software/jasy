@@ -30,8 +30,9 @@ class AssetManager():
         # Register system commands for accessing asset paths, asset dimensions, etc.
         self.__addCommands()
 
+        # Extract and inject data from sprite and animation data
         self.__processSprites()
-        #self.__processAnimations()
+        self.__processAnimations()
 
         Console.outdent()
         Console.info("Activated %s assets", len(assets))
@@ -174,7 +175,7 @@ class AssetManager():
 
     def __processSprites(self):
         """
-        Processes jasysprite.json/yaml files to merge sprite data into asset registry
+        Processes jasysprite files to merge sprite data into asset registry
         """
 
         assets = self.__assets
@@ -233,6 +234,62 @@ class AssetManager():
 
         Console.outdent()
         self.__sprites = sprites
+
+
+    def __processAnimations(self):
+        """Processes jasyanimation files to merge animation data into asset registry"""
+
+        assets = self.__assets
+        configs = [fileId for fileId in assets if assets[fileId].isImageAnimationConfig()]
+
+        if configs:
+            Console.info("Processing %s image animation configs...", len(configs))
+
+        Console.indent()
+        for fileId in configs:
+            Console.debug("Processing %s...", fileId)
+
+            asset = assets[fileId]
+            base = os.path.dirname(fileId)
+
+            try:
+                config = json.loads(asset.getText())
+            except ValueError as err:
+                raise UserError("Could not parse jasyanimation.json/yaml at %s: %s" % (fileId, err))
+
+            for relPath in config:
+                imageId = "%s/%s" % (base, relPath)
+                data = config[relPath]
+
+                if not imageId in assets:
+                    raise UserError("Unknown asset %s in %s" % (imageId, fileId))
+
+                animationAsset = assets[imageId]
+
+                if "rows" in data or "columns" in data:
+                    rows = Util.getKey(data, "rows", 1)
+                    columns = Util.getKey(data, "columns", 1)
+                    frames = Util.getKey(data, "frames")
+
+                    animationAsset.addImageAnimationData(columns, rows, frames)
+
+                    if frames is None:
+                        frames = rows * columns
+
+                elif "layout" in data:
+                    layout = data["layout"]
+                    animationAsset.addImageAnimationData(None, None, layout=layout)
+                    frames = len(layout)
+
+                else:
+                    raise UserError("Invalid image frame data for: %s" % imageId)
+
+                Console.debug("  - Animation %s has %s frames", imageId, frames)
+
+            Console.debug("  - Deleting animation config from assets: %s", fileId)
+            del assets[fileId]
+
+        Console.outdent()
 
 
     def __computeDestinationPath(self, assetItem):
