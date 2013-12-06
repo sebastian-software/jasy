@@ -222,7 +222,7 @@ class AssetManager():
                         fileChecksum = singleItem.getChecksum()
                         storedChecksum = singleData["checksum"]
 
-                        Console.debug("Checksum Compare: %s <=> %s", fileChecksum[0:6], storedChecksum[0:6])
+                        Console.debug("Checksum Compare: %s <=> %s", fileChecksum, storedChecksum)
 
                         if storedChecksum != fileChecksum:
                             raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs.", singleId)
