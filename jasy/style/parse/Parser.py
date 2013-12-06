@@ -945,9 +945,14 @@ def UrlArgumentList(tokenizer, staticContext):
         elif tokenType == "identifier":
             token = tokenizer.token
             url += token.value
+        elif tokenType == "variable":
+            # Fast path when variable present
+            node.append(Node.Node(tokenizer))
+            tokenizer.mustMatch("right_paren")
+            return node
         else:
             token = tokenizer.token
-            raise SyntaxError("Invalid token in URL parameter: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)))
+            raise SyntaxError("Invalid token in URL parameter: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)), tokenizer)
 
     urlParam = Node.Node(tokenizer, "identifier")
     urlParam.value = url
