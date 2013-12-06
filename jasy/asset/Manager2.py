@@ -106,7 +106,7 @@ class AssetManager():
 
     def getSpriteUrl(self, fileId):
         """
-        Returns the left position of the image on the sprite sheet
+        Returns the url of the sprite sheet which contains the given single image
         """
 
         return self.getAssetUrl(self.getSpriteId(fileId))
@@ -114,7 +114,7 @@ class AssetManager():
 
     def getSpriteWidth(self, fileId):
         """
-        Returns the left position of the image on the sprite sheet
+        Returns the width of the sprite sheet which contains the given single image
         """
 
         return self.getAssetWidth(self.getSpriteId(fileId))
@@ -122,7 +122,7 @@ class AssetManager():
 
     def getSpriteHeight(self, fileId):
         """
-        Returns the left position of the image on the sprite sheet
+        Returns the height of the sprite sheet which contains the given single image
         """
 
         return self.getAssetHeight(self.getSpriteId(fileId))
@@ -206,13 +206,7 @@ class AssetManager():
                 for singleRelPath in singleRelPaths:
                     singleId = "%s/%s" % (spriteBase, singleRelPath)
                     singleData = singleRelPaths[singleRelPath]
-
-                    if singleId in assets:
-                        singleAsset = assets[singleId]
-                    else:
-                        Console.info("Creating new asset: %s", singleId)
-                        singleAsset = jasy.item.Asset.AssetItem(None)
-                        assets[singleId] = singleAsset
+                    singleItem = assets[singleId]
 
                     if not spriteImageId in sprites:
                         spriteImageIndex = len(sprites)
@@ -220,14 +214,12 @@ class AssetManager():
                     else:
                         spriteImageIndex = sprites.index(spriteImageId)
 
-                    singleAsset.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
-
-                    if "width" in singleData and "height" in singleData:
-                        singleAsset.addImageDimensionData(singleData["width"], singleData["height"])
+                    # Add relevant data to find image on sprite sheet
+                    singleItem.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
 
                     # Verify that sprite sheet is up-to-date
                     if "checksum" in singleData:
-                        fileChecksum = singleAsset.getChecksum()
+                        fileChecksum = singleItem.getChecksum()
                         storedChecksum = singleData["checksum"]
 
                         Console.debug("Checksum Compare: %s <=> %s", fileChecksum[0:6], storedChecksum[0:6])
