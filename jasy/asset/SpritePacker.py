@@ -156,15 +156,12 @@ class SpritePacker():
 
         # Load image and grab required information
         img = ImgInfo(fullPath)
-        w, h = img.getSize()
+        width, height = img.getSize()
         checksum = img.getChecksum()
-        del img
 
-        # TODO crop transparent "borders"
+        self.files.append(SpriteFile(width, height, relPath, fullPath, checksum))
 
-        self.files.append(SpriteFile(w, h, relPath, fullPath, checksum))
-
-        Console.debug('- Found image "%s" (%dx%dpx)' % (relPath, w, h))
+        Console.debug('- Found image "%s" (%dx%dpx)' % (relPath, width, height))
 
 
     def packBest(self):
