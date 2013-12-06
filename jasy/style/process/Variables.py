@@ -117,10 +117,8 @@ def __computeOperation(first, second, parent, operator, values):
                 repl = Node.Node(type="list")
                 for pos, child in enumerate(first):
                     childRepl = __computeOperation(child, second[pos], parent, operator, values)
-                    if childRepl is None:
-                        raise VariableError("Got no valid return value to replace operation", child)
-
-                    repl.append(childRepl)
+                    if childRepl is not None:
+                        repl.append(childRepl)
 
                 return repl
 
@@ -135,10 +133,8 @@ def __computeOperation(first, second, parent, operator, values):
         repl = Node.Node(type="list")
         for child in first:
             childRepl = __computeOperation(child, second, parent, operator, values)
-            if childRepl is None:
-                raise VariableError("Got no valid return value to replace operation", child)
-
-            repl.append(childRepl)
+            if childRepl is not None:
+                repl.append(childRepl)
 
         return repl
 
@@ -147,10 +143,8 @@ def __computeOperation(first, second, parent, operator, values):
         repl = Node.Node(type="list")
         for child in second:
             childRepl = __computeOperation(first, child, parent, operator, values)
-            if childRepl is None:
-                raise VariableError("Got no valid return value to replace operation", child)
-
-            repl.append(childRepl)
+            if childRepl is not None:
+                repl.append(childRepl)
 
         return repl
 
@@ -163,6 +157,10 @@ def __computeOperation(first, second, parent, operator, values):
             return repl
         else:
             raise VariableError("Unsupported string operation", parent)
+
+    # Waiting for system method execution
+    elif first.type == "system" or second.type == "system":
+        return None
 
     else:
         raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
@@ -189,10 +187,8 @@ def __computeRecurser(node, scope, values):
     # Support typical operators
     if node.type in ("plus", "minus", "mul", "div", "mod"):
         repl = __processOperator(node, values)
-        if repl:
+        if repl is not None:
             node.parent.replace(node, repl)
-        else:
-            raise VariableError("Got no valid return value to replace operation", node)
 
 
     # Not operator support
@@ -227,10 +223,8 @@ def __computeRecurser(node, scope, values):
                 raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
             repl = __computeOperation(values[name], init, node, node.assignOp, values)
-            if repl:
+            if repl is not None:
                 values[name] = repl
-            else:
-                raise VariableError("Got no valid return value to replace operation", node)
 
         else:
             # Update internal variable mapping
