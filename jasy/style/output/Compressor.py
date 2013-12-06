@@ -415,7 +415,7 @@ class Compressor:
     def __values(self, node):
         result = []
         for child in node:
-            result.append(self.compress(child))
+            result.append(str(self.compress(child)))
 
         return " ".join(result)
 
