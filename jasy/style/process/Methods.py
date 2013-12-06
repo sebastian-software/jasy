@@ -106,6 +106,10 @@ def __executeRecurser(node, session):
             repl = Node.Node(type="identifier")
             repl.value = "url(%s)" % result
 
+        elif restype == "number":
+            repl = Node.Node(type="number")
+            repl.value = result
+
         else:
             repl = Node.Node(type="identifier")
             repl.value = result
