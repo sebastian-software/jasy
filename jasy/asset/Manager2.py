@@ -195,7 +195,7 @@ class AssetManager():
             try:
                 spriteConfig = asset.getParsedObject();
             except ValueError as err:
-                raise UserError("Could not parse jasysprite.json/yaml at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasysprite at %s: %s" % (fileId, err))
 
             Console.indent()
             for spriteImage in spriteConfig:
@@ -253,9 +253,9 @@ class AssetManager():
             base = os.path.dirname(fileId)
 
             try:
-                config = json.loads(asset.getText())
+                config = asset.getParsedObject()
             except ValueError as err:
-                raise UserError("Could not parse jasyanimation.json/yaml at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasyanimation at %s: %s" % (fileId, err))
 
             for relPath in config:
                 imageId = "%s/%s" % (base, relPath)
