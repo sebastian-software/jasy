@@ -208,6 +208,14 @@ class AssetManager():
                     singleData = singleRelPaths[singleRelPath]
                     singleItem = assets[singleId]
 
+                    # Verify that sprite sheet is up-to-date
+                    fileChecksum = singleItem.getChecksum()
+                    storedChecksum = singleData["checksum"]
+
+                    Console.debug("Checksum Compare: %s <=> %s", fileChecksum, storedChecksum)
+                    if storedChecksum != fileChecksum:
+                        raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs." % singleId)
+
                     if not spriteImageId in sprites:
                         spriteImageIndex = len(sprites)
                         sprites.append(spriteImageId)
@@ -217,17 +225,9 @@ class AssetManager():
                     # Add relevant data to find image on sprite sheet
                     singleItem.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
 
-                    # Verify that sprite sheet is up-to-date
-                    if "checksum" in singleData:
-                        fileChecksum = singleItem.getChecksum()
-                        storedChecksum = singleData["checksum"]
-
-                        Console.debug("Checksum Compare: %s <=> %s", fileChecksum, storedChecksum)
-
-                        if storedChecksum != fileChecksum:
-                            raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs.", singleId)
-
             Console.outdent()
+
+            # The config file does not make any sense on the client side
             Console.debug("Deleting sprite config from assets: %s", fileId)
             del assets[fileId]
 
