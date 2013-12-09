@@ -49,7 +49,10 @@ builtin = set([
     "linear-gradient",
     "radial-gradient",
     "repeating-linear-gradient",
-    "repeating-radial-gradient"
+    "repeating-radial-gradient",
+
+    # Transitions
+    "steps"
 ])
 
 

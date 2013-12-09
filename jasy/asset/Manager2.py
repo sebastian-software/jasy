@@ -178,6 +178,19 @@ class AssetManager():
             return animationData[1]
 
 
+    def getAnimationFrames(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            animationData = assetItem.exportData()[3]
+            try:
+                return animationData[2]
+            except IndexError:
+                return animationData[0] * animationData[1]
+
+
     def __addCommands(self):
         """
         Registers session commands for usage in template and stylesheets
@@ -195,6 +208,7 @@ class AssetManager():
 
         self.__session.addCommand("animation.columns", lambda fileId: self.getAnimationColumns(fileId), "number")
         self.__session.addCommand("animation.rows", lambda fileId: self.getAnimationRows(fileId), "number")
+        self.__session.addCommand("animation.frames", lambda fileId: self.getAnimationFrames(fileId), "number")
 
 
     def __processSprites(self):

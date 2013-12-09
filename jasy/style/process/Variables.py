@@ -47,6 +47,22 @@ def __computeOperation(first, second, parent, operator, values):
     if first is None and operator == "questionmark":
         return second
 
+    # Solve inner operations first
+    if first.type in ("plus", "minus", "mul", "div", "mod"):
+        repl = __computeOperation(first[0], first[1], first, first.type, values)
+        if repl is None:
+            return
+        else:
+            first = repl
+
+    if second.type in ("plus", "minus", "mul", "div", "mod"):
+        repl = __computeOperation(second[0], second[1], second, second.type, values)
+        if repl is None:
+            return
+        else:
+            second = repl
+
+
     # Compare operation types
     if first.type == second.type:
         # print("Same type: %s" % first.type)

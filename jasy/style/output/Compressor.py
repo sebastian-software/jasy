@@ -22,7 +22,8 @@ nativeMethods = (
     "scale3d", "scaleZ",
     "rotate3d", "rotateX", "rotateY", "rotateZ",
     "perspective",
-    "linear-gradient", "radial-gradient", "gradient"
+    "linear-gradient", "radial-gradient", "gradient",
+    "steps"
 )
 
 
