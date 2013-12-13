@@ -65,9 +65,11 @@ def __computeOperation(first, second, parent, operator, values):
 
     # Compare operation types
     if first.type == second.type:
-        # print("Same type: %s" % first.type)
+        if first.type == "null":
+            repl = Node.Node(type="true")
+            return repl
 
-        if first.type == "number":
+        elif first.type == "number":
             firstUnit = getattr(first, "unit", None)
             secondUnit = getattr(second, "unit", None)
 
@@ -178,9 +180,23 @@ def __computeOperation(first, second, parent, operator, values):
         else:
             raise VariableError("Unsupported string operation", parent)
 
+
     # Waiting for system method execution
     elif first.type == "system" or second.type == "system":
         return None
+
+
+    # Just handle when not both are null - equal condition is already done before
+    elif first.type == "null" or second.type == "null":
+        if operator == "eq":
+            return Node.Node(type="false")
+        elif operator == "nq":
+            return Node.Node(type="true")
+        elif operator in ("plus", "minus", "mul", "div", "mod"):
+            return Node.Node(type="null")
+        else:
+            raise VariableError("Unsupported operation on null type", parent)
+
 
     else:
         raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
