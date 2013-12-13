@@ -316,7 +316,7 @@ def __computeRecurser(node, scope, values):
 
         else:
             # Update internal variable mapping
-            Console.debug("Update value of %s to %s" % (name, init))
+            # Console.debug("Update value of %s to %s" % (name, init))
             values[name] = init
 
         # Remove declaration node from tree
