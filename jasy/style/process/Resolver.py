@@ -3,6 +3,12 @@
 # Copyright 2013 Sebastian Werner
 #
 
+"""
+This class is responsible for resolving if-conditions based on permutation data
+Not all if blocks are being able to be resolved that way though as some use
+variables etc. which are not available before actual full processing of the content.
+"""
+
 import jasy.style.parse.Node as Node
 import jasy.style.Util as Util
 import jasy.core.Console as Console
@@ -69,7 +75,7 @@ def __recurser(node, permutation, inCondition=False):
         check = __checkCondition(node.condition)
 
         if check is None:
-            raise ResolverError("Invalid state in condition", node)
+            return
 
         if check:
             node.parent.insertAllReplace(node, node.thenPart)
