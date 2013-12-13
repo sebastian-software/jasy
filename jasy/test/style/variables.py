@@ -47,7 +47,9 @@ class Tests(unittest.TestCase):
                 $width = 200px;
             }
 
-            width: $width;
+            h1{
+                width: $width;
+            }
             '''), '')
 
 
