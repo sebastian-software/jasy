@@ -42,9 +42,15 @@ def collectFields(node, keys=None):
     calls = ("jasy.Env.isSet", "jasy.Env.getValue", "jasy.Env.select")
     if node.type == "dot" and node.parent.type == "call" and Util.assembleDot(node) in calls:
         stringNode = node.parent[1][0]
-        if stringNode.type != "string":
+        if stringNode.type == "string":
+            keys.add(stringNode.value)
+        elif stringNode.type == "identifier":
+            # Tolerate identifiers for supporting dynamic requests e.g. for asset placeholders
+            pass
+        else:
             raise Exception("Could not handle non string type in jasy.Env call at line: %s" % node.line)
-        keys.add(stringNode.value)
+
+
 
     # Process children
     for child in reversed(node):
