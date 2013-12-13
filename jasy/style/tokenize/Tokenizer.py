@@ -494,7 +494,7 @@ class Tokenizer(object):
         elif isVariable:
             token.type = "variable"
             token.value = identifier
-        elif identifier == "true" or identifier == "false":
+        elif identifier == "true" or identifier == "false" or identifier == "null":
             token.type = identifier
         else:
             token.type = "identifier"
