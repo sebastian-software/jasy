@@ -53,6 +53,41 @@ class Tests(unittest.TestCase):
             '''), 'h1{width:200px;}')
 
 
+    def test_condition_strcomp(self):
+        self.assertEqual(self.process('''
+            $color = "red";
+
+            @if $color == "red"{
+                $bg = "white";
+            } @else {
+                $bg = "black";
+            }
+
+            h1{
+                color: $color;
+                background-color: $bg;
+            }
+            '''), '')
+
+
+    def test_condition_redefine_deep(self):
+        self.assertEqual(self.process('''
+            $width = 301px;
+
+            @if $width > 200{
+                @if $width % 2 == 0{
+                    $width = 200px;
+                } @else {
+                    $width = 199px;
+                }
+            }
+
+            h1{
+                width: $width;
+            }
+            '''), 'h1{width:199px;}')
+
+
     def test_condition_redefine_override(self):
         self.assertEqual(self.process('''
             $width = 300px;
