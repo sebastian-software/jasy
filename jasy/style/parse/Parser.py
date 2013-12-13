@@ -1001,7 +1001,7 @@ def PrimaryExpression(tokenizer, staticContext):
         node = Node.Node(tokenizer, tokenType)
         node.name = tokenizer.token.value
 
-    elif tokenType in ["null", "this", "true", "false", "identifier", "number", "string", "div"]:
+    elif tokenType in ["null", "true", "false", "identifier", "number", "string", "div"]:
         node = Node.Node(tokenizer, tokenType)
         if tokenType in ("identifier", "string", "number"):
             node.value = tokenizer.token.value
