@@ -67,7 +67,7 @@ def __scanNode(node, data):
     # BREAK OF IF-ELSE CHAIN
     # All non blocks have to be processed in else-block
 
-    if node.type == "block":
+    if node.type == "block" and not node.parent.type == "if":
         innerVariables = __scanScope(node)
         for name in innerVariables.shared:
             data.increment(name, innerVariables.shared[name])
