@@ -39,7 +39,7 @@ class Tests(unittest.TestCase):
             '''), '')
 
 
-    def test_condition(self):
+    def test_condition_redefine(self):
         self.assertEqual(self.process('''
             $width = 300px;
 
@@ -50,9 +50,59 @@ class Tests(unittest.TestCase):
             h1{
                 width: $width;
             }
-            '''), '')
+            '''), 'h1{width:200px;}')
 
 
+    def test_condition_redefine_override(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $width = 200px;
+            }
+
+            $width = 100px;
+
+            h1{
+                width: $width;
+            }
+            '''), 'h1{width:100px;}')
+
+
+    def test_condition_define_new(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $height = $width / 2;
+            } @else {
+                $height = $width * 2;
+            }
+
+            h1{
+                width: $width;
+                height: $height;
+            }
+            '''), 'h1{width:300px;height:150px;}')
+
+
+    def test_condition_define_new_override(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $height = $width / 2;
+            } @else {
+                $height = $width * 2;
+            }
+
+            $width = 75px;
+
+            h1{
+                width: $width;
+                height: $height;
+            }
+            '''), 'h1{width:75px;height:150px;}')
 
 
 
