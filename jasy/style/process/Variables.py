@@ -173,11 +173,23 @@ def __computeOperation(first, second, parent, operator, values):
                 raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
 
         elif first.type == "string":
-            repl = Node.Node(type="string")
-
             if operator == "plus":
+                repl = Node.Node(type="string")
                 repl.value = first.value + second.value
                 return repl
+
+            elif operator == "eq":
+                if first.value == second.value:
+                    return Node.Node(type="true")
+                else:
+                    return Node.Node(type="false")
+
+            elif operator == "ne":
+                if first.value != second.value:
+                    return Node.Node(type="true")
+                else:
+                    return Node.Node(type="false")
+
             else:
                 raise VariableError("Unsupported string operation", parent)
 

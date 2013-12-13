@@ -67,7 +67,7 @@ class Tests(unittest.TestCase):
                 color: $color;
                 background-color: $bg;
             }
-            '''), '')
+            '''), 'h1{color:"red";background-color:"white";}')
 
 
     def test_condition_redefine_deep(self):
