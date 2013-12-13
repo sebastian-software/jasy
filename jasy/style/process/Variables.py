@@ -10,6 +10,9 @@ import jasy.core.Console as Console
 
 RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
+ALL_OPERATORS = ("plus", "minus", "mul", "div", "mod", "eq", "nq", "gt", "lt", "ge", "le")
+MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
+
 
 class VariableError(Exception):
     def __init__(self, message, node):
@@ -48,14 +51,14 @@ def __computeOperation(first, second, parent, operator, values):
         return second
 
     # Solve inner operations first
-    if first.type in ("plus", "minus", "mul", "div", "mod"):
+    if first.type in ALL_OPERATORS:
         repl = __computeOperation(first[0], first[1], first, first.type, values)
         if repl is None:
             return
         else:
             first = repl
 
-    if second.type in ("plus", "minus", "mul", "div", "mod"):
+    if second.type in ALL_OPERATORS:
         repl = __computeOperation(second[0], second[1], second, second.type, values)
         if repl is None:
             return
@@ -192,7 +195,7 @@ def __computeOperation(first, second, parent, operator, values):
             return Node.Node(type="false")
         elif operator == "nq":
             return Node.Node(type="true")
-        elif operator in ("plus", "minus", "mul", "div", "mod"):
+        elif operator in MATH_OPERATORS:
             return Node.Node(type="null")
         else:
             raise VariableError("Unsupported operation on null type", parent)
@@ -215,13 +218,13 @@ def __computeRecurser(node, scope, values):
         for name in scope.modified:
             values[name] = None
 
-    # Worked on copy to prevent issues during length changes (due removing declarations, etc.)
+    # Interate on copy to prevent issues during length changes (due removing declarations, etc.)
     for child in list(node):
         if child is not None:
             __computeRecurser(child, scope, values)
 
     # Support typical operators
-    if node.type in ("plus", "minus", "mul", "div", "mod"):
+    if node.type in ALL_OPERATORS:
         repl = __processOperator(node, values)
         if repl is not None:
             node.parent.replace(node, repl)
@@ -232,7 +235,7 @@ def __computeRecurser(node, scope, values):
         child = node[0]
         if child.type == "true":
             child.type = "false"
-        elif child.type == "false":
+        elif child.type == "false" or child.type == "null":
             child.type = "true"
         else:
             raise VariableError("Could not apply not operator to non boolean variable", node)
@@ -313,5 +316,11 @@ def __computeRecurser(node, scope, values):
         else:
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
 
+
+
+    elif node.type == "if":
+
+        print("FOUND IF")
+        print(node.condition)
 
 
