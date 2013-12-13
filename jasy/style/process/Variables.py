@@ -10,8 +10,10 @@ import jasy.core.Console as Console
 
 RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
-ALL_OPERATORS = ("plus", "minus", "mul", "div", "mod", "eq", "nq", "gt", "lt", "ge", "le")
 MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
+COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
+
+ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
 
 
 class VariableError(Exception):
@@ -76,30 +78,76 @@ def __computeOperation(first, second, parent, operator, values):
             firstUnit = getattr(first, "unit", None)
             secondUnit = getattr(second, "unit", None)
 
-            if firstUnit == secondUnit or firstUnit is None or secondUnit is None:
-                repl = Node.Node(type="number")
+            if operator in COMPARE_OPERATORS:
+                if firstUnit == secondUnit or firstUnit is None or secondUnit is None:
+                    if operator == "eq":
+                        if first.value == second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
 
-                if firstUnit is not None:
-                    repl.unit = firstUnit
-                elif secondUnit is not None:
-                    repl.unit = secondUnit
+                    elif operator == "ne":
+                        if first.value != second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
 
-                if operator == "plus":
-                    repl.value = first.value + second.value
-                elif operator == "minus":
-                    repl.value = first.value - second.value
-                elif operator == "mul":
-                    repl.value = first.value * second.value
-                elif operator == "div":
-                    repl.value = first.value / second.value
-                elif operator == "mod":
-                    repl.value = first.value % second.value
+                    elif operator == "gt":
+                        if first.value > second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "lt":
+                        if first.value < second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "ge":
+                        if first.value >= second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "le":
+                        if first.value <= second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                else:
+                    raise VariableError("Unsupported unit combination for number comparison", parent)
+
+
+            elif firstUnit == secondUnit or firstUnit is None or secondUnit is None:
+                if operator in MATH_OPERATORS:
+                    repl = Node.Node(type="number")
+
+                    if firstUnit is not None:
+                        repl.unit = firstUnit
+                    elif secondUnit is not None:
+                        repl.unit = secondUnit
+
+                    if operator == "plus":
+                        repl.value = first.value + second.value
+                    elif operator == "minus":
+                        repl.value = first.value - second.value
+                    elif operator == "mul":
+                        repl.value = first.value * second.value
+                    elif operator == "div":
+                        repl.value = first.value / second.value
+                    elif operator == "mod":
+                        repl.value = first.value % second.value
+
+                    return repl
+
                 elif operator == "questionmark":
                     return first
+
                 else:
                     raise VariableError("Unsupported number operation", parent)
 
-                return repl
 
             elif firstUnit == "%" or secondUnit == "%":
 
