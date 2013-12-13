@@ -372,14 +372,25 @@ def __computeRecurser(node, scope, values):
 
         Console.info("Replacing if-condition at %s", node.line)
 
-        if node.condition.type == "true":
+        conditionNode = node.condition
+
+        if conditionNode.type == "true":
+            resultValue = True
+        elif conditionNode.type == "false":
+            resultValue = False
+        elif conditionNode.type in ("number", "string"):
+            resultValue = bool(node.condition.value)
+        else:
+            raise VariableError("Unresolved if-block with condition: %s" % conditionNode, node)
+
+        if resultValue:
             # Replace if with if block.
             node.parent.insertAllReplace(node, node.thenPart)
 
             # Import all variable modifications into current value set.
             values.update(node.thenPart.values)
 
-        elif node.condition.type == "false":
+        elif hasattr(node, "elsePart"):
             # Replace if with else block.
             node.parent.insertAllReplace(node, node.elsePart)
 
@@ -387,5 +398,6 @@ def __computeRecurser(node, scope, values):
             values.update(node.elsePart.values)
 
         else:
-            raise VariableError("Unresolved if-block with condition: %s" % node.condition, node)
+            # Cleanup the whole node
+            node.parent.remove(node)
 
