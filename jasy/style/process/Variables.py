@@ -253,7 +253,7 @@ def __computeOperation(first, second, parent, operator, values):
     elif first.type == "null" or second.type == "null":
         if operator == "eq":
             return Node.Node(type="false")
-        elif operator == "nq":
+        elif operator == "ne":
             return Node.Node(type="true")
         elif operator in MATH_OPERATORS:
             return Node.Node(type="null")
