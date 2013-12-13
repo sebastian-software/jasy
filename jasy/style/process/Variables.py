@@ -368,7 +368,10 @@ def __computeRecurser(node, scope, values):
 
     elif node.type == "if":
 
-        print("FOUND IF")
-        print(node.condition)
-
+        if node.condition.type == "true":
+            node.parent.insertAllReplace(node, node.thenPart)
+        elif node.condition.type == "false":
+            node.parent.insertAllReplace(node, node.elsePart)
+        else:
+            raise VariableError("Unresolved if-block with condition: %s" % node.condition, node)
 
