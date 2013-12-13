@@ -12,7 +12,7 @@ class AbstractNode(list):
         "line", "type", "tokenizer", "start", "end", "rel", "parent",
 
         # dynamic added data by other modules
-        "comments", "scope",
+        "comments", "scope", "values",
 
         # node type specific
         "value", "parenthesized", "fileId", "params",
