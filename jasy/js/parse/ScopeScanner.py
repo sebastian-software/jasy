@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import jasy.js.parse.ScopeData
+import jasy.parse.ScopeData
 
 
 
@@ -136,7 +136,7 @@ def __scanScope(node):
     """
 
     # Initialize statistics object for this scope
-    data = jasy.js.parse.ScopeData.ScopeData()
+    data = jasy.parse.ScopeData.ScopeData()
     node.scope = data
 
     # Add params to declaration list

@@ -3,7 +3,7 @@
 # Copyright 2013 Sebastian Werner
 #
 
-import jasy.js.parse.ScopeData
+import jasy.parse.ScopeData
 
 
 #
@@ -67,7 +67,7 @@ def __scanNode(node, data):
     # BREAK OF IF-ELSE CHAIN
     # All non blocks have to be processed in else-block
 
-    if node.type == "block" and not node.parent.type == "if":
+    if node.type == "block":
         innerVariables = __scanScope(node)
         for name in innerVariables.shared:
             data.increment(name, innerVariables.shared[name])
@@ -110,7 +110,7 @@ def __scanScope(node):
     """
 
     # Initialize statistics object for this scope
-    data = jasy.js.parse.ScopeData.ScopeData()
+    data = jasy.parse.ScopeData.ScopeData()
     node.scope = data
 
     # Add params to declaration list
