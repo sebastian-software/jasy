@@ -260,6 +260,7 @@ def __computeRecurser(node, scope, values):
     if hasattr(node, "scope"):
         scope = node.scope
         values = copy.copy(values)
+        node.values = values
 
         # Reset all local variables to None
         # which enforces not to keep values from outer scope
@@ -315,6 +316,7 @@ def __computeRecurser(node, scope, values):
 
         else:
             # Update internal variable mapping
+            Console.debug("Update value of %s to %s" % (name, init))
             values[name] = init
 
         # Remove declaration node from tree
@@ -368,10 +370,22 @@ def __computeRecurser(node, scope, values):
 
     elif node.type == "if":
 
+        Console.info("Replacing if-condition at %s", node.line)
+
         if node.condition.type == "true":
+            # Replace if with if block.
             node.parent.insertAllReplace(node, node.thenPart)
+
+            # Import all variable modifications into current value set.
+            values.update(node.thenPart.values)
+
         elif node.condition.type == "false":
+            # Replace if with else block.
             node.parent.insertAllReplace(node, node.elsePart)
+
+            # Import all variable modifications into current value set.
+            values.update(node.elsePart.values)
+
         else:
             raise VariableError("Unresolved if-block with condition: %s" % node.condition, node)
 
