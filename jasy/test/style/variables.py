@@ -38,6 +38,24 @@ class Tests(unittest.TestCase):
             $width = 300px;
             '''), '')
 
+
+    def test_condition(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $width = 200px;
+            }
+
+            width: $width;
+            '''), '')
+
+
+
+
+
+
+
     def test_unused_operation(self):
         self.assertEqual(self.process('''
             $width = 300px;
