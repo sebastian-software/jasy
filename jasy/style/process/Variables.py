@@ -376,7 +376,7 @@ def __computeRecurser(node, scope, values):
 
         if conditionNode.type == "true":
             resultValue = True
-        elif conditionNode.type == "false":
+        elif conditionNode.type == "false" or conditionNode.type == "null":
             resultValue = False
         elif conditionNode.type in ("number", "string"):
             resultValue = bool(node.condition.value)
