@@ -401,23 +401,25 @@ def __computeRecurser(node, scope, values):
             # Still unresolved - try next time (might depend on other features)
             Console.debug("Unresolved if-block with condition: %s" % conditionNode, node)
             remaining = True
+            resultValue = None
 
-        if resultValue:
+        if resultValue is True:
             # Replace if with if block.
             node.parent.insertAllReplace(node, node.thenPart)
 
             # Import all variable modifications into current value set.
             values.update(node.thenPart.values)
 
-        elif hasattr(node, "elsePart"):
-            # Replace if with else block.
-            node.parent.insertAllReplace(node, node.elsePart)
+        elif resultValue is False:
+            if hasattr(node, "elsePart"):
+                # Replace if with else block.
+                node.parent.insertAllReplace(node, node.elsePart)
 
-            # Import all variable modifications into current value set.
-            values.update(node.elsePart.values)
+                # Import all variable modifications into current value set.
+                values.update(node.elsePart.values)
 
-        else:
-            # Cleanup the whole node
-            node.parent.remove(node)
+            else:
+                # Cleanup the whole node
+                node.parent.remove(node)
 
     return remaining
