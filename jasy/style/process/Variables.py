@@ -25,9 +25,11 @@ def compute(tree):
     Console.info("Resolving variables...")
     Console.indent()
 
-    __computeRecurser(tree, None, {})
+    retval = __computeRecurser(tree, None, {})
 
     Console.outdent()
+
+    return retval
 
 
 def __processOperator(node, values):
@@ -268,6 +270,8 @@ def __computeOperation(first, second, parent, operator, values):
 
 def __computeRecurser(node, scope, values):
 
+    remaining = False
+
     # Update scope of new block starts
     if hasattr(node, "scope"):
         scope = node.scope
@@ -282,7 +286,9 @@ def __computeRecurser(node, scope, values):
     # Interate on copy to prevent issues during length changes (due removing declarations, etc.)
     for child in list(node):
         if child is not None:
-            __computeRecurser(child, scope, values)
+            childRemaining = __computeRecurser(child, scope, values)
+            if childRemaining:
+                remaining = True
 
     # Support typical operators
     if node.type in ALL_OPERATORS:
@@ -379,7 +385,6 @@ def __computeRecurser(node, scope, values):
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
 
 
-
     elif node.type == "if":
 
         Console.info("Replacing if-condition at %s", node.line)
@@ -393,7 +398,9 @@ def __computeRecurser(node, scope, values):
         elif conditionNode.type in ("number", "string"):
             resultValue = bool(node.condition.value)
         else:
-            raise VariableError("Unresolved if-block with condition: %s" % conditionNode, node)
+            # Still unresolved - try next time (might depend on other features)
+            Console.debug("Unresolved if-block with condition: %s" % conditionNode, node)
+            remaining = True
 
         if resultValue:
             # Replace if with if block.
@@ -413,3 +420,4 @@ def __computeRecurser(node, scope, values):
             # Cleanup the whole node
             node.parent.remove(node)
 
+    return remaining

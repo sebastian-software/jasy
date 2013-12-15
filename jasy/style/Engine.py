@@ -87,7 +87,8 @@ def reduceTree(tree, session=None):
 
     # PHASE 6 A
     # Compute variables
-    Variables.compute(tree)
+    remaining = Variables.compute(tree)
+    Console.info("Variables remaining [1]: %s" % remaining)
 
     # PHASE 6 B
     # Run custom methods
@@ -95,7 +96,8 @@ def reduceTree(tree, session=None):
 
     # PHASE 6 C
     # Compute variables (again)
-    Variables.compute(tree)
+    remaining = Variables.compute(tree)
+    Console.info("Variables remaining [2]: %s" % remaining)
 
     # PHASE 7
     # Flattening selectors
