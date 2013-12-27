@@ -332,7 +332,7 @@ class Session():
         env = self.__commandEnvironment
 
         if not command in env:
-            raise UserError("Unsupport command %s" % command)
+            raise UserError("Unsupported command %s" % command)
 
         entry = env[command]
         restype = entry["restype"]

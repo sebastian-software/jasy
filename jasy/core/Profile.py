@@ -134,6 +134,9 @@ class Profile():
     def getWorkingPath(self):
         return self.__workingPath
 
+    def setWorkingPath(self, path):
+        self.__workingPath = path
+
     def getHashAssets(self):
         return self.__hashAssets
 
