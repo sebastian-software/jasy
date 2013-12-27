@@ -42,11 +42,13 @@ def __recurser(node, values):
         node.parent.replace(node, copy.deepcopy(values[name]))
 
 
+    # Decide which sub tree of an if-condition is relevant based on current variable situation
     elif node.type == "if":
 
         Console.info("Processing if-condition at %s", node.line)
 
         # Pre-process condition
+        # We manually process each child in for if-types
         __recurser(node.condition, values)
 
         # Named child "condition" might be replaced so assign variable not before
@@ -88,12 +90,14 @@ def __recurser(node, values):
         return
 
 
+    # Process children / content
     for child in list(node):
         # Ignore non-children... through possible interactive structure changes
         if child and child.parent is node:
             __recurser(child, values)
 
-    # Update values of variable
+
+    # Update values of variables
     # This happens after processing children to possibly reduce child structure to an easy to assign (aka preprocessed value)
     if (node.type == "declaration" and hasattr(node, "initializer")) or node.type == "assign":
 
@@ -125,7 +129,7 @@ def __recurser(node, values):
         node.parent.remove(node)
 
 
-
+    # Support for variables inside property names or selectors
     elif node.type in ("property", "selector") and getattr(node, "dynamic", False):
         def replacer(matchObj):
             name = matchObj.group(1)
@@ -154,7 +158,4 @@ def __recurser(node, values):
 
         else:
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
-
-
-
 
