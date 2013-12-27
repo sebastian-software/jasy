@@ -428,6 +428,17 @@ class Tests(unittest.TestCase):
             '''), '.box{content:true;}')
 
 
+    def test_nonequal_combined_parens(self):
+        self.assertEqual(self.process('''
+            $freeuser = true;
+            $enabled = $freeuser && (!false and true);
+
+            .box{
+              content: $enabled;
+            }
+            '''), '.box{content:true;}')
+
+
     def test_value_operator_math(self):
         self.assertEqual(self.process('''
             $base = 30px;
