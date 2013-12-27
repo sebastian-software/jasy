@@ -24,13 +24,10 @@ class ExecuterError(Exception):
 
 
 def process(tree):
-    __recurser(tree, {})
+    __recurser(tree, None, {})
 
 
-def __recurser(node, values):
-    print("PROCESS: %s from %s" % (node.type, node.line))
-
-
+def __recurser(node, scope, values):
     # Replace variable with actual value
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
@@ -52,7 +49,7 @@ def __recurser(node, values):
 
         # Pre-process condition
         # We manually process each child in for if-types
-        __recurser(node.condition, values)
+        __recurser(node.condition, scope, values)
 
         # Named child "condition" might be replaced so assign variable not before
         conditionNode = node.condition
@@ -70,17 +67,12 @@ def __recurser(node, values):
         resultNode = None
         if resultValue is True:
             resultNode = node.thenPart
-            __recurser(node.thenPart, values)
-        elif resultValue is False:
-            if hasattr(node, "elsePart"):
-                resultNode = node.elsePart
-                __recurser(node.elsePart, values)
-            else:
-                node.parent.remove(node)
+        elif resultValue is False and hasattr(node, "elsePart"):
+            resultNode = node.elsePart
 
         if resultNode:
             # Fix missing processing of result node
-            __recurser(resultNode, values)
+            __recurser(resultNode, scope, values)
 
             # Finally replace if-node with result node
             node.parent.insertAllReplace(node, resultNode)
@@ -93,11 +85,23 @@ def __recurser(node, values):
         return
 
 
+    # Update scope of new block starts
+    if hasattr(node, "scope"):
+        scope = node.scope
+        values = copy.copy(values)
+        node.values = values
+
+        # Reset all local variables to None
+        # which enforces not to keep values from outer scope
+        for name in scope.modified:
+            values[name] = None
+
+
     # Process children / content
     for child in list(node):
         # Ignore non-children... through possible interactive structure changes
         if child and child.parent is node:
-            __recurser(child, values)
+            __recurser(child, scope, values)
 
 
     # Update values of variables
