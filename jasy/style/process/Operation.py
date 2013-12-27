@@ -15,31 +15,53 @@ class OperationError(Exception):
 def compute(node, first=None, second=None, operator=None):
 
     # Fill gaps in empty arguments
-    if first is None:
-        first = node[0]
-
-    if second is None:
-        second = node[1]
-
     if operator is None:
         operator = node.type
 
+    # Fill missing first/second param
+    if first is None and len(node) >= 1:
+        first = node[0]
+
+    if second is None and len(node) >= 2:
+        second = node[1]
+
+    # Error handling
     if node is None or operator is None:
         raise OperationError("Missing arguments for compute()", first)
+
+
+    # Support for not-operator
+    if first is not None and operator == "not":
+        if first.type == "false" or first.type == "null":
+            return Node.Node(type="true")
+        elif first.type == "true":
+            return Node.Node(type="false")
+        elif first.type == "number":
+            if first.value == 0:
+                return Node.Node(type="true")
+            else:
+                return Node.Node(type="false")
+        elif first.type == "string":
+            if len(first.value) == 0:
+                return Node.Node(type="true")
+            else:
+                return Node.Node(type="false")
+        else:
+            raise OperationError("Invalid not-operation value", node)
 
     # Support for default set operator "?=" when variable was not defined before
     if first is None and operator == "questionmark":
         return second
 
     # Solve inner operations first
-    if first.type in Util.ALL_OPERATORS:
+    if first is not None and first.type in Util.ALL_OPERATORS:
         repl = compute(first)
         if repl is None:
             return
         else:
             first = repl
 
-    if second.type in Util.ALL_OPERATORS:
+    if second is not None and second.type in Util.ALL_OPERATORS:
         repl = compute(second)
         if repl is None:
             return

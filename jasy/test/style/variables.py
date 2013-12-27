@@ -414,7 +414,7 @@ class Tests(unittest.TestCase):
             .box{
               content: $enabled;
             }
-            '''), '.box{content:false;}')
+            '''), '.box{content:true;}')
 
 
     def test_value_operator_math(self):
