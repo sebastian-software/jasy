@@ -87,14 +87,18 @@ def __recurser(node, scope, values):
 
     # Update scope of new block starts
     if hasattr(node, "scope"):
-        scope = node.scope
-        values = copy.copy(values)
-        node.values = values
+        relation = getattr(node, "rel", None)
 
-        # Reset all local variables to None
-        # which enforces not to keep values from outer scope
-        for name in scope.modified:
-            values[name] = None
+        # Conditional blocks are not exactly blocks in this variable resolution engine
+        if not relation in ("thenPart", "elsePart"):
+            scope = node.scope
+            values = copy.copy(values)
+            node.values = values
+
+            # Reset all local variables to None
+            # which enforces not to keep values from outer scope
+            for name in scope.modified:
+                values[name] = None
 
 
     # Process children / content
