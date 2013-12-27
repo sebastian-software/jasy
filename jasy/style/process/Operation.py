@@ -71,13 +71,10 @@ def compute(node, first=None, second=None, operator=None):
 
     # Support for not-/and-/or-operator
     if operator == "not":
-        print("NOT OPERATOR")
         return getBoolNode(not castToBool(first))
     elif operator == "and":
-        print("AND OPERATOR")
         return getBoolNode(castToBool(first) and castToBool(second))
     elif operator == "or":
-        print("OR OPERATOR")
         return getBoolNode(castToBool(first) or castToBool(second))
 
     # Support for default set operator "?=" when variable was not defined before
