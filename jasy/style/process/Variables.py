@@ -248,6 +248,7 @@ def __computeOperation(first, second, parent, operator, values):
 
     # Waiting for system method execution
     elif first.type == "system" or second.type == "system":
+        print("Waiting for system call...")
         return None
 
 
@@ -284,11 +285,13 @@ def __computeRecurser(node, scope, values):
             values[name] = None
 
     # Interate on copy to prevent issues during length changes (due removing declarations, etc.)
-    for child in list(node):
-        if child is not None:
-            childRemaining = __computeRecurser(child, scope, values)
-            if childRemaining:
-                remaining = True
+    # print("??????? MY-TYPE: %s from %s", node.type, node.line)
+    if node.type != "if":
+        for child in list(node):
+            if child is not None:
+                childRemaining = __computeRecurser(child, scope, values)
+                if childRemaining:
+                    remaining = True
 
     # Support typical operators
     if node.type in ALL_OPERATORS:
@@ -334,7 +337,7 @@ def __computeRecurser(node, scope, values):
 
         else:
             # Update internal variable mapping
-            # Console.debug("Update value of %s to %s" % (name, init))
+            Console.debug("Update value of %s to %s" % (name, init))
             values[name] = init
 
         # Remove declaration node from tree
@@ -399,7 +402,7 @@ def __computeRecurser(node, scope, values):
             resultValue = bool(node.condition.value)
         else:
             # Still unresolved - try next time (might depend on other features)
-            Console.debug("Unresolved if-block with condition: %s" % conditionNode, node)
+            print("Unresolved if-block with condition: %s" % conditionNode, node)
             remaining = True
             resultValue = None
 
