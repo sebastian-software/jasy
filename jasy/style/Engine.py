@@ -19,6 +19,7 @@ import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
 import jasy.style.process.Methods as Methods
+import jasy.style.process.Executer as Executer
 
 import jasy.style.output.Optimization as Optimization
 import jasy.style.output.Formatting as Formatting
@@ -88,19 +89,9 @@ def reduceTree(tree, session=None):
     ScopeScanner.scan(tree)
     Unused.cleanup(tree)
 
-    # PHASE 6 A
-    # Compute variables
-    remaining = Variables.compute(tree)
-    Console.info("Variables remaining [1]: %s" % remaining)
-
-    # PHASE 6 B
-    # Run custom methods
-    Methods.execute(tree, session)
-
-    # PHASE 6 C
-    # Compute variables (again)
-    remaining = Variables.compute(tree)
-    Console.info("Variables remaining [2]: %s" % remaining)
+    # PHASE 6
+    # Execute variable resolution and method calls
+    Executer.process(tree)
 
     # PHASE 7
     # Flattening selectors
