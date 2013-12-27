@@ -214,11 +214,6 @@ def compute(node, first=None, second=None, operator=None):
 
     # Just handle when not both are null - equal condition is already done before
     elif first.type == "null" or second.type == "null":
-        if first.type == "null":
-            other = second
-        else:
-            other = first
-
         if operator == "eq":
             return Util.castNativeToNode(False)
         elif operator == "ne":
