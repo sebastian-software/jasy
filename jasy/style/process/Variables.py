@@ -9,10 +9,6 @@ import jasy.core.Console as Console
 
 
 
-class VariableError(Exception):
-    def __init__(self, message, node):
-        Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
-
 
 def compute(tree):
     Console.info("Resolving variables...")

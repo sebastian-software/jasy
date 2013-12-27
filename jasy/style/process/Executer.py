@@ -3,10 +3,6 @@
 # Copyright 2013 Sebastian Werner
 #
 
-"""
-
-"""
-
 import copy, re
 import jasy.style.parse.Node as Node
 import jasy.core.Console as Console
@@ -18,6 +14,13 @@ MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
 COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
 
 ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
+
+
+class ExecuterError(Exception):
+    def __init__(self, message, node):
+        Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
+
+
 
 
 def process(tree):
@@ -32,11 +35,11 @@ def __recurser(node, values):
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
         if not name in values:
-            raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
+            raise ExecuterError("Could not resolve variable %s! Missing value!" % name, node)
 
         value = values[name]
         if value is None:
-            raise VariableError("Could not resolve variable %s! Value is none!" % name, node)
+            raise ExecuterError("Could not resolve variable %s! Value is none!" % name, node)
 
         Console.debug("Resolving variable: %s at line %s with %s from %s", name, node.line, values[name].type, values[name].line)
         node.parent.replace(node, copy.deepcopy(values[name]))
@@ -114,7 +117,7 @@ def __recurser(node, values):
         # Modify value instead of replace when assign operator is set
         if hasattr(node, "assignOp") and node.assignOp is not None:
             if not name in values:
-                raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
+                raise ExecuterError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
             repl = __computeOperation(values[name], init, node, node.assignOp, values)
             if repl is not None:
@@ -135,11 +138,11 @@ def __recurser(node, values):
             name = matchObj.group(1)
 
             if not name in values:
-                raise VariableError("Could not resolve variable %s! Missing value!" % name, node)
+                raise ExecuterError("Could not resolve variable %s! Missing value!" % name, node)
 
             value = values[name]
             if value is None:
-                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)
+                raise ExecuterError("Could not resolve variable %s! Value is none!" % name, node)
 
             if value.type == "identifier":
                 return value.value
@@ -148,7 +151,7 @@ def __recurser(node, values):
             elif value.type == "number":
                 return "%s%s" % (value.value, getattr(value, "unit", ""))
             else:
-                raise VariableError("Could not replace property inline variable with value of type: %s" % value.type, node)
+                raise ExecuterError("Could not replace property inline variable with value of type: %s" % value.type, node)
 
         # Fix all selectors
         if node.type == "selector":
@@ -175,7 +178,7 @@ def __recurser(node, values):
         elif child.type == "false" or child.type == "null":
             child.type = "true"
         else:
-            raise VariableError("Could not apply not operator to non boolean variable", node)
+            raise ExecuterError("Could not apply not operator to non boolean variable", node)
 
         node.parent.replace(node, child)
 
@@ -271,7 +274,7 @@ def __computeOperation(first, second, parent, operator, values):
                             return Node.Node(type="false")
 
                 else:
-                    raise VariableError("Unsupported unit combination for number comparison", parent)
+                    raise ExecuterError("Unsupported unit combination for number comparison", parent)
 
 
             elif firstUnit == secondUnit or firstUnit is None or secondUnit is None:
@@ -300,7 +303,7 @@ def __computeOperation(first, second, parent, operator, values):
                     return first
 
                 else:
-                    raise VariableError("Unsupported number operation", parent)
+                    raise ExecuterError("Unsupported number operation", parent)
 
 
             elif firstUnit == "%" or secondUnit == "%":
@@ -321,10 +324,10 @@ def __computeOperation(first, second, parent, operator, values):
                     return repl
 
                 else:
-                    raise VariableError("Could not compute mixed percent operations for operators other than \"*\" and \"/\"", node)
+                    raise ExecuterError("Could not compute mixed percent operations for operators other than \"*\" and \"/\"", node)
 
             else:
-                raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
+                raise ExecuterError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
 
         elif first.type == "string":
             if operator == "plus":
@@ -345,7 +348,7 @@ def __computeOperation(first, second, parent, operator, values):
                     return Node.Node(type="false")
 
             else:
-                raise VariableError("Unsupported string operation", parent)
+                raise ExecuterError("Unsupported string operation", parent)
 
         elif first.type == "list":
             if len(first) == len(second):
@@ -358,14 +361,14 @@ def __computeOperation(first, second, parent, operator, values):
                 return repl
 
             else:
-                raise VariableError("For list operations both lists have to have the same length!", parent)
+                raise ExecuterError("For list operations both lists have to have the same length!", parent)
 
         # Wait for system calls executing first
         elif first.type == "system":
             return None
 
         else:
-            raise VariableError("Unsupported operation on %s" % first.type, parent)
+            raise ExecuterError("Unsupported operation on %s" % first.type, parent)
 
 
     elif first.type == "list" and second.type != "list":
@@ -395,7 +398,7 @@ def __computeOperation(first, second, parent, operator, values):
             repl.value = str(first.value) + str(second.value)
             return repl
         else:
-            raise VariableError("Unsupported string operation", parent)
+            raise ExecuterError("Unsupported string operation", parent)
 
 
     # Waiting for system method execution
@@ -413,8 +416,8 @@ def __computeOperation(first, second, parent, operator, values):
         elif operator in MATH_OPERATORS:
             return Node.Node(type="null")
         else:
-            raise VariableError("Unsupported operation on null type", parent)
+            raise ExecuterError("Unsupported operation on null type", parent)
 
 
     else:
-        raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
+        raise ExecuterError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
