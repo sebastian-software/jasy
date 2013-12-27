@@ -243,10 +243,6 @@ class Compressor:
 
 
     def type_block(self, node):
-        # Ignore direct blocks inside blocks
-        if node.parent.type == "block":
-            return self.__statements(node)
-
         self.__indentLevel += 1
         inner = self.__statements(node)
         self.__indentLevel -= 1
