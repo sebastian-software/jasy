@@ -12,7 +12,17 @@ class OperationError(Exception):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
-def compute(first, second, parent, operator):
+def compute(first, second, parent=None, operator=None):
+
+    # Fill gaps in empty arguments
+    if parent is None and first.parent is second.parent:
+        parent = first.parent
+
+    if parent and operator is None:
+        operator = parent.type
+
+    if parent is None or operator is None:
+        raise OperationError("Missing arguments for compute()", first)
 
     # Support for default set operator "?=" when variable was not defined before
     if first is None and operator == "questionmark":
