@@ -24,7 +24,7 @@ class ExecuterError(Exception):
 
 
 def process(tree):
-    __recurser(tree, None, {})
+    __recurser(tree, tree.scope, {})
 
 
 def __recurser(node, scope, values):
