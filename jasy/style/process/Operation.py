@@ -25,16 +25,8 @@ def castToBool(node):
         raise OperationError("Could not cast node to boolean value", node)
 
 
-def getBoolNode(value):
-    if value:
-        return Node.Node(type="true")
-    else:
-        return Node.Node(type="false")
-
-
 def castToBoolNode(node):
-    return getBoolNode(castToBool(node))
-
+    return Util.castNativeToNode(castToBool(node))
 
 
 def compute(node, first=None, second=None, operator=None):
@@ -71,11 +63,11 @@ def compute(node, first=None, second=None, operator=None):
 
     # Support for not-/and-/or-operator
     if operator == "not":
-        return getBoolNode(not castToBool(first))
+        return Util.castNativeToNode(not castToBool(first))
     elif operator == "and":
-        return getBoolNode(castToBool(first) and castToBool(second))
+        return Util.castNativeToNode(castToBool(first) and castToBool(second))
     elif operator == "or":
-        return getBoolNode(castToBool(first) or castToBool(second))
+        return Util.castNativeToNode(castToBool(first) or castToBool(second))
 
     # Support for default set operator "?=" when variable was not defined before
     elif operator == "questionmark" and first is None:

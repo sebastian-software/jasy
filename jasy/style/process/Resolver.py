@@ -9,7 +9,6 @@ Not all if blocks are being able to be resolved that way though as some use
 variables etc. which are not available before actual full processing of the content.
 """
 
-import jasy.style.parse.Node as Node
 import jasy.style.process.Operation as Operation
 import jasy.style.Util as Util
 import jasy.core.Console as Console
@@ -28,35 +27,16 @@ def process(tree, permutation):
 
 
 
-
-
 #
 # Implementation
 #
-
-def __transform(value, name=None):
-
-    if value is True:
-        node = Node.Node(type="true")
-    elif value is False:
-        node = Node.Node(type="false")
-    elif isinstance(value, str):
-        node = Node.Node(type="string")
-        node.value = value
-    elif isinstance(value, (float, int)):
-        node = Node.Node(type="number")
-        node.value = value
-    else:
-        raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
-
-    return node
-
 
 def __recurser(node, permutation, inCondition=False):
 
     # Support block commands
     # These come with their own node.type
     if node.type == "if":
+
         # Pre-process condition
         # We manually process each child in for if-types
         __recurser(node.condition, permutation, True)
@@ -92,7 +72,7 @@ def __recurser(node, permutation, inCondition=False):
         if not permutation.has(node.value):
             raise ResolverError("Could not find field %s" % node.value, node)
 
-        repl = __transform(permutation.get(node.value), node.value)
+        repl = Util.castNativeToNode(permutation.get(node.value))
         node.parent.replace(node, repl)
 
 
@@ -111,7 +91,7 @@ def __recurser(node, permutation, inCondition=False):
             if not permutation.has(identifier):
                 raise ResolverError("Could not find field with the name %s" % identifier, identifierNode)
 
-            repl = __transform(permutation.get(identifier), identifierNode)
+            repl = Util.castNativeToNode(permutation.get(identifier))
             node.parent.replace(node, repl)
 
         else:

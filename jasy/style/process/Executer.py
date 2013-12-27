@@ -9,20 +9,24 @@ import jasy.style.process.Operation as Operation
 import jasy.style.Util as Util
 import jasy.core.Console as Console
 
-RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
-
-
 
 class ExecuterError(Exception):
     def __init__(self, message, node):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
-
-
 def process(tree, session):
     __recurser(tree, tree.scope, {}, session)
 
+
+
+
+
+#
+# Implementation
+#
+
+RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
 def __recurser(node, scope, values, session):
     # Replace variable with actual value

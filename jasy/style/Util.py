@@ -4,6 +4,7 @@
 #
 
 import itertools, re
+import jasy.style.parse.Node as Node
 
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
 
@@ -100,6 +101,22 @@ def assembleDot(node, result=None):
 
     return ".".join(result)
 
+
+def castNativeToNode(value):
+    if value is True:
+        node = Node.Node(type="true")
+    elif value is False:
+        node = Node.Node(type="false")
+    elif isinstance(value, str):
+        node = Node.Node(type="string")
+        node.value = value
+    elif isinstance(value, (float, int)):
+        node = Node.Node(type="number")
+        node.value = value
+    else:
+        raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
+
+    return node
 
 
 def combineSelector(node, stop=None):
