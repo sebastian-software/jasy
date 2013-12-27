@@ -387,7 +387,7 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_mixed_units(self):
-        import jasy.style.process.Executer as Executer
+        import jasy.style.process.Operation as Operation
 
         def wrapper():
             self.process('''
@@ -407,7 +407,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Executer.ExecuterError, wrapper)
+        self.assertRaises(Operation.OperationError, wrapper)
 
 
 
