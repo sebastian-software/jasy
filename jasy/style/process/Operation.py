@@ -67,7 +67,10 @@ def compute(node, first=None, second=None, operator=None):
     # Compare operation types
     if first.type == second.type:
         if first.type in ("true", "false", "null"):
-            return Util.castNativeToNode(True)
+            if operator in ("eq", "ge", "le"):
+                return Util.castNativeToNode(True)
+            else:
+                return Util.castNativeToNode(False)
 
         elif first.type == "number":
             firstUnit = getattr(first, "unit", None)
