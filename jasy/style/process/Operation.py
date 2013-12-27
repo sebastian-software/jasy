@@ -29,9 +29,11 @@ def compute(node, first=None, second=None, operator=None):
     if node is None or operator is None:
         raise OperationError("Missing arguments for compute()", first)
 
-
     # Support for not-operator
-    if first is not None and operator == "not":
+    if operator == "not":
+        if first is None:
+            raise OperationError("Invalid not-operation. Missing child!", node)
+
         if first.type == "false" or first.type == "null":
             return Node.Node(type="true")
         elif first.type == "true":
@@ -50,7 +52,7 @@ def compute(node, first=None, second=None, operator=None):
             raise OperationError("Invalid not-operation value", node)
 
     # Support for default set operator "?=" when variable was not defined before
-    if first is None and operator == "questionmark":
+    if operator == "questionmark" and first is None:
         return second
 
     # Solve inner operations first
