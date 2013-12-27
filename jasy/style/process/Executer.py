@@ -48,6 +48,7 @@ def __recurser(node, scope, values, session):
         # We manually process each child in for if-types
         __recurser(node.condition, scope, values, session)
 
+        # Cast condition to Python boolean type
         resultValue = Operation.castToBool(node.condition)
 
         # Process relevant part of the sub tree

@@ -57,15 +57,23 @@ def __recurser(node, permutation, inCondition=False):
     # Support block commands
     # These come with their own node.type
     if node.type == "if":
+        # Pre-process condition
+        # We manually process each child in for if-types
         __recurser(node.condition, permutation, True)
 
+        # Cast condition to Python boolean type
         resultValue = Operation.castToBool(node.condition)
+
+        # Process relevant part of the sub tree
+        resultNode = None
         if resultValue:
-            __recurser(node.thenPart, permutation)
-            node.parent.insertAllReplace(node, node.thenPart)
+            resultNode = node.thenPart
         elif hasattr(node, "elsePart"):
-            __recurser(node.elsePart, permutation)
-            node.parent.insertAllReplace(node, node.elsePart)
+            resultNode = node.elsePart
+
+        if resultNode:
+            __recurser(resultNode, permutation)
+            node.parent.insertAllReplace(node, resultNode)
         else:
             node.parent.remove(node)
 
