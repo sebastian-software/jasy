@@ -12,16 +12,19 @@ class OperationError(Exception):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
-def compute(first, second, parent=None, operator=None):
+def compute(node, first=None, second=None, operator=None):
 
     # Fill gaps in empty arguments
-    if parent is None and first.parent is second.parent:
-        parent = first.parent
+    if first is None:
+        first = node[0]
 
-    if parent and operator is None:
-        operator = parent.type
+    if second is None:
+        second = node[1]
 
-    if parent is None or operator is None:
+    if operator is None:
+        operator = node.type
+
+    if node is None or operator is None:
         raise OperationError("Missing arguments for compute()", first)
 
     # Support for default set operator "?=" when variable was not defined before
@@ -30,14 +33,14 @@ def compute(first, second, parent=None, operator=None):
 
     # Solve inner operations first
     if first.type in Util.ALL_OPERATORS:
-        repl = compute(first[0], first[1], first, first.type)
+        repl = compute(first)
         if repl is None:
             return
         else:
             first = repl
 
     if second.type in Util.ALL_OPERATORS:
-        repl = compute(second[0], second[1], second, second.type)
+        repl = compute(second)
         if repl is None:
             return
         else:
@@ -93,7 +96,7 @@ def compute(first, second, parent=None, operator=None):
                             return Node.Node(type="false")
 
                 else:
-                    raise OperationError("Unsupported unit combination for number comparison", parent)
+                    raise OperationError("Unsupported unit combination for number comparison", node)
 
 
             elif firstUnit == secondUnit or firstUnit is None or secondUnit is None:
@@ -122,7 +125,7 @@ def compute(first, second, parent=None, operator=None):
                     return first
 
                 else:
-                    raise OperationError("Unsupported number operation", parent)
+                    raise OperationError("Unsupported number operation", node)
 
 
             elif firstUnit == "%" or secondUnit == "%":
@@ -146,7 +149,7 @@ def compute(first, second, parent=None, operator=None):
                     raise OperationError("Could not compute mixed percent operations for operators other than \"*\" and \"/\"", node)
 
             else:
-                raise OperationError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
+                raise OperationError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), node)
 
         elif first.type == "string":
             if operator == "plus":
@@ -167,29 +170,29 @@ def compute(first, second, parent=None, operator=None):
                     return Node.Node(type="false")
 
             else:
-                raise OperationError("Unsupported string operation", parent)
+                raise OperationError("Unsupported string operation", node)
 
         elif first.type == "list":
             if len(first) == len(second):
                 repl = Node.Node(type="list")
                 for pos, child in enumerate(first):
-                    childRepl = compute(child, second[pos], parent, operator)
+                    childRepl = compute(node, child, second[pos], operator)
                     if childRepl is not None:
                         repl.append(childRepl)
 
                 return repl
 
             else:
-                raise OperationError("For list operations both lists have to have the same length!", parent)
+                raise OperationError("For list operations both lists have to have the same length!", node)
 
         else:
-            raise OperationError("Unsupported operation on %s" % first.type, parent)
+            raise OperationError("Unsupported operation on %s" % first.type, node)
 
 
     elif first.type == "list" and second.type != "list":
         repl = Node.Node(type="list")
         for child in first:
-            childRepl = compute(child, second, parent, operator)
+            childRepl = compute(node, child, second, operator)
             if childRepl is not None:
                 repl.append(childRepl)
 
@@ -199,7 +202,7 @@ def compute(first, second, parent=None, operator=None):
     elif first.type != "list" and second.type == "list":
         repl = Node.Node(type="list")
         for child in second:
-            childRepl = compute(first, child, parent, operator)
+            childRepl = compute(node, first, child, operator)
             if childRepl is not None:
                 repl.append(childRepl)
 
@@ -213,7 +216,7 @@ def compute(first, second, parent=None, operator=None):
             repl.value = str(first.value) + str(second.value)
             return repl
         else:
-            raise OperationError("Unsupported string operation", parent)
+            raise OperationError("Unsupported string operation", node)
 
 
     # Just handle when not both are null - equal condition is already done before
@@ -225,9 +228,9 @@ def compute(first, second, parent=None, operator=None):
         elif operator in Util.MATH_OPERATORS:
             return Node.Node(type="null")
         else:
-            raise OperationError("Unsupported operation on null type", parent)
+            raise OperationError("Unsupported operation on null type", node)
 
 
     else:
-        raise OperationError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
+        raise OperationError("Different types in operation: %s vs %s" % (first.type, second.type), node)
 
