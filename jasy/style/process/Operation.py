@@ -230,3 +230,4 @@ def compute(first, second, parent=None, operator=None):
 
     else:
         raise OperationError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
+
