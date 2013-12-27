@@ -44,6 +44,48 @@ def __recurser(node, values):
         node.parent.replace(node, copy.deepcopy(values[name]))
 
 
+    elif node.type == "if":
+
+        # Pre-process condition
+        __recurser(node.condition, values)
+
+        Console.info("Processing if-condition at %s", node.line)
+
+        conditionNode = node.condition
+
+        if conditionNode.type == "true":
+            resultValue = True
+        elif conditionNode.type == "false" or conditionNode.type == "null":
+            resultValue = False
+        elif conditionNode.type in ("number", "string"):
+            resultValue = bool(node.condition.value)
+        else:
+            raise Exception("Unresolved if-block with condition: %s" % conditionNode)
+
+        # Process relevant part of the sub tree
+        resultNode = None
+        if resultValue is True:
+            resultNode = node.thenPart
+            __recurser(node.thenPart, values)
+        elif resultValue is False:
+            if hasattr(node, "elsePart"):
+                resultNode = node.elsePart
+                __recurser(node.elsePart, values)
+            else:
+                node.parent.remove(node)
+
+        if resultNode:
+            # Fix missing processing of result node
+            __recurser(resultNode, values)
+
+            # Finally replace if-node with result node
+            node.parent.insertAllReplace(node, resultNode)
+
+        else:
+            # Cleanup original if-node
+            node.parent.remove(node)
+
+        return
 
 
     for child in list(node):
@@ -112,4 +154,7 @@ def __recurser(node, values):
 
         else:
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
+
+
+
 
