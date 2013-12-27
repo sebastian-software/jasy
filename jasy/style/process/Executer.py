@@ -4,6 +4,7 @@
 #
 
 import copy, re
+
 import jasy.style.parse.Node as Node
 import jasy.style.process.Operation as Operation
 import jasy.style.Util as Util
@@ -46,7 +47,7 @@ def __recurser(node, scope, values, session):
     # Decide which sub tree of an if-condition is relevant based on current variable situation
     elif node.type == "if":
 
-        Console.info("Processing if-condition at %s", node.line)
+        Console.debug("Processing if-condition at %s", node.line)
 
         # Pre-process condition
         # We manually process each child in for if-types
@@ -56,18 +57,19 @@ def __recurser(node, scope, values, session):
         resultValue = Operation.castToBool(node.condition)
 
         # Process relevant part of the sub tree
-        resultNode = None
         if resultValue is True:
-            resultNode = node.thenPart
-        elif resultValue is False and hasattr(node, "elsePart"):
-            resultNode = node.elsePart
-
-        if resultNode:
             # Fix missing processing of result node
-            __recurser(resultNode, scope, values, session)
+            __recurser(node.thenPart, scope, values, session)
 
             # Finally replace if-node with result node
-            node.parent.insertAllReplace(node, resultNode)
+            node.parent.replace(node, node.thenPart)
+
+        elif resultValue is False and hasattr(node, "elsePart"):
+            # Fix missing processing of result node
+            __recurser(node.elsePart, scope, values, session)
+
+            # Finally replace if-node with result node
+            node.parent.replace(node, node.elsePart)
 
         else:
             # Cleanup original if-node
@@ -125,7 +127,7 @@ def __recurser(node, scope, values, session):
 
         else:
             # Update internal variable mapping
-            Console.debug("Update value of %s to %s" % (name, init))
+            # Console.debug("Update value of %s to %s" % (name, init))
             values[name] = init
 
         # Remove declaration node from tree
