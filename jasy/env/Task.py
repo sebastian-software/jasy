@@ -135,7 +135,7 @@ def executeTask(taskname, **kwargs):
     if taskname in __taskRegistry:
         try:
             camelCaseArgs = { Util.camelize(key) : kwargs[key] for key in kwargs }
-            __taskRegistry[taskname](**camelCaseArgs)
+            return __taskRegistry[taskname](**camelCaseArgs)
         except UserError as err:
             raise
         except:
