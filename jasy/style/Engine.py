@@ -66,6 +66,9 @@ def reduceTree(tree, session=None):
     Applies all relevant modifications to the tree to allow compression to CSS
     """
 
+    Console.info("Reducing tree: %s...", tree.fileId)
+    Console.indent()
+
     # PHASE 2
     # Trivial cleanups
     ScopeScanner.scan(tree)
@@ -106,6 +109,8 @@ def reduceTree(tree, session=None):
     # PHASE 8
     # Post scan to remove (hopefully) all variable/mixin access
     ScopeScanner.scan(tree)
+
+    Console.outdent()
 
     return tree
 
