@@ -5,6 +5,7 @@
 
 import copy, re
 import jasy.style.parse.Node as Node
+import jasy.style.Util as Util
 import jasy.core.Console as Console
 
 
@@ -16,52 +17,7 @@ COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
 ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
 
 
-builtin = set([
-    # Colors
-    "rgb",
-    "rgba",
-    "hsl",
-    "hsb",
 
-    # URLs
-    "url",
-
-    # Webfonts
-    "format",
-
-    # Transforms
-    "matrix",
-    "translate",
-    "translateX",
-    "translateY",
-    "scale",
-    "scaleX",
-    "scaleY",
-    "rotate",
-    "skewX",
-    "skewY",
-
-    # 3D Transforms
-    "matrix3d",
-    "translate3d",
-    "translateZ",
-    "scale3d",
-    "scaleZ",
-    "rotate3d",
-    "rotateX",
-    "rotateY",
-    "rotateZ",
-    "perspective",
-
-    # Gradients
-    "linear-gradient",
-    "radial-gradient",
-    "repeating-linear-gradient",
-    "repeating-radial-gradient",
-
-    # Transitions
-    "steps"
-])
 
 
 class ExecuterError(Exception):
@@ -223,7 +179,7 @@ def __recurser(node, scope, values, session):
         command = node.name
 
         # Filter all built-in commands and all vendor prefixed ones
-        if command in builtin or command.startswith("-"):
+        if command in Util.BUILTIN_METHODS or command.startswith("-"):
             return
 
         params = []

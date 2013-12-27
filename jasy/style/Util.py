@@ -7,6 +7,53 @@ import itertools, re
 
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
 
+BUILTIN_METHODS = set([
+    # Colors
+    "rgb",
+    "rgba",
+    "hsl",
+    "hsb",
+
+    # URLs
+    "url",
+
+    # Webfonts
+    "format",
+
+    # Transforms
+    "matrix",
+    "translate",
+    "translateX",
+    "translateY",
+    "scale",
+    "scaleX",
+    "scaleY",
+    "rotate",
+    "skewX",
+    "skewY",
+
+    # 3D Transforms
+    "matrix3d",
+    "translate3d",
+    "translateZ",
+    "scale3d",
+    "scaleZ",
+    "rotate3d",
+    "rotateX",
+    "rotateY",
+    "rotateZ",
+    "perspective",
+
+    # Gradients
+    "linear-gradient",
+    "radial-gradient",
+    "repeating-linear-gradient",
+    "repeating-radial-gradient",
+
+    # Transitions
+    "steps"
+])
+
 def extractVendor(name):
     match = RE_ENGINE_PROPERTY.match(name)
     if match:
