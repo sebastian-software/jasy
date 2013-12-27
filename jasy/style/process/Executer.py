@@ -124,7 +124,7 @@ def __recurser(node, scope, values, session):
             if not name in values:
                 raise ExecuterError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
-            repl = Operation.compute(values[name], init, node, node.assignOp)
+            repl = Operation.compute(node, values[name], init, node.assignOp)
             if repl is not None:
                 values[name] = repl
 
@@ -209,40 +209,7 @@ def __recurser(node, scope, values, session):
 
     # Support typical operators
     elif node.type in Util.ALL_OPERATORS:
-        repl = __processOperator(node, values)
+        repl = Operation.compute(node)
         if repl is not None:
             node.parent.replace(node, repl)
-
-
-    # Not operator support
-    elif node.type == "not":
-        child = node[0]
-        if child.type == "true":
-            child.type = "false"
-        elif child.type == "false" or child.type == "null":
-            child.type = "true"
-        else:
-            raise ExecuterError("Could not apply not operator to non boolean variable", node)
-
-        node.parent.replace(node, child)
-
-
-
-
-
-
-def __processOperator(node, values):
-    Console.debug("Process operator: %s", node.type)
-
-    # Resolve first child of operation
-    first = node[0]
-    if first.type == "variable":
-        first = values[first.name]
-
-    # Resolve second child of operation
-    second = node[1]
-    if second.type == "variable":
-        second = values[second.name]
-
-    return Operation.compute(first, second)
 
