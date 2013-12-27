@@ -244,5 +244,5 @@ def __processOperator(node, values):
     if second.type == "variable":
         second = values[second.name]
 
-    return Operation.compute(first, second, node, node.type)
+    return Operation.compute(first, second)
 
