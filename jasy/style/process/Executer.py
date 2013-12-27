@@ -167,7 +167,17 @@ def __recurser(node, values):
             node.parent.replace(node, repl)
 
 
+    # Not operator support
+    elif node.type == "not":
+        child = node[0]
+        if child.type == "true":
+            child.type = "false"
+        elif child.type == "false" or child.type == "null":
+            child.type = "true"
+        else:
+            raise VariableError("Could not apply not operator to non boolean variable", node)
 
+        node.parent.replace(node, child)
 
 
 

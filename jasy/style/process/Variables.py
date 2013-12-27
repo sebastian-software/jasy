@@ -43,23 +43,4 @@ def __computeRecurser(node, scope, values):
         for name in scope.modified:
             values[name] = None
 
-    # Support typical operators
-    if node.type in ALL_OPERATORS:
-        repl = __processOperator(node, values)
-        if repl is not None:
-            node.parent.replace(node, repl)
-
-
-    # Not operator support
-    elif node.type == "not":
-        child = node[0]
-        if child.type == "true":
-            child.type = "false"
-        elif child.type == "false" or child.type == "null":
-            child.type = "true"
-        else:
-            raise VariableError("Could not apply not operator to non boolean variable", node)
-
-        node.parent.replace(node, child)
-
 
