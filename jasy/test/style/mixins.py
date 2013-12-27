@@ -301,7 +301,7 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_missing(self):
-        import jasy.style.process.Variables as Variables
+        import jasy.style.process.Executer as Executer
 
         def wrapper():
             self.process('''
@@ -321,7 +321,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)
+        self.assertRaises(Executer.ExecuterError, wrapper)
 
 
     def test_mixin_default_param(self):
@@ -387,7 +387,7 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_param_mixed_units(self):
-        import jasy.style.process.Variables as Variables
+        import jasy.style.process.Executer as Executer
 
         def wrapper():
             self.process('''
@@ -407,7 +407,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)
+        self.assertRaises(Executer.ExecuterError, wrapper)
 
 
 
@@ -551,7 +551,7 @@ class Tests(unittest.TestCase):
 
 
     def test_mixin_wrong_place_variable(self):
-        import jasy.style.process.Variables as Variables
+        import jasy.style.process.Executer as Executer
 
         def wrapper():
             self.process('''
@@ -564,7 +564,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Variables.VariableError, wrapper)
+        self.assertRaises(Executer.ExecuterError, wrapper)
 
 
     def test_mixin_content(self):
