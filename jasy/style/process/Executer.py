@@ -28,8 +28,6 @@ def __recurser(node, values):
     print("PROCESS: %s from %s" % (node.type, node.line))
 
 
-
-
     # Replace variable with actual value
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
@@ -46,11 +44,12 @@ def __recurser(node, values):
 
     elif node.type == "if":
 
+        Console.info("Processing if-condition at %s", node.line)
+
         # Pre-process condition
         __recurser(node.condition, values)
 
-        Console.info("Processing if-condition at %s", node.line)
-
+        # Named child "condition" might be replaced so assign variable not before
         conditionNode = node.condition
 
         if conditionNode.type == "true":
@@ -85,6 +84,7 @@ def __recurser(node, values):
             # Cleanup original if-node
             node.parent.remove(node)
 
+        # Nothing to do here as content is already processed
         return
 
 
