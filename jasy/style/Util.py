@@ -113,6 +113,8 @@ def castNativeToNode(value):
     elif isinstance(value, (float, int)):
         node = Node.Node(type="number")
         node.value = value
+    elif value is None:
+        node = Node.Node(type="null")
     else:
         raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
 

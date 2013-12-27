@@ -86,40 +86,17 @@ def compute(node, first=None, second=None, operator=None):
             if operator in Util.COMPARE_OPERATORS:
                 if firstUnit == secondUnit or firstUnit is None or secondUnit is None:
                     if operator == "eq":
-                        if first.value == second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
-
+                        return Util.castNativeToNode(first.value == second.value)
                     elif operator == "ne":
-                        if first.value != second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
-
+                        return Util.castNativeToNode(first.value != second.value)
                     elif operator == "gt":
-                        if first.value > second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
-
+                        return Util.castNativeToNode(first.value > second.value)
                     elif operator == "lt":
-                        if first.value < second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
-
+                        return Util.castNativeToNode(first.value < second.value)
                     elif operator == "ge":
-                        if first.value >= second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
-
+                        return Util.castNativeToNode(first.value >= second.value)
                     elif operator == "le":
-                        if first.value <= second.value:
-                            return Node.Node(type="true")
-                        else:
-                            return Node.Node(type="false")
+                        return Util.castNativeToNode(first.value <= second.value)
 
                 else:
                     raise OperationError("Unsupported unit combination for number comparison", node)
@@ -184,17 +161,9 @@ def compute(node, first=None, second=None, operator=None):
                 return repl
 
             elif operator == "eq":
-                if first.value == second.value:
-                    return Node.Node(type="true")
-                else:
-                    return Node.Node(type="false")
-
+                return Util.castNativeToNode(first.value == second.value)
             elif operator == "ne":
-                if first.value != second.value:
-                    return Node.Node(type="true")
-                else:
-                    return Node.Node(type="false")
-
+                return Util.castNativeToNode(first.value != second.value)
             else:
                 raise OperationError("Unsupported string operation", node)
 
@@ -216,11 +185,11 @@ def compute(node, first=None, second=None, operator=None):
 
 
     elif first.type == "true" and second.type == "false":
-        return Node.Node(type="false")
+        return Util.castNativeToNode(False)
 
 
     elif first.type == "false" and second.type == "true":
-        return Node.Node(type="false")
+        return Util.castNativeToNode(False)
 
 
     elif first.type == "list" and second.type != "list":
@@ -256,11 +225,11 @@ def compute(node, first=None, second=None, operator=None):
     # Just handle when not both are null - equal condition is already done before
     elif first.type == "null" or second.type == "null":
         if operator == "eq":
-            return Node.Node(type="false")
+            return Util.castNativeToNode(False)
         elif operator == "ne":
-            return Node.Node(type="true")
+            return Util.castNativeToNode(True)
         elif operator in Util.MATH_OPERATORS:
-            return Node.Node(type="null")
+            return Util.castNativeToNode(None)
         else:
             raise OperationError("Unsupported operation on null type", node)
 
