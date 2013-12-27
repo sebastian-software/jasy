@@ -16,7 +16,6 @@ import jasy.style.clean.Unused as Unused
 
 import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
-import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
 import jasy.style.process.Methods as Methods
 import jasy.style.process.Executer as Executer
