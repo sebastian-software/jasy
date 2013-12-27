@@ -212,7 +212,10 @@ def main():
         for entry in tasks:
             start = time.time()
 
-            Task.executeTask(entry["task"], **entry["params"])
+            returnValue = Task.executeTask(entry["task"], **entry["params"])
+            
+            if returnValue not in (0, None):
+                sys.exit(returnValue)
 
             duration = '{:.2f}'.format(time.time() - start)
             Console.info("Task completed in %ss", duration)
