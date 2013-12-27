@@ -25,12 +25,16 @@ def castToBool(node):
         raise OperationError("Could not cast node to boolean value", node)
 
 
-def castToBoolNode(node):
-    casted = castToBool(node)
-    if casted:
+def getBoolNode(value):
+    if value:
         return Node.Node(type="true")
     else:
         return Node.Node(type="false")
+
+
+def castToBoolNode(node):
+    return getBoolNode(castToBool(node))
+
 
 
 def compute(node, first=None, second=None, operator=None):
@@ -65,23 +69,16 @@ def compute(node, first=None, second=None, operator=None):
         else:
             second = repl
 
-    # Support for not-operator
+    # Support for not-/and-/or-operator
     if operator == "not":
-        casted = castToBoolNode(first)
-
-        # Negate value
-        if casted.type == "true":
-            casted.type = "false"
-        else:
-            casted.type = "true"
-
-        return casted
-
-    # Support for and/or-operator
+        print("NOT OPERATOR")
+        return getBoolNode(not castToBool(first))
     elif operator == "and":
-        return castToBool(first) and castToBool(second)
+        print("AND OPERATOR")
+        return getBoolNode(castToBool(first) and castToBool(second))
     elif operator == "or":
-        return castToBool(first) or castToBool(second)
+        print("OR OPERATOR")
+        return getBoolNode(castToBool(first) or castToBool(second))
 
     # Support for default set operator "?=" when variable was not defined before
     elif operator == "questionmark" and first is None:
