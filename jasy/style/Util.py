@@ -9,8 +9,9 @@ RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\
 
 MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
 COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
+LOGIC_OPERATORS = ("not", "and", "or")
 
-ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
+ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS + LOGIC_OPERATORS
 
 BUILTIN_METHODS = set([
     # Colors
