@@ -17,7 +17,6 @@ import jasy.style.clean.Unused as Unused
 import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Flatter as Flatter
-import jasy.style.process.Methods as Methods
 import jasy.style.process.Executer as Executer
 
 import jasy.style.output.Optimization as Optimization
@@ -90,7 +89,7 @@ def reduceTree(tree, session=None):
 
     # PHASE 6
     # Execute variable resolution and method calls
-    Executer.process(tree)
+    Executer.process(tree, session)
 
     # PHASE 7
     # Flattening selectors

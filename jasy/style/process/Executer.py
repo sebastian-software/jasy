@@ -16,6 +16,54 @@ COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
 ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
 
 
+builtin = set([
+    # Colors
+    "rgb",
+    "rgba",
+    "hsl",
+    "hsb",
+
+    # URLs
+    "url",
+
+    # Webfonts
+    "format",
+
+    # Transforms
+    "matrix",
+    "translate",
+    "translateX",
+    "translateY",
+    "scale",
+    "scaleX",
+    "scaleY",
+    "rotate",
+    "skewX",
+    "skewY",
+
+    # 3D Transforms
+    "matrix3d",
+    "translate3d",
+    "translateZ",
+    "scale3d",
+    "scaleZ",
+    "rotate3d",
+    "rotateX",
+    "rotateY",
+    "rotateZ",
+    "perspective",
+
+    # Gradients
+    "linear-gradient",
+    "radial-gradient",
+    "repeating-linear-gradient",
+    "repeating-radial-gradient",
+
+    # Transitions
+    "steps"
+])
+
+
 class ExecuterError(Exception):
     def __init__(self, message, node):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
@@ -23,11 +71,11 @@ class ExecuterError(Exception):
 
 
 
-def process(tree):
-    __recurser(tree, tree.scope, {})
+def process(tree, session):
+    __recurser(tree, tree.scope, {}, session)
 
 
-def __recurser(node, scope, values):
+def __recurser(node, scope, values, session):
     # Replace variable with actual value
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
@@ -49,7 +97,7 @@ def __recurser(node, scope, values):
 
         # Pre-process condition
         # We manually process each child in for if-types
-        __recurser(node.condition, scope, values)
+        __recurser(node.condition, scope, values, session)
 
         # Named child "condition" might be replaced so assign variable not before
         conditionNode = node.condition
@@ -72,7 +120,7 @@ def __recurser(node, scope, values):
 
         if resultNode:
             # Fix missing processing of result node
-            __recurser(resultNode, scope, values)
+            __recurser(resultNode, scope, values, session)
 
             # Finally replace if-node with result node
             node.parent.insertAllReplace(node, resultNode)
@@ -105,7 +153,7 @@ def __recurser(node, scope, values):
     for child in list(node):
         # Ignore non-children... through possible interactive structure changes
         if child and child.parent is node:
-            __recurser(child, scope, values)
+            __recurser(child, scope, values, session)
 
 
     # Update values of variables
@@ -169,6 +217,45 @@ def __recurser(node, scope, values):
 
         else:
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
+
+
+    elif node.type == "system":
+        command = node.name
+
+        # Filter all built-in commands and all vendor prefixed ones
+        if command in builtin or command.startswith("-"):
+            return
+
+        params = []
+        for param in node.params:
+            if param.type == "unary_minus":
+                value = -param[0].value
+            else:
+                value = param.value
+
+            params.append(value)
+
+        # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
+        result, restype = session.executeCommand(command, params)
+
+        if restype == "px":
+            repl = Node.Node(type="number")
+            repl.value = result
+            repl.unit = restype
+
+        elif restype == "url":
+            repl = Node.Node(type="identifier")
+            repl.value = "url(%s)" % result
+
+        elif restype == "number":
+            repl = Node.Node(type="number")
+            repl.value = result
+
+        else:
+            repl = Node.Node(type="identifier")
+            repl.value = result
+
+        node.parent.replace(node, repl)
 
 
     # Support typical operators
