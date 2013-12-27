@@ -45,16 +45,22 @@ def __recurser(node, permutation, inCondition=False):
         resultValue = Operation.castToBool(node.condition)
 
         # Process relevant part of the sub tree
-        resultNode = None
-        if resultValue:
-            resultNode = node.thenPart
-        elif hasattr(node, "elsePart"):
-            resultNode = node.elsePart
+        if resultValue is True:
+            # Fix missing processing of result node
+            __recurser(node.thenPart, permutation)
 
-        if resultNode:
-            __recurser(resultNode, permutation)
-            node.parent.insertAllReplace(node, resultNode)
+            # Finally replace if-node with result node
+            node.parent.replace(node, node.thenPart)
+
+        elif resultValue is False and hasattr(node, "elsePart"):
+            # Fix missing processing of result node
+            __recurser(node.elsePart, permutation)
+
+            # Finally replace if-node with result node
+            node.parent.replace(node, node.elsePart)
+
         else:
+            # Cleanup original if-node
             node.parent.remove(node)
 
         # All done including child nodes
