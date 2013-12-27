@@ -12,6 +12,27 @@ class OperationError(Exception):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
+def castToBool(node):
+    if node.type == "false" or node.type == "null":
+        return False
+    elif node.type == "true":
+        return True
+    elif node.type == "number":
+        return node.value != 0
+    elif node.type == "string":
+        return len(node.value) > 0
+    else:
+        raise OperationError("Could not cast node to boolean value", node)
+
+
+def castToBoolNode(node):
+    casted = castToBool(node)
+    if casted:
+        return Node.Node(type="true")
+    else:
+        return Node.Node(type="false")
+
+
 def compute(node, first=None, second=None, operator=None):
 
     # Fill gaps in empty arguments
@@ -27,33 +48,7 @@ def compute(node, first=None, second=None, operator=None):
 
     # Error handling
     if node is None or operator is None:
-        raise OperationError("Missing arguments for compute()", first)
-
-    # Support for not-operator
-    if operator == "not":
-        if first is None:
-            raise OperationError("Invalid not-operation. Missing child!", node)
-
-        if first.type == "false" or first.type == "null":
-            return Node.Node(type="true")
-        elif first.type == "true":
-            return Node.Node(type="false")
-        elif first.type == "number":
-            if first.value == 0:
-                return Node.Node(type="true")
-            else:
-                return Node.Node(type="false")
-        elif first.type == "string":
-            if len(first.value) == 0:
-                return Node.Node(type="true")
-            else:
-                return Node.Node(type="false")
-        else:
-            raise OperationError("Invalid not-operation value", node)
-
-    # Support for default set operator "?=" when variable was not defined before
-    if operator == "questionmark" and first is None:
-        return second
+        raise OperationError("Missing arguments for operation compute()", node)
 
     # Solve inner operations first
     if first is not None and first.type in Util.ALL_OPERATORS:
@@ -70,6 +65,27 @@ def compute(node, first=None, second=None, operator=None):
         else:
             second = repl
 
+    # Support for not-operator
+    if operator == "not":
+        casted = castToBoolNode(first)
+
+        # Negate value
+        if casted.type == "true":
+            casted.type = "false"
+        else:
+            casted.type = "true"
+
+        return casted
+
+    # Support for and/or-operator
+    elif operator == "and":
+        return castToBool(first) and castToBool(second)
+    elif operator == "or":
+        return castToBool(first) or castToBool(second)
+
+    # Support for default set operator "?=" when variable was not defined before
+    elif operator == "questionmark" and first is None:
+        return second
 
     # Compare operation types
     if first.type == second.type:
