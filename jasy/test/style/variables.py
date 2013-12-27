@@ -409,7 +409,18 @@ class Tests(unittest.TestCase):
     def test_nonequal_combined(self):
         self.assertEqual(self.process('''
             $freeuser = true;
-            $enabled = $freeuser and !false;
+            $enabled = $freeuser && !false;
+
+            .box{
+              content: $enabled;
+            }
+            '''), '.box{content:true;}')
+
+
+    def test_nonequal_combined_human(self):
+        self.assertEqual(self.process('''
+            $freeuser = true;
+            $enabled = $freeuser and not false;
 
             .box{
               content: $enabled;

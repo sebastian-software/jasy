@@ -443,15 +443,10 @@ def Media(tokenizer, staticContext):
                 query += " "
             query += "%s%s" % (token.value, getattr(token, "unit", ""))
             requiresSpace = True
-        elif tokenType == "and":
+        elif tokenType in ("and", "or", "not"):
             if requiresSpace :
                 query += " "
-            query += "and"
-            requiresSpace = True
-        elif tokenType == "or":
-            if requiresSpace :
-                query += " "
-            query += "or"
+            query += tokenType
             requiresSpace = True
         else:
             raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
@@ -539,6 +534,8 @@ def Selector(tokenizer, staticContext):
                 selector += "|"
             elif tokenType == "mul":
                 selector += "*"
+            elif tokenType == "not":
+                selector += "not"
             elif tokenType == "assign":
                 if token.assignOp:
                     if token.assignOp == "mul":
