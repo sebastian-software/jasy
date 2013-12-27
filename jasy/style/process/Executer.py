@@ -452,12 +452,6 @@ def __computeOperation(first, second, parent, operator, values):
             raise ExecuterError("Unsupported string operation", parent)
 
 
-    # Waiting for system method execution
-    elif first.type == "system" or second.type == "system":
-        print("Waiting for system call...")
-        return None
-
-
     # Just handle when not both are null - equal condition is already done before
     elif first.type == "null" or second.type == "null":
         if operator == "eq":
