@@ -48,17 +48,7 @@ def __recurser(node, scope, values, session):
         # We manually process each child in for if-types
         __recurser(node.condition, scope, values, session)
 
-        # Named child "condition" might be replaced so assign variable not before
-        conditionNode = node.condition
-
-        if conditionNode.type == "true":
-            resultValue = True
-        elif conditionNode.type == "false" or conditionNode.type == "null":
-            resultValue = False
-        elif conditionNode.type in ("number", "string"):
-            resultValue = bool(node.condition.value)
-        else:
-            raise Exception("Unresolved if-block with condition: %s" % conditionNode)
+        resultValue = Operation.castToBool(node.condition)
 
         # Process relevant part of the sub tree
         resultNode = None

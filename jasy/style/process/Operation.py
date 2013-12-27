@@ -83,7 +83,7 @@ def compute(node, first=None, second=None, operator=None):
 
     # Compare operation types
     if first.type == second.type:
-        if first.type == "null":
+        if first.type in ("true", "false", "null"):
             repl = Node.Node(type="true")
             return repl
 
@@ -221,6 +221,14 @@ def compute(node, first=None, second=None, operator=None):
 
         else:
             raise OperationError("Unsupported operation on %s" % first.type, node)
+
+
+    elif first.type == "true" and second.type == "false":
+        return Node.Node(type="false")
+
+
+    elif first.type == "false" and second.type == "true":
+        return Node.Node(type="false")
 
 
     elif first.type == "list" and second.type != "list":

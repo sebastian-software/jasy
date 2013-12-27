@@ -59,20 +59,7 @@ def __recurser(node, permutation, inCondition=False):
     if node.type == "if":
         __recurser(node.condition, permutation, True)
 
-        # result = __checkCondition(node.condition)
-
-        conditionNode = node.condition
-        if conditionNode.type == "true":
-            resultValue = True
-        elif conditionNode.type == "false":
-            resultValue = False
-        elif conditionNode.type in ("number", "string"):
-            resultValue = bool(node.condition.value)
-        else:
-            raise Exception("Unresolved if-block with condition: %s" % conditionNode)
-
-        print("RESOLVER RESULT", resultValue)
-
+        resultValue = Operation.castToBool(node.condition)
         if resultValue:
             __recurser(node.thenPart, permutation)
             node.parent.insertAllReplace(node, node.thenPart)
