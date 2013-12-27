@@ -48,18 +48,9 @@ def compute(node, first=None, second=None, operator=None):
 
     # Solve inner operations first
     if first is not None and first.type in Util.ALL_OPERATORS:
-        repl = compute(first)
-        if repl is None:
-            return
-        else:
-            first = repl
-
+        first = compute(first)
     if second is not None and second.type in Util.ALL_OPERATORS:
-        repl = compute(second)
-        if repl is None:
-            return
-        else:
-            second = repl
+        second = compute(second)
 
     # Support for not-/and-/or-operator
     if operator == "not":
@@ -76,8 +67,7 @@ def compute(node, first=None, second=None, operator=None):
     # Compare operation types
     if first.type == second.type:
         if first.type in ("true", "false", "null"):
-            repl = Node.Node(type="true")
-            return repl
+            return Util.castNativeToNode(True)
 
         elif first.type == "number":
             firstUnit = getattr(first, "unit", None)
@@ -224,6 +214,11 @@ def compute(node, first=None, second=None, operator=None):
 
     # Just handle when not both are null - equal condition is already done before
     elif first.type == "null" or second.type == "null":
+        if first.type == "null":
+            other = second
+        else:
+            other = first
+
         if operator == "eq":
             return Util.castNativeToNode(False)
         elif operator == "ne":
