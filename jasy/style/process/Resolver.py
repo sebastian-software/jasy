@@ -10,6 +10,7 @@ variables etc. which are not available before actual full processing of the cont
 """
 
 import jasy.style.parse.Node as Node
+import jasy.style.process.Operation as Operation
 import jasy.style.Util as Util
 import jasy.core.Console as Console
 
@@ -53,36 +54,51 @@ def __transform(value, name=None):
 
 def __recurser(node, permutation, inCondition=False):
 
-    # Process children first (resolve logic is inner-out)
-    for child in reversed(node):
-        if child is not None:
-            __recurser(child, permutation, inCondition or getattr(child, "rel", None) == "condition")
-
-
-    # Replace identifiers with their actual value
-    if inCondition:
-        if node.type == "identifier":
-            if not permutation.has(node.value):
-                raise ResolverError("Could not find field %s" % node.value, node)
-
-            repl = __transform(permutation.get(node.value), node.value)
-            node.parent.replace(node, repl)
-
-
     # Support block commands
     # These come with their own node.type
     if node.type == "if":
-        check = __checkCondition(node.condition)
+        __recurser(node.condition, permutation, True)
 
-        if check is None:
-            return
+        # result = __checkCondition(node.condition)
 
-        if check:
+        conditionNode = node.condition
+        if conditionNode.type == "true":
+            resultValue = True
+        elif conditionNode.type == "false":
+            resultValue = False
+        elif conditionNode.type in ("number", "string"):
+            resultValue = bool(node.condition.value)
+        else:
+            raise Exception("Unresolved if-block with condition: %s" % conditionNode)
+
+        print("RESOLVER RESULT", resultValue)
+
+        if resultValue:
+            __recurser(node.thenPart, permutation)
             node.parent.insertAllReplace(node, node.thenPart)
         elif hasattr(node, "elsePart"):
+            __recurser(node.elsePart, permutation)
             node.parent.insertAllReplace(node, node.elsePart)
         else:
             node.parent.remove(node)
+
+        # All done including child nodes
+        return
+
+
+    # Process children first (resolve logic is inner-out)
+    for child in list(node):
+        if child is not None:
+            __recurser(child, permutation, inCondition)
+
+
+    # Inside of conditions replace identifiers with their actual value (from current permutation)
+    if inCondition and node.type == "identifier":
+        if not permutation.has(node.value):
+            raise ResolverError("Could not find field %s" % node.value, node)
+
+        repl = __transform(permutation.get(node.value), node.value)
+        node.parent.replace(node, repl)
 
 
     # Support inline commands
@@ -107,107 +123,9 @@ def __recurser(node, permutation, inCondition=False):
             raise ResolverError("Unsupported inline command %s" % node.name, node)
 
 
-def __checkCondition(node):
-    """
-    Checks a comparison for equality. Returns None when
-    both, truely and falsy could not be deteted.
-    """
-
-    if node.type == "false":
-        return False
-    elif node.type == "true":
-        return True
-
-    elif node.type == "eq":
-        return __compareNodes(node[0], node[1])
-    elif node.type == "ne":
-        return __invertResult(__compareNodes(node[0], node[1]))
-
-    elif node.type == "not":
-        return __invertResult(__checkCondition(node[0]))
-
-    elif node.type == "and":
-        first = __checkCondition(node[0])
-        if first != None and not first:
-            return False
-
-        second = __checkCondition(node[1])
-        if second != None and not second:
-            return False
-
-        if first and second:
-            return True
-
-    elif node.type == "or":
-        first = __checkCondition(node[0])
-        second = __checkCondition(node[1])
-        if first != None and second != None:
-            return first or second
-
-    return None
-
-
-def __invertResult(result):
-    """
-    Used to support the NOT operator.
-    """
-
-    if type(result) == bool:
-        return not result
-
-    return result
-
-
-def __negateType(node):
-    """
-    Negates the value inside a not-type
-    """
-
-    child = node[0]
-
-    if child.type == "false":
-        return "true"
-    elif child.type == "true":
-        return "false"
-    elif child.type == "number":
-        if child.value == 0:
-            return "true"
-        else:
-            return "false"
-    elif child.type == "string":
-        if len(child.value) > 0:
-            return "false"
-        else:
-            return "true"
-    else:
-        return None
-
-
-def __compareNodes(a, b):
-    """
-    This method compares two nodes from the tree regarding equality.
-    It supports boolean, string and number type compares
-    """
-
-    firstType = a.type
-    if firstType == "not":
-        firstType = __negateType(a)
-
-    secondType = b.type
-    if secondType == "not":
-        secondType = __negateType(b)
-
-    if firstType == secondType:
-        if firstType in ("string", "number"):
-            return a.value == b.value
-        elif firstType == "true":
-            return True
-        elif secondType == "false":
-            return False
-
-    elif firstType in ("true", "false") and secondType in ("true", "false"):
-        return False
-
-    return None
-
+    # Support typical operators
+    elif node.type in Util.ALL_OPERATORS:
+        repl = Operation.compute(node)
+        if repl is not None:
+            node.parent.replace(node, repl)
 
