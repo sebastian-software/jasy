@@ -9,24 +9,6 @@ import jasy.style.Util as Util
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
 
-nativeMethods = (
-    "rgb", "rgba", "hsb", "hsba",
-    "url",
-    "format",
-    "matrix",
-    "translate", "translateX", "translateY",
-    "scale", "scaleX", "scaleY",
-    "rotate",
-    "skewX", "skewY",
-    "matrix3d", "translate3d", "translateZ",
-    "scale3d", "scaleZ",
-    "rotate3d", "rotateX", "rotateY", "rotateZ",
-    "perspective",
-    "linear-gradient", "radial-gradient", "gradient",
-    "steps"
-)
-
-
 class CompressorError(Exception):
     def __init__(self, message, node):
         Exception.__init__(self, "Compressor Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
@@ -326,8 +308,8 @@ class Compressor:
     def type_system(self, node):
         name = node.name
 
-        if not Util.extractName(name) in nativeMethods:
-            raise CompressorError("Unsupported native method: %s" % name, node)
+        if not Util.isBuiltin(name):
+            raise CompressorError("Unsupported built-in method: %s" % name, node)
 
         if self.__useWhiteSpace:
             separator = ", "

@@ -68,6 +68,14 @@ def extractName(name):
         return name
 
 
+def isBuiltin(name):
+    """
+    Whether the given method name is a built-in method of the engine
+    """
+
+    return name in BUILTIN_METHODS or RE_ENGINE_PROPERTY.match(name)
+
+
 def assembleDot(node, result=None):
     """
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"

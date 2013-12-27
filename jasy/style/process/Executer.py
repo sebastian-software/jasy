@@ -179,7 +179,7 @@ def __recurser(node, scope, values, session):
         command = node.name
 
         # Filter all built-in commands and all vendor prefixed ones
-        if command in Util.BUILTIN_METHODS or command.startswith("-"):
+        if Util.isBuiltin(command):
             return
 
         params = []
