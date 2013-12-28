@@ -86,10 +86,6 @@ def isBuiltin(name):
 def executeCommand(node, session):
     command = node.name
 
-    # Ignore style engine commands
-    if command in ("expr", "raw"):
-        return node
-
     params = []
     for param in node.params:
         # Variable not yet processed (possible e.g. during permutation apply)
