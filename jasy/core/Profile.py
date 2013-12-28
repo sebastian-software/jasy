@@ -13,7 +13,7 @@ import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
 import jasy.core.Util as Util
 
-import jasy.asset.Manager2 as AssetManager
+import jasy.asset.Manager as AssetManager
 
 import jasy.item.Class as ClassItem
 
