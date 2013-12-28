@@ -127,7 +127,9 @@ def Statement(tokenizer, staticContext):
             node = Node.Node(tokenizer, "if")
             node.append(Expression(tokenizer, staticContext), "condition")
             staticContext.statementStack.append(node)
-            node.append(Statement(tokenizer, staticContext), "thenPart")
+            thenPart = Statement(tokenizer, staticContext)
+            thenPart.noscope = True
+            node.append(thenPart, "thenPart")
 
             if tokenizer.match("command"):
                 elseTokenValue = tokenizer.token.value
@@ -136,11 +138,13 @@ def Statement(tokenizer, staticContext):
                     # Process like an "if" and append as elsePart
                     tokenizer.unget()
                     elsePart = Statement(tokenizer, staticContext)
+                    elsePart.noscope = True
                     node.append(elsePart, "elsePart")
 
                 if elseTokenValue == "else":
                     comments = tokenizer.getComments()
                     elsePart = Statement(tokenizer, staticContext)
+                    elsePart.noscope = True
                     addComments(elsePart, node, comments)
                     node.append(elsePart, "elsePart")
 
