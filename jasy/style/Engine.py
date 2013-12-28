@@ -13,8 +13,8 @@ import jasy.style.parse.Parser as Parser
 import jasy.style.parse.ScopeScanner as ScopeScanner
 
 import jasy.style.clean.Unused as Unused
+import jasy.style.clean.Permutate as Permutate
 
-import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Flatter as Flatter
 import jasy.style.process.Executer as Executer
@@ -49,13 +49,10 @@ def permutateTree(tree, permutation=None):
     """
 
     if permutation:
-
-        Resolver.process(tree, permutation)
-
+        Permutate.process(tree, permutation)
         return tree
 
     else:
-
         return tree
 
 
