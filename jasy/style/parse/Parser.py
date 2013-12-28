@@ -877,7 +877,7 @@ def MemberExpression(tokenizer, staticContext):
         elif tokenType == "left_paren":
 
             if node.type == "identifier":
-                childNode = Node.Node(tokenizer, "command")
+                childNode = Node.Node(tokenizer, "function")
                 childNode.name = node.value
 
                 # Special processing of URL commands
@@ -887,7 +887,7 @@ def MemberExpression(tokenizer, staticContext):
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             elif node.type == "command":
-                childNode = Node.Node(tokenizer, "system")
+                childNode = Node.Node(tokenizer, "command")
                 childNode.name = node.name
 
                 if node.name == "raw":

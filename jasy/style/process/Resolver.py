@@ -88,8 +88,8 @@ def __recurser(node, permutation, inCondition=False):
         node.parent.replace(node, repl)
 
 
-    # Support inline @field() system commands
-    elif node.type == "system" and node.name == "field":
+    # Support inline @field() commands
+    elif node.type == "command" and node.name == "field":
         if len(node.params) == 0:
             raise ResolverError("Missing parameter to insert field via @field.", node)
 
