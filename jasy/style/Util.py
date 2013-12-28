@@ -14,52 +14,6 @@ LOGIC_OPERATORS = ("not", "and", "or")
 
 ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS + LOGIC_OPERATORS
 
-BUILTIN_METHODS = set([
-    # Colors
-    "rgb",
-    "rgba",
-    "hsl",
-    "hsb",
-
-    # URLs
-    "url",
-
-    # Webfonts
-    "format",
-
-    # Transforms
-    "matrix",
-    "translate",
-    "translateX",
-    "translateY",
-    "scale",
-    "scaleX",
-    "scaleY",
-    "rotate",
-    "skewX",
-    "skewY",
-
-    # 3D Transforms
-    "matrix3d",
-    "translate3d",
-    "translateZ",
-    "scale3d",
-    "scaleZ",
-    "rotate3d",
-    "rotateX",
-    "rotateY",
-    "rotateZ",
-    "perspective",
-
-    # Gradients
-    "linear-gradient",
-    "radial-gradient",
-    "repeating-linear-gradient",
-    "repeating-radial-gradient",
-
-    # Transitions
-    "steps"
-])
 
 def extractVendor(name):
     match = RE_ENGINE_PROPERTY.match(name)
@@ -73,14 +27,6 @@ def extractName(name):
         return match.group(2)
     else:
         return name
-
-
-def isBuiltin(name):
-    """
-    Whether the given method name is a built-in method of the engine
-    """
-
-    return name in BUILTIN_METHODS or RE_ENGINE_PROPERTY.match(name)
 
 
 def executeCommand(node, session):
