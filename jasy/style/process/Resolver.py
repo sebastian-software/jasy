@@ -42,29 +42,35 @@ def __recurser(node, permutation, inCondition=False):
         __recurser(node.condition, permutation, True)
 
         # Cast condition to Python boolean type
-        resultValue = Operation.castToBool(node.condition)
+        resultValue = None
+        try:
+            resultValue = Operation.castToBool(node.condition)
+        except Operation.OperationError as ex:
+            Console.debug("Walked into unprocessed condition. Waiting for actual execution. Message: %s", ex)
 
-        # Process relevant part of the sub tree
-        if resultValue is True:
-            # Fix missing processing of result node
-            __recurser(node.thenPart, permutation)
+        if not resultValue is None:
 
-            # Finally replace if-node with result node
-            node.parent.replace(node, node.thenPart)
+            # Process relevant part of the sub tree
+            if resultValue is True:
+                # Fix missing processing of result node
+                __recurser(node.thenPart, permutation)
 
-        elif resultValue is False and hasattr(node, "elsePart"):
-            # Fix missing processing of result node
-            __recurser(node.elsePart, permutation)
+                # Finally replace if-node with result node
+                node.parent.replace(node, node.thenPart)
 
-            # Finally replace if-node with result node
-            node.parent.replace(node, node.elsePart)
+            elif resultValue is False and hasattr(node, "elsePart"):
+                # Fix missing processing of result node
+                __recurser(node.elsePart, permutation)
 
-        else:
-            # Cleanup original if-node
-            node.parent.remove(node)
+                # Finally replace if-node with result node
+                node.parent.replace(node, node.elsePart)
 
-        # All done including child nodes
-        return
+            else:
+                # Cleanup original if-node
+                node.parent.remove(node)
+
+            # All done including child nodes
+            return
 
 
     # Process children first (resolve logic is inner-out)
