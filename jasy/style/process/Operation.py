@@ -71,8 +71,13 @@ def compute(node, first=None, second=None, operator=None, session=None):
     elif operator == "questionmark" and first is None:
         return second
 
+
+    # Ignore when not yet processed
+    if first.type in ("system", "variable") or second.type in ("system", "variable"):
+        return
+
     # Compare operation types
-    if first.type == second.type:
+    elif first.type == second.type:
         if first.type in ("true", "false", "null"):
             if operator in ("eq", "ge", "le"):
                 return Util.castNativeToNode(True)
