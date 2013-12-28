@@ -887,14 +887,13 @@ def MemberExpression(tokenizer, staticContext):
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             elif node.type == "command":
-                childNode = Node.Node(tokenizer, "command")
-                childNode.name = node.name
-
                 if node.name == "raw":
-                    childNode.append(RawArgument(tokenizer, staticContext), "params")
+                    childNode = RawArgument(tokenizer, staticContext)
                 elif node.name == "expr":
-                    childNode.append(ExpressionArgument(tokenizer, staticContext), "params")
+                    childNode = ExpressionArgument(tokenizer, staticContext)
                 else:
+                    childNode = Node.Node(tokenizer, "command")
+                    childNode.name = node.name
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             else:
