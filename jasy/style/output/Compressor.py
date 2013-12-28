@@ -32,35 +32,17 @@ class Compressor:
         "div"         : '/',
         "mod"         : '%',
         "dot"         : '.',
-        "or"          : "||",
-        "and"         : "&&",
-        "strict_eq"   : '===',
         "eq"          : '==',
-        "strict_ne"   : '!==',
         "ne"          : '!=',
-        "lsh"         : '<<',
         "le"          : '<=',
         "lt"          : '<',
-        "ursh"        : '>>>',
-        "rsh"         : '>>',
         "ge"          : '>=',
-        "gt"          : '>',
-        "bitwise_or"  : '|',
-        "bitwise_xor" : '^',
-        "bitwise_and" : '&'
+        "gt"          : '>'
     }
 
     __prefixes = {
-        "increment"   : "++",
-        "decrement"   : "--",
-        "bitwise_not" : '~',
-        "not"         : "!",
         "unary_plus"  : "+",
-        "unary_minus" : "-",
-        "delete"      : "delete ",
-        "new"         : "new ",
-        "typeof"      : "typeof ",
-        "void"        : "void "
+        "unary_minus" : "-"
     }
 
 
