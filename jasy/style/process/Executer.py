@@ -165,9 +165,10 @@ def __recurser(node, scope, values, session):
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
 
 
+    # Execute system commands
     elif node.type == "system":
         repl = Util.executeCommand(node, session)
-        if repl is not node:
+        if not repl is node:
             node.parent.replace(node, repl)
 
 
