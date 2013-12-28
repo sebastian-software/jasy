@@ -214,8 +214,8 @@ class Tests(unittest.TestCase):
             .box{
               $padding = 10px;
               padding: $padding;
-              width: expr($width - $padding * 2);
-              height: expr($height - $padding * 2);
+              width: @expr($width - $padding * 2);
+              height: @expr($height - $padding * 2);
             }
             '''), '.box{padding:10px;width:280px;height:180px;}')
 
@@ -297,7 +297,7 @@ class Tests(unittest.TestCase):
             $inner = 20px 10px;
 
             .box{
-              padding: expr($inner * 2);
+              padding: @expr($inner * 2);
             }
             '''), '.box{padding:40px 20px;}')
 
@@ -307,7 +307,7 @@ class Tests(unittest.TestCase):
             $inner = 20px 10px;
 
             .box{
-              padding: expr(.5 * $inner);
+              padding: @expr(.5 * $inner);
             }
             '''), '.box{padding:10px 5px;}')
 
@@ -318,7 +318,7 @@ class Tests(unittest.TestCase):
             $outer = 2 3;
 
             .box{
-              padding: expr($inner * $outer);
+              padding: @expr($inner * $outer);
             }
             '''), '.box{padding:40px 30px;}')
 
