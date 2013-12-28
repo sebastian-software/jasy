@@ -41,14 +41,6 @@ core Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`Daemon` Module
---------------------
-
-.. automodule:: jasy.core.Daemon
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`Doctor` Module
 --------------------
 
@@ -125,6 +117,14 @@ core Package
 -------------------------
 
 .. automodule:: jasy.core.Permutation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`Profile` Module
+---------------------
+
+.. automodule:: jasy.core.Profile
     :members:
     :undoc-members:
     :show-inheritance:

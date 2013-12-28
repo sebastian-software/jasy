@@ -1,6 +1,14 @@
 clean Package
 =============
 
+:mod:`Permutate` Module
+-----------------------
+
+.. automodule:: jasy.style.clean.Permutate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`Unused` Module
 --------------------
 

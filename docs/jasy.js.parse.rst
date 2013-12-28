@@ -25,14 +25,6 @@ parse Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`ScopeData` Module
------------------------
-
-.. automodule:: jasy.js.parse.ScopeData
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`ScopeScanner` Module
 --------------------------
 

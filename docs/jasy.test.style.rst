@@ -1,6 +1,14 @@
 style Package
 =============
 
+:mod:`commands` Module
+----------------------
+
+.. automodule:: jasy.test.style.commands
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`conditionals` Module
 --------------------------
 
@@ -9,18 +17,18 @@ style Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`expressions` Module
--------------------------
-
-.. automodule:: jasy.test.style.expressions
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`flattening` Module
 ------------------------
 
 .. automodule:: jasy.test.style.flattening
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`fontface` Module
+----------------------
+
+.. automodule:: jasy.test.style.fontface
     :members:
     :undoc-members:
     :show-inheritance:

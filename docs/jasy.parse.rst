@@ -9,3 +9,11 @@ parse Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ScopeData` Module
+-----------------------
+
+.. automodule:: jasy.parse.ScopeData
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
