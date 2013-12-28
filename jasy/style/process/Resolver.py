@@ -90,24 +90,20 @@ def __recurser(node, permutation, inCondition=False):
 
     # Support inline commands
     # These are just attached to a node.type command
-    elif node.type == "command":
-        if node.name == "field":
-            if len(node.params) == 0:
-                raise ResolverError("Missing parameter to insert field via @field.", node)
+    elif node.type == "command" and node.name == "field":
+        if len(node.params) == 0:
+            raise ResolverError("Missing parameter to insert field via @field.", node)
 
-            identifierNode = node.params[0]
-            if identifierNode.type != "identifier":
-                raise ResolverError("Invalid parameter to @field call: %s" % identifierNode.type, identifierNode)
+        identifierNode = node.params[0]
+        if identifierNode.type != "identifier":
+            raise ResolverError("Invalid parameter to @field call: %s" % identifierNode.type, identifierNode)
 
-            identifier = identifierNode.value
-            if not permutation.has(identifier):
-                raise ResolverError("Could not find field with the name %s" % identifier, identifierNode)
+        identifier = identifierNode.value
+        if not permutation.has(identifier):
+            raise ResolverError("Could not find field with the name %s" % identifier, identifierNode)
 
-            repl = Util.castNativeToNode(permutation.get(identifier))
-            node.parent.replace(node, repl)
-
-        else:
-            raise ResolverError("Unsupported inline command %s" % node.name, node)
+        repl = Util.castNativeToNode(permutation.get(identifier))
+        node.parent.replace(node, repl)
 
 
     # Support typical operators
