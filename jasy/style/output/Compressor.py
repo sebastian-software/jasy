@@ -305,7 +305,7 @@ class Compressor:
         return result
 
 
-    def type_system(self, node):
+    def type_command(self, node):
         name = node.name
 
         if not Util.isBuiltin(name):
