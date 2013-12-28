@@ -83,6 +83,45 @@ def isBuiltin(name):
     return name in BUILTIN_METHODS or RE_ENGINE_PROPERTY.match(name)
 
 
+def executeCommand(node, session):
+    command = node.name
+
+    # Filter built-in commands
+    if isBuiltin(command):
+        return node
+
+    params = []
+    for param in node.params:
+        if param.type == "unary_minus":
+            value = -param[0].value
+        else:
+            value = param.value
+
+        params.append(value)
+
+    # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
+    result, restype = session.executeCommand(command, params)
+
+    if restype == "px":
+        repl = Node.Node(type="number")
+        repl.value = result
+        repl.unit = restype
+
+    elif restype == "url":
+        repl = Node.Node(type="identifier")
+        repl.value = "url(%s)" % result
+
+    elif restype == "number":
+        repl = Node.Node(type="number")
+        repl.value = result
+
+    else:
+        repl = Node.Node(type="identifier")
+        repl.value = result
+
+    return repl
+
+
 def assembleDot(node, result=None):
     """
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
