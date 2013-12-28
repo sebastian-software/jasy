@@ -29,7 +29,7 @@ def castToBoolNode(node):
     return Util.castNativeToNode(castToBool(node))
 
 
-def compute(node, first=None, second=None, operator=None):
+def compute(node, first=None, second=None, operator=None, session=None):
 
     # Fill gaps in empty arguments
     if operator is None:
@@ -47,10 +47,17 @@ def compute(node, first=None, second=None, operator=None):
         raise OperationError("Missing arguments for operation compute()", node)
 
     # Solve inner operations first
-    if first is not None and first.type in Util.ALL_OPERATORS:
-        first = compute(first)
-    if second is not None and second.type in Util.ALL_OPERATORS:
-        second = compute(second)
+    if first is not None:
+        if first.type in Util.ALL_OPERATORS:
+            first = compute(first, session=session)
+        elif first.type == "system":
+            first = Util.executeCommand(first, session)
+
+    if second is not None:
+        if second.type in Util.ALL_OPERATORS:
+            second = compute(second, session=session)
+        elif second.type == "system":
+            second = Util.executeCommand(second, session)
 
     # Support for not-/and-/or-operator
     if operator == "not":
@@ -164,7 +171,7 @@ def compute(node, first=None, second=None, operator=None):
             if len(first) == len(second):
                 repl = Node.Node(type="list")
                 for pos, child in enumerate(first):
-                    childRepl = compute(node, child, second[pos], operator)
+                    childRepl = compute(node, first=child, second=second[pos], session=session)
                     if childRepl is not None:
                         repl.append(childRepl)
 
@@ -188,7 +195,7 @@ def compute(node, first=None, second=None, operator=None):
     elif first.type == "list" and second.type != "list":
         repl = Node.Node(type="list")
         for child in first:
-            childRepl = compute(node, child, second, operator)
+            childRepl = compute(node, first=child, second=second, session=session)
             if childRepl is not None:
                 repl.append(childRepl)
 
@@ -198,7 +205,7 @@ def compute(node, first=None, second=None, operator=None):
     elif first.type != "list" and second.type == "list":
         repl = Node.Node(type="list")
         for child in second:
-            childRepl = compute(node, first, child, operator)
+            childRepl = compute(node, first=first, second=child, session=session)
             if childRepl is not None:
                 repl.append(childRepl)
 
