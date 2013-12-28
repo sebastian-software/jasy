@@ -248,7 +248,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -285,7 +285,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -307,7 +307,7 @@ class Tests(unittest.TestCase):
             self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -328,7 +328,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -347,7 +347,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -371,7 +371,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -393,7 +393,7 @@ class Tests(unittest.TestCase):
             self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -415,7 +415,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -434,7 +434,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -457,7 +457,7 @@ class Tests(unittest.TestCase):
 
             $font($size){
               $arial;
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
             }
 
             h1{
@@ -475,7 +475,7 @@ class Tests(unittest.TestCase):
     def test_mixin_param_name_conflicts(self):
         self.assertEqual(self.process('''
             $style($size, $color){
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
               color: $color;
             }
 
@@ -490,7 +490,7 @@ class Tests(unittest.TestCase):
     def test_mixin_param_name_conflicts_default_ignore(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
               color: $color;
             }
 
@@ -505,7 +505,7 @@ class Tests(unittest.TestCase):
     def test_mixin_param_name_conflicts_default_use(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
               color: $color;
             }
 
@@ -522,7 +522,7 @@ class Tests(unittest.TestCase):
             $titleColor = orange;
 
             $style($size, $color=$titleColor){
-              font-size: expr(15px * $size);
+              font-size: @expr(15px * $size);
               color: $color;
               border-bottom: 1px solid $titleColor;
             }
@@ -677,7 +677,7 @@ class Tests(unittest.TestCase):
             h1{
               $icon($size) {
                 margin-right: $size;
-                margin-top: expr($size/2);
+                margin-top: @expr($size/2);
               }
 
               $icon(2px);
