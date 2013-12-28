@@ -1,3 +1,74 @@
+Jasy 1.5-beta2
+==============
+
+## Major changes
+
+### Introduction of new profile object
+
+The new object is created by `State` like the `Session` instance and is mainly used to hold all relevant build information e.g. destination paths, formatting of output, compression settings, etc. This profile will be used for having a serialized version for validating cache entries against (still TODO).
+
+The `Profile` also contains a typical application build tool under its `build()` method. This is mainly thought for omitting repeative tasks inside comparable applications where mostly 90% of the build script were identical. Applications are still being able to use some variant of the old API but it's typically preferred to switch over to the new, much simpler API.
+
+The `Profile` also exports all destination paths to the client and making them available via `jasy.Env` e.g. `jasy.folder.js` etc.
+
+### Integrated completely rewritten AssetManager (which replaces the old one)
+
+- Removed support for profiles in asset system which is a major simplification and was only required by some edge cases at Zynga.
+- New asset manager uses data from `Profile` for figuring out destination paths etc.
+- Added support for auto tracking and registering of requested assets so that these are copied automatically to the destination just by requiring any details from them.
+- Making asset methods available via new system command infrastructure to ask for asset details e.g. the build URL, image dimension, sprite data, etc. from within CSS or HTML templates.
+- Improved and simplified implemention to support sprite sheets and image animations.
+
+### Added new command interface
+
+The command interface is a new API on the `Session` object to make shared commands available all different areas of the tooling. This is currently used by the new `AssetManager` to register commands for quering image URLs, dimensions, etc. The new API is planned for being used in the processors for Stylesheets, Templates, HTML files, etc. Like for `jasylibrary.py` to offer new APIs to the tooling of other projects, authors might now also create a `jasycommand.py` for making own commands available to other projects. Like for `jasylibrary.py` these commands are prefixed by the unique `name` of the project defining them.
+
+### Continued work on style processor
+
+- Major work on "execution" of style sheet code to process variables and system calls.
+- New shared operation processor which is used by both, the Permutation and Execution engine to resolve comparisons, not-operators, etc.
+- This version supports conditionals of variables (not just environment variables).
+- Added new method `getMergedMTime()` for quering for the `@include` respecting modification time (figuring out the last changed file and returns that time instead of just the top-level file).
+- Worked on include mechanics to improve stability of include implementation.
+- The syntax of expressions have been modified. These now have to be wrapped inside `@expr()` for evaluation when not part of an assignment or conditional.
+- Added a lot of new tests for validating the functionality of the new features. Updated old tests to new APIs, too.
+
+### Minor changes through style processor work
+
+- Temporary disabled style result caches to omit issues with too agressive caching (needs to be fixed with a later release).
+- Added command wrapper `executeCommand` to `Util` for making command execution and result processing reuseable inside the style processor.
+- Added new `castNativeToNode()` to `Util` for translating Python values into matching `Node` instances. This new class is used during variable processing (execution) for replacing operations with result nodes.
+- Cleanup of style compressor from unnecessary prefixes and operators.
+- Added support for slashes inside property values e.g. `font-size: 10px/1.2;`.
+- Added support for raw values via `@raw("some css string");`. This is mainly used for supporting non-CSS values like old IE filter values (opacity, gradient, etc.).
+- Added support for CSS `font-face`.
+- Added new `noscope` flag to `Node` for marking specific blocks as not being scope relevant. This is currently used for if/else blocks to allow the content blocks to modify the parent block instead of scoping into the own block. This allows for defining/overriding variables inside if/else blocks.
+- Minor fixes for CSS selector support not correctly supporting specific selector variants e.g. `&[attribute]`.
+- Added support for reducing unneeded blocks (which are not allowed in CSS anyway but might be used for scoping variables) so that their content is injected in place of the original block.
+- Removed some unsupport syntax constructs will processed inside the `Tokenizer` but not available in the `Parser`.
+
+### Cleanup of sprite sheet generator
+
+- Removed rotation feature (not relevant for most use cases and never was finished regarding implementation) and cleaned up a ton of code inside the whole sprite generator implementation.
+- Simplified import logic for Python image module. Completely switched to Pillow which is much better than good old PIL nowadays.
+
+
+
+
+## Minor changes
+
+- Added support for return values from tasks (returning error codes from tasks ends Jasy with exactly the same error code now - thanks to Sebastian Fastner)
+- Reworked integration of documentation generator to correctly work with [ReadTheDocs](http://jasy.readthedocs.org/en/latest/)
+- Let `ImageInfo` class make use of shared implementation of file SHA1 hashing in `File` instead of using a local implementation.
+- Removal of preliminary module for file system daemon support.
+- Updated dependencies to new versions.
+- Minor fixes for supporting YAML configuration files.
+- Added new asset type info for `.md` and `.yaml` (both as "text").
+- Moved `jasy.js.parse.ScopeData` to `jasy.parse.ScopeData` and updated references accordingly.
+
+
+
+
 Jasy 1.5-beta1
 ==============
 
