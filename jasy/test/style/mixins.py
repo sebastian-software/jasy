@@ -266,7 +266,7 @@ class Tests(unittest.TestCase):
     def test_mixin_param_forcall(self):
         self.assertEqual(self.process('''
             $icon($fullywild){
-              background: jasy.asset($fullywild);
+              background: @jasy.asset($fullywild);
             }
 
             h1{
