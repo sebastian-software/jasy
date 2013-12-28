@@ -31,11 +31,11 @@ def castToBool(node):
 
 def compute(node, first=None, second=None, operator=None, session=None):
     """
-    Recursively processes given expression node.
+    Recursively processes given operation node.
     Consumes optional hints for the first/second child of an operation as
     well as the operator itself (in cases where it could not be figured out
     automatically). The session is useful for supporting commands
-    inside of expressions.
+    inside of operations.
     """
 
     # Fill gaps in empty arguments
