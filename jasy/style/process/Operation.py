@@ -13,6 +13,10 @@ class OperationError(Exception):
 
 
 def castToBool(node):
+    """
+    Returns the boolean Python representation for the given Node
+    """
+
     if node.type == "false" or node.type == "null":
         return False
     elif node.type == "true":
@@ -25,11 +29,14 @@ def castToBool(node):
         raise OperationError("Could not cast node to boolean value", node)
 
 
-def castToBoolNode(node):
-    return Util.castNativeToNode(castToBool(node))
-
-
 def compute(node, first=None, second=None, operator=None, session=None):
+    """
+    Recursively processes given expression node.
+    Consumes optional hints for the first/second child of an operation as
+    well as the operator itself (in cases where it could not be figured out
+    automatically). The session is useful for supporting commands
+    inside of expressions.
+    """
 
     # Fill gaps in empty arguments
     if operator is None:
@@ -159,6 +166,7 @@ def compute(node, first=None, second=None, operator=None, session=None):
             else:
                 raise OperationError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), node)
 
+
         elif first.type == "string":
             if operator == "plus":
                 repl = Node.Node(type="string")
@@ -172,6 +180,7 @@ def compute(node, first=None, second=None, operator=None, session=None):
             else:
                 raise OperationError("Unsupported string operation", node)
 
+
         elif first.type == "list":
             if len(first) == len(second):
                 repl = Node.Node(type="list")
@@ -184,6 +193,7 @@ def compute(node, first=None, second=None, operator=None, session=None):
 
             else:
                 raise OperationError("For list operations both lists have to have the same length!", node)
+
 
         else:
             raise OperationError("Unsupported operation on %s" % first.type, node)
