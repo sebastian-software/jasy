@@ -22,7 +22,7 @@ class ResolverError(Exception):
             Exception.__init__(self, "Resolver Error: %s!" % message)
 
 
-def process(tree, permutation):
+def patch(tree, permutation):
     __recurser(tree, permutation)
 
 

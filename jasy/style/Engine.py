@@ -49,7 +49,7 @@ def permutateTree(tree, permutation=None):
     """
 
     if permutation:
-        Permutate.process(tree, permutation)
+        Permutate.patch(tree, permutation)
         return tree
 
     else:
