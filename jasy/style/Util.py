@@ -107,8 +107,13 @@ def executeCommand(node, session):
         repl.unit = restype
 
     elif restype == "url":
-        repl = Node.Node(type="identifier")
-        repl.value = "url(%s)" % result
+        repl = Node.Node(type="function")
+        repl.name = "url"
+        listChild = Node.Node(type="list")
+        repl.append(listChild, "params")
+        valueChild = Node.Node(type="identifier")
+        valueChild.value = result
+        listChild.append(valueChild)
 
     elif restype == "number":
         repl = Node.Node(type="number")
