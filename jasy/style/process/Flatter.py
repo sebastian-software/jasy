@@ -122,6 +122,7 @@ def process(tree):
             node.parent.remove(node)
 
         elif node.type == "block" and node.parent.type in ("sheet", "block"):
+            Console.debug("Inlining content of unnecessary block node at line %s" % node.line)
             node.parent.insertAllReplace(node, node)
 
 
