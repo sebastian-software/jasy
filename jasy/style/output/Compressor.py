@@ -305,11 +305,8 @@ class Compressor:
         return result
 
 
-    def type_command(self, node):
+    def type_function(self, node):
         name = node.name
-
-        if not Util.isBuiltin(name):
-            raise CompressorError("Unsupported built-in method: %s" % name, node)
 
         if self.__useWhiteSpace:
             separator = ", "
