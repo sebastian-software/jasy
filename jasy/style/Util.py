@@ -92,7 +92,10 @@ def executeCommand(node, session):
 
     params = []
     for param in node.params:
-        if param.type == "unary_minus":
+        # Variable not yet processed (possible e.g. during permutation apply)
+        if param.type == "variable":
+            return node
+        elif param.type == "unary_minus":
             value = -param[0].value
         else:
             value = param.value
