@@ -881,11 +881,7 @@ def MemberExpression(tokenizer, staticContext):
                 childNode.name = node.value
 
                 # Special processing of URL commands
-                if node.value == "raw":
-                    childNode = RawArgument(tokenizer, staticContext)
-                elif node.value == "expr":
-                    childNode = ExpressionArgument(tokenizer, staticContext)
-                elif node.value == "url":
+                if node.value == "url":
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
@@ -893,7 +889,13 @@ def MemberExpression(tokenizer, staticContext):
             elif node.type == "command":
                 childNode = Node.Node(tokenizer, "command")
                 childNode.name = node.name
-                childNode.append(ArgumentList(tokenizer, staticContext), "params")
+
+                if node.name == "raw":
+                    childNode.append(RawArgument(tokenizer, staticContext), "params")
+                elif node.name == "expr":
+                    childNode.append(ExpressionArgument(tokenizer, staticContext), "params")
+                else:
+                    childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             else:
                 raise SyntaxError("Unsupported mixin include in expression statement", tokenizer)
