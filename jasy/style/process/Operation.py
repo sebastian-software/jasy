@@ -50,13 +50,13 @@ def compute(node, first=None, second=None, operator=None, session=None):
     if first is not None:
         if first.type in Util.ALL_OPERATORS:
             first = compute(first, session=session)
-        elif first.type == "system":
+        elif first.type == "command":
             first = Util.executeCommand(first, session)
 
     if second is not None:
         if second.type in Util.ALL_OPERATORS:
             second = compute(second, session=session)
-        elif second.type == "system":
+        elif second.type == "command":
             second = Util.executeCommand(second, session)
 
     # Support for not-/and-/or-operator
@@ -73,7 +73,7 @@ def compute(node, first=None, second=None, operator=None, session=None):
 
 
     # Ignore when not yet processed
-    if first.type in ("system", "variable") or second.type in ("system", "variable"):
+    if first.type in ("command", "variable") or second.type in ("command", "variable"):
         return
 
     # Compare operation types

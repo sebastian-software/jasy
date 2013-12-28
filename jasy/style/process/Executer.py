@@ -166,7 +166,7 @@ def __recurser(node, scope, values, session):
 
 
     # Execute system commands
-    elif node.type == "system":
+    elif node.type == "command":
         repl = Util.executeCommand(node, session)
         if not repl is node:
             node.parent.replace(node, repl)
