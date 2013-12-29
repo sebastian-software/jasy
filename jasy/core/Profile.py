@@ -78,10 +78,10 @@ class Profile():
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
         # Initialize objects
-        self.__assetManager = AssetManager.AssetManager(self, self.__session)
-        self.__outputManager = OutputManager.OutputManager(self, self.__session, self.__assetManager,
+        self.__assetManager = AssetManager.AssetManager(self, session)
+        self.__outputManager = OutputManager.OutputManager(self, session, self.__assetManager,
             compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
-        self.__fileManager = FileManager.FileManager(self.__session)
+        self.__fileManager = FileManager.FileManager(session)
 
 
 
