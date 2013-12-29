@@ -17,7 +17,13 @@ RE_URL_PARAMS = re.compile("^([^?#]*)(.*)$")
 class AssetManager():
 
     def __init__(self, profile):
+        # The current build profile
         self.__profile = profile
+
+        # All known assets
+        self.__assets = {}
+
+        # The set of assets to copy during deployment
         self.__copylist = set()
 
 

@@ -21,6 +21,10 @@ class Profile():
     Configuration object for the build profile of the current task
     """
 
+    __currentPermutation = None
+    __currentTranslationBundle = None
+    __fields = None
+
     # Relative or path of the destination folder
     __destinationPath = None
 
@@ -105,11 +109,13 @@ class Profile():
         Injects locale project when current permutation has configured a locale.
         """
 
-        project = self.getCurrentLocaleProject()
-        if project:
-            return self.__projects + [project]
+        projects = self.__session.getProjects()
 
-        return self.__projects
+        localeProject = self.getCurrentLocaleProject()
+        if localeProject:
+            return projects + [localeProject]
+
+        return projects
 
 
     def getSession(self):
@@ -345,6 +351,36 @@ class Profile():
         self.__fields["locale"]["default"] = locale
 
 
+
+    def getCurrentLocale(self):
+        """Returns the current locale as defined in current permutation"""
+
+        permutation = self.getCurrentPermutation()
+        if permutation:
+            locale = permutation.get("locale")
+            if locale:
+                return locale
+
+        return None
+
+
+    def getCurrentLocaleProject(self, update=False):
+        """
+        Returns a locale project for the currently configured locale.
+        Returns None if locale is not set to a valid value.
+        """
+
+        locale = self.getCurrentLocale()
+        if not locale:
+            return None
+
+        path = os.path.abspath(os.path.join(".jasy", "locale", locale))
+        if not os.path.exists(path) or update:
+            jasy.core.Locale.LocaleParser(locale).export(path)
+
+        return jasy.core.Project.getProjectFromPath(path)
+
+
     def setField(self, name, value):
         """
         Statically configure the value of the given field.
@@ -536,6 +572,7 @@ class Profile():
                 pass
 
         return "[%s]" % ", ".join(content)
+
 
 
     #
