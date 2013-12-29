@@ -11,6 +11,8 @@ import jasy.core.Console as Console
 import jasy.core.File as File
 import jasy.core.Util as Util
 
+RE_URL_PARAMS = re.compile("^([^?#]*)(.*)$")
+
 
 class AssetManager():
 
@@ -44,8 +46,16 @@ class AssetManager():
         Returns the asset URL for the given item relative to the current working path
         """
 
+        postFix = ""
         if not fileId in self.__assets:
-            raise Exception("Did not found asset with ID %s" % fileId)
+            # Try to split asset params before resolving
+            matched = re.match(RE_URL_PARAMS, fileId)
+            if matched:
+                fileId = matched.group(1)
+                postFix = matched.group(2)
+
+            if not fileId in self.__assets:
+                raise Exception("Did not found asset with ID %s" % fileId)
 
         assetItem = self.__assets[fileId]
 
@@ -61,6 +71,10 @@ class AssetManager():
 
         # Make URL relative to current working path
         url = os.path.relpath(url, self.__profile.getWorkingPath())
+
+        # Post append asset param/query
+        if matched:
+            url += postFix
 
         return url
 
