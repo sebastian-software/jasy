@@ -77,6 +77,12 @@ class Profile():
         self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
+        # Initialize objects
+        self.__assetManager = AssetManager.AssetManager(self, self.__session)
+        self.__outputManager = OutputManager.OutputManager(self, self.__session, self.__assetManager,
+            compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
+        self.__fileManager = FileManager.FileManager(self.__session)
+
 
 
     def getDestinationPath(self):
@@ -205,92 +211,6 @@ class Profile():
     #
     # MAIN BUILD METHOD
     #
-
-    def build(self):
-
-        parts = self.__parts
-
-        # Initialize shared objects
-        assetManager = AssetManager.AssetManager(self, self.__session)
-        outputManager = OutputManager.OutputManager(self, self.__session, assetManager,
-            compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
-        fileManager = FileManager.FileManager(self.__session)
-
-        destinationFolder = self.getDestinationPath()
-
-        jsOutputPath = os.path.join(destinationFolder, self.__jsFolder)
-        cssOutputPath = os.path.join(destinationFolder, self.__cssFolder)
-        assetOutputPath = os.path.join(destinationFolder, self.__assetFolder)
-        templateOutputPath = os.path.join(destinationFolder, self.__templateFolder)
-
-        if "kernel" in parts:
-
-            self.__workingPath = self.getDestinationPath()
-
-            Console.info("Building part kernel...")
-            Console.indent()
-
-            # Store kernel script
-            kernelClass = parts["kernel"]["class"]
-            outputManager.storeKernelScript("%s/kernel.js" % jsOutputPath, bootCode="%s.boot();" % kernelClass)
-
-            Console.outdent()
-
-
-        for permutation in self.__session.permutate():
-
-            for part in parts:
-
-                if part == "kernel":
-                    continue
-
-                Console.info("Building part %s..." % part)
-                Console.indent()
-
-
-                # SCRIPT
-
-                partClass = parts[part]["class"]
-                if partClass:
-                    self.__workingPath = self.getDestinationPath()
-
-                    Console.info("Generating script (%s)...", partClass)
-                    Console.indent()
-
-                    classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
-
-                    if self.__useSource:
-                        outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
-                    else:
-                        outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
-
-                    Console.outdent()
-
-
-                # CSS
-
-                partStyle = parts[part]["style"]
-                if partStyle:
-                    self.__workingPath = cssOutputPath
-
-                    Console.info("Generating style (%s)...", partStyle)
-                    Console.indent()
-
-                    styleItems = StyleResolver.Resolver(self.__session).add(partStyle).getSorted()
-                    outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
-
-                    Console.outdent()
-
-
-
-                Console.outdent()
-
-
-        if self.__copyAssets:
-            assetManager.copyAssets()
-
-
-
 
     def __getEnvironmentId(self):
         """
