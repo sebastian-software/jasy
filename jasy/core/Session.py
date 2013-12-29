@@ -460,13 +460,12 @@ class Session():
         return supported
 
 
-    def __generateTranslationBundle(self):
+    def getTranslationBundle(self, language=None):
         """
         Returns a translation object for the given language containing
         all relevant translation files for the current project set.
         """
 
-        language = self.getCurrentPermutation().get("locale")
         if language is None:
             return None
 
@@ -508,14 +507,6 @@ class Session():
         all.append("C")
 
         return all
-
-
-    def getCurrentTranslationBundle(self):
-        """Returns the current translation bundle (useful during looping through permutations via permutate())."""
-
-        return self.__currentTranslationBundle
-
-
 
 
 

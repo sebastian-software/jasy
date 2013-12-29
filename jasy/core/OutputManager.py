@@ -169,7 +169,7 @@ class OutputManager:
             result = []
 
             for item in items:
-                compressed = item.getCompressed(profile.getCurrentPermutation(), session.getTranslationBundle(profile.getCurrentLocale()), self.__scriptOptimization, self.__scriptFormatting)
+                compressed = item.getCompressed(profile)
 
                 if self.__addDividers:
                     result.append("// FILE ID: %s\n%s\n\n" % (item.getId(), compressed))
@@ -250,7 +250,7 @@ class OutputManager:
             result = []
 
             for styleObj in styles:
-                compressed = styleObj.getCompressed(profile, profile.getCurrentPermutation(), self.__styleOptimization, self.__styleFormatting)
+                compressed = styleObj.getCompressed(profile)
 
                 if self.__addDividers:
                     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))

@@ -6,7 +6,7 @@
 import jasy
 
 import time, socket, uuid, getpass, copy
-import itertools, json
+import itertools, json, os
 
 import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
@@ -80,7 +80,7 @@ class Profile():
 
         # Initialize objects
         assetManager = self.__assetManager = AssetManager.AssetManager(self)
-        fileManager = self.__fileManager = FileManager.FileManager(session)
+        fileManager = self.__fileManager = FileManager.FileManager(self)
 
         # Registering assets
         for project in self.getProjects():
@@ -618,7 +618,7 @@ class Profile():
             Console.indent()
 
             self.__currentPermutation = current
-            self.__currentTranslationBundle = self.__generateTranslationBundle()
+            self.__currentTranslationBundle = self.__session.getTranslationBundle(self.getCurrentLocale())
 
             yield current
             Console.outdent()
@@ -677,21 +677,17 @@ class Profile():
 
         These are the currently supported placeholders:
 
-        - {{prefix}}: Current prefix of task
         - {{locale}}: Name of current locale e.g. de_DE
         - {{permutation}}: SHA1 checksum of current permutation
         - {{id}}: SHA1 checksum based on permutation and repository branch/revision
         """
-
-        if self.__currentPrefix:
-            fileName = fileName.replace("{{prefix}}", self.__currentPrefix)
 
         if self.__currentPermutation:
             if "{{permutation}}" in fileName:
                 fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
 
             if "{{id}}" in fileName:
-                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.getMain().getRevision())
+                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.__session.getMain().getRevision())
                 buildHash = Util.generateChecksum(buildId)
                 fileName = fileName.replace("{{id}}", buildHash)
 

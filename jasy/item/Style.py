@@ -127,13 +127,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getBreaks(self, permutation=None, items=None, warnings=True):
+    def getBreaks(self, profile=None, items=None, warnings=True):
         """
         Returns all down-priorized dependencies. This are dependencies which are required to
         make the module work, but are not required being available before the current item.
         """
 
-        meta = self.getMetaData(permutation)
+        meta = self.getMetaData(profile.getCurrentPermutation())
         result = set()
 
         for entry in meta.breaks:
@@ -154,14 +154,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
+    def getDependencies(self, profile=None, items=None, fields=None, warnings=True):
         """
         Returns a set of dependencies seen through the given list of known
         items (ignoring all unknown items in original set). This method also
         makes use of the meta data.
         """
 
-        permutation = self.filterPermutation(permutation)
+        permutation = self.filterPermutation(profile.getCurrentPermutation())
         meta = self.getMetaData(permutation)
         result = set()
 
@@ -184,12 +184,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getMetaData(self, permutation=None):
+    def getMetaData(self, profile):
         """
         Returns the meta data of this stylesheet
         """
 
-        permutation = self.filterPermutation(permutation)
+        permutation = self.filterPermutation(profile.getCurrentPermutation())
 
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
@@ -231,32 +231,32 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getMergedMtime(self, session, permutation=None):
+    def getMergedMtime(self, profile):
         """
         Returns the newest modification date of the stylesheet (respecting all includes)
         """
 
         mtime = self.mtime
-        permutation = self.filterPermutation(permutation)
+        permutation = self.filterPermutation(profile.getCurrentPermutation())
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
 
         # Run the actual resolver engine and figure out newest mtime
-        for item, include in includeGenerator(tree, session):
+        for item, include in includeGenerator(tree, profile):
 
-            mtime = max(mtime, item.getMergedMtime(session, permutation))
+            mtime = max(mtime, item.getMergedMtime(profile))
 
         return mtime
 
 
 
-    def getMergedTree(self, session, permutation=None):
+    def getMergedTree(self, profile):
         """
         Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
 
-        permutation = self.filterPermutation(permutation)
+        permutation = self.filterPermutation(profile.getCurrentPermutation())
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
@@ -265,10 +265,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = copy.deepcopy(tree)
 
         # Run the actual resolver engine
-        for item, include in includeGenerator(tree, session):
+        for item, include in includeGenerator(tree, profile):
 
             # Use merged tree for children as well...
-            childRoot = item.getMergedTree(session, permutation)
+            childRoot = item.getMergedTree(profile)
 
             # Copy it for being able to freely modify it
             childRoot = copy.deepcopy(childRoot)
@@ -280,22 +280,22 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getCompressed(self, session, permutation=None, optimization=None, formatting=None):
+    def getCompressed(self, profile):
         """
         Returns the compressed CSS code of this stylesheet.
         """
 
-        field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
-        mtime = self.getMergedMtime(session, permutation)
+        field = "style:compressed[%s]-%s" % (self.id, profile.getId())
+        mtime = self.getMergedMtime(profile)
 
         compressed = self.project.getCache().read(field, mtime)
         if compressed is None:
 
             # Start with the merged tree (includes resolved)
-            tree = self.getMergedTree(session, permutation)
+            tree = self.getMergedTree(profile)
 
             # Reduce tree
-            Engine.reduceTree(tree, session)
+            Engine.reduceTree(tree, profile)
 
             # Compress tree
             compressed = Compressor.Compressor(formatting).compress(tree)
