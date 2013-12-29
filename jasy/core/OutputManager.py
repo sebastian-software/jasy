@@ -163,7 +163,9 @@ class OutputManager:
 
     def __compressScripts(self, items):
         try:
+            profile = self.__profile
             session = self.__session
+
             result = []
 
             for item in items:

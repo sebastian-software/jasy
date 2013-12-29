@@ -5,7 +5,8 @@
 
 import jasy
 
-import time, socket, uuid, getpass
+import time, socket, uuid, getpass, copy
+import itertools, json
 
 import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
@@ -71,6 +72,7 @@ class Profile():
         self.__session = session
         self.__parts = {}
         self.__commands = {}
+        self.__fields = copy.copy(session.getFields())
 
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
@@ -279,7 +281,7 @@ class Profile():
         setups = {}
 
         # Add user configured fields from session
-        setups.update(self.__session.getFieldSetupClasses())
+        setups.update(self.getFieldSetupClasses())
 
 
 
@@ -502,7 +504,7 @@ class Profile():
 
         for fieldName in detects:
             fieldSetup = "jasy.Env.addField(%s);" % self.__exportField(fieldName)
-            fieldSetupClass = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+            fieldSetupClass = self.__session.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
             setups[fieldName] = fieldSetupClass
 
         return setups

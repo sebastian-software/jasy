@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import itertools, atexit, json, os, zlib, shutil
+import atexit, os, zlib, shutil
 
 import jasy.core.Locale
 import jasy.core.Config
@@ -147,6 +147,10 @@ class Session():
 
         for project in self.__projects:
             project.resume()
+
+
+    def getFields(self):
+        return self.__fields
 
 
     def getClassByName(self, className):
