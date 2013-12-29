@@ -72,8 +72,23 @@ class Profile():
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
         # Initialize objects
-        self.__assetManager = AssetManager.AssetManager(self, session)
-        self.__fileManager = FileManager.FileManager(session)
+        assetManager = self.__assetManager = AssetManager.AssetManager(self, session)
+        fileManager = self.__fileManager = FileManager.FileManager(session)
+
+        # Registering commands
+        self.addCommand("asset.url", lambda fileId: assetManager.getAssetUrl(fileId), "url")
+        self.addCommand("asset.width", lambda fileId: assetManager.getAssetWidth(fileId), "px")
+        self.addCommand("asset.height", lambda fileId: assetManager.getAssetHeight(fileId), "px")
+
+        self.addCommand("sprite.url", lambda fileId: assetManager.getSpriteUrl(fileId), "url")
+        self.addCommand("sprite.left", lambda fileId: assetManager.getSpriteLeft(fileId), "px")
+        self.addCommand("sprite.top", lambda fileId: assetManager.getSpriteTop(fileId), "px")
+        self.addCommand("sprite.width", lambda fileId: assetManager.getSpriteWidth(fileId), "px")
+        self.addCommand("sprite.height", lambda fileId: assetManager.getSpriteHeight(fileId), "px")
+
+        self.addCommand("animation.columns", lambda fileId: assetManager.getAnimationColumns(fileId), "number")
+        self.addCommand("animation.rows", lambda fileId: assetManager.getAnimationRows(fileId), "number")
+        self.addCommand("animation.frames", lambda fileId: assetManager.getAnimationFrames(fileId), "number")
 
 
     def getSession(self):
@@ -283,5 +298,352 @@ class Profile():
 
 
 
+
+    #
+    # Support for fields
+    # Fields allow to inject data from the build into the running application
+    #
+
+    def setLocales(self, locales, default=None):
+        """
+        Store locales as a special built-in field with optional default value
+        """
+
+        self.__fields["locale"] = {
+            "values" : locales,
+            "default" : default or locales[0],
+            "detect" : "core.detect.Locale"
+        }
+
+
+    def setDefaultLocale(self, locale):
+        """
+        Sets the default locale
+        """
+
+        if not "locale" in self.__fields:
+            raise UserError("Define locales first!")
+
+        self.__fields["locale"]["default"] = locale
+
+
+    def setField(self, name, value):
+        """
+        Statically configure the value of the given field.
+
+        This field is just injected into Permutation data and used for permutations, but as
+        it only holds a single value all alternatives paths are removed/ignored.
+        """
+
+        if not name in self.__fields:
+            raise Exception("Unsupported field (not defined by any project): %s" % name)
+
+        entry = self.__fields[name]
+
+        # Replace current value with single value
+        entry["values"] = [value]
+
+        # Additonally set the default
+        entry["default"] = value
+
+        # Delete detection if configured by the project
+        if "detect" in entry:
+            del entry["detect"]
+
+
+    def permutateField(self, name, values=None, detect=None, default=None):
+        """
+        Adds the given key/value pair to the session for permutation usage.
+
+        It supports an optional test. A test is required as soon as there is
+        more than one value available. The detection method and values are typically
+        already defined by the project declaring the key/value pair.
+        """
+
+        if not name in self.__fields:
+            raise Exception("Unsupported field (not defined by any project): %s" % name)
+
+        entry = self.__fields[name]
+
+        if values:
+            if type(values) != list:
+                values = [values]
+
+            entry["values"] = values
+
+            # Verifying values from build script with value definition in project manifests
+            if "check" in entry:
+                check = entry["check"]
+                for value in values:
+                    if check == "Boolean":
+                        if type(value) == bool:
+                            continue
+                    elif check == "String":
+                        if type(value) == str:
+                            continue
+                    elif check == "Number":
+                        if type(value) in (int, float):
+                            continue
+                    else:
+                        if value in check:
+                            continue
+
+                    raise Exception("Unsupported value %s for %s" % (value, name))
+
+            if default is not None:
+                entry["default"] = default
+
+        elif "check" in entry and entry["check"] == "Boolean":
+            entry["values"] = [True, False]
+
+        elif "check" in entry and type(entry["check"]) == list:
+            entry["values"] = entry["check"]
+
+        elif "default" in entry:
+            entry["values"] = [entry["default"]]
+
+        else:
+            raise Exception("Could not permutate field: %s! Requires value list for non-boolean fields which have no defaults." % name)
+
+        # Store class which is responsible for detection (overrides data from project)
+        if detect:
+            if not self.getClassByName(detect):
+                raise Exception("Could not permutate field: %s! Unknown detect class %s." % detect)
+
+            entry["detect"] = detect
+
+
+    def __exportFieldDetects(self):
+        """
+        Returns a dict where the field points to the detection class
+        which is being used to figure out the value on the client.
+        """
+
+        detects = {}
+
+        for key in sorted(self.__fields):
+            source = self.__fields[key]
+            if "values" in source:
+                values = source["values"]
+                if "detect" in source and len(values) > 1:
+                    detects[key] = source["detect"]
+                else:
+                    detects[key] = None
+
+            # Has no relevance for permutation, just insert the test
+            else:
+                if "detect" in source:
+                    detects[key] = source["detect"]
+                elif "default" in source:
+                    detects[key] = None
+
+        return detects
+
+
+
+    def getFieldSetupClasses(self):
+        detects = self.__exportFieldDetects()
+        setups = {}
+
+        for fieldName in detects:
+            fieldSetup = "jasy.Env.addField(%s);" % self.__exportField(fieldName)
+            fieldSetupClass = self.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
+            setups[fieldName] = fieldSetupClass
+
+        return setups
+
+
+    def __exportField(self, field):
+        """
+        Converts data for the given field into a compact data structure for being used to
+        compute a checksum in JavaScript.
+
+        Export structures:
+        1. [ name, 1, test, [value1, ...] ]
+        2. [ name, 2, value ]
+        3. [ name, 3, test, default? ]
+        4. [ name, 4, value ] (just data - non permutated - generated internally only)
+        """
+
+        source = self.__fields[field]
+
+        content = []
+        content.append("'%s'" % field)
+
+        # We have available values to permutate for
+        if "values" in source:
+            values = source["values"]
+            if "detect" in source and len(values) > 1:
+                # EXPORT STRUCT 1
+                content.append("1")
+                content.append(source["detect"])
+
+                if "default" in source:
+                    # Make sure that default value is first in
+                    values = values[:]
+                    values.remove(source["default"])
+                    values.insert(0, source["default"])
+
+                content.append(json.dumps(values))
+
+            else:
+                # EXPORT STRUCT 2
+                content.append("2")
+
+                if "default" in source:
+                    content.append(json.dumps(source["default"]))
+                else:
+                    content.append(json.dumps(values[0]))
+
+        # Has no relevance for permutation, just insert the test
+        else:
+            if "detect" in source:
+                # EXPORT STRUCT 3
+                content.append("3")
+
+                # Add detection class
+                content.append(source["detect"])
+
+                # Add default value if available
+                if "default" in source:
+                    content.append(json.dumps(source["default"]))
+
+            elif "default" in source:
+                # EXPORT STRUCT 2
+                content.append("2")
+                content.append(json.dumps(source["default"]))
+
+            else:
+                # Has no detection and no permutation. Ignore it completely
+                pass
+
+        return "[%s]" % ", ".join(content)
+
+
+    #
+    # State Handling / Looping
+    #
+
+    def __generatePermutations(self):
+        """
+        Combines all values to a set of permutations.
+        These define all possible combinations of the configured settings
+        """
+
+        fields = self.__fields
+        values = {}
+        for key in fields:
+            if "values" in fields[key]:
+                values[key] = fields[key]["values"]
+            elif "default" in fields[key] and not "detect" in fields[key]:
+                values[key] = [fields[key]["default"]]
+
+        # Thanks to eumiro via http://stackoverflow.com/questions/3873654/combinations-from-dictionary-with-list-values-using-python
+        names = sorted(values)
+        combinations = [dict(zip(names, prod)) for prod in itertools.product(*(values[name] for name in names))]
+        permutations = [jasy.core.Permutation.getPermutation(combi) for combi in combinations]
+
+        return permutations
+
+
+    def permutate(self):
+        """ Generator method for permutations for improving output capabilities """
+
+        Console.info("Processing permutations...")
+        Console.indent()
+
+        permutations = self.__generatePermutations()
+        length = len(permutations)
+
+        for pos, current in enumerate(permutations):
+            Console.info("Permutation %s/%s:" % (pos+1, length))
+            Console.indent()
+
+            self.__currentPermutation = current
+            self.__currentTranslationBundle = self.__generateTranslationBundle()
+
+            yield current
+            Console.outdent()
+
+        Console.outdent()
+
+        self.__currentPermutation = None
+        self.__currentTranslationBundle = None
+
+
+    def getCurrentPermutation(self):
+        """Returns current permutation object (useful during looping through permutations via permutate())."""
+
+        return self.__currentPermutation
+
+
+    def resetCurrentPermutation(self):
+        """Resets the current permutation object."""
+
+        self.__currentPermutation = None
+
+
+    def setStaticPermutation(self, **argv):
+        """
+        Sets current permutation to a static permutation which contains all values hardly wired to
+        static values using setField() or given via additional named parameters.
+        """
+
+        combi = {}
+
+        for name in self.__fields:
+            entry = self.__fields[name]
+            if not "detect" in entry:
+                combi[name] = entry["default"]
+
+        for name in argv:
+            combi[name] = argv[name]
+
+        if not combi:
+            self.__currentPermutation = None
+            return None
+
+        permutation = jasy.core.Permutation.getPermutation(combi)
+        self.__currentPermutation = permutation
+
+        return permutation
+
+
+
+
+
+    def expandFileName(self, fileName):
+        """
+        Replaces placeholders inside the given filename and returns the result.
+        The placeholders are based on the current state of the session.
+
+        These are the currently supported placeholders:
+
+        - {{prefix}}: Current prefix of task
+        - {{locale}}: Name of current locale e.g. de_DE
+        - {{permutation}}: SHA1 checksum of current permutation
+        - {{id}}: SHA1 checksum based on permutation and repository branch/revision
+        """
+
+        if self.__currentPrefix:
+            fileName = fileName.replace("{{prefix}}", self.__currentPrefix)
+
+        if self.__currentPermutation:
+            if "{{permutation}}" in fileName:
+                fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
+
+            if "{{id}}" in fileName:
+                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.getMain().getRevision())
+                buildHash = Util.generateChecksum(buildId)
+                fileName = fileName.replace("{{id}}", buildHash)
+
+            if "{{locale}}" in fileName:
+                locale = self.__currentPermutation.get("locale")
+                fileName = fileName.replace("{{locale}}", locale)
+
+        elif "{{id}}" in fileName:
+            fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision()))
+
+        return fileName
 
 
