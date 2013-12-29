@@ -17,25 +17,12 @@ RE_URL_PARAMS = re.compile("^([^?#]*)(.*)$")
 class AssetManager():
 
     def __init__(self, profile):
-
-        Console.info("Initializing assets...")
-        Console.indent()
-
         self.__profile = profile
-        self.__session = profile.getSession()
         self.__copylist = set()
 
-        # Loop though all projects and merge assets
-        assets = self.__assets = {}
-        for project in self.__session.getProjects():
-            assets.update(project.getAssets())
 
-        # Extract and inject data from sprite and animation data
-        self.__processSprites()
-        self.__processAnimations()
-
-        Console.outdent()
-        Console.info("Activated %s assets", len(assets))
+    def addProject(self, project):
+        self.__assets.update(project.getAssets())
 
 
     def getAssetUrl(self, fileId):
@@ -203,7 +190,7 @@ class AssetManager():
 
 
 
-    def __processSprites(self):
+    def processSprites(self):
         """
         Processes jasysprite files to merge sprite data into asset registry
         """
@@ -266,7 +253,7 @@ class AssetManager():
         self.__sprites = sprites
 
 
-    def __processAnimations(self):
+    def processAnimations(self):
         """Processes jasyanimation files to merge animation data into asset registry"""
 
         assets = self.__assets
