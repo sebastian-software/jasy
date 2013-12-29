@@ -46,7 +46,7 @@ class AssetManager():
         Returns the asset URL for the given item relative to the current working path
         """
 
-        postFix = ""
+        matched = False
         if not fileId in self.__assets:
             # Try to split asset params before resolving
             matched = re.match(RE_URL_PARAMS, fileId)
