@@ -75,6 +75,14 @@ class Profile():
         assetManager = self.__assetManager = AssetManager.AssetManager(self)
         fileManager = self.__fileManager = FileManager.FileManager(session)
 
+        # Registering assets
+        for project in self.getProjects():
+            assetManager.addProject(project)
+
+        # Enable sprite sheets and image animations
+        assetManager.processSprites()
+        assetManager.processAnimations()
+
         # Registering commands
         self.addCommand("asset.url", lambda fileId: assetManager.getAssetUrl(fileId), "url")
         self.addCommand("asset.width", lambda fileId: assetManager.getAssetWidth(fileId), "px")
@@ -91,14 +99,24 @@ class Profile():
         self.addCommand("animation.frames", lambda fileId: assetManager.getAnimationFrames(fileId), "number")
 
 
+    def getProjects(self):
+        """
+        Returns all currently registered projects.
+        Injects locale project when current permutation has configured a locale.
+        """
+
+        project = self.getCurrentLocaleProject()
+        if project:
+            return self.__projects + [project]
+
+        return self.__projects
+
+
     def getSession(self):
         return self.__session
 
     def getParts(self):
         return self.__parts
-
-    def getOutputManager(self):
-        return self.__outputManager
 
     def getAssetManager(self):
         return self.__assetManager

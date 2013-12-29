@@ -351,12 +351,7 @@ class Session():
     def getProjects(self):
         """
         Returns all currently registered projects.
-        Injects locale project when current permutation has configured a locale.
         """
-
-        project = self.getCurrentLocaleProject()
-        if project:
-            return self.__projects + [project]
 
         return self.__projects
 
