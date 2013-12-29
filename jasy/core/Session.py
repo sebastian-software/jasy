@@ -36,6 +36,8 @@ class Session():
     __scriptEnvironment = None
     __virtualProject = None
 
+    profile = None
+
 
     #
     # Core
