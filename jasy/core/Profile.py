@@ -250,34 +250,39 @@ class Profile():
 
                 # SCRIPT
 
-                self.__workingPath = self.getDestinationPath()
-
                 partClass = parts[part]["class"]
-                Console.info("Generating script (%s)...", partClass)
-                Console.indent()
+                if partClass:
+                    self.__workingPath = self.getDestinationPath()
 
-                classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
+                    Console.info("Generating script (%s)...", partClass)
+                    Console.indent()
 
-                if self.__useSource:
-                    outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
-                else:
-                    outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    classItems = ScriptResolver.Resolver(self.__session).add(partClass).getSorted()
 
-                Console.outdent()
+                    if self.__useSource:
+                        outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    else:
+                        outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+
+                    Console.outdent()
 
 
                 # CSS
 
-                self.__workingPath = cssOutputPath
-
                 partStyle = parts[part]["style"]
-                Console.info("Generating style (%s)...", partStyle)
-                Console.indent()
+                if partStyle:
+                    self.__workingPath = cssOutputPath
 
-                styleItems = StyleResolver.Resolver(self.__session).add(partStyle).getSorted()
-                outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
+                    Console.info("Generating style (%s)...", partStyle)
+                    Console.indent()
 
-                Console.outdent()
+                    styleItems = StyleResolver.Resolver(self.__session).add(partStyle).getSorted()
+                    outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
+
+                    Console.outdent()
+
+
+
                 Console.outdent()
 
 
