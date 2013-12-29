@@ -15,3 +15,5 @@ session.__doc__ = """Auto initialized session object based on jasy.core.Session"
 
 profile = Profile.Profile(session)
 profile.__doc__ = """Auto initialized profile object based on jasy.core.Profile"""
+
+session.profile = profile
