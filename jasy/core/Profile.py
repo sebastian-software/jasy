@@ -70,6 +70,7 @@ class Profile():
 
         self.__session = session
         self.__parts = {}
+        self.__commands = {}
 
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
@@ -700,5 +701,55 @@ class Profile():
             fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision()))
 
         return fileName
+
+
+
+
+
+
+    def addCommand(self, name, func, restype=None):
+        """
+        Registers the given function as a new command
+        """
+
+        if len(name.split(".")) != 2:
+            raise Exception("Command names should always match namespace.name! Tried with: %s!" % name)
+
+        commands = self.__commands
+
+        if name in commands:
+            raise Exception("Overwriting commands is not supported! Command=%s" % name)
+
+        commands[name] = {
+            "func" : func,
+            "restype" : restype
+        }
+
+
+    def executeCommand(self, command, params=None):
+        """
+        Executes the given command and returns the result
+        """
+
+        commands = self.__commands
+
+        # Delegate unknown commands to the Session instance
+        if not command in env:
+            return self.__session.executeCommand(command, params)
+
+            raise UserError("Unsupported command %s" % command)
+
+        entry = env[command]
+        restype = entry["restype"]
+
+        if params:
+            result = entry["func"](*params)
+        else:
+            result = entry["func"]()
+
+        return result, restype
+
+
+
 
 
