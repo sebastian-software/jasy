@@ -548,6 +548,10 @@ class Session():
         return jasy.core.Project.getProjectFromPath(path)
 
 
+
+
+
+
     def setCurrentPrefix(self, path):
         """Interface for Task class to configure the current prefix to use"""
 

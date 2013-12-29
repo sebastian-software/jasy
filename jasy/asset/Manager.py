@@ -22,7 +22,7 @@ class AssetManager():
         Console.indent()
 
         self.__profile = profile
-        self.__session = profile.session
+        self.__session = profile.getSession()
         self.__copylist = set()
 
         # Loop though all projects and merge assets

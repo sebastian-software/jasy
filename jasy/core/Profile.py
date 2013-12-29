@@ -72,7 +72,7 @@ class Profile():
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
         # Initialize objects
-        assetManager = self.__assetManager = AssetManager.AssetManager(self, session)
+        assetManager = self.__assetManager = AssetManager.AssetManager(self)
         fileManager = self.__fileManager = FileManager.FileManager(session)
 
         # Registering commands
