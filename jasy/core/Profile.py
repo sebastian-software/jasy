@@ -82,8 +82,8 @@ class Profile():
     def getDestinationPath(self):
         return self.__destinationPath or self.__session.getCurrentPrefix()
 
-    def setDestinationPath(self, folder):
-        self.__destinationPath = folder
+    def setDestinationPath(self, path):
+        self.__destinationPath = path
 
     def getDestinationUrl(self):
         return self.__destinationUrl
