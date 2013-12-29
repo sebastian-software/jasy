@@ -14,8 +14,7 @@ def run(profile):
     session = profile.getSession()
     parts = profile.getParts()
 
-    outputManager = OutputManager.OutputManager(profile, session, profile.getAssetManager(),
-        compressionLevel=profile.getCompressionLevel(), formattingLevel=profile.getFormattingLevel())
+    outputManager = OutputManager.OutputManager(profile)
 
     destinationFolder = profile.getDestinationPath()
 
@@ -38,7 +37,7 @@ def run(profile):
         Console.outdent()
 
 
-    for permutation in session.permutate():
+    for permutation in profile.permutate():
 
         for part in parts:
 
@@ -58,7 +57,7 @@ def run(profile):
                 Console.info("Generating script (%s)...", partClass)
                 Console.indent()
 
-                classItems = ScriptResolver.Resolver(session).add(partClass).getSorted()
+                classItems = ScriptResolver.Resolver(profile).add(partClass).getSorted()
 
                 if profile.getUseSource():
                     outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
@@ -77,7 +76,7 @@ def run(profile):
                 Console.info("Generating style (%s)...", partStyle)
                 Console.indent()
 
-                styleItems = StyleResolver.Resolver(session).add(partStyle).getSorted()
+                styleItems = StyleResolver.Resolver(profile).add(partStyle).getSorted()
                 outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
 
                 Console.outdent()
