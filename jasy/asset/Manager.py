@@ -16,22 +16,19 @@ RE_URL_PARAMS = re.compile("^([^?#]*)(.*)$")
 
 class AssetManager():
 
-    def __init__(self, profile, session):
+    def __init__(self, profile):
 
         Console.info("Initializing assets...")
         Console.indent()
 
         self.__profile = profile
-        self.__session = session
+        self.__session = profile.session
         self.__copylist = set()
 
         # Loop though all projects and merge assets
         assets = self.__assets = {}
         for project in self.__session.getProjects():
             assets.update(project.getAssets())
-
-        # Register system commands for accessing asset paths, asset dimensions, etc.
-        self.__addCommands()
 
         # Extract and inject data from sprite and animation data
         self.__processSprites()
@@ -204,25 +201,6 @@ class AssetManager():
             except IndexError:
                 return animationData[0] * animationData[1]
 
-
-    def __addCommands(self):
-        """
-        Registers session commands for usage in template and stylesheets
-        """
-
-        self.__session.addCommand("asset.url", lambda fileId: self.getAssetUrl(fileId), "url")
-        self.__session.addCommand("asset.width", lambda fileId: self.getAssetWidth(fileId), "px")
-        self.__session.addCommand("asset.height", lambda fileId: self.getAssetHeight(fileId), "px")
-
-        self.__session.addCommand("sprite.url", lambda fileId: self.getSpriteUrl(fileId), "url")
-        self.__session.addCommand("sprite.left", lambda fileId: self.getSpriteLeft(fileId), "px")
-        self.__session.addCommand("sprite.top", lambda fileId: self.getSpriteTop(fileId), "px")
-        self.__session.addCommand("sprite.width", lambda fileId: self.getSpriteWidth(fileId), "px")
-        self.__session.addCommand("sprite.height", lambda fileId: self.getSpriteHeight(fileId), "px")
-
-        self.__session.addCommand("animation.columns", lambda fileId: self.getAnimationColumns(fileId), "number")
-        self.__session.addCommand("animation.rows", lambda fileId: self.getAnimationRows(fileId), "number")
-        self.__session.addCommand("animation.frames", lambda fileId: self.getAnimationFrames(fileId), "number")
 
 
     def __processSprites(self):
@@ -482,10 +460,16 @@ class AssetManager():
         # Merge asset hints from all classes and remove duplicates
         hints = set()
         for classObj in classes:
-            hints.update(classObj.getMetaData(self.__session.getCurrentPermutation()).assets)
+            hints.update(classObj.getMetaData(self.__profile.getCurrentPermutation()).assets)
 
         # Compile filter expressions
         matcher = "^%s$" % "|".join(["(?:%s)" % fnmatch.translate(hint) for hint in hints])
         Console.debug("Compiled asset matcher: %s" % matcher)
 
         return re.compile(matcher)
+
+
+
+
+
+
