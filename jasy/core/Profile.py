@@ -749,5 +749,7 @@ class Profile():
 
 
 
-
+    def getId(self):
+        # FIXME
+        return str(self.__currentPermutation)
 

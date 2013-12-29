@@ -348,15 +348,10 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
 
     def getCompressed(self, profile):
-        permutation = self.filterPermutation(profile.getCurrentPermutation())
-
-        # Disable translation for caching / patching when not actually used
-        if translation and not self.getTranslations():
-            translation = None
-
         field = "script:compressed[%s]-%s" % (self.id, profile.getId())
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
+            permutation = self.filterPermutation(profile.getCurrentPermutation())
             tree = self.__getOptimizedTree(permutation)
 
             translation = profile.getCurrentTranslation()
