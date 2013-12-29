@@ -56,7 +56,19 @@ class FileManager:
         srcLength = len(src)
         counter = 0
 
-        for rootFolder, dirs, files in os.walk(src):
+        visitedPaths = []
+
+        for rootFolder, dirs, files in os.walk(src,followlinks=True):
+            
+            # Prevent infinite loops by removing already visited subdirs
+            # This only happens by using recursive links
+            subdirs = dirs[:]
+            for subdir in subdirs:
+                realPath = os.path.realpath(os.path.join(rootFolder, subdir))
+                if realPath in visitedPaths:
+                    dirs.remove(subdir)
+                else:
+                    visitedPaths.append(realPath)
 
             # figure out where we're going
             destFolder = dst + rootFolder[srcLength:]
