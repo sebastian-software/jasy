@@ -5,20 +5,14 @@
 
 import jasy
 
-import os.path
 import time, socket, uuid, getpass
 
 import jasy.core.Console as Console
-import jasy.core.OutputManager as OutputManager
 import jasy.core.FileManager as FileManager
 import jasy.core.Util as Util
 
 import jasy.asset.Manager as AssetManager
-
 import jasy.item.Class as ClassItem
-
-import jasy.js.Resolver as ScriptResolver
-import jasy.style.Resolver as StyleResolver
 
 
 
@@ -79,10 +73,23 @@ class Profile():
 
         # Initialize objects
         self.__assetManager = AssetManager.AssetManager(self, session)
-        self.__outputManager = OutputManager.OutputManager(self, session, self.__assetManager,
-            compressionLevel=self.__compressionLevel, formattingLevel=self.__formattingLevel)
         self.__fileManager = FileManager.FileManager(session)
 
+
+    def getSession(self):
+        return self.__session
+
+    def getParts(self):
+        return self.__parts
+
+    def getOutputManager(self):
+        return self.__outputManager
+
+    def getAssetManager(self):
+        return self.__assetManager
+
+    def getFileManager(self):
+        return self.__fileManager
 
 
     def getDestinationPath(self):

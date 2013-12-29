@@ -6,19 +6,17 @@
 
 """Global environment which is used by jasyscript.py files"""
 
-# Session & Profile
+# Session Instance
 from jasy.env.State import session
-from jasy.env.State import profile
 
 # Modules
 import jasy.core.Console as Console
 import jasy.env.Task as Task
 import jasy.vcs.Repository as Repository
+import jasy.core.Build as Build
 
 # Common Classes
-from jasy.core.OutputManager import OutputManager
-from jasy.core.FileManager import FileManager
-from jasy.asset.Manager import AssetManager
+from jasy.core.Profile import Profile
 from jasy.asset.SpritePacker import SpritePacker
 
 # Script Features

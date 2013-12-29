@@ -3,9 +3,19 @@
 # Copyright 2013 Sebastian Werner
 #
 
+import os.path
+
+import jasy.core.Console as Console
+import jasy.core.OutputManager as OutputManager
+import jasy.js.Resolver as ScriptResolver
+import jasy.style.Resolver as StyleResolver
+
 def run(profile):
     session = profile.getSession()
     parts = profile.getParts()
+
+    outputManager = OutputManager.OutputManager(profile, session, profile.getAssetManager(),
+        compressionLevel=profile.getCompressionLevel(), formattingLevel=profile.getFormattingLevel())
 
     destinationFolder = profile.getDestinationPath()
 
@@ -78,5 +88,5 @@ def run(profile):
 
 
     if profile.getCopyAssets():
-        assetManager.copyAssets()
+        profile.getAssetManager().copyAssets()
 
