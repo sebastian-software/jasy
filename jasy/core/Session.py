@@ -1,22 +1,20 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 import atexit, os, zlib, shutil
 
-import jasy.core.Locale
-import jasy.core.Config
-import jasy.core.Project
-import jasy.core.Permutation
+import jasy.core.Config as Config
+import jasy.core.Project as Project
 import jasy.core.Util as Util
+import jasy.core.Console as Console
 
-import jasy.asset.Manager
 import jasy.item.Translation
 import jasy.item.Class
 
 from jasy import UserError
-import jasy.core.Console as Console
 
 
 class Session():
@@ -26,15 +24,30 @@ class Session():
     """
 
     __currentPrefix = None
+
+
+    # List of all projects in priority order
     __projects = None
+
+    # Whether repositories should be auto updated before projects should be initialized
     __updateRepositories = True
 
-    __scriptEnvironment = None
+    # All (active) fields as defined by the active projects
+    __fields = None
+
+    # Environment object for executing jasylibrary.py code
+    __libraryEnvironment = None
+
+    # Environment object for executing jasycommand.py code
     __commandEnvironment = None
 
+    # Virtual project to store dynamically created classes
     __virtualProject = None
 
+    # Translation bundles created by merged data from active projects
     __translationBundles = None
+
+
 
 
     #
@@ -60,14 +73,14 @@ class Session():
         :param commandEnvironment: API object as being used for loadCommands to add Python features for any item nodes.
         """
 
-        self.__scriptEnvironment = scriptEnvironment
+        self.__libraryEnvironment = scriptEnvironment
         self.__commandEnvironment = {}
         self.__updateRepositories = updateRepositories
 
-        if autoInitialize and jasy.core.Config.findConfig("jasyproject"):
+        if autoInitialize and Config.findConfig("jasyproject"):
 
             try:
-                self.addProject(jasy.core.Project.getProjectFromPath("."))
+                self.addProject(Project.getProjectFromPath("."))
 
             except UserError as err:
                 Console.outdent(True)
@@ -204,7 +217,7 @@ class Session():
         :type project: object
         """
 
-        result = jasy.core.Project.getProjectDependencies(project, "external", self.__updateRepositories)
+        result = Project.getProjectDependencies(project, "external", self.__updateRepositories)
         for project in result:
 
             # Append to session list
@@ -245,7 +258,7 @@ class Session():
         containing all @share'd functions and fields loaded from the given file.
         """
 
-        if objectName in self.__scriptEnvironment:
+        if objectName in self.__libraryEnvironment:
             raise UserError("Could not import library %s as the object name %s is already used." % (fileName, objectName))
 
         # Create internal class object for storing shared methods
@@ -270,7 +283,7 @@ class Session():
 
         # Export destination name as global
         Console.debug("Importing %s shared methods under %s...", counter, objectName)
-        self.__scriptEnvironment[objectName] = exportedModule
+        self.__libraryEnvironment[objectName] = exportedModule
 
         return counter
 
@@ -407,7 +420,7 @@ class Session():
         jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: virtual\npackage: ""\n')
 
         # Generate project instance from path, store and return
-        project = jasy.core.Project.getProjectFromPath(path)
+        project = Project.getProjectFromPath(path)
         self.__virtualProject = project
         self.__projects.append(project)
 
@@ -488,7 +501,7 @@ class Session():
                         Console.debug("Adding %s entries from %s @ %s...", len(translation.getTable()), currentLanguage, project.getName())
                         combined += translation
 
-        Console.debug("Combined number of translations: %s", len(combined.getTable()))
+        Console.info("Combined number of translations: %s", len(combined.getTable()))
         Console.outdent()
 
         self.__translationBundles[language] = combined
