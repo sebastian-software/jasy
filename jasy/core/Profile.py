@@ -744,12 +744,12 @@ class Profile():
         commands = self.__commands
 
         # Delegate unknown commands to the Session instance
-        if not command in env:
+        if not command in commands:
             return self.__session.executeCommand(command, params)
 
             raise UserError("Unsupported command %s" % command)
 
-        entry = env[command]
+        entry = commands[command]
         restype = entry["restype"]
 
         if params:
