@@ -10,12 +10,14 @@ Tasks are basically functions with some managment code allow them to run in jasy
 import types, os, sys, inspect, subprocess
 
 import jasy.core.Console as Console
+import jasy.core.Util as Util
 
 from jasy.env.State import session
-import jasy.core.Util as Util
 from jasy import UserError
 
+
 __all__ = ["task", "executeTask", "runTask", "printTasks", "setCommand", "setOptions", "getOptions"]
+
 
 class Task:
 
@@ -51,34 +53,22 @@ class Task:
 
     def __call__(self, **kwargs):
 
+        # Let session know about current task
+        session.setCurrentTask(self.name)
+
+        # Combine all arguments
         merged = {}
         merged.update(self.curry)
         merged.update(kwargs)
 
-
-        #
-        # SUPPORT SOME DEFAULT FEATURES CONTROLLED BY TASK PARAMETERS
-        #
-
-        # Allow overriding of prefix via task or cmdline parameter.
-        # By default use name of the task (no prefix for cleanup tasks)
-        if "prefix" in merged:
-            session.setCurrentPrefix(merged["prefix"])
-            del merged["prefix"]
-        elif "clean" in self.name:
-            session.setCurrentPrefix(None)
-        else:
-            session.setCurrentPrefix(self.name)
-
-
-        #
-        # EXECUTE ATTACHED FUNCTION
-        #
-
-        Console.header(self.__name__)
-
         # Execute internal function
-        return self.func(**merged)
+        retval = self.func(**merged)
+
+        # Let session know about current task
+        session.setCurrentTask(None)
+
+        # Return result
+        return retval
 
 
     def __repr__(self):
