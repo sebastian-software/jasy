@@ -105,7 +105,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            spriteData = assetItem.exportData()[2]
+            assetData = assetItem.exportData()
+            if len(assetData) < 2:
+                raise Exception("No such sprite image: %s" % fileId)
+
+            spriteData = assetData[2]
             spriteIndex = spriteData[0]
             return self.__sprites[spriteIndex]
 
@@ -144,7 +148,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            spriteData = assetItem.exportData()[2]
+            assetData = assetItem.exportData()
+            if len(assetData) < 2:
+                raise Exception("No such sprite image: %s" % fileId)
+
+            spriteData = assetData[2]
             return spriteData[1]
 
 
@@ -158,7 +166,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            spriteData = assetItem.exportData()[2]
+            assetData = assetItem.exportData()
+            if len(assetData) < 2:
+                raise Exception("No such sprite image: %s" % fileId)
+
+            spriteData = assetData[2]
             return spriteData[2]
 
 
@@ -168,7 +180,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            animationData = assetItem.exportData()[3]
+            assetData = assetItem.exportData()
+            if len(assetData) < 3:
+                raise Exception("No such animated image: %s" % fileId)
+
+            animationData = assetData[3]
             return animationData[0]
 
 
@@ -178,7 +194,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            animationData = assetItem.exportData()[3]
+            assetData = assetItem.exportData()
+            if len(assetData) < 3:
+                raise Exception("No such animated image: %s" % fileId)
+
+            animationData = assetData[3]
             return animationData[1]
 
 
@@ -188,7 +208,11 @@ class AssetManager():
 
         assetItem = self.__assets[fileId]
         if assetItem.isImage():
-            animationData = assetItem.exportData()[3]
+            assetData = assetItem.exportData()
+            if len(assetData) < 3:
+                raise Exception("No such animated image: %s" % fileId)
+
+            animationData = assetData[3]
             try:
                 return animationData[2]
             except IndexError:
