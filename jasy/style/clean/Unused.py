@@ -17,7 +17,7 @@ class Error(Exception):
     def __init__(self, name, line):
         self.__name = name
         self.__line = line
-    
+
     def __str__(self):
         return "Unallowed private field access to %s at line %s!" % (self.__name, self.__line)
 
@@ -26,14 +26,14 @@ class Error(Exception):
 def cleanup(node):
     """
     """
-    
+
     if not hasattr(node, "variables"):
         ScopeScanner.scan(node)
 
     # Re cleanup until nothing to remove is found
     iteration = 0
     cleaned = False
-    
+
     Console.debug("Removing unused variables...")
     Console.indent()
 
@@ -42,12 +42,12 @@ def cleanup(node):
 
         modified = __cleanup(node)
         if modified > 0:
-            Console.info("Removed %s unused variables", modified)
+            Console.debug("Removed %s unused variables", modified)
             ScopeScanner.scan(node)
             cleaned = True
         else:
             break
-        
+
     Console.outdent()
 
     return cleaned
@@ -60,7 +60,7 @@ def cleanup(node):
 
 def __cleanup(node):
     """ The scanner part which looks for scopes with unused variables/params """
-    
+
     cleaned = 0
 
     for child in list(node):
@@ -80,24 +80,24 @@ def __cleanup(node):
             cleaned += __recurser(node, node.scope.unused)
 
     return cleaned
-            
-            
-            
+
+
+
 def __recurser(node, unused):
-    """ 
+    """
     The cleanup part which always processes one scope and cleans up params and
     variable definitions which are unused
     """
-    
+
     modified = 0
-    
+
     # Process children, but ignore all selector blocks as these should be processed separately
     if node.type != "selector":
         for child in reversed(node):
             # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
             if child != None:
                 modified += __recurser(child, unused)
-                    
+
     if node.type == "mixin":
         # Mixin with actual users aka extending customers
         if getattr(node, "selector", None):
@@ -131,10 +131,10 @@ def __recurser(node, unused):
                     Console.debug("Removing unused primitive variable %s at line %s" % (node.name, node.line))
                     node.parent.remove(node)
                     modified += 1
-                    
+
                 else:
                     Console.debug("Could not automatically remove unused variable %s at line %s without possible side-effects" % (node.name, node.line))
-                
+
             else:
                 node.parent.remove(node)
                 modified += 1

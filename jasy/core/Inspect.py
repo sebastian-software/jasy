@@ -9,7 +9,7 @@ import jasy.core.Console as Console
 
 def highlightArgs(value, inClassOrObject=False):
 
-    argsspec = inspect.getfullargspec(value)     
+    argsspec = inspect.getfullargspec(value)
 
     if inClassOrObject and argsspec.args and argsspec.args[0] == "self":
         del argsspec.args[0]
@@ -24,7 +24,7 @@ def highlightArgs(value, inClassOrObject=False):
 
     argmsg += ")"
 
-    return Console.colorize(argmsg, "cyan")    
+    return Console.colorize(argmsg, "cyan")
 
 
 def extractDoc(value, limit=80, indent=2):
@@ -123,5 +123,5 @@ def generateApi(api):
 
         result.append("")
 
-    return "\n".join(result)    
+    return "\n".join(result)
 

@@ -11,27 +11,27 @@ if __name__ == "__main__":
 import jasy.js.parse.Parser as Parser
 from jasy.core.MetaData import MetaData
 
-        
+
 class Tests(unittest.TestCase):
 
     def process(self, code):
         tree = Parser.parse(code)
         meta = MetaData(tree)
         return meta
-        
-        
+
+
     def test_other(self):
-    
+
         meta = self.process('''
-    
+
         /**
          * Hello World
          *
          * #deprecated #public #use(future) #use(current)
          */
-    
+
         ''')
-    
+
         self.assertIsInstance(meta, MetaData)
         self.assertIsInstance(meta.requires, set)
         self.assertIsInstance(meta.optionals, set)
@@ -41,8 +41,8 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(meta.optionals), 0)
         self.assertEqual(len(meta.breaks), 0)
         self.assertEqual(len(meta.assets), 0)
-        
-        
+
+
     def test_classes(self):
 
         meta = self.process('''
@@ -95,9 +95,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(meta.breaks), 0)
         self.assertEqual(len(meta.assets), 3)
         self.assertEqual(meta.assets, set(["projectx/*", "projectx/some/local/url.png", "icons/*post/home.png"]))
-        
-        
-        
+
+
+
     def test_asset_escape(self):
 
         meta = self.process('''
@@ -111,33 +111,33 @@ class Tests(unittest.TestCase):
         ''')
 
         self.assertIsInstance(meta, MetaData)
-        
+
         # Test unescaping
         self.assertEqual(meta.assets, set(["icons/*/home.png"]))
-        
-        
-    
+
+
+
     def test_structured(self):
 
         meta = self.process('''
 
         (function(global) {
-        
+
           global.my.Class = function() {
-          
+
             /**
              * #asset(projectx/some/local/url.png)
              */
             var uri = core.io.Asset.toUri("projectx/some/local/url.png");
-            
+
           };
-        
+
         })(this);
 
         ''')
 
         self.assertIsInstance(meta, MetaData)
-        self.assertEqual(meta.assets, set(["projectx/some/local/url.png"]))        
+        self.assertEqual(meta.assets, set(["projectx/some/local/url.png"]))
 
 
 

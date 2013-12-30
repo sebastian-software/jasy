@@ -3,9 +3,15 @@
 # Copyright 2013 Sebastian Werner
 #
 
+"""
+This class is responsible for resolving if-conditions based on permutation data
+Not all if blocks are being able to be resolved that way though as some use
+variables etc. which are not available before actual full processing of the content.
+"""
+
 import jasy.style.parse.Node as Node
 import jasy.style.Util as Util
-import jasy.core.Console as Console 
+import jasy.core.Console as Console
 
 
 class ResolverError(Exception):
@@ -69,7 +75,7 @@ def __recurser(node, permutation, inCondition=False):
         check = __checkCondition(node.condition)
 
         if check is None:
-            raise ResolverError("Invalid state in condition", node)
+            return
 
         if check:
             node.parent.insertAllReplace(node, node.thenPart)
@@ -106,20 +112,20 @@ def __checkCondition(node):
     Checks a comparison for equality. Returns None when
     both, truely and falsy could not be deteted.
     """
-    
+
     if node.type == "false":
         return False
     elif node.type == "true":
         return True
-        
+
     elif node.type == "eq":
         return __compareNodes(node[0], node[1])
     elif node.type == "ne":
         return __invertResult(__compareNodes(node[0], node[1]))
-        
+
     elif node.type == "not":
         return __invertResult(__checkCondition(node[0]))
-        
+
     elif node.type == "and":
         first = __checkCondition(node[0])
         if first != None and not first:
@@ -128,7 +134,7 @@ def __checkCondition(node):
         second = __checkCondition(node[1])
         if second != None and not second:
             return False
-            
+
         if first and second:
             return True
 
@@ -145,10 +151,10 @@ def __invertResult(result):
     """
     Used to support the NOT operator.
     """
-    
+
     if type(result) == bool:
         return not result
-        
+
     return result
 
 
@@ -158,7 +164,7 @@ def __negateType(node):
     """
 
     child = node[0]
-    
+
     if child.type == "false":
         return "true"
     elif child.type == "true":
@@ -190,15 +196,15 @@ def __compareNodes(a, b):
     secondType = b.type
     if secondType == "not":
         secondType = __negateType(b)
-    
+
     if firstType == secondType:
         if firstType in ("string", "number"):
             return a.value == b.value
         elif firstType == "true":
             return True
         elif secondType == "false":
-            return False    
-            
+            return False
+
     elif firstType in ("true", "false") and secondType in ("true", "false"):
         return False
 

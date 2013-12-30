@@ -39,7 +39,7 @@ import jasy.style.output.Formatting as Formatting
 for fname in sys.argv[2:]:
     text = open(fname, encoding="utf-8").read()
     
-    print(">>> File: %s" % fname)
+    print(">>> File: %s" % fname, file=sys.stderr)
     
     if job == "optimize":    
         tree = Engine.getTree(text, fname)

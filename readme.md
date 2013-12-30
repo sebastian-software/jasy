@@ -16,12 +16,7 @@ For details have a look at [the official documentation](https://github.com/sebas
 ## Documentation
 
 * [Documentation](http://github.com/sebastian-software/jasy/wiki)
-* [API Reference](http://packages.python.org/jasy/)
-
-## Feedback
-
-* [Star Jasy](https://github.com/sebastian-software/jasy/star)
-* [Report an issue](https://github.com/sebastian-software/jasy/issues/new)
+* API Reference: [ReadTheDocs](https://readthedocs.org/projects/jasy/) or [Python.org](http://packages.python.org/jasy/)
 
 ## QuickStart
 
@@ -38,7 +33,6 @@ For details have a look at [the official documentation](https://github.com/sebas
 
 * [Jasy Skeleton](http://github.com/sebastian-software/jasy-skeleton): Test skeletons for Jasy using different "jasy create" aspects
 * [Jasy Top Level Skeleton](https://github.com/sebastian-software/jasy-toplevelskeleton): Demonstrating how a standalone skeleton might look like.
-
 
 ## License
 

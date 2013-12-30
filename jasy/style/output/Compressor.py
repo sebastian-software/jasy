@@ -10,19 +10,20 @@ ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
 
 nativeMethods = (
-    "rgb", "rgba", "hsb", "hsba", 
-    "url", 
+    "rgb", "rgba", "hsb", "hsba",
+    "url",
     "format",
-    "matrix", 
-    "translate", "translateX", "translateY", 
-    "scale", "scaleX", "scaleY", 
-    "rotate", 
-    "skewX", "skewY", 
-    "matrix3d", "translate3d", "translateZ", 
-    "scale3d", "scaleZ", 
-    "rotate3d", "rotateX", "rotateY", "rotateZ", 
+    "matrix",
+    "translate", "translateX", "translateY",
+    "scale", "scaleX", "scaleY",
+    "rotate",
+    "skewX", "skewY",
+    "matrix3d", "translate3d", "translateZ",
+    "scale3d", "scaleZ",
+    "rotate3d", "rotateX", "rotateY", "rotateZ",
     "perspective",
-    "linear-gradient", "radial-gradient", "gradient"
+    "linear-gradient", "radial-gradient", "gradient",
+    "steps"
 )
 
 
@@ -67,7 +68,7 @@ class Compressor:
         "bitwise_and" : '&'
     }
 
-    __prefixes = {    
+    __prefixes = {
         "increment"   : "++",
         "decrement"   : "--",
         "bitwise_not" : '~',
@@ -111,27 +112,27 @@ class Compressor:
                 result = self.compress(node[0]) + self.__prefixes[node.type]
             else:
                 result = self.__prefixes[node.type] + self.compress(node[0])
-        
+
         elif type in self.__dividers:
             first = self.compress(node[0])
             second = self.compress(node[1])
             divider = self.__dividers[node.type]
-            
+
             # Fast path
             if node.type not in ("plus", "minus"):
                 result = "%s%s%s" % (first, divider, second)
-                
+
             # Special code for dealing with situations like x + ++y and y-- - x
             else:
                 result = first
                 if first.endswith(divider):
                     result += " "
-            
+
                 result += divider
-            
+
                 if second.startswith(divider):
                     result += " "
-                
+
                 result += second
 
         else:
@@ -209,7 +210,7 @@ class Compressor:
             # Convert zero-prefix
             if value.startswith("0.") and len(value) > 2:
                 value = value[1:]
-                
+
             # Convert zero postfix
             elif value.endswith(".0"):
                 value = value[:-2]
@@ -224,6 +225,26 @@ class Compressor:
         return node.value
 
 
+    def type_slash(self, node):
+        return "/"
+
+
+    def type_expr(self, node):
+        child = node[0]
+        return self.compress(child)
+
+
+    def type_raw(self, node):
+        child = node[0]
+        result = self.compress(child)
+
+        # Remove string quotes
+        if child.type == "string":
+            result = result[1:-1]
+
+        return result
+
+
     def type_list(self, node):
         return " ".join([ self.compress(child) for child in node ])
 
@@ -234,7 +255,7 @@ class Compressor:
         if self.__useWhiteSpace:
             res = "%s, %s"
         else:
-            res = "%s,%s" 
+            res = "%s,%s"
 
         return res % (first, second)
 
@@ -329,7 +350,7 @@ class Compressor:
             result += "\n"
 
         self.__indentLevel += 1
-        
+
         frames = "".join([ self.compress(child) for child in node ])
         result += self.indent(frames)
 
@@ -349,7 +370,7 @@ class Compressor:
         if self.__useWhiteSpace:
             result += node.value.replace(",", ", ")
         else:
-            result += node.value 
+            result += node.value
 
         result += self.compress(node.rules)
 
@@ -366,21 +387,21 @@ class Compressor:
 
         result = "@media %s" % separator.join(node.name)
         result += self.compress(node.rules)
-        
+
         return self.indent(result)
 
 
     def type_fontface(self, node):
         result = "@font-face" + self.compress(node.rules)
-        
-        return self.indent(result)     
+
+        return self.indent(result)
 
 
 
     #
     # Helpers
     #
-    
+
     def __statements(self, node):
         result = []
         for child in node:
@@ -395,7 +416,7 @@ class Compressor:
     def __values(self, node):
         result = []
         for child in node:
-            result.append(self.compress(child))
+            result.append(str(self.compress(child)))
 
         return " ".join(result)
 

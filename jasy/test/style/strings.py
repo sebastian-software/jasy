@@ -41,7 +41,7 @@ class Tests(unittest.TestCase):
     def test_quotes(self):
         self.assertEqual(self.process(r'''
             .foo{
-              quotes: "\201E" "\201C" "\201A" "\2018"; 
+              quotes: "\201E" "\201C" "\201A" "\2018";
             }
             '''), r'.foo{quotes:"\201E" "\201C" "\201A" "\2018";}')
 
@@ -59,5 +59,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

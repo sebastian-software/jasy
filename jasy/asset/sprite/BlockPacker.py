@@ -1,26 +1,30 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 from jasy.asset.sprite.BlockNode import BlockNode
 
 class BlockPacker():
-    
+
     def __init__(self, w = 0, h = 0):
 
         self.nodes = []
         self.autogrow = False
+
         if w > 0 and h > 0:
             self.root = BlockNode(self, 0, 0, w, h)
-
         else:
             self.autogrow = True
             self.root = None
 
+
     def getUnused(self):
+
         return [b for b in self.nodes if not b.used]
-        
+
+
     def fit(self, blocks):
 
         length = len(blocks)
@@ -31,14 +35,15 @@ class BlockPacker():
             self.root = BlockNode(self, 0, 0, w, h)
 
         for block in blocks:
-            
+
             node = self.findNode(self.root, block.w, block.h)
             if node:
                 block.fit = self.splitNode(node, block.w, block.h)
 
             elif self.autogrow:
                 block.fit = self.growNode(block.w, block.h)
-        
+
+
     def findNode(self, root, w, h):
 
         if (root.used):
@@ -50,15 +55,18 @@ class BlockPacker():
         else:
             return None
 
+
     def splitNode(self, node, w, h):
+
         node.used = True
         node.down = BlockNode(self, node.x, node.y + h, node.w, node.h - h)
         node.right = BlockNode(self, node.x + w, node.y, node.w - w, h)
+
         return node
 
 
     def growNode(self, w, h):
-        
+
         canGrowDown  = w <= self.root.w
         canGrowRight = h <= self.root.h
 
@@ -67,33 +75,28 @@ class BlockPacker():
 
         if shouldGrowRight:
             return self.growRight(w, h)
-
         elif shouldGrowDown:
             return self.growDown(w, h)
-
         elif canGrowRight:
             return self.growRight(w, h)
-
         elif canGrowDown:
             return self.growDown(w, h)
-
         else:
             return None
-    
+
 
     def growRight(self, w, h):
         root = Node(self, 0, 0, self.root.w + w, self.root.h)
         root.used = True
         root.down = self.root
         root.right = BlockNode(self, self.root.w, 0, w, self.root.h)
-        
+
         self.root = root
 
         node = self.findNode(self.root, w, h)
 
         if node:
             return self.splitNode(node, w, h)
-
         else:
             return None
 
@@ -103,14 +106,13 @@ class BlockPacker():
         root.used = True
         root.down = BlockNode(self, 0, self.root.h, self.root.w, h)
         root.right = self.root
-        
+
         self.root = root
 
         node = self.findNode(self.root, w, h)
 
         if node:
             return self.splitNode(node, w, h)
-
         else:
             return None
 

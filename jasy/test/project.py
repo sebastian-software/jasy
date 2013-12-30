@@ -175,7 +175,7 @@ content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/ma
 
     def test_translations(self):
         for project in [self.createCaseTwo(), self.createCaseFour()]:
-            self.assertEqual(type(project.getTranslations()["myproject.de"]).__name__, "TranslationItem")     
+            self.assertEqual(type(project.getTranslations()["myproject.de"]).__name__, "TranslationItem")
 
     def test_manual_class_fusion(self):
         self.assertEqual(self.createCaseOne().getClassByName("myproject.Main").getText(), ";;")

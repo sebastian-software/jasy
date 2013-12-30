@@ -10,12 +10,12 @@ import jasy.style.Sorter as Sorter
 
 
 class Resolver(AbstractResolver.Resolver):
-    
+
     def __init__(self, session):
         super().__init__(session)
 
         for project in session.getProjects():
-            self.items.update(project.getStyles())        
+            self.items.update(project.getStyles())
 
 
     def getItemDependencies(self, item):
@@ -27,4 +27,3 @@ class Resolver(AbstractResolver.Resolver):
 
         return Sorter.Sorter(self, self.session).getSorted()
 
-        

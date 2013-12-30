@@ -32,14 +32,14 @@ class Tests(unittest.TestCase):
         options = Options.Options()
         options.add("file", accept=str, value="jasyscript.py", help="Use the given jasy script")
         options.parse(['--file', 'foo'])
-        self.assertEqual(options.__getattr__("file"), "foo") 
+        self.assertEqual(options.__getattr__("file"), "foo")
 
 
     def test_getTasks(self):
 
         options = Options.Options()
         options.parse(['source', '--file', 'foo'])
-        self.assertEqual(options.getTasks()[0]['task'], 'source') 
+        self.assertEqual(options.getTasks()[0]['task'], 'source')
 
 
 if __name__ == '__main__':

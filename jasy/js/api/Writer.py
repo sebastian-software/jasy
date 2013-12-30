@@ -43,10 +43,10 @@ def convertFunction(item):
             param = params[paramName]
             param["name"] = paramName
             paramsNew.append(param)
-            
+
         item["params"] = paramsNew
-        
-        
+
+
 def convertTags(item):
     if "tags" in item:
         tags = item["tags"]
@@ -57,13 +57,13 @@ def convertTags(item):
                 if tags[tagName] is not True:
                     tag["value"] = "+".join(tags[tagName])
                 tagsNew.append(tag)
-            
+
         item["tags"] = tagsNew
 
 
 def safeUpdate(dest, origin):
     """ Like update() but only never overwrites"""
-    
+
     for key in origin:
         if not key in dest:
             dest[key] = origin[dest]
@@ -72,13 +72,13 @@ def safeUpdate(dest, origin):
 def isErrornous(data):
     if "errornous" in data:
         return True
-        
+
     if "params" in data:
         for paramName in data["params"]:
             param = data["params"][paramName]
             if "errornous" in param:
                 return True
-                
+
     return False
 
 
@@ -86,7 +86,7 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
     Console.debug("Merging %s into %s", mixinName, className)
 
     sectionLink = ["member", "property", "event"]
-    
+
     for pos, section in enumerate(("members", "properties", "events")):
         mixinItems = getattr(mixinApi, section, None)
         if mixinItems:
@@ -94,19 +94,19 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
             if not classItems:
                 classItems = {}
                 setattr(classApi, section, classItems)
-            
+
             for name in mixinItems:
 
                 # Overridden Check
                 if name in classItems:
-                
+
                     # If it was included, just store another origin
                     if "origin" in classItems[name]:
                         classItems[name]["origin"].append({
                             "name": mixinName,
                             "link": "%s:%s~%s" % (sectionLink[pos], mixinName, name)
                         })
-                
+
                     # Otherwise add it to the overridden list
                     else:
                         if not "overridden" in classItems[name]:
@@ -133,7 +133,7 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
 
 def connectInterface(className, interfaceName, classApi, interfaceApi):
     Console.debug("- Connecting %s with %s", className, interfaceName)
-    
+
     #
     # Properties
     #
@@ -153,24 +153,24 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                     "name": interfaceName,
                     "link": "property:%s~%s" % (interfaceName, name)
                 })
-                
+
                 # Copy over documentation
                 if not "doc" in classProperties[name] and "doc" in interfaceProperties[name]:
                     classProperties[name]["doc"] = interfaceProperties[name]["doc"]
 
                 if not "summary" in classProperties[name] and "summary" in interfaceProperties[name]:
                     classProperties[name]["summary"] = interfaceProperties[name]["summary"]
-                    
+
                 if "errornous" in classProperties[name] and not "errornous" in interfaceProperties[name]:
                     del classProperties[name]["errornous"]
-                    
+
                 # Update tags with data from interface
                 if "tags" in interfaceProperties[name]:
                     if not "tags" in classProperties[name]:
                         classProperties[name]["tags"] = {}
 
-                    safeUpdate(classProperties[name]["tags"], interfaceProperties[name]["tags"])                    
-    
+                    safeUpdate(classProperties[name]["tags"], interfaceProperties[name]["tags"])
+
     #
     # Events
     #
@@ -189,7 +189,7 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                     "name": interfaceName,
                     "link": "event:%s~%s" % (interfaceName, name)
                 })
-                
+
                 # Copy user event type and documentation from interface
                 if not "doc" in classEvents[name] and "doc" in interfaceEvents[name]:
                     classEvents[name]["doc"] = interfaceEvents[name]["doc"]
@@ -202,13 +202,13 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
 
                 if "errornous" in classEvents[name] and not "errornous" in interfaceEvents[name]:
                     del classEvents[name]["errornous"]
-                    
+
                 # Update tags with data from interface
                 if "tags" in interfaceEvents[name]:
                     if not "tags" in classEntry:
                         classEvents[name]["tags"] = {}
 
-                    safeUpdate(classEvents[name]["tags"], interfaceEvents[name]["tags"])                    
+                    safeUpdate(classEvents[name]["tags"], interfaceEvents[name]["tags"])
 
     #
     # Members
@@ -219,20 +219,20 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
         for name in interfaceMembers:
             if not name in classMembers:
                 Console.warn("Class %s is missing implementation for member %s of interface %s!", className, name, interfaceName)
-    
+
             else:
                 interfaceEntry = interfaceMembers[name]
                 classEntry = classMembers[name]
-                
+
                 # Add reference to interface
                 if not "interface" in classEntry:
                     classEntry["defined"] = []
-                    
+
                 classEntry["defined"].append({
                     "name": interfaceName,
                     "link": "member:%s~%s" % (interfaceName, name)
                 })
-                
+
                 # Copy over doc from interface
                 if not "doc" in classEntry and "doc" in interfaceEntry:
                     classEntry["doc"] = interfaceEntry["doc"]
@@ -251,7 +251,7 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                 if "tags" in interfaceEntry:
                     if not "tags" in classEntry:
                         classEntry["tags"] = {}
-                    
+
                     safeUpdate(classEntry["tags"], interfaceEntry["tags"])
 
                 # Copy over params from interface
@@ -259,14 +259,14 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                     # Fix completely missing parameters
                     if not "params" in classEntry:
                         classEntry["params"] = {}
-                        
+
                     for paramName in interfaceEntry["params"]:
                         # Prefer data from interface
                         if not paramName in classEntry["params"]:
                             classEntry["params"][paramName] = {}
-                            
+
                         classEntry["params"][paramName].update(interfaceEntry["params"][paramName])
-                        
+
                         # Clear errournous documentation flags
                         if "errornous" in classEntry["params"][paramName] and not "errornous" in interfaceEntry["params"][paramName]:
                             del classEntry["params"][paramName]["errornous"]
@@ -283,21 +283,21 @@ class ApiWriter():
 
         self.__session = session
 
-    
+
     def __isIncluded(self, className, classFilter):
-        
+
         if not classFilter:
             return True
-            
+
         if type(classFilter) is tuple:
             if className.startswith(classFilter):
                 return True
-            
+
         elif not classFilter(className):
             return True
-            
+
         return False
-    
+
 
     def write(self, distFolder, classFilter=None, callback="apiload", showInternals=False, showPrivates=False, printErrors=True, highlightCode=True):
         """
@@ -309,7 +309,7 @@ class ApiWriter():
         :param showInternals: Include internal methods inside API data
         :param showPrivates: Include private methods inside API data
         :param printErrors: Whether errors should be printed to the console
-        :param highlightCode: Whether to enable code highlighting using Pygments 
+        :param highlightCode: Whether to enable code highlighting using Pygments
 
         :type distFolder: str
         :type classFilter: tuple or function
@@ -319,18 +319,18 @@ class ApiWriter():
         :type printErrors: bool
         :type highlightCode: bool
         """
-        
+
         #
         # Collecting
         #
-        
+
         Console.info("Collecting API Data...")
         Console.indent()
-        
+
         apiData = {}
         highlightedCode = {}
         virtualProject = self.__session.getVirtualProject()
-        
+
         for project in self.__session.getProjects():
             if project is virtualProject:
                 continue
@@ -346,28 +346,28 @@ class ApiWriter():
                     if not data.isEmpty:
                         apiData[className] = data
                         highlightedCode[className] = classes[className].getHighlightedCode()
-                
+
                     else:
                         Console.info("Skipping %s, class is empty." % className)
 
             Console.outdent()
-        
+
         Console.outdent()
 
-        
+
         #
         # Processing
         #
-        
+
         Console.info("Processing API Data...")
         Console.indent()
-        
+
         data, index, search = self.__process(apiData, classFilter=classFilter, internals=showInternals, privates=showPrivates, printErrors=printErrors, highlightCode=highlightCode)
-        
+
         Console.outdent()
-        
-        
-        
+
+
+
         #
         # Writing
         #
@@ -384,7 +384,7 @@ class ApiWriter():
             def default(self, obj):
                 if isinstance(obj, set):
                     return list(obj)
-                    
+
                 return json.JSONEncoder.default(self, obj)
 
 
@@ -438,13 +438,13 @@ class ApiWriter():
         File.write(self.__session.expandFileName(os.path.join(distFolder, "meta-index.%s" % extension)), encode(index, "meta-index"))
         File.write(self.__session.expandFileName(os.path.join(distFolder, "meta-search.%s" % extension)), encode(search, "meta-search"))
         Console.outdent()
-        
+
         Console.outdent()
 
 
 
     def __process(self, apiData, classFilter=None, internals=False, privates=False, printErrors=True, highlightCode=True):
-        
+
         knownClasses = set(list(apiData))
 
 
@@ -453,7 +453,7 @@ class ApiWriter():
         # Building Documentation Summaries
         #
 
-        
+
         Console.info("Adding Source Links...")
 
         for className in apiData:
@@ -496,7 +496,7 @@ class ApiWriter():
                     if not mixinName in apiData:
                         Console.error("Invalid mixin %s in class %s", className, mixinName)
                         continue
-                        
+
                     mixinApi = apiData[mixinName]
                     if not hasattr(mixinApi, "includedBy"):
                         mixinApi.includedBy = set()
@@ -518,60 +518,60 @@ class ApiWriter():
         #
         # Checking links
         #
-        
+
         Console.info("Checking Links...")
-        
+
         additionalTypes = ("Call", "Identifier", "Map", "Integer", "Node", "Element", "Class", "Exception", "Uri")
-        
+
         def checkInternalLink(link, className):
             match = internalLinkParse.match(link)
             if not match:
                 return 'Invalid link "#%s"' % link
-                
+
             if match.group(3) is not None:
                 className = match.group(3)
-                
+
             if not className in knownClasses and not className in apiData:
                 return 'Invalid class in link "#%s"' % link
-                
+
             # Accept all section/item values for named classes,
             # as it might be pretty complicated to verify this here.
             if not className in apiData:
                 return True
-                
+
             classApi = apiData[className]
             sectionName = match.group(2)
             itemName = match.group(5)
-            
+
             if itemName is None:
                 return True
-                
+
             if sectionName is not None:
                 if not sectionName in linkMap:
                     return 'Invalid section in link "#%s"' % link
-                    
+
                 section = getattr(classApi, linkMap[sectionName], None)
                 if section is None:
                     return 'Invalid section in link "#%s"' % link
                 else:
                     if itemName in section:
                         return True
-                        
+
                     return 'Invalid item in link "#%s"' % link
-            
+
             for sectionName in ("statics", "members", "properties", "events"):
                 section = getattr(classApi, sectionName, None)
                 if section and itemName in section:
                     return True
-                
+
             return 'Invalid item link "#%s"' % link
 
 
         def checkLinksInItem(item):
-            
+
             # Process types
             if "type" in item:
-                
+
                 if item["type"] == "Function":
 
                     # Check param types
@@ -586,26 +586,26 @@ class ApiWriter():
 
                                     if not "pseudo" in paramTypeEntry and paramTypeEntry["name"] in knownClasses:
                                         paramTypeEntry["linkable"] = True
-                
-                
+
+
                     # Check return types
                     if "returns" in item:
                         for returnTypeEntry in item["returns"]:
                             if not returnTypeEntry["name"] in knownClasses and not returnTypeEntry["name"] in additionalTypes and not ("builtin" in returnTypeEntry or "pseudo" in returnTypeEntry):
                                 item["errornous"] = True
                                 Console.error('Invalid return type "%s" in %s' % (returnTypeEntry["name"], className))
-                            
+
                             if not "pseudo" in returnTypeEntry and returnTypeEntry["name"] in knownClasses:
                                 returnTypeEntry["linkable"] = True
-                            
+
                 elif not item["type"] in knownClasses and not item["type"] in builtinTypes and not item["type"] in pseudoTypes and not item["type"] in additionalTypes:
                     item["errornous"] = True
                     Console.error('Invalid type "%s" in %s' % (item["type"], className))
-            
-            
+
+
             # Process doc
             if "doc" in item:
-                
+
                 def processInternalLink(match):
                     linkUrl = match.group(2)
 
@@ -618,7 +618,7 @@ class ApiWriter():
                                 Console.error("%s in %s:%s~%s" % (linkCheck, sectionName, className, name))
                             else:
                                 Console.error("%s in %s" % (linkCheck, className))
-            
+
                 linkExtract.sub(processInternalLink, item["doc"])
 
 
@@ -627,7 +627,7 @@ class ApiWriter():
         # Process APIs
         for className in apiData:
             classApi = apiData[className]
-            
+
             sectionName = None
             constructData = getattr(classApi, "construct", None)
             if constructData is not None:
@@ -647,9 +647,9 @@ class ApiWriter():
         #
         # Filter Internals/Privates
         #
-        
+
         Console.info("Filtering Items...")
-        
+
         def isVisible(entry):
             if "visibility" in entry:
                 visibility = entry["visibility"]
@@ -676,45 +676,45 @@ class ApiWriter():
         #
         # Connection Interfaces / ImplementedBy
         #
-        
+
         Console.info("Connecting Interfaces...")
         Console.indent()
-        
+
         for className in apiData:
             classApi = getApi(className)
-            
+
             if not hasattr(classApi, "main"):
                 continue
-                
+
             classType = classApi.main["type"]
             if classType == "core.Class":
-                
+
                 classImplements = getattr(classApi, "implements", None)
                 if classImplements:
-                    
+
                     for interfaceName in classImplements:
                         interfaceApi = apiData[interfaceName]
                         implementedBy = getattr(interfaceApi, "implementedBy", None)
                         if not implementedBy:
                             implementedBy = interfaceApi.implementedBy = []
-                            
+
                         implementedBy.append(className)
                         connectInterface(className, interfaceName, classApi, interfaceApi)
-        
+
         Console.outdent()
-        
-        
+
+
         #
         # Merging Named Classes
         #
-        
+
         Console.info("Merging Named Classes...")
         Console.indent()
-        
+
         for className in list(apiData):
             classApi = apiData[className]
             destName = classApi.main["name"]
-            
+
             if destName is not None and destName != className:
 
                 Console.debug("Extending class %s with %s", destName, className)
@@ -722,7 +722,7 @@ class ApiWriter():
                 if destName in apiData:
                     destApi = apiData[destName]
                     destApi.main["from"].append(className)
-                
+
                 else:
                     destApi = apiData[destName] = Data.ApiData(destName, highlight=highlightCode)
                     destApi.main = {
@@ -730,14 +730,14 @@ class ApiWriter():
                         "name" : destName,
                         "from" : [className]
                     }
-                    
+
                 # If there is a "main" tag found in the class use its API description
                 if "tags" in classApi.main and classApi.main["tags"] is not None and "main" in classApi.main["tags"]:
                     if "doc" in classApi.main:
                         destApi.main["doc"] = classApi.main["doc"]
-                
+
                 classApi.main["extension"] = True
-                    
+
                 # Read existing data
                 construct = getattr(classApi, "construct", None)
                 statics = getattr(classApi, "statics", None)
@@ -746,7 +746,7 @@ class ApiWriter():
                 if construct is not None:
                     if hasattr(destApi, "construct"):
                         Console.warn("Overriding constructor in extension %s by %s", destName, className)
-                        
+
                     destApi.construct = copy.copy(construct)
 
                 if statics is not None:
@@ -761,14 +761,14 @@ class ApiWriter():
                 if members is not None:
                     if not hasattr(destApi, "members"):
                         destApi.members = {}
-                        
+
                     for memberName in members:
                         destApi.members[memberName] = copy.copy(members[memberName])
                         destApi.members[memberName]["from"] = className
                         destApi.members[memberName]["fromLink"] = "member:%s~%s" % (className, memberName)
 
         Console.outdent()
-        
+
 
         #
         # Connecting Uses / UsedBy
@@ -795,8 +795,8 @@ class ApiWriter():
 
             apiData[className].uses = cleanUses
 
-        
-        
+
+
         #
         # Building Search Index
         #
@@ -821,20 +821,20 @@ class ApiWriter():
             addSearch(classApi, "members")
             addSearch(classApi, "properties")
             addSearch(classApi, "events")
-        
-        
-        
+
+
+
         #
         # Post Process (dict to sorted list)
         #
-        
+
         Console.info("Post Processing Data...")
-        
+
         for className in sorted(apiData):
             classApi = apiData[className]
-            
+
             convertTags(classApi.main)
-            
+
             construct = getattr(classApi, "construct", None)
             if construct:
                 convertFunction(construct)
@@ -847,34 +847,34 @@ class ApiWriter():
                     for itemName in sorted(items):
                         item = items[itemName]
                         item["name"] = itemName
-                        
+
                         if "type" in item and item["type"] == "Function":
                             convertFunction(item)
-                                
+
                         convertTags(item)
                         sortedList.append(item)
 
                     setattr(classApi, section, sortedList)
-        
-        
-        
+
+
+
         #
         # Collecting Package Docs
         #
 
         Console.info("Collecting Package Docs...")
         Console.indent()
-        
+
         # Inject existing package docs into api data
         for project in self.__session.getProjects():
             docs = project.getDocs()
-            
+
             for packageName in docs:
                 if self.__isIncluded(packageName, classFilter):
                     Console.debug("Creating package documentation %s", packageName)
                     apiData[packageName] = docs[packageName].getApi()
-        
-        
+
+
         # Fill missing package docs
         for className in sorted(apiData):
             splits = className.split(".")
@@ -887,7 +887,7 @@ class ApiWriter():
                         "type" : "Package",
                         "name" : packageName
                     }
-                        
+
                 packageName = "%s.%s" % (packageName, split)
 
 
@@ -898,26 +898,26 @@ class ApiWriter():
             if packageName:
                 package = apiData[packageName]
                 # debug("- Registering class %s in parent %s", className, packageName)
-                
+
                 entry = {
                     "name" : splits[-1],
                     "link" : className,
                 }
-                
+
                 classMain = apiData[className].main
                 if "doc" in classMain and classMain["doc"]:
                     summary = Text.extractSummary(classMain["doc"])
                     if summary:
                         entry["summary"] = summary
-                        
+
                 if "type" in classMain and classMain["type"]:
                     entry["type"] = classMain["type"]
-                
+
                 if not hasattr(package, "content"):
                     package.content = [entry]
                 else:
                     package.content.append(entry)
-                    
+
         Console.outdent()
 
 
@@ -925,37 +925,37 @@ class ApiWriter():
         #
         # Writing API Index
         #
-        
+
         Console.debug("Building Index...")
         index = {}
-        
+
         for className in sorted(apiData):
-            
+
             classApi = apiData[className]
             mainInfo = classApi.main
-            
+
             # Create structure for className
             current = index
             for split in className.split("."):
                 if not split in current:
                     current[split] = {}
-            
+
                 current = current[split]
-            
+
             # Store current type
             current["$type"] = mainInfo["type"]
-            
+
             # Keep information if
             if hasattr(classApi, "content"):
                 current["$content"] = True
-        
-        
-        
+
+
+
         #
         # Return
         #
-        
+
         return apiData, index, search
-        
-        
-        
+
+
+

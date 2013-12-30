@@ -27,7 +27,7 @@ def processExtends(tree):
 
 def processMixins(tree):
     """
-    Processes all mixin includes inside mixins 
+    Processes all mixin includes inside mixins
     """
 
     Console.info("Merging mixins with each other...")
@@ -67,13 +67,13 @@ def isMixinCall(node):
 
 def __extend(node, scanMixins=False):
     """
-    Finds extend requests for mixins aka 
+    Finds extend requests for mixins aka
 
     - mixins calls without params
     - simple variables in a block
 
-    For all found extend requests it detects the flattened selector and appends 
-    the selector section of the extendable mixin accordingly. After that it 
+    For all found extend requests it detects the flattened selector and appends
+    the selector section of the extendable mixin accordingly. After that it
     removes the original mixin request.
     """
 
@@ -81,7 +81,7 @@ def __extend(node, scanMixins=False):
 
     for child in reversed(node):
         # Ignore all mixin declarations. Can't operate inside them.
-        # For these things to work we have to wait for the include mechanics to resolve them first 
+        # For these things to work we have to wait for the include mechanics to resolve them first
         # (which actually just remove these mixin declarations though)
         if child is not None and (scanMixins or child.type != "mixin"):
             modified += __extend(child)
@@ -268,7 +268,7 @@ def __findMixin(node, name):
 
     for child in reversed(node):
         if child is not None:
-            # Sheets are just fragments with a special origin, 
+            # Sheets are just fragments with a special origin,
             # but otherwise the content is valid on the same level
             # as other siblings of the sheet.
             if child.type == "sheet":
@@ -319,7 +319,7 @@ def __resolveMixin(mixin, params):
             if len(params) > pos:
                 paramAsDeclaration.append(copy.deepcopy(params[pos]), "initializer")
             elif param.type == "assign" and param[0].type == "variable":
-                paramAsDeclaration.append(param[1], "initializer")
+                paramAsDeclaration.append(copy.deepcopy(param[1]), "initializer")
 
             clone.insert(0, paramAsDeclaration)
 
@@ -349,6 +349,6 @@ def __renameRecurser(node, variables, prefix):
 
     # Access variable
     elif node.type == "variable" and node.name in variables:
-        node.name = variables[node.name]        
+        node.name = variables[node.name]
 
 

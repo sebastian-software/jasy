@@ -9,10 +9,10 @@ class Error(Exception):
     """
     Error object which is raised whenever an optimization could not be applied correctly.
     """
-    
+
     def __init__(self, msg):
         self.__msg = msg
-    
+
     def __str__(self):
         return "Error during optimization! %s" % (self.__msg)
 
@@ -30,7 +30,7 @@ class Optimization(FlagSet.FlagSet):
         to be sure to have a deep copy if you need the original one. It raises an error instance
         whenever any optimization could not be applied to the given tree.
         """
-        
+
         # if self.has("wrap"):
         #     try:
         #         ClosureWrapper.optimize(tree)

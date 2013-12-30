@@ -44,7 +44,7 @@ class Tests(unittest.TestCase):
             h2{
               margin: -20px;
             }
-            '''), 'h2{margin:-20px;}')        
+            '''), 'h2{margin:-20px;}')
 
 
     def test_simple_multi(self):
@@ -52,57 +52,78 @@ class Tests(unittest.TestCase):
             h2{
               margin: 10px 20px 30px;
             }
-            '''), 'h2{margin:10px 20px 30px;}')              
+            '''), 'h2{margin:10px 20px 30px;}')
 
 
-    def test_simple_multi_minus(self):
+    def test_simple_expr_minus(self):
         self.assertEqual(self.process('''
             h2{
-              margin: 10px - 20px;
+              margin: expr(10px - 20px);
             }
-            '''), 'h2{margin:-10px;}')            
+            '''), 'h2{margin:-10px;}')
 
 
-    def test_simple_multi_plus(self):
+    def test_simple_expr_plus(self):
         self.assertEqual(self.process('''
             h2{
-              margin: 10px + 20px;
+              margin: expr(10px + 20px);
             }
-            '''), 'h2{margin:30px;}')        
+            '''), 'h2{margin:30px;}')
 
 
-    def test_simple_multi_minus_unary(self):
+    def test_simple_unary_minus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px -20px;
             }
-            '''), 'h2{margin:10px -20px;}')   
+            '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_multi_plus_unary(self):
+    def test_simple_unary_plus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px +20px;
             }
-            '''), 'h2{margin:10px +20px;}')  
+            '''), 'h2{margin:10px +20px;}')
 
 
-    def test_simple_multi_minus_compact(self):
+    def test_simple_expr_minus_compact(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: expr(10px-20px);
+            }
+            '''), 'h2{margin:-10px;}')
+
+
+    def test_simple_expr_plus_compact(self):
+        self.assertEqual(self.process('''
+            h2{
+              margin: expr(10px+20px);
+            }
+            '''), 'h2{margin:30px;}')
+
+    def test_simple_noexpr_minus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px-20px;
             }
-            '''), 'h2{margin:-10px;}')            
+            '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_multi_plus_compact(self):
+    def test_simple_noexpr_plus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px+20px;
             }
-            '''), 'h2{margin:30px;}')    
+            '''), 'h2{margin:10px +20px;}')
 
-  
+
+    def test_ie_filter(self):
+        self.assertEqual(self.process('''
+            .rotate{
+              filter: raw("progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
+            }
+            '''), '.rotate{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}')
 
 
 
@@ -110,5 +131,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

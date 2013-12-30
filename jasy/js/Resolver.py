@@ -10,14 +10,14 @@ import jasy.js.Sorter as Sorter
 
 
 class Resolver(AbstractResolver.Resolver):
-    
+
     def __init__(self, session):
         super().__init__(session)
 
         self.fields = session.getFieldSetupClasses()
 
         for project in session.getProjects():
-            self.items.update(project.getClasses())        
+            self.items.update(project.getClasses())
 
 
     def getItemDependencies(self, item):
@@ -33,9 +33,9 @@ class Resolver(AbstractResolver.Resolver):
     def addVirtual(self, name, text):
         """
         Adds a virtual aka generated class to the resolver with
-        the given name and text. 
+        the given name and text.
 
-        Please note: The file name is modified to 
+        Please note: The file name is modified to
         contain a checksum of the content as a postfix. This keeps
         caches in-tact when using different contents for the same
         file name aka different sets of assets, translations, etc.

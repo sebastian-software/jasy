@@ -21,25 +21,25 @@ class Tests(unittest.TestCase):
         node = Parser.parse(code)
 
         translation = Translation.TranslationItem(None, id="de_DE", table={
-            
+
             "Hello World": "Hallo Welt",
             "Short": "Kurz",
             "Thank you for the flowers": "Danke für die Blumen",
-            
+
             "Hello %1!": "Hallo: %1!",
             "Hello %1! %1!": "Hallo: %1! %1!",
-            
+
             "Chat[C:Chat (noum)]": "Unterhaltung",
             "Chat %1[C:Chat (noum) %1]": "Unterhaltung %1",
-            
+
             "You have got a new mail[N:You have got new mails]": {0:"Du hast eine neue E-Mail", 1:"Du hast neue E-Mails"},
             "You have got a new mail[N:You have got %1 new mails]": {0:"Du hast eine neue E-Mail", 1:"Du hast %1 neue E-Mail erhalten"}
-            
+
         })
-        
+
         TranslationOptimizer.optimize(node, translation)
-        
-        return Compressor.Compressor().compress(node)        
+
+        return Compressor.Compressor().compress(node)
 
 
     def test_basic(self):
@@ -64,7 +64,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){alert("Hallo: "+("Peter")+"!")}'
-        )        
+        )
 
     def test_vars2(self):
         self.assertEqual(self.process(
@@ -74,7 +74,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){alert("Hallo: "+("Peter")+"! "+("Peter")+"!")}'
-        )        
+        )
 
     def test_vars3(self):
         self.assertEqual(self.process(
@@ -85,7 +85,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){alert("Hallo: "+this.getGreetingName()+"!")}'
         )
-            
+
     def test_vars4(self):
         self.assertEqual(self.process(
             '''
@@ -94,8 +94,8 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){alert("Hallo: "+this.getGreetingName()+"! "+this.getGreetingName()+"!")}'
-        )        
- 
+        )
+
     def test_trc1(self):
         self.assertEqual(self.process(
             '''
@@ -105,7 +105,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){alert("Unterhaltung")}'
         )
-        
+
     def test_trc2(self):
         self.assertEqual(self.process(
             '''
@@ -115,7 +115,7 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){alert("Unterhaltung "+("Online"))}'
         )
-        
+
     def test_trc3(self):
         self.assertEqual(self.process(
             '''
@@ -125,8 +125,8 @@ class Tests(unittest.TestCase):
             '''),
             'function wrapper(){alert("Unterhaltung "+this.getChatStatus())}'
         )
-        
-        
+
+
     def test_trn1(self):
         self.assertEqual(self.process(
             '''

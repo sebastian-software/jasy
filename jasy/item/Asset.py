@@ -19,19 +19,19 @@ extensions = {
     ".gif" : "image",
     ".webp" : "image",
     ".jxr" : "image",
-    
+
     ".mp3" : "audio",
     ".ogg" : "audio",
     ".m4a" : "audio",
     ".aac" : "audio",
     ".wav" : "audio",
-    
+
     ".avi" : "video",
     ".mpeg" : "video",
     ".mpg" : "video",
     ".m4v" : "video",
     ".mkv" : "video",
-    
+
     ".eot" : "font",
     ".woff" : "font",
     ".ttf" : "font",
@@ -39,8 +39,10 @@ extensions = {
     ".pfa" : "font",
     ".pfb" : "font",
     ".afm" : "font",
-    
+
     ".json" : "text",
+    ".yaml" : "text",
+    ".md" : "text",
     ".svg" : "text",
     ".txt" : "text",
     ".csv" : "text",
@@ -50,7 +52,7 @@ extensions = {
     ".htc" : "text",
     ".xml" : "text",
     ".tmpl" : "text",
-    
+
     ".fla" : "binary",
     ".swf" : "binary",
     ".psd" : "binary",
@@ -59,7 +61,7 @@ extensions = {
 
 
 class AssetItem(jasy.item.Abstract.AbstractItem):
-    
+
     kind = "asset"
 
     __imageSpriteData = []
@@ -73,7 +75,7 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
         self.extension = os.path.splitext(self.id.lower())[1]
         self.type = getKey(extensions, self.extension, "other")
         self.shortType = self.type[0]
-        
+
 
     def isImageSpriteConfig(self):
         return self.isText() and (os.path.basename(self.id) == "jasysprite.yaml" or os.path.basename(self.id) == "jasysprite.json")
@@ -86,14 +88,14 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
 
     def isImage(self):
         return self.type == "image"
-    
+
     def isAudio(self):
         return self.type == "audio"
 
     def isVideo(self):
         return self.type == "video"
-        
-        
+
+
     def getType(self, short=False):
         if short:
             return self.shortType
@@ -103,12 +105,12 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
     def getParsedObject(self):
         return loadConfig(self.getPath())
 
-    
+
     def addImageSpriteData(self, id, left, top):
         Console.debug("Registering sprite location for %s: %s@%sx%s", self.id, id, left, top)
         self.__imageSpriteData = [id, left, top]
-        
-    
+
+
     def addImageAnimationData(self, columns, rows, frames=None, layout=None):
         if layout is not None:
             self.__imageAnimationData = layout
@@ -116,15 +118,15 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
             self.__imageAnimationData = [columns, rows, frames]
         else:
             self.__imageAnimationData = [columns, rows]
-    
-    
+
+
     def addImageDimensionData(self, width, height):
         Console.debug("Adding dimension data for %s: %sx%s", self.id, width, height)
         self.__imageDimensionData = [width, height]
-    
-    
+
+
     def exportData(self):
-        
+
         if self.isImage():
             if self.__imageDimensionData:
                 image = self.__imageDimensionData[:]
@@ -140,14 +142,14 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
             elif self.__imageAnimationData:
                 # divider between sprite data and animation data
                 image.append(0)
-                
+
             if self.__imageAnimationData:
                 image.append(self.__imageAnimationData)
-                
+
             return image
-            
+
         # TODO: audio length, video codec, etc.?
-        
+
         return None
 
 

@@ -4,7 +4,7 @@
 #
 
 import itertools, re
-        
+
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
 
 def extractVendor(name):
@@ -25,7 +25,7 @@ def assembleDot(node, result=None):
     """
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
     """
-    
+
     if result == None:
         result = []
 

@@ -5,7 +5,7 @@
 
 import copy
 
-import jasy.core.Console as Console 
+import jasy.core.Console as Console
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 
@@ -31,7 +31,7 @@ def getTokenizer(text, fileId=None):
     Returns a tokenizer for the given file content
     """
 
-    return Tokenizer.Tokenizer(text, fileId, 0)    
+    return Tokenizer.Tokenizer(text, fileId, 0)
 
 
 
@@ -85,13 +85,19 @@ def reduceTree(tree, session=None):
     ScopeScanner.scan(tree)
     Unused.cleanup(tree)
 
-    # PHASE 6
+    # PHASE 6 A
     # Compute variables
-    Variables.compute(tree)
+    remaining = Variables.compute(tree)
+    Console.info("Variables remaining [1]: %s" % remaining)
 
-    # PHASE 6+++
+    # PHASE 6 B
     # Run custom methods
     Methods.execute(tree, session)
+
+    # PHASE 6 C
+    # Compute variables (again)
+    remaining = Variables.compute(tree)
+    Console.info("Variables remaining [2]: %s" % remaining)
 
     # PHASE 7
     # Flattening selectors
@@ -110,20 +116,20 @@ def compressTree(tree, formatting=None):
     Returns the compressed result from the given tree
     """
 
-    return Compressor.Compressor(formatting).compress(tree)    
+    return Compressor.Compressor(formatting).compress(tree)
 
 
 
 def printTokens(text, fileId=None):
     """
-    Prints out a structured list of tokens 
+    Prints out a structured list of tokens
     """
 
     tokenizer = getTokenizer(text, fileId)
     indent = 0
 
     while tokenizer.get() and not tokenizer.done():
-        tokenType = tokenizer.token.type 
+        tokenType = tokenizer.token.type
         tokenValue = getattr(tokenizer.token, "value", None)
         if tokenType == "left_curly":
             indent += 1

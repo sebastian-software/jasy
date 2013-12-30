@@ -53,7 +53,7 @@ class Tests(unittest.TestCase):
                 color: white;
               }
             }
-            '''), '@keyframes bump{0%{color:red;}100%{color:white;}}')        
+            '''), '@keyframes bump{0%{color:red;}100%{color:white;}}')
 
 
     def test_multistep(self):
@@ -80,5 +80,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

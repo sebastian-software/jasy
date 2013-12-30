@@ -5,7 +5,7 @@
 
 import os, copy, fnmatch, re
 
-import jasy.core.Console as Console 
+import jasy.core.Console as Console
 
 import jasy.item.Abstract
 
@@ -55,10 +55,10 @@ def includeGenerator(node, session):
 
 
 def collectFields(node, keys=None, condition=False):
-    
+
     if keys is None:
         keys = set()
-    
+
     if getattr(node, "rel", None) == "condition":
         condition = True
 
@@ -72,7 +72,7 @@ def collectFields(node, keys=None, condition=False):
     for child in reversed(node):
         if child != None:
             collectFields(child, keys, condition)
-            
+
     return keys
 
 
@@ -82,36 +82,36 @@ class StyleError(Exception):
     def __init__(self, inst, msg):
         self.__msg = msg
         self.__inst = inst
-        
+
     def __str__(self):
         return "Error processing stylesheet %s: %s" % (self.__inst, self.__msg)
 
 
 
 class StyleItem(jasy.item.Abstract.AbstractItem):
-    
+
     kind = "style"
-    
+
     def __getTree(self):
         """
         Returns the abstract syntax tree
         """
-        
+
         field = "style:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             Console.info("Processing stylesheet %s...", Console.colorize(self.id, "bold"))
-            
+
             Console.indent()
             tree = Engine.getTree(self.getText(), self.id)
             Console.outdent()
-            
-            self.project.getCache().store(field, tree, self.mtime, True)
-        
-        return tree
-    
 
-    
+            self.project.getCache().store(field, tree, self.mtime, True)
+
+        return tree
+
+
+
     def __getPermutatedTree(self, permutation=None):
         """
         Returns an permutated tree: a copy of the normal tree
@@ -126,13 +126,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         if not tree:
             tree = copy.deepcopy(self.__getTree())
-                
+
             Console.debug("Permutating tree...")
             Console.indent()
             Engine.permutateTree(tree, permutation)
             Console.outdent()
-        
-            self.project.getCache().store(field, tree, self.mtime, True)
+
+            # self.project.getCache().store(field, tree, self.mtime, True)
 
         return tree
 
@@ -140,7 +140,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getBreaks(self, permutation=None, items=None, warnings=True):
         """
-        Returns all down-priorized dependencies. This are dependencies which are required to 
+        Returns all down-priorized dependencies. This are dependencies which are required to
         make the module work, but are not required being available before the current item.
         """
 
@@ -159,15 +159,15 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                         if reobj.match(itemId):
                             result.add(items[itemId])
             elif warnings:
-                Console.warn("Missing item for break command: %s in %s", entry, self.id)                            
+                Console.warn("Missing item for break command: %s in %s", entry, self.id)
 
         return result
 
 
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
-        """ 
-        Returns a set of dependencies seen through the given list of known 
+        """
+        Returns a set of dependencies seen through the given list of known
         items (ignoring all unknown items in original set). This method also
         makes use of the meta data.
         """
@@ -207,10 +207,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if meta is None:
             meta = MetaData.MetaData(self.__getPermutatedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
-            
+
         return meta
 
-        
+
 
     def getFields(self):
         """
@@ -222,10 +222,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if fields is None:
             fields = collectFields(self.__getTree())
             self.project.getCache().store(field, fields, self.mtime)
-        
+
         return fields
-        
-        
+
+
 
     def filterPermutation(self, permutation):
         """
@@ -239,7 +239,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
                 return permutation.filter(fields)
 
         return None
-        
+
 
 
     def getMergedMtime(self, session, permutation=None):
@@ -251,7 +251,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         permutation = self.filterPermutation(permutation)
 
         # Work is on base of optimized tree
-        tree = self.__getPermutatedTree(permutation)        
+        tree = self.__getPermutatedTree(permutation)
 
         # Run the actual resolver engine and figure out newest mtime
         for item, include in includeGenerator(tree, session):
@@ -271,7 +271,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
-        
+
         # Copying original tree
         tree = copy.deepcopy(tree)
 
@@ -285,7 +285,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             childRoot = copy.deepcopy(childRoot)
 
             # Then replace it with include node
-            include.parent.replace(include, childRoot)            
+            include.parent.replace(include, childRoot)
 
         return tree
 
@@ -295,7 +295,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         """
         Returns the compressed CSS code of this stylesheet.
         """
-        
+
         field = "style:compressed[%s]-%s-%s-%s" % (self.id, permutation, optimization, formatting)
         mtime = self.getMergedMtime(session, permutation)
 
@@ -312,9 +312,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             compressed = Compressor.Compressor(formatting).compress(tree)
 
             # Store in cache
-            self.project.getCache().store(field, compressed, mtime)
+            # self.project.getCache().store(field, compressed, mtime)
 
         return compressed
-  
+
 
 

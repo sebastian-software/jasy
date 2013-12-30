@@ -10,6 +10,11 @@ import jasy.core.Console as Console
 
 RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
+MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
+COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
+
+ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS
+
 
 class VariableError(Exception):
     def __init__(self, message, node):
@@ -20,9 +25,11 @@ def compute(tree):
     Console.info("Resolving variables...")
     Console.indent()
 
-    __computeRecurser(tree, None, {})
+    retval = __computeRecurser(tree, None, {})
 
     Console.outdent()
+
+    return retval
 
 
 def __processOperator(node, values):
@@ -47,38 +54,102 @@ def __computeOperation(first, second, parent, operator, values):
     if first is None and operator == "questionmark":
         return second
 
+    # Solve inner operations first
+    if first.type in ALL_OPERATORS:
+        repl = __computeOperation(first[0], first[1], first, first.type, values)
+        if repl is None:
+            return
+        else:
+            first = repl
+
+    if second.type in ALL_OPERATORS:
+        repl = __computeOperation(second[0], second[1], second, second.type, values)
+        if repl is None:
+            return
+        else:
+            second = repl
+
+
     # Compare operation types
     if first.type == second.type:
-        # print("Same type: %s" % first.type)
+        if first.type == "null":
+            repl = Node.Node(type="true")
+            return repl
 
-        if first.type == "number":
+        elif first.type == "number":
             firstUnit = getattr(first, "unit", None)
             secondUnit = getattr(second, "unit", None)
 
-            if firstUnit == secondUnit or firstUnit is None or secondUnit is None:
-                repl = Node.Node(type="number")
+            if operator in COMPARE_OPERATORS:
+                if firstUnit == secondUnit or firstUnit is None or secondUnit is None:
+                    if operator == "eq":
+                        if first.value == second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
 
-                if firstUnit is not None:
-                    repl.unit = firstUnit
-                elif secondUnit is not None:
-                    repl.unit = secondUnit
+                    elif operator == "ne":
+                        if first.value != second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
 
-                if operator == "plus":
-                    repl.value = first.value + second.value
-                elif operator == "minus":
-                    repl.value = first.value - second.value
-                elif operator == "mul":
-                    repl.value = first.value * second.value
-                elif operator == "div":
-                    repl.value = first.value / second.value
-                elif operator == "mod":
-                    repl.value = first.value % second.value
+                    elif operator == "gt":
+                        if first.value > second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "lt":
+                        if first.value < second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "ge":
+                        if first.value >= second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                    elif operator == "le":
+                        if first.value <= second.value:
+                            return Node.Node(type="true")
+                        else:
+                            return Node.Node(type="false")
+
+                else:
+                    raise VariableError("Unsupported unit combination for number comparison", parent)
+
+
+            elif firstUnit == secondUnit or firstUnit is None or secondUnit is None:
+                if operator in MATH_OPERATORS:
+                    repl = Node.Node(type="number")
+
+                    if firstUnit is not None:
+                        repl.unit = firstUnit
+                    elif secondUnit is not None:
+                        repl.unit = secondUnit
+
+                    if operator == "plus":
+                        repl.value = first.value + second.value
+                    elif operator == "minus":
+                        repl.value = first.value - second.value
+                    elif operator == "mul":
+                        repl.value = first.value * second.value
+                    elif operator == "div":
+                        repl.value = first.value / second.value
+                    elif operator == "mod":
+                        repl.value = first.value % second.value
+
+                    return repl
+
                 elif operator == "questionmark":
                     return first
+
                 else:
                     raise VariableError("Unsupported number operation", parent)
 
-                return repl
 
             elif firstUnit == "%" or secondUnit == "%":
 
@@ -104,11 +175,23 @@ def __computeOperation(first, second, parent, operator, values):
                 raise VariableError("Could not compute result from numbers of different units: %s vs %s" % (first.unit, second.unit), parent)
 
         elif first.type == "string":
-            repl = Node.Node(type="string")
-
             if operator == "plus":
+                repl = Node.Node(type="string")
                 repl.value = first.value + second.value
                 return repl
+
+            elif operator == "eq":
+                if first.value == second.value:
+                    return Node.Node(type="true")
+                else:
+                    return Node.Node(type="false")
+
+            elif operator == "ne":
+                if first.value != second.value:
+                    return Node.Node(type="true")
+                else:
+                    return Node.Node(type="false")
+
             else:
                 raise VariableError("Unsupported string operation", parent)
 
@@ -117,40 +200,38 @@ def __computeOperation(first, second, parent, operator, values):
                 repl = Node.Node(type="list")
                 for pos, child in enumerate(first):
                     childRepl = __computeOperation(child, second[pos], parent, operator, values)
-                    if childRepl is None:
-                        raise VariableError("Got no valid return value to replace operation", child)
+                    if childRepl is not None:
+                        repl.append(childRepl)
 
-                    repl.append(childRepl)
-
-                return repl                
+                return repl
 
             else:
                 raise VariableError("For list operations both lists have to have the same length!", parent)
 
+        # Wait for system calls executing first
+        elif first.type == "system":
+            return None
+
         else:
-            raise VariableError("Unsupported operation", parent)
+            raise VariableError("Unsupported operation on %s" % first.type, parent)
 
 
     elif first.type == "list" and second.type != "list":
         repl = Node.Node(type="list")
         for child in first:
             childRepl = __computeOperation(child, second, parent, operator, values)
-            if childRepl is None:
-                raise VariableError("Got no valid return value to replace operation", child)
-
-            repl.append(childRepl)
+            if childRepl is not None:
+                repl.append(childRepl)
 
         return repl
- 
+
 
     elif first.type != "list" and second.type == "list":
         repl = Node.Node(type="list")
         for child in second:
             childRepl = __computeOperation(first, child, parent, operator, values)
-            if childRepl is None:
-                raise VariableError("Got no valid return value to replace operation", child)
-
-            repl.append(childRepl)
+            if childRepl is not None:
+                repl.append(childRepl)
 
         return repl
 
@@ -164,6 +245,24 @@ def __computeOperation(first, second, parent, operator, values):
         else:
             raise VariableError("Unsupported string operation", parent)
 
+
+    # Waiting for system method execution
+    elif first.type == "system" or second.type == "system":
+        return None
+
+
+    # Just handle when not both are null - equal condition is already done before
+    elif first.type == "null" or second.type == "null":
+        if operator == "eq":
+            return Node.Node(type="false")
+        elif operator == "ne":
+            return Node.Node(type="true")
+        elif operator in MATH_OPERATORS:
+            return Node.Node(type="null")
+        else:
+            raise VariableError("Unsupported operation on null type", parent)
+
+
     else:
         raise VariableError("Different types in operation: %s vs %s" % (first.type, second.type), parent)
 
@@ -171,28 +270,31 @@ def __computeOperation(first, second, parent, operator, values):
 
 def __computeRecurser(node, scope, values):
 
+    remaining = False
+
     # Update scope of new block starts
     if hasattr(node, "scope"):
         scope = node.scope
         values = copy.copy(values)
+        node.values = values
 
         # Reset all local variables to None
         # which enforces not to keep values from outer scope
         for name in scope.modified:
             values[name] = None
 
-    # Worked on copy to prevent issues during length changes (due removing declarations, etc.)
+    # Interate on copy to prevent issues during length changes (due removing declarations, etc.)
     for child in list(node):
         if child is not None:
-            __computeRecurser(child, scope, values)
+            childRemaining = __computeRecurser(child, scope, values)
+            if childRemaining:
+                remaining = True
 
     # Support typical operators
-    if node.type in ("plus", "minus", "mul", "div", "mod"):
+    if node.type in ALL_OPERATORS:
         repl = __processOperator(node, values)
-        if repl:
+        if repl is not None:
             node.parent.replace(node, repl)
-        else:
-            raise VariableError("Got no valid return value to replace operation", node)
 
 
     # Not operator support
@@ -200,7 +302,7 @@ def __computeRecurser(node, scope, values):
         child = node[0]
         if child.type == "true":
             child.type = "false"
-        elif child.type == "false":
+        elif child.type == "false" or child.type == "null":
             child.type = "true"
         else:
             raise VariableError("Could not apply not operator to non boolean variable", node)
@@ -210,7 +312,7 @@ def __computeRecurser(node, scope, values):
 
     # Update values of variable
     elif (node.type == "declaration" and hasattr(node, "initializer")) or node.type == "assign":
-        
+
         if node.type == "declaration":
             name = node.name
             init = node.initializer
@@ -227,13 +329,12 @@ def __computeRecurser(node, scope, values):
                 raise VariableError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
             repl = __computeOperation(values[name], init, node, node.assignOp, values)
-            if repl:
+            if repl is not None:
                 values[name] = repl
-            else:
-                raise VariableError("Got no valid return value to replace operation", node)
 
-        else:        
+        else:
             # Update internal variable mapping
+            # Console.debug("Update value of %s to %s" % (name, init))
             values[name] = init
 
         # Remove declaration node from tree
@@ -263,12 +364,12 @@ def __computeRecurser(node, scope, values):
 
             value = values[name]
             if value is None:
-                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)          
+                raise VariableError("Could not resolve variable %s! Value is none!" % name, node)
 
             if value.type == "identifier":
                 return value.value
             elif value.type == "string":
-                return value.value  
+                return value.value
             elif value.type == "number":
                 return "%s%s" % (value.value, getattr(value, "unit", ""))
             else:
@@ -284,4 +385,41 @@ def __computeRecurser(node, scope, values):
             node.name = RE_INLINE_VARIABLE.sub(replacer, node.name)
 
 
+    elif node.type == "if":
 
+        Console.info("Replacing if-condition at %s", node.line)
+
+        conditionNode = node.condition
+
+        if conditionNode.type == "true":
+            resultValue = True
+        elif conditionNode.type == "false" or conditionNode.type == "null":
+            resultValue = False
+        elif conditionNode.type in ("number", "string"):
+            resultValue = bool(node.condition.value)
+        else:
+            # Still unresolved - try next time (might depend on other features)
+            Console.debug("Unresolved if-block with condition: %s" % conditionNode, node)
+            remaining = True
+            resultValue = None
+
+        if resultValue is True:
+            # Replace if with if block.
+            node.parent.insertAllReplace(node, node.thenPart)
+
+            # Import all variable modifications into current value set.
+            values.update(node.thenPart.values)
+
+        elif resultValue is False:
+            if hasattr(node, "elsePart"):
+                # Replace if with else block.
+                node.parent.insertAllReplace(node, node.elsePart)
+
+                # Import all variable modifications into current value set.
+                values.update(node.elsePart.values)
+
+            else:
+                # Cleanup the whole node
+                node.parent.remove(node)
+
+    return remaining

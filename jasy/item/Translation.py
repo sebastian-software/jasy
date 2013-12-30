@@ -103,10 +103,10 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
         elif format is "txt":
             raise UserError("Parsing ICU/text files is currently not supported!")
-                        
-        Console.debug("Translation of %s entries ready" % len(table))        
+
+        Console.debug("Translation of %s entries ready" % len(table))
         Console.outdent()
-        
+
         self.table = table
 
         return self
@@ -134,7 +134,7 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
     def getLanguage(self):
         """Returns the language of the translation file"""
-        return self.language        
+        return self.language
 
     def getFormat(self):
         """Returns the format of the localization file"""

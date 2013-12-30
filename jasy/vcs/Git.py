@@ -26,7 +26,7 @@ def update(url, version, path, update=True, submodules=True):
     old = os.getcwd()
 
     if os.path.exists(path) and os.path.exists(os.path.join(path, ".git")):
-        
+
         if not os.path.exists(os.path.join(path, ".git", "HEAD")):
             Console.error("Invalid git clone. Cleaning up...")
             shutil.rmtree(path)
@@ -34,17 +34,17 @@ def update(url, version, path, update=True, submodules=True):
         else:
             os.chdir(path)
             revision = executeCommand(["git", "rev-parse", "HEAD"], "Could not detect current revision")
-            
+
             if update and (version == "master" or "refs/heads/" in version):
                 if update:
                     Console.info("Updating %s", Console.colorize("%s @ " % url, "bold") + Console.colorize(version, "magenta"))
                     Console.indent()
-                    
+
                     try:
                         executeCommand(["git", "fetch", "-q", "--depth", "1", "origin", version], "Could not fetch updated revision!")
                         executeCommand(["git", "reset", "-q", "--hard", "FETCH_HEAD"], "Could not update checkout!")
                         newRevision = executeCommand(["git", "rev-parse", "HEAD"], "Could not detect current revision")
-                        
+
                         if revision != newRevision:
                             Console.info("Updated from %s to %s", revision[:10], newRevision[:10])
                             revision = newRevision
@@ -60,20 +60,20 @@ def update(url, version, path, update=True, submodules=True):
 
                         os.chdir(old)
                         return
-                        
+
                     except KeyboardInterrupt:
                         print()
                         Console.error("Git transaction was aborted by user!")
                         Console.outdent()
-                        
+
                         os.chdir(old)
-                        return                            
+                        return
 
                     Console.outdent()
-                    
+
                 else:
                     Console.debug("Updates disabled")
-                
+
             else:
                 Console.debug("Using existing clone")
 
@@ -85,7 +85,7 @@ def update(url, version, path, update=True, submodules=True):
 
     os.makedirs(path)
     os.chdir(path)
-    
+
     try:
         # cut of "git+" prefix
         remoteurl = url[4:]
@@ -99,7 +99,7 @@ def update(url, version, path, update=True, submodules=True):
         if submodules and os.path.exists(".gitmodules"):
             Console.info("Updating sub modules (this might take some time)...")
             executeCommand("git submodule update --init --recursive", "Could not initialize sub modules")
-        
+
     except Exception:
         Console.error("Error during git transaction! Intitial clone required for continuing!")
         Console.error("Please verify that the host is reachable.")
@@ -110,18 +110,18 @@ def update(url, version, path, update=True, submodules=True):
 
         Console.outdent()
         return
-        
+
     except KeyboardInterrupt:
         print()
         Console.error("Git transaction was aborted by user!")
-        
+
         Console.error("Cleaning up...")
         os.chdir(old)
         shutil.rmtree(path)
 
         Console.outdent()
         return
-    
+
     os.chdir(old)
     Console.outdent()
 
@@ -160,14 +160,14 @@ def isUrl(url):
             return True
         elif not parsed.scheme and parsed.path == url and __gitAccountUrl.match(url) != None:
             return True
-        
+
     return False
-    
-    
+
+
 def expandVersion(version=None):
     if version is None:
         version = "master"
-    
+
     version = str(version)
 
     if version.startswith("refs/"):
@@ -179,7 +179,7 @@ def expandVersion(version=None):
         version = "refs/tags/" + version
     else:
         version = "refs/heads/" + version
-        
+
     return version
 
 

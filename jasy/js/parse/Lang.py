@@ -34,7 +34,7 @@ futureReserved = set([
     "synchronized",
     "throws",
     "transient",
-    "volatile" 
+    "volatile"
 ])
 
 
@@ -64,7 +64,7 @@ statements = [
 
     # no semicolons
     # function, setter and getter as statement_form or declared_form
-    "function", 
+    "function",
     "setter",
     "getter",
     "try",
@@ -73,7 +73,7 @@ statements = [
 
 
 # All allowed expression types of JavaScript 1.7
-# They may be separated by "comma" which is quite of special 
+# They may be separated by "comma" which is quite of special
 # and not allowed everywhere e.g. in conditional statements
 expressions = [
     # Primary Expression - Part 1 (expressed form)
@@ -83,18 +83,18 @@ expressions = [
     "object_init",
     "array_init",
     "array_comp",
-    
+
     # Primary Expression - Part 3
     "let",
 
     # Primary Expression - Part 4
-    "null", 
-    "this", 
-    "true", 
-    "false", 
-    "identifier", 
-    "number", 
-    "string", 
+    "null",
+    "this",
+    "true",
+    "false",
+    "identifier",
+    "number",
+    "string",
     "regexp",
 
     # Member Expression - Part 1
@@ -125,12 +125,12 @@ expressions = [
     # Add Expression
     "plus",
     "minus",
-    
+
     # Shift Expression
     "lsh",
     "rsh",
     "ursh",
-    
+
     # Relational Expression
     "lt",
     "le",
@@ -138,34 +138,34 @@ expressions = [
     "gt",
     "in",
     "instanceof",
-    
+
     # Equality Expression
     "eq",
     "ne",
     "strict_eq",
     "strict_ne",
-    
+
     # BitwiseAnd Expression
     "bitwise_and",
-    
+
     # BitwiseXor Expression
     "bitwise_xor",
-    
+
     # BitwiseOr Expression
     "bitwise_or",
-    
+
     # And Expression
     "and",
-    
+
     # Or Expression
     "or",
-    
+
     # Conditional Expression
     "hook",
-    
+
     # Assign Expression
     "assign",
-    
+
     # Expression
     "comma"
 ]
@@ -196,13 +196,13 @@ def __createOrder():
         ["object_init","array_init","array_comp"],
         ["function"]
     ]
-    
+
     result = {}
     for priority, itemList in enumerate(expressions):
         for item in itemList:
             result[item] = priority
-            
+
     return result
-    
+
 expressionOrder = __createOrder()
 

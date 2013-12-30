@@ -19,8 +19,8 @@ $width = 300px, $height = 200px;
 $width += 20px;
 $content = "Hello" + "World";
 $negative = -100px;
-$list = 20px 30px
-$listoper = $list * 20
+$list = 20px 30px;
+$listoper = $list * 20;
 
 """
 
@@ -38,13 +38,118 @@ class Tests(unittest.TestCase):
             $width = 300px;
             '''), '')
 
+
+    def test_condition_redefine(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $width = 200px;
+            }
+
+            h1{
+                width: $width;
+            }
+            '''), 'h1{width:200px;}')
+
+
+    def test_condition_strcomp(self):
+        self.assertEqual(self.process('''
+            $color = "red";
+
+            @if $color == "red"{
+                $bg = "white";
+            } @else {
+                $bg = "black";
+            }
+
+            h1{
+                color: $color;
+                background-color: $bg;
+            }
+            '''), 'h1{color:"red";background-color:"white";}')
+
+
+    def test_condition_redefine_deep(self):
+        self.assertEqual(self.process('''
+            $width = 301px;
+
+            @if $width > 200{
+                @if $width % 2 == 0{
+                    $width = 200px;
+                } @else {
+                    $width = 199px;
+                }
+            }
+
+            h1{
+                width: $width;
+            }
+            '''), 'h1{width:199px;}')
+
+
+    def test_condition_redefine_override(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $width = 200px;
+            }
+
+            $width = 100px;
+
+            h1{
+                width: $width;
+            }
+            '''), 'h1{width:100px;}')
+
+
+    def test_condition_define_new(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $height = $width / 2;
+            } @else {
+                $height = $width * 2;
+            }
+
+            h1{
+                width: $width;
+                height: $height;
+            }
+            '''), 'h1{width:300px;height:150px;}')
+
+
+    def test_condition_define_new_override(self):
+        self.assertEqual(self.process('''
+            $width = 300px;
+
+            @if $width > 200{
+                $height = $width / 2;
+            } @else {
+                $height = $width * 2;
+            }
+
+            $width = 75px;
+
+            h1{
+                width: $width;
+                height: $height;
+            }
+            '''), 'h1{width:75px;height:150px;}')
+
+
+
+
+
     def test_unused_operation(self):
         self.assertEqual(self.process('''
             $width = 300px;
             $height = 200px;
             $size = $width * $height;
             '''), '')
-        
+
     def test_value_simple(self):
         self.assertEqual(self.process('''
             $width = 300px;
@@ -56,7 +161,7 @@ class Tests(unittest.TestCase):
             }
             '''), '.box{width:300px;height:200px;}')
 
-        
+
     def test_value_simple_scope(self):
         self.assertEqual(self.process('''
             $width = 300px;
@@ -75,7 +180,7 @@ class Tests(unittest.TestCase):
               height: $height;
             }
 
-            '''), '.box{width:40px;height:20px;}header{width:300px;height:200px;}')        
+            '''), '.box{width:40px;height:20px;}header{width:300px;height:200px;}')
 
 
     def test_value_simple_namespaced(self):
@@ -98,7 +203,7 @@ class Tests(unittest.TestCase):
               width: $width;
               height: $height;
             }
-            '''), '.box{width:300px;height:200px;}')        
+            '''), '.box{width:300px;height:200px;}')
 
 
     def test_value_simple_math(self):
@@ -109,8 +214,8 @@ class Tests(unittest.TestCase):
             .box{
               $padding = 10px;
               padding: $padding;
-              width: $width - $padding * 2;
-              height: $height - $padding * 2;
+              width: expr($width - $padding * 2);
+              height: expr($height - $padding * 2);
             }
             '''), '.box{padding:10px;width:280px;height:180px;}')
 
@@ -192,7 +297,7 @@ class Tests(unittest.TestCase):
             $inner = 20px 10px;
 
             .box{
-              padding: $inner * 2;
+              padding: expr($inner * 2);
             }
             '''), '.box{padding:40px 20px;}')
 
@@ -202,7 +307,7 @@ class Tests(unittest.TestCase):
             $inner = 20px 10px;
 
             .box{
-              padding: .5 * $inner;
+              padding: expr(.5 * $inner);
             }
             '''), '.box{padding:10px 5px;}')
 
@@ -213,7 +318,7 @@ class Tests(unittest.TestCase):
             $outer = 2 3;
 
             .box{
-              padding: $inner * $outer;
+              padding: expr($inner * $outer);
             }
             '''), '.box{padding:40px 30px;}')
 
@@ -358,7 +463,7 @@ class Tests(unittest.TestCase):
             .box-$align{
               display: inline-block;
             }
-            '''), '.box-left{display:inline-block;}')    
+            '''), '.box-left{display:inline-block;}')
 
 
     def test_variable_usedonly_in_property(self):
@@ -368,7 +473,7 @@ class Tests(unittest.TestCase):
             .box{
               margin-$edge: 20px;
             }
-            '''), '.box{margin-left:20px;}')    
+            '''), '.box{margin-left:20px;}')
 
 
     def test_variable_property(self):
@@ -379,7 +484,7 @@ class Tests(unittest.TestCase):
               float: $align;
               margin-${align}: 10px;
               $align: 20px;
-              border-color-$align: 1px solid red;            
+              border-color-$align: 1px solid red;
             }
             '''), '.box{float:left;margin-left:10px;left:20px;border-color-left:1px solid red;}')
 
@@ -406,11 +511,19 @@ class Tests(unittest.TestCase):
             .box:nth-child(${cell}n){
               color: red;
             }
-            '''), '.box:nth-child(4n){color:red;}')           
+            '''), '.box:nth-child(4n){color:red;}')
+
+
+    def test_complex_font_setting(self):
+        self.assertEqual(self.process('''
+            html {
+                font: 300 1.125em/1.5 sans-serif;
+            }
+        '''), 'html{font:300 1.125em / 1.5 sans-serif;}')
 
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

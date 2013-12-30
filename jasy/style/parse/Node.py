@@ -6,16 +6,16 @@
 import jasy.parse.AbstractNode as AbstractNode
 
 class Node(AbstractNode.AbstractNode):
-    
+
     __slots__ = [
         # core data
-        "line", "type", "tokenizer", "start", "end", "rel", "parent", 
-        
+        "line", "type", "tokenizer", "start", "end", "rel", "parent",
+
         # dynamic added data by other modules
-        "comments", "scope", 
-        
+        "comments", "scope",
+
         # node type specific
-        "value", "parenthesized", "fileId", "params", 
+        "value", "parenthesized", "fileId", "params",
         "name", "initializer", "condition", "assignOp",
         "thenPart", "elsePart", "statements",
         "statement", "variables", "names",

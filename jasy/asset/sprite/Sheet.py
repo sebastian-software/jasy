@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
 from jasy import UserError
@@ -14,15 +15,9 @@ try:
 
 except ImportError as err1:
 
-    try:
-        import Image
-        import ImageDraw
-        Console.debug("Using classic PIL")
-
-    except ImportError as err2:
-        Image = None
-        ImageDraw = None
-        Console.debug("No support for either Pillow or PIL!")
+    Image = None
+    ImageDraw = None
+    Console.debug("No support for Pillow (PIL)!")
 
 class SpriteSheet():
 
@@ -42,14 +37,13 @@ class SpriteSheet():
         return len(self.blocks)
 
 
-    def export(self, projectId=''):
-        
+    def export(self):
+
         data = {}
 
         for block in self.blocks:
 
             info = block.toJSON()
-            
             data[block.image.relPath] = info
 
             for d in block.duplicates:
@@ -66,23 +60,18 @@ class SpriteSheet():
         img = Image.new('RGBA', (self.width, self.height))
         draw = ImageDraw.Draw(img)
 
-        #draw.rectangle((0, 0, self.width, self.height), fill=(255, 255, 0, 255))
-
         # Load images and pack them in
         for block in self.blocks:
             res = Image.open(block.image.src)
 
             x, y = block.fit.x, block.fit.y
-            if block.rotated:
-                Console.debug('%s is rotated' % block.image.src)
-                res = res.rotate(90)
 
             img.paste(res, (x, y))
             del res
 
             if debug:
                 x, y, w, h = block.fit.x, block.fit.y, block.w, block.h
-                draw.rectangle((x, y , x + w , y + h), outline=(0, 0, 255, 255) if block.rotated else (255, 0, 0, 255))
+                draw.rectangle((x, y , x + w , y + h), outline=(255, 0, 0, 255))
 
         if debug:
             for i, block in enumerate(self.packer.getUnused()):

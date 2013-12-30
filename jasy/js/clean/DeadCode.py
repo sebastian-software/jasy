@@ -4,16 +4,16 @@
 #
 
 """
-This module is used to detect dead code branches and remove them. 
+This module is used to detect dead code branches and remove them.
 This is escecially useful after injecting values from the outside
 which might lead to simple truish equations which can be easily
-resolved. 
+resolved.
 
 This module is directly used by Class after Permutations have been
 applied (code branches) but can be used more widely, too.
 
 This acts somewhat like the optimizers you find under "optimizer",
-but is dependency relevant (Permutations might remove whole blocks 
+but is dependency relevant (Permutations might remove whole blocks
 of alternative code branches). It makes no sense to optimize this
 just before compilation. It must be done pretty early during the
 processing of classes.
@@ -53,9 +53,9 @@ import jasy.core.Console as Console
 
 def cleanup(node):
     """
-    Reprocesses JavaScript to remove dead paths 
+    Reprocesses JavaScript to remove dead paths
     """
-    
+
     Console.debug("Removing dead code branches...")
 
     Console.indent()
@@ -67,53 +67,53 @@ def cleanup(node):
 
 def __cleanup(node):
     """
-    Reprocesses JavaScript to remove dead paths 
+    Reprocesses JavaScript to remove dead paths
     """
-    
+
     optimized = False
-    
+
     # Process from inside to outside
     for child in reversed(node):
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
         if child != None:
             if __cleanup(child):
                 optimized = True
-        
+
     # Optimize if cases
     if node.type == "if":
         check = __checkCondition(node.condition)
         if check is not None:
             optimized = True
             Console.debug("Optimizing if/else at line %s", node.line)
-            
+
             if check is True:
                 node.parent.replace(node, node.thenPart)
-                
+
             elif check is False:
                 if hasattr(node, "elsePart"):
                     node.parent.replace(node, node.elsePart)
                 else:
                     node.parent.remove(node)
-    
+
     # Optimize hook statement
     if node.type == "hook":
         check = __checkCondition(node[0])
         if check is not None:
             Console.debug("Optimizing hook at line %s", node.line)
             optimized = True
-        
+
             if check is True:
                 node.parent.replace(node, node[1])
             elif check is False:
                 node.parent.replace(node, node[2])
-                
+
     # Optimize switch statement
     if node.type == "switch" and node.discriminant.type in ("string", "number"):
         discriminant = node.discriminant.value
         fallback = None
         matcher = None
         allowed = ["default", "case"]
-        
+
         for child in node:
             # Require that every case block ends with a break (no fall-throughs)
             if child.type == "case":
@@ -127,18 +127,18 @@ def __cleanup(node):
 
             elif child.type == "case" and child.label.value == discriminant:
                 matcher = child.statements
-                
+
                 # Remove break statement
                 matcher.pop()
-            
+
         if matcher or fallback:
             if not matcher:
                 matcher = fallback
-                
+
             node.parent.replace(node, matcher)
             Console.debug("Optimizing switch at line %s", node.line)
             optimized = True
-    
+
     return optimized
 
 
@@ -152,20 +152,20 @@ def __checkCondition(node):
     Checks a comparison for equality. Returns None when
     both, truely and falsy could not be deteted.
     """
-    
+
     if node.type == "false":
         return False
     elif node.type == "true":
         return True
-        
+
     elif node.type == "eq" or node.type == "strict_eq":
         return __compareNodes(node[0], node[1])
     elif node.type == "ne" or node.type == "strict_ne":
         return __invertResult(__compareNodes(node[0], node[1]))
-        
+
     elif node.type == "not":
         return __invertResult(__checkCondition(node[0]))
-        
+
     elif node.type == "and":
         first = __checkCondition(node[0])
         if first != None and not first:
@@ -174,7 +174,7 @@ def __checkCondition(node):
         second = __checkCondition(node[1])
         if second != None and not second:
             return False
-            
+
         if first and second:
             return True
 
@@ -191,10 +191,10 @@ def __invertResult(result):
     """
     Used to support the NOT operator.
     """
-    
+
     if type(result) == bool:
         return not result
-        
+
     return result
 
 
@@ -204,7 +204,7 @@ def __negateType(node):
     """
 
     child = node[0]
-    
+
     if child.type == "false":
         return "true"
     elif child.type == "true":
@@ -236,18 +236,17 @@ def __compareNodes(a, b):
     secondType = b.type
     if secondType == "not":
         secondType = __negateType(b)
-    
+
     if firstType == secondType:
         if firstType in ("string", "number"):
             return a.value == b.value
         elif firstType == "true":
             return True
         elif secondType == "false":
-            return False    
-            
+            return False
+
     elif firstType in ("true", "false") and secondType in ("true", "false"):
         return False
 
     return None
-    
-    
+

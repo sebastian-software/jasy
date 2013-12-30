@@ -1,11 +1,13 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013 Sebastian Werner
 #
 
-import struct, hashlib
+import struct
 
 import jasy.core.Console as Console
+import jasy.core.File as File
 
 """
 Contains image format detection classes. Once the format is detect it supports image size detection, too.
@@ -34,12 +36,7 @@ class ImgFile(object):
         self.fp.close()
 
     def getChecksum(self):
-
-        self.fp.seek(0)
-        m = hashlib.md5()
-        m.update(self.fp.read())
-
-        return m.hexdigest()
+        return File.sha1(self.fp)
 
     def __del__(self):
         self.close()
@@ -69,7 +66,7 @@ class GifFile(ImgFile):
 # http://www.libmng.com/pub/png/spec/1.2/png-1.2-pdg.html#Structure
 class PngFile(ImgFile):
     """Class for parsing PNG files"""
-    
+
     def type(self):
         return "png"
 
@@ -119,13 +116,13 @@ class JpegFile(ImgFile):
                 b = self.fp.read(1)
             width = int(w)
             height = int(h)
-            
+
             return (width, height)
         except struct.error:
             pass
         except ValueError:
             pass
-            
+
 
 class ImgInfo(object):
     def __init__(self, filename):
@@ -138,7 +135,7 @@ class ImgInfo(object):
         Returns the image sizes of png, gif and jpeg files as
         (width, height) tuple
         """
-        
+
         filename = self.__filename
         classes = self.classes
 
@@ -152,12 +149,12 @@ class ImgInfo(object):
             img.close()
 
         return None
-    
+
     def getInfo(self):
         ''' Returns (width, height, "type") of the image'''
         filename = self.__filename
         classes = self.classes
-        
+
         for cls in classes:
             img = cls(filename)
             if img.verify():

@@ -40,7 +40,7 @@ projects = {}
 
 def getProjectFromPath(path, config=None, version=None):
     global projects
-    
+
     if not path in projects:
         projects[path] = Project(path, config, version)
 
@@ -114,33 +114,33 @@ def getProjectNameFromPath(path):
 
 
 class Project():
-    
+
     kind = "none"
     scanned = False
 
 
     def __init__(self, path, config=None, version=None):
         """
-        Constructor call of the project. 
+        Constructor call of the project.
 
         - First param is the path of the project relative to the current working directory.
         - Config can be read from jasyproject.json or using constructor parameter @config
         - Parent is used for structural debug messages (dependency trees)
         """
-        
+
         if not os.path.isdir(path):
             raise UserError("Invalid project path: %s" % path)
-        
+
         # Only store and work with full path
         self.__path = os.path.abspath(os.path.expanduser(path))
-        
+
         # Store given params
         self.version = version
-        
+
         # Intialize item registries
         self.classes = {}
         self.styles = {}
-        self.assets = {}        
+        self.assets = {}
         self.docs = {}
         self.translations = {}
 
@@ -154,7 +154,7 @@ class Project():
             self.__cache = jasy.core.Cache.Cache(self.__path, filename=".jasy/cache")
         except IOError as err:
             raise UserError("Could not initialize project. Cache file in %s could not be initialized! %s" % (self.__path, err))
-        
+
         # Detect version changes
         if version is None:
             self.__modified = True
@@ -165,10 +165,10 @@ class Project():
 
         # Read name from manifest or use the basename of the project's path
         self.__name = self.__config.get("name", getProjectNameFromPath(self.__path))
-            
+
         # Read requires
         self.__requires = self.__config.get("requires", {})
-        
+
         # Defined whenever no package is defined and classes/styles/assets are not stored in the toplevel structure.
         self.__package = self.__config.get("package", self.__name if self.__config.has("name") else None)
 
@@ -213,7 +213,7 @@ class Project():
                     raise UserError("Could not scan project %s: %s" % (self.__name, ex))
 
             Console.outdent()
-        
+
         # Processing custom content section. Only supports classes and assets.
         if self.__config.has("content"):
             self.kind = "manual"
@@ -231,7 +231,7 @@ class Project():
                 self.__addDir("source/asset", "assets")
             if self.__hasDir("source/translation"):
                 self.__addDir("source/translation", "translations")
-                
+
         # Compat - please change to class/style/asset instead
         elif self.__hasDir("src"):
             self.kind = "resource"
@@ -273,40 +273,40 @@ class Project():
     #
     # FILE SYSTEM INDEXER
     #
-    
+
     def __hasDir(self, directory):
         full = os.path.join(self.__path, directory)
         if os.path.exists(full):
             if not os.path.isdir(full):
                 raise UserError("Expecting %s to be a directory: %s" % full)
-            
+
             return True
-        
+
         return False
-        
-        
+
+
     def __addContent(self, content):
         Console.debug("Adding manual content")
-        
+
         Console.indent()
         for fileId in content:
             fileContent = content[fileId]
             if len(fileContent) == 0:
                 raise UserError("Empty content!")
-                
-            # If the user defines a file extension for JS public idenfiers 
+
+            # If the user defines a file extension for JS public idenfiers
             # (which is not required) we filter them out
             if fileId.endswith(".js"):
                 raise UserError("JavaScript files should define the exported name, not a file name: %s" % fileId)
 
             fileExtension = os.path.splitext(fileContent[0])[1]
-            
+
             # Support for joining text content
             if len(fileContent) == 1:
                 filePath = os.path.join(self.__path, fileContent[0])
             else:
                 filePath = [os.path.join(self.__path, filePart) for filePart in fileContent]
-            
+
             # Structure files
             if fileExtension in classExtensions:
                 construct = jasy.item.Class.ClassItem
@@ -320,28 +320,28 @@ class Project():
             else:
                 construct = jasy.item.Asset.AssetItem
                 dist = self.assets
-                
+
             # Check for duplication
             if fileId in dist:
                 raise UserError("Item ID was registered before: %s" % fileId)
-            
+
             # Create instance
             item = construct(self, fileId).attach(filePath)
             Console.debug("Registering %s %s" % (item.kind, fileId))
             dist[fileId] = item
-            
+
         Console.outdent()
-        
-        
+
+
     def __addDir(self, directory, distname):
-        
+
         Console.debug("Scanning directory: %s" % directory)
         Console.indent()
-        
+
         path = os.path.join(self.__path, directory)
         if not os.path.exists(path):
             return
-            
+
         for dirPath, dirNames, fileNames in os.walk(path):
             for dirName in dirNames:
                 # Filter dotted directories like .git, .bzr, .hg, .svn, etc.
@@ -352,24 +352,24 @@ class Project():
                 projectConfBase = os.path.join(dirPath, dirName, "jasyproject.")
                 if os.path.exists(projectConfBase + "json") or os.path.exists(projectConfBase + "yaml"):
                     dirNames.remove(dirName)
-                    
+
             relDirPath = os.path.relpath(dirPath, path)
 
             for fileName in fileNames:
-                
+
                 if fileName[0] == ".":
                     continue
-                    
+
                 relPath = os.path.normpath(os.path.join(relDirPath, fileName)).replace(os.sep, "/")
                 fullPath = os.path.join(dirPath, fileName)
-                
+
                 self.addFile(relPath, fullPath, distname)
-        
+
         Console.outdent()
 
 
     def addFile(self, relPath, fullPath, distname, override=False):
-        
+
         fileName = os.path.basename(relPath)
         fileExtension = os.path.splitext(fileName)[1]
 
@@ -379,7 +379,7 @@ class Project():
         else:
             fileId = ""
 
-        # Structure files  
+        # Structure files
         if fileExtension in classExtensions and distname == "classes":
             fileId += os.path.splitext(relPath)[0]
             construct = jasy.item.Class.ClassItem
@@ -414,9 +414,9 @@ class Project():
         item = construct(self, fileId).attach(fullPath)
         Console.debug("Registering %s %s" % (item.kind, fileId))
         dist[fileId] = item
-        
-        
-    
+
+
+
 
     #
     # ESSENTIALS
@@ -425,18 +425,18 @@ class Project():
     def hasRequires(self):
         return len(self.__requires) > 0
 
-    
+
     def getRequires(self, checkoutDirectory="external", updateRepositories=True):
         """
         Return the project requirements as project instances
         """
 
         global projects
-        
+
         result = []
-        
+
         for entry in self.__requires:
-            
+
             if type(entry) is dict:
                 source = entry["source"]
                 config = Util.getKey(entry, "config")
@@ -453,18 +453,18 @@ class Project():
                 version = str(version)
 
             revision = None
-            
+
             if Repository.isUrl(source):
                 kind = kind or Repository.getType(source)
                 path = os.path.abspath(os.path.join(checkoutDirectory, Repository.getTargetFolder(source, version)))
-                
+
                 # Only clone and update when the folder is unique in this session
                 # This reduces git/hg/svn calls which are typically quite expensive
                 if not path in projects:
                     revision = Repository.update(source, version, path, updateRepositories)
                     if revision is None:
                         raise UserError("Could not update repository %s" % source)
-            
+
             else:
                 kind = "local"
                 if not source.startswith(("/", "~")):
@@ -473,30 +473,30 @@ class Project():
                     path = os.path.abspath(os.path.expanduser(source))
 
                 path = os.path.normpath(path)
-            
+
             if path in projects:
                 project = projects[path]
-                
+
             else:
                 fullversion = []
-                
+
                 # Produce user readable version when non is defined
                 if version is None and revision is not None:
                     version = "master"
-                
+
                 if version is not None:
                     if "/" in version:
                         fullversion.append(version[version.rindex("/")+1:])
                     else:
                         fullversion.append(version)
-                    
+
                 if revision is not None:
                     # Shorten typical long revisions as used by e.g. Git
                     if type(revision) is str and len(revision) > 20:
                         fullversion.append(revision[:10])
                     else:
                         fullversion.append(revision)
-                        
+
                 if fullversion:
                     fullversion = "-".join(fullversion)
                 else:
@@ -504,9 +504,9 @@ class Project():
 
                 project = Project(path, config, fullversion)
                 projects[path] = project
-            
+
             result.append(project)
-        
+
         return result
 
 
@@ -524,16 +524,16 @@ class Project():
 
     def getName(self):
         return self.__name
-    
+
     def getPath(self):
         return self.__path
-    
+
     def getPackage(self):
         return self.__package
 
     def getConfigValue(self, key, default=None):
         return self.__config.get(key, default)
-        
+
     def toRelativeUrl(self, path, prefix="", subpath="source"):
         root = os.path.join(self.__path, subpath)
         relpath = os.path.relpath(path, root)
@@ -541,9 +541,9 @@ class Project():
         if prefix:
             if not prefix[-1] == os.sep:
                 prefix += os.sep
-                
+
             relpath = os.path.normpath(prefix + relpath)
-            
+
         return relpath.replace(os.sep, "/")
 
     def getRevision(self):
@@ -559,38 +559,38 @@ class Project():
     #
     # CACHE API
     #
-    
+
     def getCache(self):
         """Returns the cache instance"""
-        
+
         return self.__cache
-    
+
     def clean(self):
         """Clears the cache of the project"""
-        
+
         Console.info("Clearing cache of %s..." % self.__name)
         self.__cache.clear()
-        
+
     def close(self):
         """Closes the project which deletes the internal caches"""
-        
+
         if self.__cache:
             self.__cache.close()
             self.__cache = None
-        
+
         self.classes = None
         self.assets = None
         self.docs = None
         self.translations = None
-        
+
     def pause(self):
         """Pauses the project so that other processes could modify/access it"""
-        
+
         self.__cache.close()
-        
+
     def resume(self):
         """Resumes the paused project"""
-        
+
         self.__cache.open()
 
 
@@ -602,7 +602,7 @@ class Project():
     #
     # LIST ACCESSORS
     #
-    
+
     def getDocs(self):
         """Returns all package docs"""
 
@@ -625,7 +625,7 @@ class Project():
         if not self.scanned:
             self.scan()
 
-        return self.styles        
+        return self.styles
 
     def getTranslations(self):
         """ Returns all translation objects """
@@ -643,4 +643,3 @@ class Project():
 
         return self.assets
 
-        

@@ -48,7 +48,7 @@ class Tests(unittest.TestCase):
               }
             }
             '''), 'h1:first-child{font-weight:bold;}')
-        
+
     def test_after(self):
         self.assertEqual(self.process('''
             h1{
@@ -65,7 +65,17 @@ class Tests(unittest.TestCase):
                 color: red;
               }
             }
-            '''), 'header h1:first-child{color:red;}')        
+            '''), 'header h1:first-child{color:red;}')
+
+
+    def test_attribute(self):
+        self.assertEqual(self.process('''
+            li{
+              &[selected]{
+                color: blue;
+              }
+            }
+            '''), 'li[selected]{color:blue;}')
 
 
 
@@ -73,5 +83,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

@@ -75,7 +75,7 @@ def doCompleteDoctor():
 
     dists = [dist for dist in pip.get_installed_distributions()]
     keys = [dist.key for dist in pip.get_installed_distributions()]
-    
+
     versions = {}
     for dist in dists:
         versions[dist.key] = dist.version
@@ -118,7 +118,7 @@ def doInitializationDoctor():
 
     dists = [dist for dist in pip.get_installed_distributions()]
     keys = [dist.key for dist in pip.get_installed_distributions()]
-    
+
     versions = {}
     for dist in dists:
         versions[dist.key] = dist.version
@@ -147,7 +147,7 @@ def doInitializationDoctor():
 
     for entry in needs:
         if not checkSingleInstallation(keys, versions, entry["packageName"], entry["minVersion"], entry["installPath"], entry["updatePath"]):
-            allOk = False   
+            allOk = False
 
     return allOk
 

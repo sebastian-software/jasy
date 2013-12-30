@@ -55,8 +55,8 @@ class Tests(unittest.TestCase):
               src: url(FiraSans-BoldItalic.woff);
               font-style: italic;
               font-weight: bold;
-            }            
-            '''), '@font-face{font-family:FiraSans;src:url(FiraSans-Bold.woff);font-style:normal;font-weight:bold;}@font-face{font-family:FiraSans;src:url(FiraSans-BoldItalic.woff);font-style:italic;font-weight:bold;}')        
+            }
+            '''), '@font-face{font-family:FiraSans;src:url(FiraSans-Bold.woff);font-style:normal;font-weight:bold;}@font-face{font-family:FiraSans;src:url(FiraSans-BoldItalic.woff);font-style:italic;font-weight:bold;}')
 
 
 
@@ -64,5 +64,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

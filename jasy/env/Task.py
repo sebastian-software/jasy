@@ -21,7 +21,7 @@ class Task:
 
     __slots__ = ["func", "name", "curry", "availableArgs", "hasFlexArgs", "__doc__", "__name__"]
 
-    
+
     def __init__(self, func, **curry):
         """Creates a task bound to the given function and currying in static parameters"""
 
@@ -33,7 +33,7 @@ class Task:
         # Circular reference to connect both, function and task
         func.task = self
 
-        # The are curried in arguments which are being merged with 
+        # The are curried in arguments which are being merged with
         # dynamic command line arguments on each execution
         self.curry = curry
 
@@ -41,16 +41,16 @@ class Task:
         self.__doc__ = inspect.getdoc(func)
 
         # Analyse arguments for help screen
-        result = inspect.getfullargspec(func)        
+        result = inspect.getfullargspec(func)
         self.availableArgs = result.args
         self.hasFlexArgs = result.varkw is not None
 
         # Register task globally
         addTask(self)
-        
+
 
     def __call__(self, **kwargs):
-        
+
         merged = {}
         merged.update(self.curry)
         merged.update(kwargs)
@@ -59,7 +59,7 @@ class Task:
         #
         # SUPPORT SOME DEFAULT FEATURES CONTROLLED BY TASK PARAMETERS
         #
-        
+
         # Allow overriding of prefix via task or cmdline parameter.
         # By default use name of the task (no prefix for cleanup tasks)
         if "prefix" in merged:
@@ -69,7 +69,7 @@ class Task:
             session.setCurrentPrefix(None)
         else:
             session.setCurrentPrefix(self.name)
-        
+
 
         #
         # EXECUTE ATTACHED FUNCTION
@@ -89,7 +89,7 @@ class Task:
 
 def task(*args, **kwargs):
     """ Specifies that this function is a task. """
-    
+
     if len(args) == 1:
 
         func = args[0]
@@ -106,12 +106,12 @@ def task(*args, **kwargs):
 
         else:
             raise UserError("Invalid task")
-    
+
     else:
 
         def wrapper(func):
             return Task(func, **kwargs)
-            
+
         return wrapper
 
 
@@ -121,12 +121,12 @@ __taskRegistry = {}
 
 def addTask(task):
     """Registers the given task with its name"""
-    
+
     if task.name in __taskRegistry:
         Console.debug("Overriding task: %s" % task.name)
     else:
         Console.debug("Registering task: %s" % task.name)
-        
+
     __taskRegistry[task.name] = task
 
 def executeTask(taskname, **kwargs):
@@ -146,7 +146,7 @@ def executeTask(taskname, **kwargs):
 
 def printTasks(indent=16):
     """Prints out a list of all avaible tasks and their descriptions"""
-    
+
     for name in sorted(__taskRegistry):
         obj = __taskRegistry[name]
 
@@ -201,9 +201,9 @@ def getOptions():
 
 def runTask(project, task, **kwargs):
     """
-    Executes the given task of the given projects. 
-    
-    This happens inside a new sandboxed session during which the 
+    Executes the given task of the given projects.
+
+    This happens inside a new sandboxed session during which the
     current session is paused/resumed automatically.
     """
 

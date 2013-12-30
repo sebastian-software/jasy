@@ -32,12 +32,12 @@ class Tests(unittest.TestCase):
             var baz=foo+bar;
             '''),
             'var foo=3,bar=4,baz;foo++;baz=foo+bar;'
-        )        
+        )
 
     def test_combine_closure_innerfirst(self):
         self.assertEqual(self.process(
             '''
-            function inner() 
+            function inner()
             {
               var innerVarA = 5;
               var innerVarB = 10;
@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             '''
             var before = 4;
-            function inner() 
+            function inner()
             {
               var innerVarA = 5;
               var innerVarB = 10;
@@ -79,7 +79,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'var foo=3,bar=4,baz,next;foo++;{baz=foo+bar}'
-        )        
+        )
 
     def test_combine_destruct_assign(self):
         self.assertEqual(self.process(
@@ -104,7 +104,7 @@ class Tests(unittest.TestCase):
             }
             '''),
             'function wrapper(){var desFirst=3,[desFirst,desSecond]=destruct()}'
-        )        
+        )
 
     def test_combine_doubles(self):
         self.assertEqual(self.process(
@@ -124,7 +124,7 @@ class Tests(unittest.TestCase):
             var foo = 4;
             '''),
             'var foo=3,bar=2;x();foo=4;'
-        )        
+        )
 
     def test_combine_doubles_for(self):
         self.assertEqual(self.process(
@@ -135,7 +135,7 @@ class Tests(unittest.TestCase):
             '''),
             'var key,key2;for(key in obj){}for(key in obj2){}for(key2 in obj){}'
         )
-        
+
     def test_combine_doubles_oneassign(self):
         self.assertEqual(self.process(
             '''
@@ -144,7 +144,7 @@ class Tests(unittest.TestCase):
             '''),
             'var foo=3;'
         )
-        
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)

@@ -24,22 +24,22 @@ translationFunctions = ("tr", "trc", "trn", "marktr")
 def hasText(node):
     if node.type == "call":
         funcName = None
-        
+
         if node[0].type == "identifier":
             funcName = node[0].value
         elif node[0].type == "dot" and node[0][1].type == "identifier":
             funcName = node[0][1].value
-        
+
         if funcName in translationFunctions:
             return True
-            
+
     # Process children
     for child in node:
         if child != None:
             ret = hasText(child)
             if ret:
                 return True
-    
+
     return False
 
 
@@ -54,7 +54,7 @@ def parseParams(params, funcName):
     elif funcName == "trc":
         context = params[0].value
         basic = params[1].value
-    
+
     if funcName == "trn":
         plural = params[1].value
 
@@ -65,12 +65,12 @@ def parseParams(params, funcName):
 def __collectionRecurser(node, collection):
     if node.type == "call":
         funcName = None
-        
+
         if node[0].type == "identifier":
             funcName = node[0].value
         elif node[0].type == "dot" and node[0][1].type == "identifier":
             funcName = node[0][1].value
-        
+
         if funcName in translationFunctions:
             translationId = Translation.generateId(*parseParams(node[1], funcName))
             if translationId:
@@ -94,7 +94,7 @@ def collectTranslations(node):
 
 def optimize(node, translation):
   return __recurser(node, translation.getTable())
-  
+
 
 
 #
@@ -106,8 +106,8 @@ __replacer = re.compile("(%[0-9])")
 
 
 def __splitTemplate(value, valueParams):
-    """ 
-    Split string into plus-expression(s) 
+    """
+    Split string into plus-expression(s)
 
     - patchParam: string node containing the placeholders
     - valueParams: list of params to inject
@@ -116,18 +116,18 @@ def __splitTemplate(value, valueParams):
     # Convert list with nodes into Python dict
     # [a, b, c] => {0:a, 1:b, 2:c}
     mapper = { pos: value for pos, value in enumerate(valueParams) }
-    
+
     result = []
     splits = __replacer.split(value)
     if len(splits) == 1:
         return None
-    
+
     pair = Node.Node(None, "plus")
 
     for entry in splits:
         if entry == "":
             continue
-            
+
         if len(pair) == 2:
             newPair = Node.Node(None, "plus")
             newPair.append(pair)
@@ -135,23 +135,23 @@ def __splitTemplate(value, valueParams):
 
         if __replacer.match(entry):
             pos = int(entry[1]) - 1
-            
+
             # Items might be added multiple times. Copy to protect original.
             try:
                 repl = mapper[pos]
             except KeyError:
                 raise UserError("Invalid positional value: %s in %s" % (entry, value))
-            
+
             copied = copy.deepcopy(mapper[pos])
             if copied.type not in ("identifier", "call"):
                 copied.parenthesized = True
             pair.append(copied)
-            
+
         else:
             child = Node.Node(None, "string")
             child.value = entry
             pair.append(child)
-            
+
     return pair
 
 
@@ -163,12 +163,12 @@ def __recurser(node, table):
     for child in list(node):
         if child is not None:
             counter += __recurser(child, table)
-                    
+
     # Process all method calls
     if node.type == "call":
         funcName = None
         funcNameNode = None
-        
+
         # Uses global translation method (not typical)
         if node[0].type == "identifier":
             funcNameNode = node[0]
@@ -185,7 +185,7 @@ def __recurser(node, table):
             Console.indent()
 
             params = node[1]
-            
+
             # Remove marktr() calls
             if funcName == "marktr":
                 node.parent.remove(node)
@@ -194,7 +194,7 @@ def __recurser(node, table):
             elif params[0].type is not "string":
                 # maybe something marktr() relevant being used, in this case we need to keep the call and inline the data
                 pass
-                
+
             # Error handling
             elif (funcName == "trn" or funcName == "trc") and params[1].type != "string":
                 Console.warn("Expecting translation string to be type string: %s at line %s" % (params[1].type, params[1].line))
@@ -204,7 +204,7 @@ def __recurser(node, table):
                 key = params[0].value
                 if key in table:
                     params[0].value = table[key]
-                
+
                 counter += 1
 
                 if len(params) == 1:
@@ -214,7 +214,7 @@ def __recurser(node, table):
                     if replacement:
                         node.parent.replace(node, replacement)
 
-                    
+
             # Signature trc(context, msg, arg1, ...)
             elif funcName == "trc":
                 key = "%s[C:%s]" % (params[1].value, params[0].value)
@@ -242,7 +242,7 @@ def __recurser(node, table):
 
                 # Use optimized trnc() method instead of trn()
                 funcNameNode.value = "trnc"
-                
+
                 # Remove first two string parameters
                 params.remove(params[0])
                 params.remove(params[0])

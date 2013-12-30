@@ -28,9 +28,9 @@ class Tests(unittest.TestCase):
             'fullversion': 3.11
         })
         Permutate.patch(node, permutation)
-        return Compressor.Compressor().compress(node)    
-    
-    
+        return Compressor.Compressor().compress(node)
+
+
     def test_get(self):
         self.assertEqual(self.process(
             'var engine = jasy.Env.getValue("engine");'),
@@ -45,31 +45,31 @@ class Tests(unittest.TestCase):
             }
             '''),
             'if(false){var x=1}'
-        )        
+        )
 
     def test_isset_bool_false(self):
         self.assertEqual(self.process(
             'var debug = jasy.Env.isSet("debug", true);'),
             'var debug=false;'
-        )             
-        
+        )
+
     def test_isset_bool_shorthand_false(self):
         self.assertEqual(self.process(
             'var debug = jasy.Env.isSet("debug");'),
             'var debug=false;'
         )
-        
+
     def test_isset_bool_true(self):
         self.assertEqual(self.process(
             'var legacy = jasy.Env.isSet("legacy", true);'),
             'var legacy=true;'
         )
-        
+
     def test_isset_bool_shorthand_true(self):
         self.assertEqual(self.process(
             'var legacy = jasy.Env.isSet("legacy");'),
             'var legacy=true;'
-        )             
+        )
 
     def test_isset_typediff(self):
         self.assertEqual(self.process(
@@ -81,13 +81,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             'var legacy = jasy.Env.isSet("legacy", x);'),
             'var legacy=jasy.Env.isSet("legacy",x);'
-        )        
-        
+        )
+
     def test_isset_int_true(self):
         self.assertEqual(self.process(
             'var recent = jasy.Env.isSet("version", 3);'),
             'var recent=true;'
-        )             
+        )
 
     def test_isset_int_false(self):
         self.assertEqual(self.process(
@@ -105,25 +105,25 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(
             'var buggy = jasy.Env.isSet("fullversion", 3.2);'),
             'var buggy=false;'
-        )           
-        
+        )
+
     def test_isset_str_single(self):
         self.assertEqual(self.process(
             'var modern = jasy.Env.isSet("engine", "webkit");'),
             'var modern=true;'
         )
-        
+
     def test_isset_str_multi(self):
         self.assertEqual(self.process(
             'var modern = jasy.Env.isSet("engine", "gecko|webkit");'),
             'var modern=true;'
         )
-        
+
     def test_isset_str_multilong(self):
         self.assertEqual(self.process(
             'var modern = jasy.Env.isSet("engine", "gecko|webkitbrowser");'),
             'var modern=false;'
-        )            
+        )
 
     def test_select(self):
         self.assertEqual(self.process(
@@ -143,11 +143,11 @@ class Tests(unittest.TestCase):
             var prefix = jasy.Env.select("engine", {
               gecko: "Moz",
               trident: "ms"
-            });            
+            });
             '''),
             'var prefix=jasy.Env.select("engine",{gecko:"Moz",trident:"ms"});'
-        )        
-        
+        )
+
     def test_select_default(self):
         self.assertEqual(self.process(
             '''
@@ -155,7 +155,7 @@ class Tests(unittest.TestCase):
               gecko: "Moz",
               trident: "ms",
               "default": ""
-            });            
+            });
             '''),
             'var prefix="";'
         )
@@ -166,15 +166,15 @@ class Tests(unittest.TestCase):
             var prefix = jasy.Env.select("engine", {
               "webkit|khtml": "Webkit",
               trident: "ms",
-            });            
+            });
             '''),
             'var prefix="Webkit";'
-        )             
+        )
 
 
-    
+
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-    
+

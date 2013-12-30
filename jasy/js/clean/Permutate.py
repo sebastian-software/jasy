@@ -11,7 +11,7 @@ from jasy.js.util import *
 
 def __translateToJS(code):
     """ Returns the code equivalent of the stored value for the given key """
-    
+
     if code is None:
         pass
     elif code is True:
@@ -24,18 +24,18 @@ def __translateToJS(code):
         pass
     else:
         code = "\"%s\"" % code
-        
+
     return code
-    
+
 
 def patch(node, permutation):
     """ Replaces all occourences with incoming values """
 
     modified = False
-    
+
     if node.type == "dot" and node.parent.type == "call":
         assembled = assembleDot(node)
-        
+
         # jasy.Env.getValue(key)
         if assembled == "jasy.Env.getValue" and node.parent.type == "call":
             callNode = node.parent
@@ -51,8 +51,8 @@ def patch(node, permutation):
                 modified = True
 
                 Console.debug("Replaced with %s", replacement)
-         
-        
+
+
         # jasy.Env.isSet(key, expected)
         # also supports boolean like: jasy.Env.isSet(key)
         elif assembled == "jasy.Env.isSet" and node.parent.type == "call":
@@ -72,7 +72,7 @@ def patch(node, permutation):
                 if expected.type in ("string", "number", "true", "false"):
                     parsedReplacement = Parser.parseExpression(replacement)
                     expectedValue = getattr(expected, "value", None)
-                    
+
                     if expectedValue is not None:
                         if getattr(parsedReplacement, "value", None) is not None:
                             replacementResult = parsedReplacement.value in str(expected.value).split("|")
@@ -88,7 +88,7 @@ def patch(node, permutation):
 
                     Console.debug("Replaced with %s", "true" if replacementResult else "false")
 
-        
+
         # jasy.Env.select(key, map)
         elif assembled == "jasy.Env.select" and node.parent.type == "call":
             Console.debug("Found jasy.Env.select() in line %s", node.line)
@@ -130,4 +130,3 @@ def patch(node, permutation):
     return modified
 
 
-    

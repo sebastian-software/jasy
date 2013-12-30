@@ -74,7 +74,7 @@ class Tests(unittest.TestCase):
 
     def test_star(self):
         self.assertEqual(self.process('* { box-sizing: border-box }'), '*{box-sizing:border-box;}')
-        
+
     def test_tag(self):
         self.assertEqual(self.process('h1 { color: red }'), 'h1{color:red;}')
 
@@ -159,5 +159,5 @@ class Tests(unittest.TestCase):
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
-    unittest.TextTestRunner(verbosity=2).run(suite)   
+    unittest.TextTestRunner(verbosity=2).run(suite)
 

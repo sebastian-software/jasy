@@ -22,7 +22,7 @@ except:
 
 def markdownToHtml(markdownStr):
     """
-    Converts Markdown to HTML. Supports GitHub's fenced code blocks, 
+    Converts Markdown to HTML. Supports GitHub's fenced code blocks,
     auto linking and typographic features by SmartyPants.
     """
 
@@ -64,13 +64,13 @@ def highlightCodeBlocks(html, tabsize=2, defaultlang="javascript"):
         language, classname, code = match.groups()
         if language is None:
             language = classname if classname else defaultlang
-    
+
         lexer = get_lexer_by_name(language, tabsize=tabsize)
         formatter = HtmlFormatter(linenos="table")
-    
+
         code = unescape(code)
 
         # for some reason pygments escapes our code once again so we need to reverse it twice
         return unescape(highlight(code, lexer, formatter))
-    
+
     return codeblock.sub(replace, html)

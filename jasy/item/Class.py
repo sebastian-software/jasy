@@ -6,7 +6,7 @@
 import os, copy, fnmatch, re
 
 import jasy.core.MetaData as MetaData
-import jasy.core.Console as Console 
+import jasy.core.Console as Console
 import jasy.item.Abstract
 import jasy.js.parse.Parser as Parser
 import jasy.js.parse.ScopeScanner as ScopeScanner
@@ -33,21 +33,30 @@ aliases = {}
 
 
 def collectFields(node, keys=None):
-    
+
     if keys is None:
         keys = set()
-    
+
     # Always the first parameter
     # Supported calls: jasy.Env.isSet(key, expected?), jasy.Env.getValue(key), jasy.Env.select(key, map)
     calls = ("jasy.Env.isSet", "jasy.Env.getValue", "jasy.Env.select")
     if node.type == "dot" and node.parent.type == "call" and Util.assembleDot(node) in calls:
-        keys.add(node.parent[1][0].value)
+        stringNode = node.parent[1][0]
+        if stringNode.type == "string":
+            keys.add(stringNode.value)
+        elif stringNode.type == "identifier":
+            # Tolerate identifiers for supporting dynamic requests e.g. for asset placeholders
+            pass
+        else:
+            raise Exception("Could not handle non string type in jasy.Env call at line: %s" % node.line)
+
+
 
     # Process children
     for child in reversed(node):
         if child != None:
             collectFields(child, keys)
-            
+
     return keys
 
 
@@ -57,16 +66,16 @@ class ClassError(Exception):
     def __init__(self, inst, msg):
         self.__msg = msg
         self.__inst = inst
-        
+
     def __str__(self):
         return "Error processing class %s: %s" % (self.__inst, self.__msg)
 
 
 
 class ClassItem(jasy.item.Abstract.AbstractItem):
-    
+
     kind = "class"
-    
+
     def __getTree(self):
         """
         Returns the abstract syntax tree
@@ -76,17 +85,17 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         tree = self.project.getCache().read(field, self.mtime)
         if not tree:
             Console.info("Processing class %s...", Console.colorize(self.id, "bold"))
-            
+
             Console.indent()
             tree = Parser.parse(self.getText(), self.id)
             ScopeScanner.scan(tree)
             Console.outdent()
-            
+
             self.project.getCache().store(field, tree, self.mtime, True)
-        
+
         return tree
-    
-    
+
+
     def __getOptimizedTree(self, permutation=None):
         """
         Returns an optimized tree with permutations applied
@@ -101,7 +110,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             msg = "Processing class %s" % Console.colorize(self.id, "bold")
             if permutation:
                 msg += Console.colorize(" (%s)" % permutation, "grey")
-                
+
             Console.info("%s..." % msg)
             Console.indent()
 
@@ -116,7 +125,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             jasy.js.clean.DeadCode.cleanup(tree)
             ScopeScanner.scan(tree)
             jasy.js.clean.Unused.cleanup(tree)
-        
+
             self.project.getCache().store(field, tree, self.mtime, True)
             Console.outdent()
 
@@ -126,7 +135,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
     def getBreaks(self, permutation=None, items=None):
         """
-        Returns all down-priorized dependencies. This are dependencies which are required to 
+        Returns all down-priorized dependencies. This are dependencies which are required to
         make the module work, but are not required being available before the current item.
         """
 
@@ -149,9 +158,9 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
-        """ 
-        Returns a set of dependencies seen through the given list of known 
-        classes (ignoring all unknown items in original set) and configured fields 
+        """
+        Returns a set of dependencies seen through the given list of known
+        classes (ignoring all unknown items in original set) and configured fields
         with their individual detection classes. This method also
         makes use of the meta data and the variable data.
         """
@@ -191,7 +200,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         for name in scope.shared:
             if name != self.id and name in items and items[name].kind == "class":
                 result.add(items[name])
-        
+
         # Add classes from detected package access
         for package in scope.packages:
             if package in aliases:
@@ -199,24 +208,24 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 if className in items:
                     result.add(items[className])
                     continue
-            
+
             orig = package
             while True:
                 if package == self.id:
                     break
-            
+
                 elif package in items and items[package].kind == "class":
                     aliases[orig] = package
                     result.add(items[package])
                     break
-            
+
                 else:
                     pos = package.rfind(".")
                     if pos == -1:
                         break
-                    
+
                     package = package[0:pos]
-                    
+
         # Manually excluded names/classes
         for name in meta.optionals:
             if name != self.id and name in items and items[name].kind == "class":
@@ -225,17 +234,17 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 Console.warn("Missing class (optional): %s in %s", name, self.id)
 
         return result
-        
-        
+
+
 
     def getScopeData(self, permutation=None):
         """
         Returns the top level scope object which contains information about the
         global variable and package usage/influence.
         """
-        
+
         permutation = self.filterPermutation(permutation)
-        
+
         field = "script:scope[%s]-%s" % (self.id, permutation)
         scope = self.project.getCache().read(field, self.mtime)
         if scope is None:
@@ -243,29 +252,29 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, scope, self.mtime)
 
         return scope
-        
 
-        
+
+
     def getApi(self, highlight=True):
         field = "script:api[%s]-%s" % (self.id, highlight)
         apidata = self.project.getCache().read(field, self.mtime, inMemory=False)
         if apidata is None:
             apidata = jasy.js.api.Data.ApiData(self.id, highlight)
-            
+
             tree = self.__getTree()
             Console.indent()
             apidata.scanTree(tree)
             Console.outdent()
-            
+
             metaData = self.getMetaData()
             apidata.addAssets(metaData.assets)
             for require in metaData.requires:
                 apidata.addUses(require)
             for optional in metaData.optionals:
                 apidata.removeUses(optional)
-                
+
             apidata.addFields(self.getFields())
-            
+
             self.project.getCache().store(field, apidata, self.mtime, inMemory=False)
 
         return apidata
@@ -278,11 +287,11 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         if source is None:
             if highlight is None:
                 raise UserError("Could not highlight JavaScript code! Please install Pygments.")
-            
+
             lexer = JavascriptLexer(tabsize=2)
             formatter = HtmlFormatter(full=True, style="autumn", linenos="table", lineanchors="line")
             source = highlight(self.getText(), lexer, formatter)
-            
+
             self.project.getCache().store(field, source, self.mtime)
 
         return source
@@ -297,18 +306,22 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         if meta is None:
             meta = MetaData.MetaData(self.__getOptimizedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
-            
-        return meta
-        
 
-        
+        return meta
+
+
+
     def getFields(self):
         field = "script:fields[%s]" % (self.id)
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
-            fields = collectFields(self.__getTree())
+            try:
+                fields = collectFields(self.__getTree())
+            except Exception as ex:
+                raise Exception("Unable to collect fields in file %s: %s" % (self.id, ex))
+
             self.project.getCache().store(field, fields, self.mtime)
-        
+
         return fields
 
 
@@ -321,9 +334,9 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, result, self.mtime)
 
         return result
-        
 
-        
+
+
     def filterPermutation(self, permutation):
         if permutation:
             fields = self.getFields()
@@ -331,24 +344,24 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 return permutation.filter(fields)
 
         return None
-        
 
-        
+
+
     def getCompressed(self, permutation=None, translation=None, optimization=None, formatting=None):
         permutation = self.filterPermutation(permutation)
 
         # Disable translation for caching / patching when not actually used
         if translation and not self.getTranslations():
             translation = None
-        
+
         field = "script:compressed[%s]-%s-%s-%s-%s" % (self.id, permutation, translation, optimization, formatting)
         compressed = self.project.getCache().read(field, self.mtime)
         if compressed == None:
             tree = self.__getOptimizedTree(permutation)
-            
+
             if translation or optimization:
                 tree = copy.deepcopy(tree)
-            
+
                 if translation:
                     jasy.js.optimize.Translation.optimize(tree, translation)
 
@@ -357,10 +370,10 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                         optimization.apply(tree)
                     except jasy.js.output.Optimization.Error as error:
                         raise ClassError(self, "Could not compress class! %s" % error)
-                
+
             compressed = Compressor.Compressor(formatting).compress(tree)
             self.project.getCache().store(field, compressed, self.mtime)
-            
+
         return compressed
 
 

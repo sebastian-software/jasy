@@ -32,9 +32,10 @@ class OutputManager:
     #   ESSENTIALS
     # --------------------------------------------------------------------------------------------
 
-    def __init__(self, session, assetManager=None, compressionLevel=1, formattingLevel=0):
+    def __init__(self, profile, session, assetManager=None, compressionLevel=1, formattingLevel=0):
 
         self.__session = session
+        self.__profile = profile
 
         self.__assetManager = assetManager
         self.__fileManager = FileManager(session)
@@ -52,7 +53,7 @@ class OutputManager:
         if compressionLevel > 0:
             self.__scriptOptimization.enable("variables")
             self.__scriptOptimization.enable("declarations")
-            
+
         if compressionLevel > 1:
             self.__scriptOptimization.enable("blocks")
             self.__scriptOptimization.enable("privates")
@@ -128,7 +129,7 @@ class OutputManager:
 
         # 4. Add asset data if needed
         if usesAssets:
-            assetData = self.__assetManager.export(includedClasses)
+            assetData = self.__assetManager.exportToJson(includedClasses)
             assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
             resolver.add(assetClassItem, prepend=True)
 
@@ -168,7 +169,7 @@ class OutputManager:
                     result.append("// FILE ID: %s\n%s\n\n" % (item.getId(), compressed))
                 else:
                     result.append(compressed)
-                
+
         except ClassError as error:
             raise UserError("Error during script compression! %s" % error)
 
@@ -177,8 +178,8 @@ class OutputManager:
 
     def __generateScriptLoader(self, items, urlPrefix=None):
 
-        # For loading items we require core.ui.Queue and core.io.Script 
-        # being available. If they are not part of the kernel, we have to 
+        # For loading items we require core.ui.Queue and core.io.Script
+        # being available. If they are not part of the kernel, we have to
         # prepend them as compressed code into the resulting output.
 
         hasLoader = False
@@ -213,14 +214,14 @@ class OutputManager:
 
             path = item.getPath()
 
-            # Support for multi path items 
+            # Support for multi path items
             # (typically in projects with custom layout/structure e.g. 3rd party)
             if type(path) is list:
                 for singleFileName in path:
                     files.append(main.toRelativeUrl(singleFileName, urlPrefix))
-            
+
             else:
-                files.append(main.toRelativeUrl(path, urlPrefix))        
+                files.append(main.toRelativeUrl(path, urlPrefix))
 
         if self.__addDividers:
             loaderList = '"%s"' % '",\n"'.join(files)
@@ -249,7 +250,7 @@ class OutputManager:
                     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
                 else:
                     result.append(compressed)
-                
+
         except StyleError as error:
             raise UserError("Error during stylesheet compression! %s" % error)
 
@@ -267,11 +268,8 @@ class OutputManager:
         Console.info("Generating kernel script...")
         Console.indent()
 
-        # Export all field data for the kernel
-        items = []
-        fieldSetupClasses = self.__session.getFieldSetupClasses()
-        for fieldName in fieldSetupClasses:
-            items.append(fieldSetupClasses[fieldName])
+        # Export all profile data for the kernel
+        items = self.__profile.getSetupClasses().values()
 
         # Transfer all hard-wired fields into a permutation
         self.__session.setStaticPermutation()
@@ -306,7 +304,7 @@ class OutputManager:
         compressedCode = self.__compressScripts(sortedClasses)
         self.__fileManager.writeFile(fileName, compressedCode)
 
-        Console.outdent()        
+        Console.outdent()
 
 
     def storeCompressedStylesheet(self, styles, fileName):
