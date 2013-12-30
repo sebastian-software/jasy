@@ -20,12 +20,12 @@ class AbstractSorter:
     This class is not type depended e.g. is used for both scripts and styles.
     """
 
-    def __init__(self, resolver, session):
+    def __init__(self, resolver):
     
-        # Keep items/permutation/fields reference
-        # Classes is set(item, ...)
+        # Shorthand references
         self.resolver = resolver
-        self.permutation = session.getCurrentPermutation()
+        self.profile = resolver.profile
+        self.permutation = resolver.permutation
         
         # Build item name dict (id => item)
         items = self.resolver.getIncluded()

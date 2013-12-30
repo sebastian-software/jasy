@@ -11,10 +11,10 @@ class Sorter(AbstractSorter.AbstractSorter):
     Sorter for Script items
     """
 
-    def __init__(self, resolver, session):
-        super().__init__(resolver, session)
+    def __init__(self, resolver):
+        super().__init__(resolver)
 
-        self.fields = session.getFieldSetupClasses()
+        self.fields = self.profile.getFieldSetupClasses()
 
 
     def getItemDependencies(self, item):

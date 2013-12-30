@@ -10,8 +10,8 @@ class Sorter(AbstractSorter.AbstractSorter):
     Sorter for Style items
     """
 
-    def __init__(self, resolver, session):
-        super().__init__(resolver, session)
+    def __init__(self, resolver):
+        super().__init__(resolver)
 
 
     def getItemDependencies(self, item):

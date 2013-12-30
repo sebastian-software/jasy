@@ -11,19 +11,19 @@ import jasy.style.Sorter as Sorter
 
 class Resolver(AbstractResolver.Resolver):
 
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self, profile):
+        super().__init__(profile)
 
-        for project in session.getProjects():
+        for project in profile.getProjects():
             self.items.update(project.getStyles())
 
 
     def getItemDependencies(self, item):
-        return item.getDependencies(self.permutation, items=self.items)
+        return item.getDependencies(self.profile, items=self.items)
 
 
     def getSorted(self):
         """ Returns a list of sorted classes """
 
-        return Sorter.Sorter(self, self.session).getSorted()
+        return Sorter.Sorter(self).getSorted()
 

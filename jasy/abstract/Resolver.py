@@ -22,13 +22,13 @@ class Resolver():
     This class is not type depended e.g. is used for both scripts and styles.
     """
 
-    def __init__(self, session):
+    def __init__(self, profile):
         
-        # Keep session reference
-        self.session = session
+        # Keep profile reference
+        self.profile = profile
 
         # Keep permutation reference
-        self.permutation = session.getCurrentPermutation()
+        self.permutation = profile.getCurrentPermutation()
 
         # Collecting all available items
         self.items = {}

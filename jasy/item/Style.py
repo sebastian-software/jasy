@@ -110,6 +110,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if permutation is None:
             return self.__getTree()
 
+        permutation = self.filterPermutation(permutation)
         field = "style:permutated[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
 
@@ -127,13 +128,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getBreaks(self, profile=None, items=None, warnings=True):
+    def getBreaks(self, permutation=None, items=None, warnings=True):
         """
         Returns all down-priorized dependencies. This are dependencies which are required to
         make the module work, but are not required being available before the current item.
         """
 
-        meta = self.getMetaData(profile.getCurrentPermutation())
+        meta = self.getMetaData(permutation)
         result = set()
 
         for entry in meta.breaks:
@@ -154,14 +155,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getDependencies(self, profile=None, items=None, fields=None, warnings=True):
+    def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
         """
         Returns a set of dependencies seen through the given list of known
         items (ignoring all unknown items in original set). This method also
         makes use of the meta data.
         """
 
-        permutation = self.filterPermutation(profile.getCurrentPermutation())
         meta = self.getMetaData(permutation)
         result = set()
 
@@ -184,12 +184,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getMetaData(self, profile):
+    def getMetaData(self, permutation):
         """
         Returns the meta data of this stylesheet
         """
 
-        permutation = self.filterPermutation(profile.getCurrentPermutation())
+        permutation = self.filterPermutation(permutation)
 
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
@@ -206,7 +206,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         Returns the fields which are accessed by this stylesheet.
         """
 
-        field = "style:fields[%s]" % (self.id)
+        field = "style:fields[%s]" % self.id
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
             fields = collectFields(self.__getTree())
@@ -243,7 +243,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = self.__getPermutatedTree(permutation)
 
         # Run the actual resolver engine and figure out newest mtime
-        for item, include in includeGenerator(tree, profile):
+        for item, include in includeGenerator(tree, profile.getSession()):
 
             mtime = max(mtime, item.getMergedMtime(profile))
 
@@ -256,16 +256,14 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
 
-        permutation = self.filterPermutation(profile.getCurrentPermutation())
-
         # Work is on base of optimized tree
-        tree = self.__getPermutatedTree(permutation)
+        tree = self.__getPermutatedTree(profile.getCurrentPermutation())
 
         # Copying original tree
         tree = copy.deepcopy(tree)
 
         # Run the actual resolver engine
-        for item, include in includeGenerator(tree, profile):
+        for item, include in includeGenerator(tree, profile.getSession()):
 
             # Use merged tree for children as well...
             childRoot = item.getMergedTree(profile)

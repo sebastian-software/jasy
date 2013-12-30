@@ -11,12 +11,12 @@ import jasy.js.Sorter as Sorter
 
 class Resolver(AbstractResolver.Resolver):
 
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self, profile):
+        super().__init__(profile)
 
-        self.fields = session.getFieldSetupClasses()
+        self.fields = profile.getFieldSetupClasses()
 
-        for project in session.getProjects():
+        for project in profile.getProjects():
             self.items.update(project.getClasses())
 
 
@@ -27,7 +27,7 @@ class Resolver(AbstractResolver.Resolver):
     def getSorted(self):
         """ Returns a list of sorted classes """
 
-        return Sorter.Sorter(self, self.session).getSorted()
+        return Sorter.Sorter(self).getSorted()
 
 
     def addVirtual(self, name, text):
@@ -44,5 +44,5 @@ class Resolver(AbstractResolver.Resolver):
         class object is automatically added to the resolver (and sorter).
         """
 
-        classItem = self.session.getVirtualItem(name, Class.ClassItem, text, ".js")
+        classItem = self.profile.getVirtualItem(name, Class.ClassItem, text, ".js")
         return self.add(classItem)

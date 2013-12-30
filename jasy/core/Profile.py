@@ -630,6 +630,17 @@ class Profile():
         self.__currentTranslationBundle = None
 
 
+    def getCurrentOptimization(self):
+        return None
+
+    def getCurrentFormatting(self):
+        return None
+
+
+    def getCurrentTranslation(self):
+        return self.__currentTranslationBundle
+
+
     def getCurrentPermutation(self):
         """Returns current permutation object (useful during looping through permutations via permutate())."""
 
