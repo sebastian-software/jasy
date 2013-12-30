@@ -19,7 +19,7 @@ class Resolver(AbstractResolver.Resolver):
 
 
     def getItemDependencies(self, item):
-        return item.getDependencies(self.profile, items=self.items)
+        return item.getDependencies(self.permutation, items=self.items)
 
 
     def getSorted(self):

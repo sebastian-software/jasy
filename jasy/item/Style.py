@@ -285,12 +285,16 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         field = "style:compressed[%s]-%s" % (self.id, profile.getId())
         mtime = self.getMergedMtime(profile)
-
         compressed = self.project.getCache().read(field, mtime)
+
         if compressed is None:
 
             # Start with the merged tree (includes resolved)
             tree = self.getMergedTree(profile)
+
+            # Read out profile config
+            optimization = profile.getCurrentOptimization()
+            formatting = profile.getCurrentFormatting()
 
             # Reduce tree
             Engine.reduceTree(tree, profile)
