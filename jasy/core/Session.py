@@ -229,6 +229,9 @@ class Session():
         result = Project.getProjectDependencies(project, "external", self.__updateRepositories)
         for project in result:
 
+            Console.info("Adding project %s..." % project.getName())
+            Console.indent()
+
             # Append to session list
             self.__projects.append(project)
 
@@ -259,6 +262,8 @@ class Session():
 
                 self.__fields[name] = entry
 
+
+            Console.outdent()
 
 
     def loadLibrary(self, objectName, fileName, encoding="utf-8", doc=None):
@@ -293,7 +298,7 @@ class Session():
         # Export destination name as global
         self.__scriptEnvironment[objectName] = exportedModule
 
-        Console.debug("Imported %s shared library methods under %s...", counter, objectName)
+        Console.info("Imported %s shared library methods.", counter)
 
         return counter
 
@@ -313,7 +318,7 @@ class Session():
             if name in commands:
                 raise Exception("Overwriting commands is not supported! Tried with: %s!" % name)
 
-            commands["%s.%s" % (objectName, name)] = func
+            commands[name] = func
 
             nonlocal counter
             counter += 1
@@ -327,7 +332,7 @@ class Session():
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
 
         # Export destination name as global
-        Console.debug("Imported %s shared commands under %s...", counter, objectName)    
+        Console.info("Imported %s shared commands.", counter)    
 
         return counter
 

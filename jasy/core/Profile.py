@@ -134,7 +134,6 @@ class Profile():
     def getFileManager(self):
         return self.__fileManager
 
-
     def getDestinationPath(self):
         return self.__destinationPath or self.__session.getCurrentTask()
 
