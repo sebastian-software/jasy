@@ -136,7 +136,7 @@ class Profile():
 
 
     def getDestinationPath(self):
-        return self.__destinationPath or self.__session.getCurrentPrefix()
+        return self.__destinationPath or self.__session.getCurrentTask()
 
     def setDestinationPath(self, path):
         self.__destinationPath = path
