@@ -12,7 +12,7 @@ class FileManager:
     Summarizes utility methods for operations in filesystem.
     """
 
-    def __init__(self, profile):
+    def __init__(self, profile=None):
 
         self.__profile = profile
 
@@ -20,7 +20,9 @@ class FileManager:
     def removeDir(self, dirname):
         """Removes the given directory"""
 
-        dirname = self.__profile.expandFileName(dirname)
+        if self.__profile:
+            dirname = self.__profile.expandFileName(dirname)
+
         if os.path.exists(dirname):
             Console.info("Deleting folder %s" % dirname)
             shutil.rmtree(dirname)
@@ -29,7 +31,9 @@ class FileManager:
     def removeFile(self, filename):
         """Removes the given file"""
 
-        filename = self.__profile.expandFileName(filename)
+        if self.__profile:
+            filename = self.__profile.expandFileName(filename)
+
         if os.path.exists(filename):
             Console.info("Deleting file %s" % filename)
             os.remove(filename)
@@ -41,7 +45,9 @@ class FileManager:
         if dirname == "":
             return
 
-        dirname = self.__profile.expandFileName(dirname)
+        if self.__profile:
+            dirname = self.__profile.expandFileName(dirname)
+
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
@@ -52,7 +58,9 @@ class FileManager:
         Merges the existing directory structure with the folder to copy.
         """
 
-        dst = self.__profile.expandFileName(dst)
+        if self.__profile:
+            dst = self.__profile.expandFileName(dst)
+
         srcLength = len(src)
         counter = 0
 
@@ -92,7 +100,8 @@ class FileManager:
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
 
-        dst = self.__profile.expandFileName(dst)
+        if self.__profile:
+            dst = self.__profile.expandFileName(dst)
 
         # First test for existance of destination directory
         self.makeDir(os.path.dirname(dst))
@@ -112,7 +121,8 @@ class FileManager:
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
 
-        dst = self.__profile.expandFileName(dst)
+        if self.__profile:
+            dst = self.__profile.expandFileName(dst)
 
         try:
             dst_mtime = os.path.getmtime(dst)
@@ -133,7 +143,8 @@ class FileManager:
     def writeFile(self, dst, content):
         """Writes the content to the destination file name"""
 
-        dst = self.__profile.expandFileName(dst)
+        if self.__profile:
+            dst = self.__profile.expandFileName(dst)
 
         # First test for existance of destination directory
         self.makeDir(os.path.dirname(dst))
