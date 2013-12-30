@@ -70,18 +70,34 @@ class Profile():
 
     def __init__(self, session):
 
+        Console.info("Initializing profile...")
+        Console.indent()
+
+        # Reference to global session object
         self.__session = session
+
+        # Enforce scan of projects
+        session.scan()
+
+        # Part registry holds information about all parts of the application to build
         self.__parts = {}
-        self.__commands = {}
+
+        # Copy fields and commands from session
+        # This happens to have local access to all of them + being able to add and tweak data locally
         self.__fields = copy.copy(session.getFields())
+        self.__commands = copy.copy(session.getCommands())
 
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
 
         # Initialize objects
-        assetManager = self.__assetManager = AssetManager.AssetManager(self)
         fileManager = self.__fileManager = FileManager.FileManager(self)
+
+        # Initialize asset manager
+        Console.info("Initializing asset manager...")
+        Console.indent()
+        assetManager = self.__assetManager = AssetManager.AssetManager(self)
 
         # Registering assets
         for project in self.getProjects():
@@ -91,7 +107,11 @@ class Profile():
         assetManager.processSprites()
         assetManager.processAnimations()
 
+        Console.outdent()
+
         # Registering commands
+        Console.info("Registering commands...")
+
         self.addCommand("asset.url", lambda fileId: assetManager.getAssetUrl(fileId), "url")
         self.addCommand("asset.width", lambda fileId: assetManager.getAssetWidth(fileId), "px")
         self.addCommand("asset.height", lambda fileId: assetManager.getAssetHeight(fileId), "px")
@@ -105,6 +125,8 @@ class Profile():
         self.addCommand("animation.columns", lambda fileId: assetManager.getAnimationColumns(fileId), "number")
         self.addCommand("animation.rows", lambda fileId: assetManager.getAnimationRows(fileId), "number")
         self.addCommand("animation.frames", lambda fileId: assetManager.getAnimationFrames(fileId), "number")
+
+        Console.outdent()
 
 
     def getProjects(self):

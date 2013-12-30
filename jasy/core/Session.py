@@ -77,6 +77,9 @@ class Session():
 
         if autoInitialize and Config.findConfig("jasyproject"):
 
+            Console.info("Initializing session...")
+            Console.indent()
+
             try:
                 self.addProject(Project.getProjectFromPath("."))
 
@@ -85,15 +88,18 @@ class Session():
                 Console.error(err)
                 raise UserError("Critical: Could not initialize session!")
 
-            Console.info("Active projects (%s):", len(self.__projects))
+            self.getVirtualProject()
+
+            Console.debug("Active projects (%s):", len(self.__projects))
             Console.indent()
 
             for project in self.__projects:
                 if project.version:
-                    Console.info("%s @ %s", Console.colorize(project.getName(), "bold"), Console.colorize(project.version, "magenta"))
+                    Console.debug("%s @ %s", Console.colorize(project.getName(), "bold"), Console.colorize(project.version, "magenta"))
                 else:
-                    Console.info(Console.colorize(project.getName(), "bold"))
+                    Console.debug(Console.colorize(project.getName(), "bold"))
 
+            Console.outdent()
             Console.outdent()
 
 
@@ -108,6 +114,17 @@ class Session():
     def getCurrentTask(self):
         return self.__currentTask
 
+
+    def scan(self):
+        """ Scans all registered projects """
+
+        Console.info("Scanning projects...")
+        Console.indent()
+
+        for project in self.__projects:
+            project.scan()
+
+        Console.outdent()
 
 
     def clean(self):
@@ -229,7 +246,7 @@ class Session():
         result = Project.getProjectDependencies(project, "external", self.__updateRepositories)
         for project in result:
 
-            Console.info("Adding project %s..." % project.getName())
+            Console.info("Adding %s...", Console.colorize(project.getName(), "bold"))
             Console.indent()
 
             # Append to session list
@@ -298,7 +315,7 @@ class Session():
         # Export destination name as global
         self.__scriptEnvironment[objectName] = exportedModule
 
-        Console.info("Imported %s shared library methods.", counter)
+        Console.info("Imported %s.", Console.colorize("%s methods" % counter, "magenta"))
 
         return counter
 
@@ -316,7 +333,7 @@ class Session():
         def share(func):
             name = "%s.%s" % (objectName, func.__name__)
             if name in commands:
-                raise Exception("Overwriting commands is not supported! Tried with: %s!" % name)
+                raise Exception("Command %s already exists!" % name)
 
             commands[name] = func
 
@@ -332,51 +349,32 @@ class Session():
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
 
         # Export destination name as global
-        Console.info("Imported %s shared commands.", counter)    
+        Console.info("Imported %s.", Console.colorize("%s commands" % counter, "magenta"))    
 
         return counter
 
 
-
     def addCommand(self, name, func, restype=None):
-        """
-        Registers the given function as a new command
-        """
+        """ Registers the given function as a new command """
 
         if len(name.split(".")) != 2:
             raise Exception("Command names should always match namespace.name! Tried with: %s!" % name)
 
-        env = self.__commandEnvironment
+        commands = self.__commands
 
-        if name in env:
-            raise Exception("Overwriting commands is not supported! Command=%s" % name)
+        if name in commands:
+            raise Exception("Command %s already exists!" % name)
 
-        env[name] = {
+        commands[name] = {
             "func" : func,
             "restype" : restype
         }
 
 
+    def getCommands(self):
+        """ Returns a dictionary of all commands """
 
-    def executeCommand(self, command, params=None):
-        """
-        Executes the given command and returns the result
-        """
-
-        env = self.__commandEnvironment
-
-        if not command in env:
-            raise UserError("Unsupported command %s" % command)
-
-        entry = env[command]
-        restype = entry["restype"]
-
-        if params:
-            result = entry["func"](*params)
-        else:
-            result = entry["func"]()
-
-        return result, restype
+        return self.__commands
 
 
 

@@ -229,7 +229,7 @@ class AssetManager():
         configs = [fileId for fileId in assets if assets[fileId].isImageSpriteConfig()]
 
         if configs:
-            Console.info("Processing %s image sprite configs...", len(configs))
+            Console.info("Processing %s...", Console.colorize("%s sprites", "magenta") % len(configs))
 
         sprites = []
         Console.indent()
@@ -290,7 +290,7 @@ class AssetManager():
         configs = [fileId for fileId in assets if assets[fileId].isImageAnimationConfig()]
 
         if configs:
-            Console.info("Processing %s image animation configs...", len(configs))
+            Console.info("Processing %s...", Console.colorize("%s animations", "magenta") % len(configs))
 
         Console.indent()
         for fileId in configs:

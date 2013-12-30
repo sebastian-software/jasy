@@ -190,7 +190,12 @@ class Project():
             return
 
         updatemsg = "[updated]" if self.__modified else "[cached]"
-        Console.info("Scanning project %s %s...", self.__name, Console.colorize(updatemsg, "grey"))
+
+        if self.version:
+            Console.info("Scanning %s @ %s %s...", Console.colorize(self.getName(), "bold"), Console.colorize(self.version, "magenta"), Console.colorize(updatemsg, "grey"))
+        else:
+            Console.info("Scanning %s %s...", Console.colorize(self.getName(), "bold"), Console.colorize(updatemsg, "grey"))
+
         Console.indent()
 
         # Support for pre-initialize projects...
@@ -255,13 +260,11 @@ class Project():
         for section in ["classes", "styles", "translations", "assets"]:
             content = getattr(self, section, None)
             if content:
-                summary.append("%s %s" % (len(content), section))
+                summary.append(Console.colorize("%s %s" % (len(content), section), "magenta"))
 
         # Print out
         if summary:
-            Console.info("Content: %s" % (Console.colorize(", ".join(summary), "green")))
-        else:
-            Console.error("Project is empty!")
+            Console.info("Content: %s" % (", ".join(summary)))
 
         self.scanned = True
 
