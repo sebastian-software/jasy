@@ -19,15 +19,19 @@ from jasy import UserError
 
 class Session():
     """
-    Manages all projects, fields, permutations, translations etc. Mainly like
-    the main managment infrastructure.
+    Manages all projects.
     """
 
-    __currentPrefix = None
-
+    # Environment object used for executing jasyscript.py.
+    # Contains all items from the main projects jasyscript.py + 
+    # all shared (namespaced) commands from all jasylibrary.py files.
+    __scriptEnvironment = None
 
     # List of all projects in priority order
     __projects = None
+
+    # Virtual project to store dynamically created classes
+    __virtualProject = None
 
     # Whether repositories should be auto updated before projects should be initialized
     __updateRepositories = True
@@ -35,14 +39,8 @@ class Session():
     # All (active) fields as defined by the active projects
     __fields = None
 
-    # Environment object for executing jasylibrary.py code
-    __libraryEnvironment = None
-
-    # Environment object for executing jasycommand.py code
-    __commandEnvironment = None
-
-    # Virtual project to store dynamically created classes
-    __virtualProject = None
+    # Dictionary which maps command names to the implementation function
+    __commands = None
 
     # Translation bundles created by merged data from active projects
     __translationBundles = None
@@ -60,10 +58,11 @@ class Session():
 
         self.__projects = []
         self.__fields = {}
+        self.__commands = {}
         self.__translationBundles = {}
 
 
-    def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None, commandEnvironment=None):
+    def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
         """
         Initialize the actual session with projects
 
@@ -73,8 +72,7 @@ class Session():
         :param commandEnvironment: API object as being used for loadCommands to add Python features for any item nodes.
         """
 
-        self.__libraryEnvironment = scriptEnvironment
-        self.__commandEnvironment = {}
+        self.__scriptEnvironment = scriptEnvironment
         self.__updateRepositories = updateRepositories
 
         if autoInitialize and Config.findConfig("jasyproject"):
@@ -97,6 +95,19 @@ class Session():
                     Console.info(Console.colorize(project.getName(), "bold"))
 
             Console.outdent()
+
+
+
+    def setCurrentTask(self, name=None):
+        if name:
+            Console.header(name)
+
+        self.__currentTask = name
+
+
+    def getCurrentTask(self):
+        return self.__currentTask
+
 
 
     def clean(self):
@@ -201,8 +212,6 @@ class Session():
 
 
 
-
-
     #
     # Project Managment
     #
@@ -258,7 +267,7 @@ class Session():
         containing all @share'd functions and fields loaded from the given file.
         """
 
-        if objectName in self.__libraryEnvironment:
+        if objectName in self.__scriptEnvironment:
             raise UserError("Could not import library %s as the object name %s is already used." % (fileName, objectName))
 
         # Create internal class object for storing shared methods
@@ -282,8 +291,9 @@ class Session():
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
 
         # Export destination name as global
-        Console.debug("Importing %s shared methods under %s...", counter, objectName)
-        self.__libraryEnvironment[objectName] = exportedModule
+        self.__scriptEnvironment[objectName] = exportedModule
+
+        Console.debug("Imported %s shared library methods under %s...", counter, objectName)
 
         return counter
 
@@ -291,20 +301,19 @@ class Session():
 
     def loadCommands(self, objectName, fileName, encoding="utf-8"):
         """
-        Loads new commands into the command environment for being available
-        to all script, style and template preprocessing.
+        Loads new commands into the session wide command registry.
         """
 
         counter = 0
-        env = self.__commandEnvironment
+        commands = self.__commands
 
         # Method for being used as a decorator to share methods to the outside
         def share(func):
             name = "%s.%s" % (objectName, func.__name__)
-            if name in env:
+            if name in commands:
                 raise Exception("Overwriting commands is not supported! Tried with: %s!" % name)
 
-            env[name] = func
+            commands["%s.%s" % (objectName, name)] = func
 
             nonlocal counter
             counter += 1
@@ -316,6 +325,9 @@ class Session():
         # and the session object (self).
         code = open(fileName, "r", encoding=encoding).read()
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
+
+        # Export destination name as global
+        Console.debug("Imported %s shared commands under %s...", counter, objectName)    
 
         return counter
 
@@ -455,7 +467,7 @@ class Session():
 
 
     #
-    # Translation/Localization Support
+    # Translation Support
     #
 
     def getAvailableTranslations(self):
@@ -520,32 +532,5 @@ class Session():
         all.append("C")
 
         return all
-
-
-
-
-
-
-
-    def setCurrentPrefix(self, path):
-        """Interface for Task class to configure the current prefix to use"""
-
-        if path is None:
-            self.__currentPrefix = None
-            Console.debug("Resetting prefix to working directory")
-        else:
-            self.__currentPrefix = os.path.normpath(os.path.abspath(os.path.expanduser(path)))
-            Console.debug("Setting prefix to: %s" % self.__currentPrefix)
-
-
-    def getCurrentPrefix(self):
-        """
-        Returns the current prefix which should be used to generate/copy new files
-        in the current task. This somewhat sandboxes each task automatically to mostly
-        only create files in a task specific folder.
-        """
-
-        return self.__currentPrefix
-
 
 
