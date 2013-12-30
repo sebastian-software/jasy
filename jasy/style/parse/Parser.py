@@ -127,7 +127,9 @@ def Statement(tokenizer, staticContext):
             node = Node.Node(tokenizer, "if")
             node.append(Expression(tokenizer, staticContext), "condition")
             staticContext.statementStack.append(node)
-            node.append(Statement(tokenizer, staticContext), "thenPart")
+            thenPart = Statement(tokenizer, staticContext)
+            thenPart.noscope = True
+            node.append(thenPart, "thenPart")
 
             if tokenizer.match("command"):
                 elseTokenValue = tokenizer.token.value
@@ -136,11 +138,13 @@ def Statement(tokenizer, staticContext):
                     # Process like an "if" and append as elsePart
                     tokenizer.unget()
                     elsePart = Statement(tokenizer, staticContext)
+                    elsePart.noscope = True
                     node.append(elsePart, "elsePart")
 
                 if elseTokenValue == "else":
                     comments = tokenizer.getComments()
                     elsePart = Statement(tokenizer, staticContext)
+                    elsePart.noscope = True
                     addComments(elsePart, node, comments)
                     node.append(elsePart, "elsePart")
 
@@ -443,6 +447,11 @@ def Media(tokenizer, staticContext):
                 query += " "
             query += "%s%s" % (token.value, getattr(token, "unit", ""))
             requiresSpace = True
+        elif tokenType in ("and", "or", "not"):
+            if requiresSpace :
+                query += " "
+            query += tokenType
+            requiresSpace = True
         else:
             raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
 
@@ -529,6 +538,8 @@ def Selector(tokenizer, staticContext):
                 selector += "|"
             elif tokenType == "mul":
                 selector += "*"
+            elif tokenType == "not":
+                selector += "not"
             elif tokenType == "assign":
                 if token.assignOp:
                     if token.assignOp == "mul":
@@ -866,23 +877,24 @@ def MemberExpression(tokenizer, staticContext):
         elif tokenType == "left_paren":
 
             if node.type == "identifier":
-                childNode = Node.Node(tokenizer, "system")
+                childNode = Node.Node(tokenizer, "function")
                 childNode.name = node.value
 
                 # Special processing of URL commands
-                if node.value == "raw":
-                    childNode = RawArgument(tokenizer, staticContext)
-                elif node.value == "expr":
-                    childNode = ExpressionArgument(tokenizer, staticContext)
-                elif node.value in ("url", "jasy.asset"):
+                if node.value == "url":
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             elif node.type == "command":
-                childNode = Node.Node(tokenizer, "command")
-                childNode.name = node.name
-                childNode.append(ArgumentList(tokenizer, staticContext), "params")
+                if node.name == "raw":
+                    childNode = RawArgument(tokenizer, staticContext)
+                elif node.name == "expr":
+                    childNode = ExpressionArgument(tokenizer, staticContext)
+                else:
+                    childNode = Node.Node(tokenizer, "command")
+                    childNode.name = node.name
+                    childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             else:
                 raise SyntaxError("Unsupported mixin include in expression statement", tokenizer)

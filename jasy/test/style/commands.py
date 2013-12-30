@@ -39,7 +39,7 @@ class Tests(unittest.TestCase):
 
 
 
-    def test_simple_minus(self):
+    def test_minus(self):
         self.assertEqual(self.process('''
             h2{
               margin: -20px;
@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:-20px;}')
 
 
-    def test_simple_multi(self):
+    def test_multi(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px 20px 30px;
@@ -55,23 +55,23 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px 20px 30px;}')
 
 
-    def test_simple_expr_minus(self):
+    def test_expr_minus(self):
         self.assertEqual(self.process('''
             h2{
-              margin: expr(10px - 20px);
+              margin: @expr(10px - 20px);
             }
             '''), 'h2{margin:-10px;}')
 
 
-    def test_simple_expr_plus(self):
+    def test_expr_plus(self):
         self.assertEqual(self.process('''
             h2{
-              margin: expr(10px + 20px);
+              margin: @expr(10px + 20px);
             }
             '''), 'h2{margin:30px;}')
 
 
-    def test_simple_unary_minus(self):
+    def test_unary_minus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px -20px;
@@ -79,7 +79,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_unary_plus(self):
+    def test_unary_plus(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px +20px;
@@ -87,22 +87,22 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px +20px;}')
 
 
-    def test_simple_expr_minus_compact(self):
+    def test_expr_minus_compact(self):
         self.assertEqual(self.process('''
             h2{
-              margin: expr(10px-20px);
+              margin: @expr(10px-20px);
             }
             '''), 'h2{margin:-10px;}')
 
 
-    def test_simple_expr_plus_compact(self):
+    def test_expr_plus_compact(self):
         self.assertEqual(self.process('''
             h2{
-              margin: expr(10px+20px);
+              margin: @expr(10px+20px);
             }
             '''), 'h2{margin:30px;}')
 
-    def test_simple_noexpr_minus_compact(self):
+    def test_noexpr_minus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px-20px;
@@ -110,7 +110,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px -20px;}')
 
 
-    def test_simple_noexpr_plus_compact(self):
+    def test_noexpr_plus_compact(self):
         self.assertEqual(self.process('''
             h2{
               margin: 10px+20px;
@@ -118,10 +118,10 @@ class Tests(unittest.TestCase):
             '''), 'h2{margin:10px +20px;}')
 
 
-    def test_ie_filter(self):
+    def test_raw(self):
         self.assertEqual(self.process('''
             .rotate{
-              filter: raw("progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
+              filter: @raw("progid:DXImageTransform.Microsoft.BasicImage(rotation=1)");
             }
             '''), '.rotate{filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);}')
 

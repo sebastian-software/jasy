@@ -1,114 +1,204 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2010-2012 Zynga Inc.
 # Copyright 2013 Sebastian Werner
 #
 
-import re, json, os, fnmatch
-
-import jasy.core.File
-import jasy.item.Asset
+import os, fnmatch, re, json
 
 from jasy import UserError
+
 import jasy.core.Console as Console
+import jasy.core.File as File
+import jasy.core.Util as Util
 
-__all__ = ["AssetManager"]
+RE_URL_PARAMS = re.compile("^([^?#]*)(.*)$")
 
 
-class AssetManager:
-    """
-    Manages assets aka images, styles and other files required for a web application.
+class AssetManager():
 
-    Supports filtering assets based on a given class list (with optional permutation) to
-    only include and copy assets which are needed by the current implementation. This is
-    especially useful when only parts of dependend projects are actually used.
-
-    Merges assets with the same name from different projects. But normally each project
-    creates it's own sandbox namespace so this has not often any effect at all.
-
-    Supports images and automatically detect their size and image format. Both informations
-    are added to the exported data later on.
-    """
-
-    def __init__(self, session, profile):
-
-        Console.info("Initializing assets...")
-        Console.indent()
-
-        # Store session reference (one asset manager per session)
-        self.__session = session
+    def __init__(self, profile):
+        # The current build profile
         self.__profile = profile
 
-        # Stores manager contextual asset information (like relative paths)
-        self.__data = {}
+        # All known assets
+        self.__assets = {}
 
-        # Registry for profiles aka asset groups
-        self.__profiles = []
-
-        # Loop though all projects and merge assets
-        assets = self.__assets = {}
-        for project in self.__session.getProjects():
-            assets.update(project.getAssets())
-
-        self.__processSprites()
-        self.__processAnimations()
-        self.__addCommands()
-
-        Console.outdent()
-        Console.info("Activated %s assets", len(assets))
+        # The set of assets to copy during deployment
+        self.__copylist = set()
 
 
-
-    def __addCommands(self):
-        session = self.__session
-        profile = self.__profile
-
-        data = self.__data
-        assets = self.__assets
-
-        main = session.getMain()
-
-        def assetCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            if not fileId in data:
-                raise Exception("The asset with ID %s is not included in this build" % fileId)
-
-            asset = assets[fileId]
-            print("Looking up asset: %s" % fileId, asset)
-
-            resultPath = None
-            return "url(%s)" % os.path.relpath(asset.getPath(), resultPath)
+    def addProject(self, project):
+        self.__assets.update(project.getAssets())
 
 
-        def widthCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            asset = assets[fileId]
-            if asset.isImage():
-                return asset.exportData()[0]
-
-
-        def heightCmd(fileId):
-            if not fileId in assets:
-                raise Exception("Did not found asset with ID %s" % fileId)
-
-            asset = assets[fileId]
-            if asset.isImage():
-                return asset.exportData()[1]
-
-
-        session.addCommand("jasy.asset", assetCmd)
-        session.addCommand("jasy.width", widthCmd)
-        session.addCommand("jasy.height", heightCmd)
-
-
-
-    def __processSprites(self):
+    def getAssetUrl(self, fileId):
         """
-        Processes jasysprite.json/yaml files to merge sprite data into asset registry
+        Returns the asset URL for the given item relative to the current working path
+        """
+
+        matched = False
+        if not fileId in self.__assets:
+            # Try to split asset params before resolving
+            matched = re.match(RE_URL_PARAMS, fileId)
+            if matched:
+                fileId = matched.group(1)
+                postFix = matched.group(2)
+
+            if not fileId in self.__assets:
+                raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+
+        # Add asset item to tracking list for copy process
+        self.__copylist.add(assetItem)
+
+        # Check for whether files are being copied over to somewhere
+        # or whether we use the relative URL to the source folder
+        if self.__profile.getUseSource():
+            url = assetItem.getPath()
+        else:
+            url = self.__computeDestinationPath(assetItem)
+
+        # Make URL relative to current working path
+        url = os.path.relpath(url, self.__profile.getWorkingPath())
+
+        # Post append asset param/query
+        if matched:
+            url += postFix
+
+        return url
+
+
+    def getAssetWidth(self, fileId):
+        """
+        Returns the width (image width) of the given item
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            return assetItem.exportData()[0]
+
+
+    def getAssetHeight(self, fileId):
+        """
+        Returns the width (image height) of the given item
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            return assetItem.exportData()[1]
+
+
+    def getSpriteId(self, fileId):
+        """
+        Returns the sprite asset which contains the image with the given ID
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            spriteIndex = spriteData[0]
+            return self.__sprites[spriteIndex]
+
+
+    def getSpriteUrl(self, fileId):
+        """
+        Returns the url of the sprite sheet which contains the given single image
+        """
+
+        return self.getAssetUrl(self.getSpriteId(fileId))
+
+
+    def getSpriteWidth(self, fileId):
+        """
+        Returns the width of the sprite sheet which contains the given single image
+        """
+
+        return self.getAssetWidth(self.getSpriteId(fileId))
+
+
+    def getSpriteHeight(self, fileId):
+        """
+        Returns the height of the sprite sheet which contains the given single image
+        """
+
+        return self.getAssetHeight(self.getSpriteId(fileId))
+
+
+    def getSpriteLeft(self, fileId):
+        """
+        Returns the left position of the image on the sprite sheet
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            return spriteData[1]
+
+
+    def getSpriteTop(self, fileId):
+        """
+        Returns the top position of the image on the sprite sheet
+        """
+
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            spriteData = assetItem.exportData()[2]
+            return spriteData[2]
+
+
+    def getAnimationColumns(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            animationData = assetItem.exportData()[3]
+            return animationData[0]
+
+
+    def getAnimationRows(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            animationData = assetItem.exportData()[3]
+            return animationData[1]
+
+
+    def getAnimationFrames(self, fileId):
+        if not fileId in self.__assets:
+            raise Exception("Did not found asset with ID %s" % fileId)
+
+        assetItem = self.__assets[fileId]
+        if assetItem.isImage():
+            animationData = assetItem.exportData()[3]
+            try:
+                return animationData[2]
+            except IndexError:
+                return animationData[0] * animationData[1]
+
+
+
+    def processSprites(self):
+        """
+        Processes jasysprite files to merge sprite data into asset registry
         """
 
         assets = self.__assets
@@ -128,7 +218,7 @@ class AssetManager:
             try:
                 spriteConfig = asset.getParsedObject();
             except ValueError as err:
-                raise UserError("Could not parse jasysprite.json/yaml at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasysprite at %s: %s" % (fileId, err))
 
             Console.indent()
             for spriteImage in spriteConfig:
@@ -140,13 +230,15 @@ class AssetManager:
                 for singleRelPath in singleRelPaths:
                     singleId = "%s/%s" % (spriteBase, singleRelPath)
                     singleData = singleRelPaths[singleRelPath]
+                    singleItem = assets[singleId]
 
-                    if singleId in assets:
-                        singleAsset = assets[singleId]
-                    else:
-                        Console.info("Creating new asset: %s", singleId)
-                        singleAsset = jasy.item.Asset.AssetItem(None)
-                        assets[singleId] = singleAsset
+                    # Verify that sprite sheet is up-to-date
+                    fileChecksum = singleItem.getChecksum()
+                    storedChecksum = singleData["checksum"]
+
+                    Console.debug("Checksum Compare: %s <=> %s", fileChecksum, storedChecksum)
+                    if storedChecksum != fileChecksum:
+                        raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs." % singleId)
 
                     if not spriteImageId in sprites:
                         spriteImageIndex = len(sprites)
@@ -154,22 +246,12 @@ class AssetManager:
                     else:
                         spriteImageIndex = sprites.index(spriteImageId)
 
-                    singleAsset.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
-
-                    if "width" in singleData and "height" in singleData:
-                        singleAsset.addImageDimensionData(singleData["width"], singleData["height"])
-
-                    # Verify that sprite sheet is up-to-date
-                    if "checksum" in singleData:
-                        fileChecksum = singleAsset.getChecksum()
-                        storedChecksum = singleData["checksum"]
-
-                        Console.debug("Checksum Compare: %s <=> %s", fileChecksum[0:6], storedChecksum[0:6])
-
-                        if storedChecksum != fileChecksum:
-                            raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs.", singleId)
+                    # Add relevant data to find image on sprite sheet
+                    singleItem.addImageSpriteData(spriteImageIndex, singleData["left"], singleData["top"])
 
             Console.outdent()
+
+            # The config file does not make any sense on the client side
             Console.debug("Deleting sprite config from assets: %s", fileId)
             del assets[fileId]
 
@@ -177,9 +259,8 @@ class AssetManager:
         self.__sprites = sprites
 
 
-
-    def __processAnimations(self):
-        """Processes jasyanimation.json files to merge animation data into asset registry"""
+    def processAnimations(self):
+        """Processes jasyanimation files to merge animation data into asset registry"""
 
         assets = self.__assets
         configs = [fileId for fileId in assets if assets[fileId].isImageAnimationConfig()]
@@ -195,9 +276,9 @@ class AssetManager:
             base = os.path.dirname(fileId)
 
             try:
-                config = json.loads(asset.getText())
+                config = asset.getParsedObject()
             except ValueError as err:
-                raise UserError("Could not parse jasyanimation.json/yaml at %s: %s" % (fileId, err))
+                raise UserError("Could not parse jasyanimation at %s: %s" % (fileId, err))
 
             for relPath in config:
                 imageId = "%s/%s" % (base, relPath)
@@ -234,131 +315,100 @@ class AssetManager:
         Console.outdent()
 
 
-
-    def addProfile(self, name, root=None, config=None, items=None):
+    def __computeDestinationPath(self, assetItem):
         """
-        Adds a new profile to the manager. This is basically the plain
-        version of addSourceProfile/addBuildProfile which gives complete
-        manual control of where to load the assets from. This is useful
-        for e.g. supporting a complete custom loading scheme aka complex
-        CDN based setup.
+        Returns the path of the given asset item including the asset folder path
         """
 
-        profiles = self.__profiles
-        for entry in profiles:
-            if entry["name"] == name:
-                raise UserError("Asset profile %s was already defined!" % name)
+        profile = self.__profile
+        assetFolder = os.path.join(profile.getDestinationPath(), profile.getAssetFolder())
 
-        profile = {
-            "name" : name
-        }
+        if profile.getHashAssets():
+            fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
+        else:
+            fileName = assetItem.getId().replace("/", os.sep)
 
-        if root:
-            if not root.endswith("/"):
-                root += "/"
-
-            profile["root"] = root
-
-        if config is not None:
-            profile.update(config)
-
-        unique = len(profiles)
-        profiles.append(profile)
-
-        if items:
-            for fileId in items:
-                items[fileId]["p"] = unique
-
-            self.__addRuntimeData(items)
-
-        return unique
+        return assetFolder + "/" + fileName
 
 
-
-    def addSourceProfile(self, urlPrefix="", override=False):
+    def copyAssets(self):
         """
-        Adds a profile to include assets as being available in source tasks.
-
-        This basically means that assets from all projects are referenced via
-        relative URLs to the main project.
-
-        Note 1: This automatically updates all currently known assets to
-        reference the source profile.
-
-        Note 2: This method only adds profile data to any assets when either
-        there is no profile registered yet or override is set to True.
+        Copies assets from their source folder to the configured
+        destination folder. Does apply file name transformations
+        during copying when requested.
         """
 
-        # First create a new profile with optional (CDN-) URL prefix
-        profileId = self.addProfile("source", urlPrefix)
+        Console.info("Copying assets...")
 
-        # Then export all relative paths to main project and add this to the runtime data
-        main = self.__session.getMain()
+        counter = 0
+        for assetItem in self.__copylist:
+            srcFile = assetItem.getPath()
+            dstFile = self.__computeDestinationPath(assetItem)
+
+            if File.syncfile(srcFile, dstFile):
+                counter += 1
+
+        Console.info("Copied %s assets.", counter)
+
+
+    def exportToJson(self, items=None):
+        """
+        Exports asset data for usage at the client side. Utilizes JavaScript
+        class jasy.Asset to inject data into the client at runtime.
+        """
+
+        # Processing assets
         assets = self.__assets
-        data = self.__data
 
+        # Destination folder for assets
+        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetFolder());
+
+        result = {}
+        filterExpr = self.__compileFilterExpr(items) if items else None
         for fileId in assets:
-            if not fileId in data:
-                data[fileId] = {}
-
-            if override or not "p" in data[fileId]:
-                data[fileId]["p"] = profileId
-                data[fileId]["u"] = main.toRelativeUrl(assets[fileId].getPath())
-
-        return self
-
-
-
-    def addBuildProfile(self, urlPrefix="asset", override=False, hashNames=False):
-        """
-        Adds a profile to include assets as being available in build tasks.
-
-        This basically means that assets from all projects are copied to
-        a local directory inside the build folder.
-
-        Note 1: This automatically updates all currently known assets to
-        reference the build profile.
-
-        Note 2: This method only adds profile data to any assets when either
-        there is no profile registered yet or override is set to True.
-        """
-
-        # First create a new profile with optional (CDN-) URL prefix
-        profileId = self.addProfile("build", urlPrefix)
-
-        # Then export all relative paths to main project and add this to the runtime data
-        main = self.__session.getMain()
-        assets = self.__assets
-        data = self.__data
-
-        for fileId in assets:
-            if not fileId in data:
-                data[fileId] = {}
-
-            if override or not "p" in data[fileId]:
-                data[fileId]["p"] = profileId
-
-            if hashNames:
-                data[fileId]["h"] = assets[fileId].getChecksum()
-
-        return self
-
-
-    def __addRuntimeData(self, runtime):
-        assets = self.__assets
-        data = self.__data
-
-        for fileId in runtime:
-            if not fileId in assets:
-                Console.debug("Unknown asset: %s" % fileId)
+            if filterExpr and not filterExpr.match(fileId):
                 continue
 
-            if not fileId in data:
-                data[fileId] = {}
+            entry = {}
+            # t = file type
+            # u = full file url
+            # h = file hash (based on content)
+            # d = asset data (image size, etc.)
 
-            data[fileId].update(runtime[fileId])
+            assetItem = assets[fileId]
+            self.__copylist.add(assetItem)
 
-        return self
+            if self.__profile.getUseSource():
+                # Compute relative folder from asset location to even external
+                # locations (e.g. auto cloned remote projects)
+                entry["u"] = os.path.relpath(assetItem.getPath(), assetPath)
+            elif self.__profile.getHashAssets():
+                # Export checksum (SHA1 encoded as URL-safe Base62)
+                entry["h"] = assetItem.getChecksum()
+
+            # Store file type as analyzed by asset item
+            entry["t"] = assetItem.getType(short=True)
+
+            # Store additional data figured out by asset item e.g.
+            # image dimensions, video format, play duration, ...
+            assetData = assetItem.exportData()
+            if assetData:
+                entry["d"] = assetData
+
+            result[fileId] = entry
+
+        # Ignore empty result
+        if not result:
+            return None
+
+        Console.info("Exported %s assets", len(result))
+
+        return json.dumps({
+            "assets" : self.__structurize(result)
+        }, indent=2, sort_keys=True)
+
+
+
 
 
     def __structurize(self, data):
@@ -397,14 +447,13 @@ class AssetManager:
         return root
 
 
-
     def __compileFilterExpr(self, classes):
         """Returns the regular expression object to use for filtering"""
 
         # Merge asset hints from all classes and remove duplicates
         hints = set()
         for classObj in classes:
-            hints.update(classObj.getMetaData(self.__session.getCurrentPermutation()).assets)
+            hints.update(classObj.getMetaData(self.__profile.getCurrentPermutation()).assets)
 
         # Compile filter expressions
         matcher = "^%s$" % "|".join(["(?:%s)" % fnmatch.translate(hint) for hint in hints])
@@ -414,88 +463,6 @@ class AssetManager:
 
 
 
-    def deploy(self, classes, assetFolder=None, hashNames=False):
-        """
-        Deploys all asset files to the destination asset folder. This merges
-        assets from different projects into one destination folder.
-        """
 
-        # Sometimes it's called with explicit None - we want to fill the default
-        # in that case as well.
-        if assetFolder is None:
-            assetFolder = "{{prefix}}/asset"
-
-        assets = self.__assets
-        projects = self.__session.getProjects()
-
-        copyAssetFolder = self.__session.expandFileName(assetFolder)
-        filterExpr = self.__compileFilterExpr(classes)
-
-        Console.info("Deploying assets...")
-
-        counter = 0
-        length = len(assets)
-
-        for fileId in assets:
-            if not filterExpr.match(fileId):
-                length -= 1
-                continue
-
-            srcFile = assets[fileId].getPath()
-
-            # Support for hashed file names instead of real names
-            if hashNames:
-                dstFile = os.path.join(copyAssetFolder, "%s%s" % (assets[fileId].getChecksum(), assets[fileId].extension))
-            else:
-                dstFile = os.path.join(copyAssetFolder, fileId.replace("/", os.sep))
-
-            if jasy.core.File.syncfile(srcFile, dstFile):
-                counter += 1
-
-        Console.info("Updated %s/%s files" % (counter, length))
-
-
-
-    def export(self, classes=None):
-        """
-        Exports asset data for usage at the client side. Utilizes JavaScript
-        class jasy.Asset to inject data into the client at runtime.
-        """
-
-        # Processing assets
-        assets = self.__assets
-        data = self.__data
-
-        result = {}
-        filterExpr = self.__compileFilterExpr(classes) if classes else None
-        for fileId in assets:
-            if filterExpr and not filterExpr.match(fileId):
-                continue
-
-            entry = {}
-
-            asset = assets[fileId]
-            entry["t"] = asset.getType(short=True)
-
-            assetData = asset.exportData()
-            if assetData:
-                entry["d"] = assetData
-
-            if fileId in data:
-                entry.update(data[fileId])
-
-            result[fileId] = entry
-
-        # Ignore empty result
-        if not result:
-            return None
-
-        Console.info("Exported %s assets", len(result))
-
-        return json.dumps({
-            "assets" : self.__structurize(result),
-            "profiles" : self.__profiles,
-            "sprites" : self.__sprites
-        }, indent=2, sort_keys=True)
 
 

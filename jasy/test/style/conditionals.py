@@ -165,12 +165,19 @@ class Tests(unittest.TestCase):
 
     def test_field(self):
         self.assertEqual(self.process('''
+            h2{
+              content: @field(jasy.engine);
+            }
+            '''), 'h2{content:"gecko";}')
+
+
+    def test_field_as_variable(self):
+        self.assertEqual(self.process('''
             $engine = @field(jasy.engine);
             h2{
               content: $engine;
             }
             '''), 'h2{content:"gecko";}')
-
 
 
 

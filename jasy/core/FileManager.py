@@ -12,15 +12,15 @@ class FileManager:
     Summarizes utility methods for operations in filesystem.
     """
 
-    def __init__(self, session):
+    def __init__(self, profile):
 
-        self.__session = session
+        self.__profile = profile
 
 
     def removeDir(self, dirname):
         """Removes the given directory"""
 
-        dirname = self.__session.expandFileName(dirname)
+        dirname = self.__profile.expandFileName(dirname)
         if os.path.exists(dirname):
             Console.info("Deleting folder %s" % dirname)
             shutil.rmtree(dirname)
@@ -29,7 +29,7 @@ class FileManager:
     def removeFile(self, filename):
         """Removes the given file"""
 
-        filename = self.__session.expandFileName(filename)
+        filename = self.__profile.expandFileName(filename)
         if os.path.exists(filename):
             Console.info("Deleting file %s" % filename)
             os.remove(filename)
@@ -41,7 +41,7 @@ class FileManager:
         if dirname == "":
             return
 
-        dirname = self.__session.expandFileName(dirname)
+        dirname = self.__profile.expandFileName(dirname)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
@@ -52,11 +52,23 @@ class FileManager:
         Merges the existing directory structure with the folder to copy.
         """
 
-        dst = self.__session.expandFileName(dst)
+        dst = self.__profile.expandFileName(dst)
         srcLength = len(src)
         counter = 0
 
-        for rootFolder, dirs, files in os.walk(src):
+        visitedPaths = []
+
+        for rootFolder, dirs, files in os.walk(src,followlinks=True):
+            
+            # Prevent infinite loops by removing already visited subdirs
+            # This only happens by using recursive links
+            subdirs = dirs[:]
+            for subdir in subdirs:
+                realPath = os.path.realpath(os.path.join(rootFolder, subdir))
+                if realPath in visitedPaths:
+                    dirs.remove(subdir)
+                else:
+                    visitedPaths.append(realPath)
 
             # figure out where we're going
             destFolder = dst + rootFolder[srcLength:]
@@ -80,7 +92,7 @@ class FileManager:
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
 
-        dst = self.__session.expandFileName(dst)
+        dst = self.__profile.expandFileName(dst)
 
         # First test for existance of destination directory
         self.makeDir(os.path.dirname(dst))
@@ -100,7 +112,7 @@ class FileManager:
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
 
-        dst = self.__session.expandFileName(dst)
+        dst = self.__profile.expandFileName(dst)
 
         try:
             dst_mtime = os.path.getmtime(dst)
@@ -121,7 +133,7 @@ class FileManager:
     def writeFile(self, dst, content):
         """Writes the content to the destination file name"""
 
-        dst = self.__session.expandFileName(dst)
+        dst = self.__profile.expandFileName(dst)
 
         # First test for existance of destination directory
         self.makeDir(os.path.dirname(dst))

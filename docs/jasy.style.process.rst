@@ -1,6 +1,14 @@
 process Package
 ===============
 
+:mod:`Executer` Module
+----------------------
+
+.. automodule:: jasy.style.process.Executer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`Flatter` Module
 ---------------------
 
@@ -17,18 +25,10 @@ process Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`Resolver` Module
-----------------------
-
-.. automodule:: jasy.style.process.Resolver
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`Variables` Module
+:mod:`Operation` Module
 -----------------------
 
-.. automodule:: jasy.style.process.Variables
+.. automodule:: jasy.style.process.Operation
     :members:
     :undoc-members:
     :show-inheritance:

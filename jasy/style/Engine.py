@@ -13,12 +13,11 @@ import jasy.style.parse.Parser as Parser
 import jasy.style.parse.ScopeScanner as ScopeScanner
 
 import jasy.style.clean.Unused as Unused
+import jasy.style.clean.Permutate as Permutate
 
-import jasy.style.process.Resolver as Resolver
 import jasy.style.process.Mixins as Mixins
-import jasy.style.process.Variables as Variables
 import jasy.style.process.Flatter as Flatter
-import jasy.style.process.Methods as Methods
+import jasy.style.process.Executer as Executer
 
 import jasy.style.output.Optimization as Optimization
 import jasy.style.output.Formatting as Formatting
@@ -50,13 +49,10 @@ def permutateTree(tree, permutation=None):
     """
 
     if permutation:
-
-        Resolver.process(tree, permutation)
-
+        Permutate.patch(tree, permutation)
         return tree
 
     else:
-
         return tree
 
 
@@ -65,6 +61,9 @@ def reduceTree(tree, session=None):
     """
     Applies all relevant modifications to the tree to allow compression to CSS
     """
+
+    Console.info("Reducing tree: %s...", tree.fileId)
+    Console.indent()
 
     # PHASE 2
     # Trivial cleanups
@@ -85,19 +84,9 @@ def reduceTree(tree, session=None):
     ScopeScanner.scan(tree)
     Unused.cleanup(tree)
 
-    # PHASE 6 A
-    # Compute variables
-    remaining = Variables.compute(tree)
-    Console.info("Variables remaining [1]: %s" % remaining)
-
-    # PHASE 6 B
-    # Run custom methods
-    Methods.execute(tree, session)
-
-    # PHASE 6 C
-    # Compute variables (again)
-    remaining = Variables.compute(tree)
-    Console.info("Variables remaining [2]: %s" % remaining)
+    # PHASE 6
+    # Execute variable resolution and method calls
+    Executer.process(tree, session)
 
     # PHASE 7
     # Flattening selectors
@@ -106,6 +95,8 @@ def reduceTree(tree, session=None):
     # PHASE 8
     # Post scan to remove (hopefully) all variable/mixin access
     ScopeScanner.scan(tree)
+
+    Console.outdent()
 
     return tree
 

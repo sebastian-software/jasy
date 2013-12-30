@@ -32,13 +32,16 @@ class OutputManager:
     #   ESSENTIALS
     # --------------------------------------------------------------------------------------------
 
-    def __init__(self, profile, session, assetManager=None, compressionLevel=1, formattingLevel=0):
+    def __init__(self, profile):
 
-        self.__session = session
         self.__profile = profile
 
-        self.__assetManager = assetManager
-        self.__fileManager = FileManager(session)
+        self.__session = profile.getSession()
+        self.__assetManager = profile.getAssetManager()
+        self.__fileManager = profile.getFileManager()
+
+        compressionLevel = profile.getCompressionLevel()
+        formattingLevel = profile.getFormattingLevel()
 
         self.__kernelScripts = []
 
@@ -89,7 +92,7 @@ class OutputManager:
         Console.info("Deploying assets...")
         Console.indent()
 
-        resolver = Resolver(self.__session)
+        resolver = Resolver(self.__profile)
 
         for itemId in items:
             resolver.add(itemId)
@@ -107,10 +110,11 @@ class OutputManager:
 
     def __sortScriptItems(self, items, bootCode=None, filterBy=None, inlineTranslations=False):
 
+        profile = self.__profile
         session = self.__session
 
         # 1. Add given set of items
-        resolver = Resolver(session)
+        resolver = Resolver(profile)
         for item in items:
             resolver.add(item)
 
@@ -135,7 +139,7 @@ class OutputManager:
 
         # 5. Add translation data
         if not inlineTranslations:
-            translationBundle = self.__session.getCurrentTranslationBundle()
+            translationBundle = session.getTranslationBundle(profile.getCurrentLocale())
             if translationBundle:
                 translationData = translationBundle.export(includedClasses)
                 if translationData:
@@ -159,11 +163,13 @@ class OutputManager:
 
     def __compressScripts(self, items):
         try:
+            profile = self.__profile
             session = self.__session
+
             result = []
 
             for item in items:
-                compressed = item.getCompressed(session.getCurrentPermutation(), session.getCurrentTranslationBundle(), self.__scriptOptimization, self.__scriptFormatting)
+                compressed = item.getCompressed(profile)
 
                 if self.__addDividers:
                     result.append("// FILE ID: %s\n%s\n\n" % (item.getId(), compressed))
@@ -240,11 +246,11 @@ class OutputManager:
 
     def __compressStyles(self, styles):
         try:
-            session = self.__session
+            profile = self.__profile
             result = []
 
             for styleObj in styles:
-                compressed = styleObj.getCompressed(session, session.getCurrentPermutation(), self.__styleOptimization, self.__styleFormatting)
+                compressed = styleObj.getCompressed(profile)
 
                 if self.__addDividers:
                     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
@@ -272,7 +278,7 @@ class OutputManager:
         items = self.__profile.getSetupClasses().values()
 
         # Transfer all hard-wired fields into a permutation
-        self.__session.setStaticPermutation()
+        self.__profile.setStaticPermutation()
 
         # Sort and compress
         sortedClasses = self.__sortScriptItems(items, bootCode, inlineTranslations=True)
@@ -313,7 +319,7 @@ class OutputManager:
         Console.indent()
 
         # Resolve placeholders first
-        fileName = self.__session.expandFileName(fileName)
+        fileName = self.__profile.expandFileName(fileName)
         relativeToMain = self.__session.getMain().toRelativeUrl(fileName)
 
         compressedCode = self.__compressStyles(styles)

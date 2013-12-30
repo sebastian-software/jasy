@@ -4,8 +4,16 @@
 #
 
 import itertools, re
+import jasy.style.parse.Node as Node
 
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
+
+MATH_OPERATORS = ("plus", "minus", "mul", "div", "mod")
+COMPARE_OPERATORS = ("eq", "ne", "gt", "lt", "ge", "le")
+LOGIC_OPERATORS = ("not", "and", "or")
+
+ALL_OPERATORS = MATH_OPERATORS + COMPARE_OPERATORS + LOGIC_OPERATORS
+
 
 def extractVendor(name):
     match = RE_ENGINE_PROPERTY.match(name)
@@ -19,6 +27,49 @@ def extractName(name):
         return match.group(2)
     else:
         return name
+
+
+def executeCommand(node, session):
+    command = node.name
+
+    params = []
+    for param in node.params:
+        # Variable not yet processed (possible e.g. during permutation apply)
+        if param.type == "variable":
+            return node
+        elif param.type == "unary_minus":
+            value = -param[0].value
+        else:
+            value = param.value
+
+        params.append(value)
+
+    # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
+    result, restype = session.executeCommand(command, params)
+
+    if restype == "px":
+        repl = Node.Node(type="number")
+        repl.value = result
+        repl.unit = restype
+
+    elif restype == "url":
+        repl = Node.Node(type="function")
+        repl.name = "url"
+        listChild = Node.Node(type="list")
+        repl.append(listChild, "params")
+        valueChild = Node.Node(type="identifier")
+        valueChild.value = result
+        listChild.append(valueChild)
+
+    elif restype == "number":
+        repl = Node.Node(type="number")
+        repl.value = result
+
+    else:
+        repl = Node.Node(type="identifier")
+        repl.value = result
+
+    return repl
 
 
 def assembleDot(node, result=None):
@@ -39,6 +90,24 @@ def assembleDot(node, result=None):
 
     return ".".join(result)
 
+
+def castNativeToNode(value):
+    if value is True:
+        node = Node.Node(type="true")
+    elif value is False:
+        node = Node.Node(type="false")
+    elif isinstance(value, str):
+        node = Node.Node(type="string")
+        node.value = value
+    elif isinstance(value, (float, int)):
+        node = Node.Node(type="number")
+        node.value = value
+    elif value is None:
+        node = Node.Node(type="null")
+    else:
+        raise ResolverError("Could not transform field %s=%s to style value" % (name, value))
+
+    return node
 
 
 def combineSelector(node, stop=None):
