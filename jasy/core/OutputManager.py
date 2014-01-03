@@ -25,6 +25,8 @@ import jasy.style.output.Formatting as StyleFormatting
 
 from jasy.core.FileManager import FileManager
 
+import jasy.core.Hook
+
 
 class OutputManager:
 
@@ -145,6 +147,8 @@ class OutputManager:
                 if translationData:
                     translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
                     resolver.add(translationClassItem, prepend=True)
+
+        jasy.core.Hook.call("jasy.core.OutputManager resolve classes", self.__profile, resolver)
 
         # 6. Sorting items
         sortedClasses = resolver.getSorted()
