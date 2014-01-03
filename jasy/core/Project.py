@@ -11,6 +11,7 @@ import jasy.core.Config as Config
 import jasy.core.File as File
 import jasy.core.Console as Console
 import jasy.core.Util as Util
+import jasy.core.Hook
 
 import jasy.vcs.Repository as Repository
 
@@ -143,6 +144,7 @@ class Project():
         self.assets = {}
         self.docs = {}
         self.translations = {}
+        self.hookContents = {}
 
         # Load project configuration
         self.__config = Config.Config(config)
@@ -219,6 +221,8 @@ class Project():
 
             Console.outdent()
 
+        projectPathHook = self.__projectPathHook = jasy.core.Hook.call("jasy.core.Project register source path", self)
+
         # Processing custom content section. Only supports classes and assets.
         if self.__config.has("content"):
             self.kind = "manual"
@@ -236,6 +240,10 @@ class Project():
                 self.__addDir("source/asset", "assets")
             if self.__hasDir("source/translation"):
                 self.__addDir("source/translation", "translations")
+            if projectPathHook:
+                for pathHook in projectPathHook:
+                    if self.__hasDir("source/%s" % pathHook["path"]):
+                        self.__addDir("source/%s" % pathHook["path"], pathHook["name"])
 
         # Compat - please change to class/style/asset instead
         elif self.__hasDir("src"):
@@ -254,10 +262,17 @@ class Project():
                 self.__addDir("asset", "assets")
             if self.__hasDir("translation"):
                 self.__addDir("translation", "translations")
+            if projectPathHook:
+                for pathHook in projectPathHook:
+                    if self.__hasDir(pathHook["path"]):
+                        self.__addDir(pathHook["path"], pathHook["name"])
 
         # Generate summary
         summary = []
-        for section in ["classes", "styles", "translations", "assets"]:
+        sections = ["classes", "styles", "translations", "assets"]
+        if projectPathHook:
+            sections += [pathHook["name"] for pathHook in projectPathHook]
+        for section in sections:
             content = getattr(self, section, None)
             if content:
                 summary.append(Console.colorize("%s %s" % (len(content), section), "magenta"))
@@ -310,6 +325,8 @@ class Project():
             else:
                 filePath = [os.path.join(self.__path, filePart) for filePart in fileContent]
 
+            projectPathHook = self.__projectPathHook
+
             # Structure files
             if fileExtension in classExtensions:
                 construct = jasy.item.Class.ClassItem
@@ -320,6 +337,16 @@ class Project():
             elif fileExtension in translationExtensions:
                 construct = jasy.item.Translation.TranslationItem
                 dist = self.translations
+            elif projectPathHook and fileExtension in [pathHook["extension"] for pathHook in projectPathHook]:
+                for pathHook in projectPathHook:
+                    if fileExtension == pathHook["extension"]:
+                        Item = pathHook["itemtype"]
+                        distname = pathHook["name"]
+                        break
+                construct = Item
+                if not distname in self.hookContents:
+                    self.hookContents[distname] = {}
+                dist = self.hookContents[distname]
             else:
                 construct = jasy.item.Asset.AssetItem
                 dist = self.assets
@@ -382,6 +409,8 @@ class Project():
         else:
             fileId = ""
 
+        projectPathHook = self.__projectPathHook
+
         # Structure files
         if fileExtension in classExtensions and distname == "classes":
             fileId += os.path.splitext(relPath)[0]
@@ -395,6 +424,16 @@ class Project():
             fileId += os.path.splitext(relPath)[0]
             construct = jasy.item.Translation.TranslationItem
             dist = self.translations
+        elif projectPathHook and (fileExtension, distname) in [(pathHook["extension"], pathHook["name"]) for pathHook in projectPathHook]:
+            for pathHook in projectPathHook:
+                if fileExtension == pathHook["extension"] and distname == pathHook["name"]:
+                    Item = pathHook["itemtype"]
+                    break
+            fileId += relPath
+            construct = Item
+            if not distname in self.hookContents:
+                self.hookContents[distname] = {}
+            dist = self.hookContents[distname]
         elif fileName in docFiles:
             fileId += os.path.dirname(relPath)
             fileId = fileId.strip("/") # edge case when top level directory
@@ -585,6 +624,7 @@ class Project():
         self.assets = None
         self.docs = None
         self.translations = None
+        self.hookContents = None
 
     def pause(self):
         """Pauses the project so that other processes could modify/access it"""
@@ -639,10 +679,20 @@ class Project():
         return self.translations
 
     def getAssets(self):
-        """ Returns all project asssets (images, stylesheets, static data, etc.). """
+        """ Returns all project assets (images, stylesheets, static data, etc.). """
 
         if not self.scanned:
             self.scan()
 
         return self.assets
 
+    def getHookContents(self, hookName):
+        """ Returns all hooked contents. """
+
+        if not self.scanned:
+            self.scan()
+
+        if not hookName in self.hookContents:
+            return None
+
+        return self.hookContents[hookName]
