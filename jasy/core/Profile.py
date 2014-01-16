@@ -715,6 +715,9 @@ class Profile():
         - {{id}}: SHA1 checksum based on permutation and repository branch/revision
         """
 
+        if "{{destination}}" in fileName:
+            fileName = fileName.replace("{{destination}}", self.getDestinationPath())
+
         if self.__currentPermutation:
             if "{{permutation}}" in fileName:
                 fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
