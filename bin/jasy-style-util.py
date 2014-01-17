@@ -3,6 +3,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 # Import standard library stuff
@@ -17,11 +18,11 @@ if sys.version_info[0] < 3:
 basedir = os.path.join(os.path.dirname(sys.argv[0]), os.pardir)
 if os.path.exists(os.path.join(basedir, "jasy")):
     sys.path.insert(0, basedir)
-                
+
 if len(sys.argv) == 1:
     sys.stderr.write("Missing job name\n")
     sys.exit(1)
-    
+
 supported = set(("tokens", "tree", "compress", "optimize"))
 job = sys.argv[1]
 if not job in supported:
@@ -38,20 +39,20 @@ import jasy.style.output.Formatting as Formatting
 
 for fname in sys.argv[2:]:
     text = open(fname, encoding="utf-8").read()
-    
+
     print(">>> File: %s" % fname, file=sys.stderr)
-    
-    if job == "optimize":    
+
+    if job == "optimize":
         tree = Engine.getTree(text, fname)
         tree = Engine.reduceTree(tree)
         print(Engine.compressTree(tree))
 
-    elif job == "compress":    
+    elif job == "compress":
         formatting = Formatting.Formatting("blocks", "whitespace", "statements", "indent")
         tree = Engine.getTree(text, fname)
         tree = Engine.reduceTree(tree)
         print(Engine.compressTree(tree, formatting))
-        
+
     elif job == "tree":
         print(Engine.getTree(text, fname).toXml())
 

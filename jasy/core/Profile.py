@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import jasy

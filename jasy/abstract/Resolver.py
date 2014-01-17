@@ -1,7 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import jasy.core.Console as Console
@@ -18,12 +18,12 @@ class ResolverError(Exception):
 
 class Resolver():
     """
-    Resolves dependencies between items. 
+    Resolves dependencies between items.
     This class is not type depended e.g. is used for both scripts and styles.
     """
 
     def __init__(self, profile):
-        
+
         # Keep profile reference
         self.profile = profile
 
@@ -38,7 +38,7 @@ class Resolver():
 
         # Hard excluded classes (used for filtering previously included classes etc.)
         self.__excluded = []
-        
+
         # Included classes after dependency calculation
         self.__included = []
 
@@ -62,10 +62,10 @@ class Resolver():
             self.__required.insert(0, nameOrItem)
         else:
             self.__required.append(nameOrItem)
-        
+
         # Invalidate included list
         self.__included = None
-        
+
         return self
 
 
@@ -80,27 +80,27 @@ class Resolver():
                 if self.__included:
                     self.__included = []
                 return True
-                
+
         return False
 
 
     def exclude(self, items):
-        """ 
-        Excludes the given items (just a hard-exclude which is 
-        applied after calculating the current dependencies) 
         """
-        
+        Excludes the given items (just a hard-exclude which is
+        applied after calculating the current dependencies)
+        """
+
         self.__excluded.extend(items)
-        
+
         # Invalidate included list
         self.__included = None
-        
+
         return self
-        
+
 
     def getRequired(self):
         """ Returns the user added classes - the so-called required classes. """
-        
+
         return self.__required
 
 
@@ -109,29 +109,29 @@ class Resolver():
 
         if self.__included:
             return self.__included
-                
+
         collection = set()
         for item in self.__required:
             self.__resolveDependencies(item, collection)
-            
+
         # Filter excluded classes
         for item in self.__excluded:
             if item in collection:
                 collection.remove(item)
-        
+
         self.__included = collection
 
         return self.__included
-        
+
 
     def __resolveDependencies(self, item, collection):
         """ Internal resolver engine which works recursively through all dependencies """
-        
+
         collection.add(item)
         dependencies = self.getItemDependencies(item)
-        
+
         for depObj in dependencies:
             if not depObj in collection:
                 self.__resolveDependencies(depObj, collection)
-                    
+
 

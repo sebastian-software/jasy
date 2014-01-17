@@ -3,6 +3,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 # Import standard library stuff
@@ -17,11 +18,11 @@ if sys.version_info[0] < 3:
 basedir = os.path.join(os.path.dirname(sys.argv[0]), os.pardir)
 if os.path.exists(os.path.join(basedir, "jasy")):
     sys.path.insert(0, basedir)
-                
+
 if len(sys.argv) == 1:
     sys.stderr.write("Missing job name\n")
     sys.exit(1)
-    
+
 supported = set(("api", "compress", "deps", "meta", "optimize", "tree"))
 job = sys.argv[1]
 if not job in supported:
@@ -47,17 +48,17 @@ for fname in sys.argv[2:]:
     text = open(fname, encoding="utf-8").read()
     root = parse(text, fname)
     variables = scan(root)
-    
+
     print(">>> File: %s" % fname)
-    
+
     if job == "api":
         apidata = ApiData(fname, True)
         apidata.scanTree(root)
         print(apidata.export())
-        
+
     elif job == "compress":
         print(Compressor().compress(root))
-        
+
     elif job == "deps":
         if variables.modified:
             print("Exported Variables:")
@@ -72,8 +73,8 @@ for fname in sys.argv[2:]:
         if variables.packages:
             print("Accessed Packages:")
             for package in sorted(variables.packages):
-                print(" - %s (%sx)" % (package, variables.packages[package]))        
-        
+                print(" - %s (%sx)" % (package, variables.packages[package]))
+
     elif job == "meta":
         meta = MetaData(root)
 
@@ -81,20 +82,20 @@ for fname in sys.argv[2:]:
         print("Requires: %s" % meta.requires)
         print("Optionals: %s" % meta.optionals)
         print("Breaks: %s" % meta.breaks)
-        print("Assets: %s" % meta.assets)        
-        
+        print("Assets: %s" % meta.assets)
+
     elif job == "optimize":
         permutation = Permutation({ "debug": False })
         jasy.js.clean.Permutate.patch(root, permutation)
-        
+
         jasy.js.clean.DeadCode.cleanup(root)
         variables = scan(root)
         jasy.js.clean.Unused.cleanup(root)
-        
+
         Optimization("declarations", "blocks", "variables", "privates").apply(root)
         print(Compressor().compress(root))
-        
+
     elif job == "tree":
         print(root.toXml())
-    
+
 

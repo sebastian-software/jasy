@@ -3,6 +3,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 # Import standard libraries
@@ -37,7 +38,7 @@ import jasy.core.Console as Console
 args = sys.argv[1:]
 if args and "jasyscript.py" in args[0]:
     args = args.pop(0)
-    
+
 options = Options()
 
 options.add("verbose", short="v", help="Print more detailed status messages to stdout")
@@ -91,12 +92,12 @@ if options.log:
     logfileHandler = logging.FileHandler(options.log)
     logfileHandler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
     logfileHandler.setLevel(logging.DEBUG)
-    logging.getLogger().addHandler(logfileHandler)  
+    logging.getLogger().addHandler(logfileHandler)
 
 
 # ===========================================================================
 #   DOCTOR
-# ===========================================================================      
+# ===========================================================================
 
 import jasy.core.Doctor as Doctor
 
@@ -130,7 +131,7 @@ def findJasyscript():
         current = os.path.normpath(os.path.join(current, ".."))
         if current == old:
             break
-            
+
 jasyscript = options.file
 if jasyscript == "jasyscript.py":
     jasyscript = findJasyscript()
@@ -181,7 +182,7 @@ def init():
             api[key] = getattr(Context, key)
 
     # Let context know about the methods/classes it has (e.g. for showapi() task)
-    setattr(Context, "__api__", api)    
+    setattr(Context, "__api__", api)
 
     # Execute the jasyscript.py in a clean environment
     if jasyscript:
@@ -202,7 +203,7 @@ def main():
         if not tasks or options.help:
 
             Task.executeTask("help")
-            
+
             if options.help:
                 sys.exit(0)
             else:
@@ -213,7 +214,7 @@ def main():
             start = time.time()
 
             returnValue = Task.executeTask(entry["task"], **entry["params"])
-            
+
             if returnValue not in (0, None):
                 sys.exit(returnValue)
 
@@ -241,22 +242,22 @@ except UserError as ex:
     sys.exit(1)
 
 if options.stats:
-    
+
     Console.info("Running in profiling mode...")
-    
+
     import cProfile
     cProfile.run("main()", "jasyprofile.txt")
-    
+
     Console.header("Analysing data")
     import pstats
     stats = pstats.Stats("jasyprofile.txt")
-    
+
     stats.sort_stats('time', 'cum').print_stats(30)
-    
+
     os.remove("jasyprofile.txt")
-    
+
 else:
-    
+
     main()
 
 sys.exit(0)
