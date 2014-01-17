@@ -21,47 +21,29 @@ class Profile():
     Configuration object for the build profile of the current task
     """
 
+    #
+    # CONFIGURATION DATA STRUCTURE
+    #
+
     __data = None
-
-
-    __currentPermutation = None
-    __currentTranslationBundle = None
     __fields = None
-
-    # Relative or path of the destination folder
-    __destinationPath = None
-
-    # The same as destination folder but from the URL/server perspective
-    __destinationUrl = None
 
     # The user configured application parts
     __parts = None
 
-    # Name of the folder inside the destination folder for storing compiled templates
-    __templateFolder = "tmpl"
 
-    # Name of the folder inside the destination folder for storing generated script files
-    __jsFolder = "js"
-
-    # Name of the folder inside the destination folder for storing generated style sheets
-    __cssFolder = "css"
-
-    # Name of the folder inside the destination folder for storing used assets
-    __assetFolder = "asset"
+    #
+    # CURRENT STATE
+    #
 
     # Currently selected output path
     __workingPath = None
+    __currentPermutation = None
+    __currentTranslationBundle = None
 
-    # Whether the content hash of assets should be used instead of their name
-    __hashAssets = False
-    __useSource = False
 
-    # Whether assets should be copied to the destination folder
-    __copyAssets = False
 
-    # Whether files should be loaded from the different source folders
-    __useSource = False
-
+    # XXX
 
     __compressionLevel = 0
     __formattingLevel = 5
@@ -138,6 +120,9 @@ class Profile():
 
 
 
+    #
+    # BASIC API
+    #
 
     def getProjects(self):
         """
@@ -163,25 +148,8 @@ class Profile():
     def getFileManager(self):
         return self.__fileManager
 
-
     def getParts(self):
         return self.__parts
-
-    def getDestinationPath(self):
-        return self.getValue("destination-path", self.__session.getCurrentTask())
-
-    def setDestinationPath(self, path):
-        self.setValue("destination-path", path)
-
-    def getDestinationUrl(self):
-        return self.getValue("destination-url")
-
-    def setDestinationUrl(self, url):
-        # Fix missing end slash
-        if not url.endswith("/"):
-            url += "/"
-
-        self.setValue("destination-url", url)
 
 
 
@@ -247,29 +215,59 @@ class Profile():
 
 
     #
+    # DESTINATION SETUP
+    #
+
+    def getDestinationPath(self):
+        """ Relative or path of the destination folder """
+        return self.getValue("destination-path", self.__session.getCurrentTask())
+
+    def setDestinationPath(self, path):
+        self.setValue("destination-path", path)
+
+    def getDestinationUrl(self):
+        """ The same as destination folder but from the URL/server perspective """
+        return self.getValue("destination-url")
+
+    def setDestinationUrl(self, url):
+        # Fix missing end slash
+        if not url.endswith("/"):
+            url += "/"
+
+        self.setValue("destination-url", url)
+
+
+
+
+
+    #
     # OUTPUT FOLDER NAMES
     #
 
     def getCssOutputFolder(self):
-        return self.getOutputFolder("css")
+        """ Name of the folder inside the destination folder for storing generated style sheets """
+        return self.getOutputFolder("css", "css")
 
     def setCssOutputFolder(self, folder):
         return self.setOutputFolder("css", folder)
 
     def getJsOutputFolder(self):
-        return self.getOutputFolder("js")
+        """ Name of the folder inside the destination folder for storing generated script files """
+        return self.getOutputFolder("js", "js")
 
     def setJsOutputFolder(self, folder):
         return self.setOutputFolder("js", folder)
 
     def getAssetOutputFolder(self):
-        return self.getOutputFolder("asset")
+        """ Name of the folder inside the destination folder for storing used assets """
+        return self.getOutputFolder("asset", "asset")
 
     def setAssetOutputFolder(self, folder):
         return self.setOutputFolder("asset", folder)
 
     def getTemplateOutputFolder(self):
-        return self.getOutputFolder("template")
+        """ Name of the folder inside the destination folder for storing compiled templates """
+        return self.getOutputFolder("template", "tmpl")
 
     def setTemplateOutputFolder(self, folder):
         return self.setOutputFolder("template", folder)
