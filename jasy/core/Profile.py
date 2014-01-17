@@ -205,6 +205,20 @@ class Profile():
 
         return value
 
+    def getMatchingValues(self, matcher, transformer=None):
+        result = {}
+
+        data = self.__data
+        for key in data:
+            if matcher(key):
+                if transformer:
+                    result[transformer(key)] = data[key]
+                else:
+                    result[key] = data[key]
+
+        return result
+
+
     def setFlag(self, name, value):
         return self.setValue("enable-%s" % name, value)
 
@@ -216,6 +230,12 @@ class Profile():
 
     def getOutputFolder(self, type, fallback):
         return self.getValue("output-folder-%s" % type, fallback)
+
+    def getOutputFolders(self):
+        return self.getMatchingValues(
+            lambda key: return key.startswith("output-folder-"),
+            lambda key: return key[14:]
+        )
 
 
 
@@ -382,19 +402,12 @@ class Profile():
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.getDestinationUrl() or ""))
         setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
-        # Folder names inside destination
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.template",4,"%s"' % (self.__templateFolder or ""))
-        setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        # Output folder names
+        for key, value in self.getOutputFolders():
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.js",4,"%s"' % (self.__jsFolder or ""))
-        setups["jasy.folder.js"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
-
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.css",4,"%s"' % (self.__cssFolder or ""))
-        setups["jasy.folder.css"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
-
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.asset",4,"%s"' % (self.__assetFolder or ""))
-        setups["jasy.folder.asset"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+            fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (entry, value))
+            setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
         return setups
 
