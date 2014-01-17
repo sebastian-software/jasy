@@ -63,6 +63,18 @@ class Profile():
         # Initialize data instance
         self.__data = {}
 
+
+        # Set default values (which require serialization)
+        self.setJsOutputFolder("js")
+        self.setCssOutputFolder("css")
+        self.setAssetOutputFolder("asset")
+        self.setTemplateOutputFolder("tmpl")
+
+        self.setCompressionLevel(0)
+        self.setFormattingLevel(100)
+
+
+
         # Enforce scan of projects
         session.scan()
 
@@ -220,13 +232,13 @@ class Profile():
     def setFlag(self, name, value):
         return self.setValue("enable-%s" % name, value)
 
-    def getFlag(self, name, fallback):
+    def getFlag(self, name, fallback=None):
         return self.getValue("enable-%s" % name, fallback)
 
     def setOutputFolder(self, type, value):
         return self.setValue("output-folder-%s" % type, value)
 
-    def getOutputFolder(self, type, fallback):
+    def getOutputFolder(self, type, fallback=None):
         return self.getValue("output-folder-%s" % type, fallback)
 
     def getOutputFolders(self):
@@ -425,9 +437,9 @@ class Profile():
 
 
         # Output folder names
-        for key, value in self.getOutputFolders():
+        for key, value in self.getOutputFolders().items():
 
-            fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (entry, value))
+            fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (key, value))
             setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
         return setups
