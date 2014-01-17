@@ -1,3 +1,21 @@
+Jasy 1.5-beta3
+==============
+
+## Redistributed tasks between `Profile` and `Session`
+
+Effectively everything related to the current build is in `Profile` e.g. permutation data is now part of Profile - not Session. Session just handles projects registration, initial setup etc.
+
+## Moved actual `build` from `Profile` to new `BuildTool`
+
+The profile is now mainly used for configuration and state management. The build process itself did not feel as being a good place inside this class. The new `BuildTool` class now implements a simple application build logic.
+
+## Minor changes
+
+- Support for query strings in assets e.g. to support SVG fonts correctly
+- Minor output and logging improvements during session/profile initialization
+- `Profile` is no longer auto initialized but requires being initiated by the author of the task.
+
+
 Jasy 1.5-beta2
 ==============
 
