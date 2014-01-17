@@ -6,9 +6,9 @@
 Jasy - Web Tooling Framework
 ============================
 
-Jasy is a powerful Python3-based tooling framework. It makes it 
-easy to manage heavy web projects. Its main goal is to offer 
-an API which could be used by developers to write their custom 
+Jasy is a powerful Python3-based tooling framework. It makes it
+easy to manage heavy web projects. Its main goal is to offer
+an API which could be used by developers to write their custom
 build/deployment scripts.
 
 
@@ -31,7 +31,7 @@ For details have a look at [the official documentation](https://github.com/sebas
 * [Core](http://github.com/sebastian-software/core): Core Library for JavaScript projects. Ideal JS counterpart to Jasy.
 * [Jasy Compat](http://github.com/sebastian-software/jasy-compat): Showing how to integrate other JavaScript libraries into Jasy workflow
 * [Jasy Locale](https://github.com/sebastian-software/jasy-locale): Demonstrating locale and translation support in Jasy/Core.
- 
+
 ## Test Skeletons
 
 * [Jasy Skeleton](http://github.com/sebastian-software/jasy-skeleton): Test skeletons for Jasy using different "jasy create" aspects
@@ -40,7 +40,7 @@ For details have a look at [the official documentation](https://github.com/sebas
 ## License
 
 Copyright (c) 2011-2012 Zynga Inc. http://zynga.com/
-Copyright (c) 2012-2013 Sebastian Werner http://sebastian-werner.com
+Copyright (c) 2012-2014 Sebastian Werner http://sebastian-werner.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

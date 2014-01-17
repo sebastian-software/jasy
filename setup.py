@@ -3,6 +3,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import sys
@@ -11,7 +12,7 @@ if sys.version < "3.2":
   print("Jasy requires Python 3.2 or higher")
   sys.exit(1)
 
-# Prefer setuptools (aka distribute) over distutils 
+# Prefer setuptools (aka distribute) over distutils
 # - Distutils comes with Python3 but is not capable of installing requires, extras, etc.
 # - Distribute is a fork of the Setuptools project (http://packages.python.org/distribute/)
 try:
@@ -30,12 +31,12 @@ if uses == "distribute":
 
     "test_suite" : "jasy.test",
 
-    "install_requires" : [ 
-      "Pygments>=1.6", 
-      "polib>=1.0.3", 
-      "requests>=2", 
-      "CherryPy>=3.2.4", 
-      "PyYAML>=3.10" 
+    "install_requires" : [
+      "Pygments>=1.6",
+      "polib>=1.0.3",
+      "requests>=2",
+      "CherryPy>=3.2.4",
+      "PyYAML>=3.10"
     ],
 
     "extras_require" : {
@@ -79,9 +80,9 @@ setup(
   platforms = 'any',
 
   description = "Web Tooling Framework",
-  long_description = """Jasy is a powerful Python3-based tooling framework. It makes it 
-                        easy to manage heavy web projects. Its main goal is to offer 
-                        an API which could be used by developers to write their custom 
+  long_description = """Jasy is a powerful Python3-based tooling framework. It makes it
+                        easy to manage heavy web projects. Its main goal is to offer
+                        an API which could be used by developers to write their custom
                         build/deployment scripts.""",
 
   # Via: http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -141,9 +142,9 @@ setup(
 
   package_data = {
     'jasy': [
-      'data/cldr/VERSION', 
-      'data/cldr/keys/*.xml', 
-      'data/cldr/main/*.xml', 
+      'data/cldr/VERSION',
+      'data/cldr/keys/*.xml',
+      'data/cldr/main/*.xml',
       'data/cldr/supplemental/*.xml'
     ]
   },
@@ -156,7 +157,7 @@ setup(
       "requirements.txt"
      ]
     )
-  ],  
+  ],
 
   **extra
 )
