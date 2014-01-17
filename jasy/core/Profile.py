@@ -11,6 +11,7 @@ import itertools, json, os
 import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
 import jasy.core.Util as Util
+import jasy.core.Permutation as Permutation
 
 import jasy.asset.Manager as AssetManager
 import jasy.item.Class as ClassItem
@@ -621,7 +622,7 @@ class Profile():
         # Thanks to eumiro via http://stackoverflow.com/questions/3873654/combinations-from-dictionary-with-list-values-using-python
         names = sorted(values)
         combinations = [dict(zip(names, prod)) for prod in itertools.product(*(values[name] for name in names))]
-        permutations = [jasy.core.Permutation.getPermutation(combi) for combi in combinations]
+        permutations = [Permutation.getPermutation(combi) for combi in combinations]
 
         return permutations
 
@@ -694,7 +695,7 @@ class Profile():
             self.__currentPermutation = None
             return None
 
-        permutation = jasy.core.Permutation.getPermutation(combi)
+        permutation = Permutation.getPermutation(combi)
         self.__currentPermutation = permutation
 
         return permutation
