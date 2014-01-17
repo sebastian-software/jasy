@@ -121,7 +121,7 @@ class Profile():
 
 
     #
-    # BASIC API
+    # PROJECT API
     #
 
     def getProjects(self):
@@ -139,6 +139,11 @@ class Profile():
         return projects
 
 
+
+    #
+    # OBJECT ACCESSORS
+    #
+
     def getSession(self):
         return self.__session
 
@@ -148,8 +153,26 @@ class Profile():
     def getFileManager(self):
         return self.__fileManager
 
+
+
+
+    #
+    # PART MANAGEMENT
+    #
+
     def getParts(self):
         return self.__parts
+
+
+    def registerPart(self, name, className="", styleName="", templateName=""):
+        if name in self.__parts:
+            raise Exception("The part %s is already registered!")
+
+        self.__parts[name] = {
+            "class" : className,
+            "style" : styleName,
+            "template" : templateName
+        }
 
 
 
@@ -284,6 +307,16 @@ class Profile():
     def setWorkingPath(self, path):
         return self.setValue("working-path", path)
 
+    def getCurrentTranslation(self):
+        return self.__currentTranslationBundle
+
+    def getCurrentPermutation(self):
+        """Returns current permutation object (useful during looping through permutations via permutate())."""
+        return self.__currentPermutation
+
+    def resetCurrentPermutation(self):
+        """Resets the current permutation object."""
+        self.__currentPermutation = None
 
 
 
@@ -327,23 +360,6 @@ class Profile():
 
     def setFormattingLevel(self, level):
         return self.setValue("formatting-level", level)
-
-
-
-
-    #
-    # PART MANAGEMENT
-    #
-
-    def registerPart(self, name, className="", styleName="", templateName=""):
-        if name in self.__parts:
-            raise Exception("The part %s is already registered!")
-
-        self.__parts[name] = {
-            "class" : className,
-            "style" : styleName,
-            "template" : templateName
-        }
 
 
 
@@ -477,6 +493,13 @@ class Profile():
 
         return jasy.core.Project.getProjectFromPath(path)
 
+
+
+
+
+    #
+    # FIELD API
+    #
 
     def setField(self, name, value):
         """
@@ -723,6 +746,12 @@ class Profile():
         self.__currentTranslationBundle = None
 
 
+
+
+
+
+
+
     def getCurrentOptimization(self):
         return None
 
@@ -730,20 +759,6 @@ class Profile():
         return None
 
 
-    def getCurrentTranslation(self):
-        return self.__currentTranslationBundle
-
-
-    def getCurrentPermutation(self):
-        """Returns current permutation object (useful during looping through permutations via permutate())."""
-
-        return self.__currentPermutation
-
-
-    def resetCurrentPermutation(self):
-        """Resets the current permutation object."""
-
-        self.__currentPermutation = None
 
 
     def setStaticPermutation(self, **argv):
