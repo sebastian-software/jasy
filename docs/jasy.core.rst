@@ -9,6 +9,14 @@ core Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`BuildTool` Module
+-----------------------
+
+.. automodule:: jasy.core.BuildTool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`Cache` Module
 -------------------
 
