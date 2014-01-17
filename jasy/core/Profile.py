@@ -199,6 +199,9 @@ class Profile():
         else:
             self.__data[key] = value
 
+        # Invalidate ID
+        self.__id = None
+
         return value
 
     def getValue(self, key, fallback=None):
@@ -885,9 +888,11 @@ class Profile():
 
 
     def getId(self):
-        # FIXME
+        id = self.__id
+        if id is None:
+            serialized = json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': '))
+            # Console.info("Re-generating ID: %s" % serialized)
+            id = self.__id = jasy.core.Util.generateChecksum(serialized)
+            Console.info("Re-generated profile ID: %s" % id)
 
-        print("CURRENT DATA: ", json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': ')))
-
-        return str(self.__currentPermutation)
-
+        return id
