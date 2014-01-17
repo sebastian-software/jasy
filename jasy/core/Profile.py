@@ -16,12 +16,13 @@ import jasy.core.Permutation as Permutation
 import jasy.asset.Manager as AssetManager
 import jasy.item.Class as ClassItem
 
-
-
 class Profile():
     """
     Configuration object for the build profile of the current task
     """
+
+    __data = None
+
 
     __currentPermutation = None
     __currentTranslationBundle = None
@@ -77,6 +78,9 @@ class Profile():
         # Reference to global session object
         self.__session = session
 
+        # Initialize data instance
+        self.__data = {}
+
         # Enforce scan of projects
         session.scan()
 
@@ -130,6 +134,11 @@ class Profile():
         Console.outdent()
 
 
+
+
+
+
+
     def getProjects(self):
         """
         Returns all currently registered projects.
@@ -148,30 +157,65 @@ class Profile():
     def getSession(self):
         return self.__session
 
-    def getParts(self):
-        return self.__parts
-
     def getAssetManager(self):
         return self.__assetManager
 
     def getFileManager(self):
         return self.__fileManager
 
+
+    def getParts(self):
+        return self.getValue("parts", {})
+
     def getDestinationPath(self):
-        return self.__destinationPath or self.__session.getCurrentTask()
+        return self.getValue("destination-path", self.__session.getCurrentTask())
 
     def setDestinationPath(self, path):
-        self.__destinationPath = path
+        self.setValue("destination-path"], path)
 
     def getDestinationUrl(self):
-        return self.__destinationUrl
+        return self.getValue("destination-url")
 
     def setDestinationUrl(self, url):
         # Fix missing end slash
         if not url.endswith("/"):
             url += "/"
 
-        self.__destinationUrl = url
+        self.setValue("destination-url", url)
+
+
+
+
+    #
+    # GENERIC STORAGE API
+    #
+
+    def setValue(self, key, value):
+        if value is None:
+            del self.__data[key]
+        else:
+            self.__data[key] = value
+
+        return value
+
+    def getValue(self, key, fallback):
+        value = self.__data[key]
+        if value is None:
+            value = fallback()
+
+        return value
+
+    def setFlag(self, name, value):
+        return self.setValue("enable-%s" % name, value)
+
+    def getFlag(self, name, fallback):
+        return self.getValue("enable-%s" % name, fallback)
+
+    def setOutputFolder(self, type, value):
+        return self.setValue("output-folder-%s" % type, value)
+
+    def getOutputFolder(self, type, fallback):
+        return self.getValue("output-folder-%s" % type, fallback)
 
 
 
@@ -179,29 +223,42 @@ class Profile():
     # OUTPUT FOLDER NAMES
     #
 
-    def getCssFolder(self):
-        return self.__cssFolder
+    def getCssOutputFolder(self):
+        return self.getOutputFolder("css")
 
-    def setCssFolder(self, folder):
-        self.__cssFolder = folder
+    def setCssOutputFolder(self, folder):
+        return self.setOutputFolder("css", folder)
 
-    def getJsFolder(self):
-        return self.__jsFolder
+    def getJsOutputFolder(self):
+        return self.getOutputFolder("js")
 
-    def setJsFolder(self, folder):
-        self.__jsFolder = folder
+    def setJsOutputFolder(self, folder):
+        return self.setOutputFolder("js", folder)
 
-    def getAssetFolder(self):
-        return self.__assetFolder
+    def getAssetOutputFolder(self):
+        return self.getOutputFolder("asset")
 
-    def setAssetFolder(self, folder):
-        self.__assetFolder = folder
+    def setAssetOutputFolder(self, folder):
+        return self.setOutputFolder("asset", folder)
 
-    def getTemplateFolder(self):
-        return self.__templateFolder
+    def getTemplateOutputFolder(self):
+        return self.getOutputFolder("template")
 
-    def setTemplateFolder(self, folder):
-        self.__templateFolder = folder
+    def setTemplateOutputFolder(self, folder):
+        return self.setOutputFolder("template", folder)
+
+
+
+    #
+    # RUNTIME STATE
+    #
+
+    def getWorkingPath(self):
+        return self.getValue("working-path")
+
+    def setWorkingPath(self, path):
+        return self.setValue("working-path", path)
+
 
 
 
@@ -209,29 +266,24 @@ class Profile():
     # CONFIGURATION OPTIONS
     #
 
-    def getWorkingPath(self):
-        return self.__workingPath
-
-    def setWorkingPath(self, path):
-        self.__workingPath = path
-
     def getHashAssets(self):
-        return self.__hashAssets
+        return self.getFlag("hash-assets")
 
     def setHashAssets(self, enable):
-        self.__hashAssets = enable
+        return self.setFlag("hash-assets", enable)
 
     def getCopyAssets(self):
-        return self.__copyAssets
+        return self.getFlag("copy-assets")
 
     def setCopyAssets(self, enable):
-        self.__copyAssets = enable
+        return self.setFlag("copy-assets", enable)
 
     def getUseSource(self):
-        return self.__useSource
+        return self.getFlag("use-source")
 
     def setUseSource(self, enable):
-        self.__useSource = enable
+        return self.setFlag("use-source", enable)
+
 
 
 
@@ -240,16 +292,17 @@ class Profile():
     #
 
     def getCompressionLevel(self):
-        return self.__compressionLevel
+        return self.getValue("compression-level")
 
     def setCompressionLevel(self, level):
-        self.__compressionLevel = level
+        return self.setValue("compression-level", level)
 
     def getFormattingLevel(self):
-        return self.__formattingLevel
+        return self.getValue("formatting-level")
 
     def setFormattingLevel(self, level):
-        self.__formattingLevel = level
+        return self.setValue("formatting-level", level)
+
 
 
 
