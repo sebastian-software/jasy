@@ -440,7 +440,7 @@ class Profile():
         for key, value in self.getOutputFolders().items():
 
             fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (key, value))
-            setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+            setups["jasy.folder.%s" % key] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
         return setups
 
