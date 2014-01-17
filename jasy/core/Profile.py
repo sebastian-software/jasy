@@ -165,13 +165,13 @@ class Profile():
 
 
     def getParts(self):
-        return self.getValue("parts", {})
+        return self.__parts
 
     def getDestinationPath(self):
         return self.getValue("destination-path", self.__session.getCurrentTask())
 
     def setDestinationPath(self, path):
-        self.setValue("destination-path"], path)
+        self.setValue("destination-path", path)
 
     def getDestinationUrl(self):
         return self.getValue("destination-url")
@@ -198,10 +198,17 @@ class Profile():
 
         return value
 
-    def getValue(self, key, fallback):
-        value = self.__data[key]
-        if value is None:
-            value = fallback()
+    def getValue(self, key, fallback=None):
+        value = None
+
+        if key in self.__data:
+            value = self.__data[key]
+
+        if value is None and fallback is not None:
+            if callable(fallback):
+                value = fallback()
+            else:
+                value = fallback
 
         return value
 
@@ -233,8 +240,8 @@ class Profile():
 
     def getOutputFolders(self):
         return self.getMatchingValues(
-            lambda key: return key.startswith("output-folder-"),
-            lambda key: return key[14:]
+            lambda key: key.startswith("output-folder-"),
+            lambda key: key[14:]
         )
 
 
@@ -854,5 +861,8 @@ class Profile():
 
     def getId(self):
         # FIXME
+
+        print("CURRENT DATA: ", json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': ')))
+
         return str(self.__currentPermutation)
 
