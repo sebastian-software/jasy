@@ -1,7 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 """This module is used to pass a single session instance around to different modules"""

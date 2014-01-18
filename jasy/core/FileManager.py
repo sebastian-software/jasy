@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import os, shutil, json
@@ -67,7 +68,7 @@ class FileManager:
         visitedPaths = []
 
         for rootFolder, dirs, files in os.walk(src,followlinks=True):
-            
+
             # Prevent infinite loops by removing already visited subdirs
             # This only happens by using recursive links
             subdirs = dirs[:]

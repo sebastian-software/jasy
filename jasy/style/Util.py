@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import itertools, re
@@ -29,7 +29,7 @@ def extractName(name):
         return name
 
 
-def executeCommand(node, session):
+def executeCommand(node, profile):
     command = node.name
 
     params = []
@@ -45,7 +45,7 @@ def executeCommand(node, session):
         params.append(value)
 
     # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
-    result, restype = session.executeCommand(command, params)
+    result, restype = profile.executeCommand(command, params)
 
     if restype == "px":
         repl = Node.Node(type="number")

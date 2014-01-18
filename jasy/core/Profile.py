@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import jasy
@@ -11,55 +11,39 @@ import itertools, json, os
 import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
 import jasy.core.Util as Util
+import jasy.core.Permutation as Permutation
 
 import jasy.asset.Manager as AssetManager
 import jasy.item.Class as ClassItem
-
-
 
 class Profile():
     """
     Configuration object for the build profile of the current task
     """
 
-    __currentPermutation = None
-    __currentTranslationBundle = None
+    #
+    # CONFIGURATION DATA STRUCTURE
+    #
+
+    __data = None
     __fields = None
-
-    # Relative or path of the destination folder
-    __destinationPath = None
-
-    # The same as destination folder but from the URL/server perspective
-    __destinationUrl = None
 
     # The user configured application parts
     __parts = None
 
-    # Name of the folder inside the destination folder for storing compiled templates
-    __templateFolder = "tmpl"
 
-    # Name of the folder inside the destination folder for storing generated script files
-    __jsFolder = "js"
-
-    # Name of the folder inside the destination folder for storing generated style sheets
-    __cssFolder = "css"
-
-    # Name of the folder inside the destination folder for storing used assets
-    __assetFolder = "asset"
+    #
+    # CURRENT STATE
+    #
 
     # Currently selected output path
     __workingPath = None
+    __currentPermutation = None
+    __currentTranslationBundle = None
 
-    # Whether the content hash of assets should be used instead of their name
-    __hashAssets = False
-    __useSource = False
 
-    # Whether assets should be copied to the destination folder
-    __copyAssets = False
 
-    # Whether files should be loaded from the different source folders
-    __useSource = False
-
+    # XXX
 
     __compressionLevel = 0
     __formattingLevel = 5
@@ -75,6 +59,21 @@ class Profile():
 
         # Reference to global session object
         self.__session = session
+
+        # Initialize data instance
+        self.__data = {}
+
+
+        # Set default values (which require serialization)
+        self.setJsOutputFolder("js")
+        self.setCssOutputFolder("css")
+        self.setAssetOutputFolder("asset")
+        self.setTemplateOutputFolder("tmpl")
+
+        self.setCompressionLevel(0)
+        self.setFormattingLevel(100)
+
+
 
         # Enforce scan of projects
         session.scan()
@@ -129,6 +128,14 @@ class Profile():
         Console.outdent()
 
 
+
+
+
+
+    #
+    # PROJECT API
+    #
+
     def getProjects(self):
         """
         Returns all currently registered projects.
@@ -144,11 +151,13 @@ class Profile():
         return projects
 
 
+
+    #
+    # OBJECT ACCESSORS
+    #
+
     def getSession(self):
         return self.__session
-
-    def getParts(self):
-        return self.__parts
 
     def getAssetManager(self):
         return self.__assetManager
@@ -156,105 +165,16 @@ class Profile():
     def getFileManager(self):
         return self.__fileManager
 
-    def getDestinationPath(self):
-        return self.__destinationPath or self.__session.getCurrentTask()
-
-    def setDestinationPath(self, path):
-        self.__destinationPath = path
-
-    def getDestinationUrl(self):
-        return self.__destinationUrl
-
-    def setDestinationUrl(self, url):
-        # Fix missing end slash
-        if not url.endswith("/"):
-            url += "/"
-
-        self.__destinationUrl = url
-
-
-
-    #
-    # OUTPUT FOLDER NAMES
-    #
-
-    def getCssFolder(self):
-        return self.__cssFolder
-
-    def setCssFolder(self, folder):
-        self.__cssFolder = folder
-
-    def getJsFolder(self):
-        return self.__jsFolder
-
-    def setJsFolder(self, folder):
-        self.__jsFolder = folder
-
-    def getAssetFolder(self):
-        return self.__assetFolder
-
-    def setAssetFolder(self, folder):
-        self.__assetFolder = folder
-
-    def getTemplateFolder(self):
-        return self.__templateFolder
-
-    def setTemplateFolder(self, folder):
-        self.__templateFolder = folder
-
-
-
-    #
-    # CONFIGURATION OPTIONS
-    #
-
-    def getWorkingPath(self):
-        return self.__workingPath
-
-    def setWorkingPath(self, path):
-        self.__workingPath = path
-
-    def getHashAssets(self):
-        return self.__hashAssets
-
-    def setHashAssets(self, enable):
-        self.__hashAssets = enable
-
-    def getCopyAssets(self):
-        return self.__copyAssets
-
-    def setCopyAssets(self, enable):
-        self.__copyAssets = enable
-
-    def getUseSource(self):
-        return self.__useSource
-
-    def setUseSource(self, enable):
-        self.__useSource = enable
-
-
-
-    #
-    # OUTPUT FORMATTING/COMPRESSION SETTINGS
-    #
-
-    def getCompressionLevel(self):
-        return self.__compressionLevel
-
-    def setCompressionLevel(self, level):
-        self.__compressionLevel = level
-
-    def getFormattingLevel(self):
-        return self.__formattingLevel
-
-    def setFormattingLevel(self, level):
-        self.__formattingLevel = level
 
 
 
     #
     # PART MANAGEMENT
     #
+
+    def getParts(self):
+        return self.__parts
+
 
     def registerPart(self, name, className="", styleName="", templateName=""):
         if name in self.__parts:
@@ -265,6 +185,196 @@ class Profile():
             "style" : styleName,
             "template" : templateName
         }
+
+
+
+
+    #
+    # GENERIC STORAGE API
+    #
+
+    def setValue(self, key, value):
+        if value is None:
+            del self.__data[key]
+        else:
+            self.__data[key] = value
+
+        # Invalidate ID
+        self.__id = None
+
+        return value
+
+    def getValue(self, key, fallback=None):
+        value = None
+
+        if key in self.__data:
+            value = self.__data[key]
+
+        if value is None and fallback is not None:
+            if callable(fallback):
+                value = fallback()
+            else:
+                value = fallback
+
+        return value
+
+    def getMatchingValues(self, matcher, transformer=None):
+        result = {}
+
+        data = self.__data
+        for key in data:
+            if matcher(key):
+                if transformer:
+                    result[transformer(key)] = data[key]
+                else:
+                    result[key] = data[key]
+
+        return result
+
+
+    def setFlag(self, name, value):
+        return self.setValue("enable-%s" % name, value)
+
+    def getFlag(self, name, fallback=None):
+        return self.getValue("enable-%s" % name, fallback)
+
+    def setOutputFolder(self, type, value):
+        return self.setValue("output-folder-%s" % type, value)
+
+    def getOutputFolder(self, type, fallback=None):
+        return self.getValue("output-folder-%s" % type, fallback)
+
+    def getOutputFolders(self):
+        return self.getMatchingValues(
+            lambda key: key.startswith("output-folder-"),
+            lambda key: key[14:]
+        )
+
+
+
+    #
+    # DESTINATION SETUP
+    #
+
+    def getDestinationPath(self):
+        """ Relative or path of the destination folder """
+        return self.getValue("destination-path", self.__session.getCurrentTask())
+
+    def setDestinationPath(self, path):
+        self.setValue("destination-path", path)
+
+    def getDestinationUrl(self):
+        """ The same as destination folder but from the URL/server perspective """
+        return self.getValue("destination-url")
+
+    def setDestinationUrl(self, url):
+        # Fix missing end slash
+        if not url.endswith("/"):
+            url += "/"
+
+        self.setValue("destination-url", url)
+
+
+
+
+
+    #
+    # OUTPUT FOLDER NAMES
+    #
+
+    def getCssOutputFolder(self):
+        """ Name of the folder inside the destination folder for storing generated style sheets """
+        return self.getOutputFolder("css", "css")
+
+    def setCssOutputFolder(self, folder):
+        return self.setOutputFolder("css", folder)
+
+    def getJsOutputFolder(self):
+        """ Name of the folder inside the destination folder for storing generated script files """
+        return self.getOutputFolder("js", "js")
+
+    def setJsOutputFolder(self, folder):
+        return self.setOutputFolder("js", folder)
+
+    def getAssetOutputFolder(self):
+        """ Name of the folder inside the destination folder for storing used assets """
+        return self.getOutputFolder("asset", "asset")
+
+    def setAssetOutputFolder(self, folder):
+        return self.setOutputFolder("asset", folder)
+
+    def getTemplateOutputFolder(self):
+        """ Name of the folder inside the destination folder for storing compiled templates """
+        return self.getOutputFolder("template", "tmpl")
+
+    def setTemplateOutputFolder(self, folder):
+        return self.setOutputFolder("template", folder)
+
+
+
+    #
+    # RUNTIME STATE
+    #
+
+    def getWorkingPath(self):
+        return self.getValue("working-path")
+
+    def setWorkingPath(self, path):
+        return self.setValue("working-path", path)
+
+    def getCurrentTranslation(self):
+        return self.__currentTranslationBundle
+
+    def getCurrentPermutation(self):
+        """Returns current permutation object (useful during looping through permutations via permutate())."""
+        return self.__currentPermutation
+
+    def resetCurrentPermutation(self):
+        """Resets the current permutation object."""
+        self.__currentPermutation = None
+
+
+
+    #
+    # CONFIGURATION OPTIONS
+    #
+
+    def getHashAssets(self):
+        return self.getFlag("hash-assets")
+
+    def setHashAssets(self, enable):
+        return self.setFlag("hash-assets", enable)
+
+    def getCopyAssets(self):
+        return self.getFlag("copy-assets")
+
+    def setCopyAssets(self, enable):
+        return self.setFlag("copy-assets", enable)
+
+    def getUseSource(self):
+        return self.getFlag("use-source")
+
+    def setUseSource(self, enable):
+        return self.setFlag("use-source", enable)
+
+
+
+
+    #
+    # OUTPUT FORMATTING/COMPRESSION SETTINGS
+    #
+
+    def getCompressionLevel(self):
+        return self.getValue("compression-level")
+
+    def setCompressionLevel(self, level):
+        return self.setValue("compression-level", level)
+
+    def getFormattingLevel(self):
+        return self.getValue("formatting-level")
+
+    def setFormattingLevel(self, level):
+        return self.setValue("formatting-level", level)
 
 
 
@@ -328,19 +438,12 @@ class Profile():
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.getDestinationUrl() or ""))
         setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
-        # Folder names inside destination
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.template",4,"%s"' % (self.__templateFolder or ""))
-        setups["jasy.folder.template"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        # Output folder names
+        for key, value in self.getOutputFolders().items():
 
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.js",4,"%s"' % (self.__jsFolder or ""))
-        setups["jasy.folder.js"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
-
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.css",4,"%s"' % (self.__cssFolder or ""))
-        setups["jasy.folder.css"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
-
-        fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.asset",4,"%s"' % (self.__assetFolder or ""))
-        setups["jasy.folder.asset"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+            fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (key, value))
+            setups["jasy.folder.%s" % key] = self.__session.getVirtualItem("jasy.generated.OutputFolder", ClassItem.ClassItem, fieldSetup, ".js")
 
         return setups
 
@@ -405,6 +508,13 @@ class Profile():
 
         return jasy.core.Project.getProjectFromPath(path)
 
+
+
+
+
+    #
+    # FIELD API
+    #
 
     def setField(self, name, value):
         """
@@ -621,7 +731,7 @@ class Profile():
         # Thanks to eumiro via http://stackoverflow.com/questions/3873654/combinations-from-dictionary-with-list-values-using-python
         names = sorted(values)
         combinations = [dict(zip(names, prod)) for prod in itertools.product(*(values[name] for name in names))]
-        permutations = [jasy.core.Permutation.getPermutation(combi) for combi in combinations]
+        permutations = [Permutation.getPermutation(combi) for combi in combinations]
 
         return permutations
 
@@ -651,6 +761,12 @@ class Profile():
         self.__currentTranslationBundle = None
 
 
+
+
+
+
+
+
     def getCurrentOptimization(self):
         return None
 
@@ -658,20 +774,6 @@ class Profile():
         return None
 
 
-    def getCurrentTranslation(self):
-        return self.__currentTranslationBundle
-
-
-    def getCurrentPermutation(self):
-        """Returns current permutation object (useful during looping through permutations via permutate())."""
-
-        return self.__currentPermutation
-
-
-    def resetCurrentPermutation(self):
-        """Resets the current permutation object."""
-
-        self.__currentPermutation = None
 
 
     def setStaticPermutation(self, **argv):
@@ -694,7 +796,7 @@ class Profile():
             self.__currentPermutation = None
             return None
 
-        permutation = jasy.core.Permutation.getPermutation(combi)
+        permutation = Permutation.getPermutation(combi)
         self.__currentPermutation = permutation
 
         return permutation
@@ -786,6 +888,11 @@ class Profile():
 
 
     def getId(self):
-        # FIXME
-        return str(self.__currentPermutation)
+        id = self.__id
+        if id is None:
+            serialized = json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': '))
+            # Console.info("Re-generating ID: %s" % serialized)
+            id = self.__id = jasy.core.Util.generateChecksum(serialized)
+            Console.info("Re-generated profile ID: %s" % id)
 
+        return id

@@ -1,6 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import shutil, json, base64, os, re, random, sys, mimetypes, http.client, urllib.parse, hashlib

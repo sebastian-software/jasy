@@ -33,9 +33,13 @@ from jasy.env.State import session
 
 session.init()
 
-session.addCommand("jasy.asset", lambda fileId: "resolved/%s" % fileId, "url")
-session.addCommand("jasy.width", lambda fileId: 42, "px")
-session.addCommand("jasy.height", lambda fileId: 38, "px")
+import jasy.core.Profile as Profile
+
+profile = Profile.Profile(session)
+
+profile.addCommand("jasy.asset", lambda fileId: "resolved/%s" % fileId, "url")
+profile.addCommand("jasy.width", lambda fileId: 42, "px")
+profile.addCommand("jasy.height", lambda fileId: 38, "px")
 
 class Tests(unittest.TestCase):
 
@@ -43,7 +47,7 @@ class Tests(unittest.TestCase):
         callerName = inspect.stack()[1][3][5:]
 
         tree = Engine.getTree(code, callerName)
-        tree = Engine.reduceTree(tree, session)
+        tree = Engine.reduceTree(tree, profile)
         return Engine.compressTree(tree)
 
     def test_extend(self):

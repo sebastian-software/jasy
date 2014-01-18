@@ -8,6 +8,7 @@ sys.path.insert(0, jasyroot)
 
 import jasy.core.Project as Project
 import jasy.core.Session as Session
+import jasy.core.Profile as Profile
 
 globProject = None
 
@@ -198,20 +199,22 @@ def add(number):
         session = Session.Session()
         session.addProject(self.createProject([]))
 
+        profile = Profile.Profile(session)
+
         counter = 0
-        for p in session.permutate():
+        for p in profile.permutate():
             counter += 1
         self.assertEqual(counter, 8)
 
-        session.permutateField("engine", values=["webkit", "gecko", "trident"])
+        profile.permutateField("engine", values=["webkit", "gecko", "trident"])
         counter = 0
-        for p in session.permutate():
+        for p in profile.permutate():
             counter += 1
         self.assertEqual(counter, 6)
 
-        session.setField("debug", True)
+        profile.setField("debug", True)
         counter = 0
-        for p in session.permutate():
+        for p in profile.permutate():
             counter += 1
         self.assertEqual(counter, 3)
 
@@ -220,10 +223,11 @@ def add(number):
         session = Session.Session()
         session.addProject(self.createProject([]))
 
-        session.setLocales(["de", "en_", "fr"])
+        profile = Profile.Profile(session)
+        profile.setLocales(["de", "en_", "fr"])
 
         counter = 0
-        for p in session.permutate():
+        for p in profile.permutate():
             counter += 1
         self.assertEqual(counter, 24)
 

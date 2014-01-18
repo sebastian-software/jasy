@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import os.path
@@ -18,10 +18,10 @@ def run(profile):
 
     destinationFolder = profile.getDestinationPath()
 
-    jsOutputPath = os.path.join(destinationFolder, profile.getJsFolder())
-    cssOutputPath = os.path.join(destinationFolder, profile.getCssFolder())
-    assetOutputPath = os.path.join(destinationFolder, profile.getAssetFolder())
-    templateOutputPath = os.path.join(destinationFolder, profile.getTemplateFolder())
+    jsOutputPath = os.path.join(destinationFolder, profile.getJsOutputFolder())
+    cssOutputPath = os.path.join(destinationFolder, profile.getCssOutputFolder())
+    assetOutputPath = os.path.join(destinationFolder, profile.getAssetOutputFolder())
+    templateOutputPath = os.path.join(destinationFolder, profile.getTemplateOutputFolder())
 
     if "kernel" in parts:
 

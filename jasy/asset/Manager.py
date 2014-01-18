@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import os, fnmatch, re, json
@@ -345,7 +345,7 @@ class AssetManager():
         """
 
         profile = self.__profile
-        assetFolder = os.path.join(profile.getDestinationPath(), profile.getAssetFolder())
+        assetFolder = os.path.join(profile.getDestinationPath(), profile.getAssetOutputFolder())
 
         if profile.getHashAssets():
             fileName = "%s%s" % (assetItem.getChecksum(), assetItem.extension)
@@ -385,7 +385,7 @@ class AssetManager():
         assets = self.__assets
 
         # Destination folder for assets
-        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetFolder());
+        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetOutputFolder());
 
         result = {}
         filterExpr = self.__compileFilterExpr(items) if items else None

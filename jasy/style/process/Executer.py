@@ -1,6 +1,6 @@
 #
 # Jasy - Web Tooling Framework
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import copy, re
@@ -16,8 +16,8 @@ class ExecuterError(Exception):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
 
-def process(tree, session):
-    __recurser(tree, tree.scope, {}, session)
+def process(tree, profile):
+    __recurser(tree, tree.scope, {}, profile)
 
 
 
@@ -29,7 +29,7 @@ def process(tree, session):
 
 RE_INLINE_VARIABLE = re.compile("\$\{([a-zA-Z0-9\-_\.]+)\}")
 
-def __recurser(node, scope, values, session):
+def __recurser(node, scope, values, profile):
     # Replace variable with actual value
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
@@ -51,7 +51,7 @@ def __recurser(node, scope, values, session):
 
         # Pre-process condition
         # We manually process each child in for if-types
-        __recurser(node.condition, scope, values, session)
+        __recurser(node.condition, scope, values, profile)
 
         # Cast condition to Python boolean type
         resultValue = Operation.castToBool(node.condition)
@@ -59,14 +59,14 @@ def __recurser(node, scope, values, session):
         # Process relevant part of the sub tree
         if resultValue is True:
             # Fix missing processing of result node
-            __recurser(node.thenPart, scope, values, session)
+            __recurser(node.thenPart, scope, values, profile)
 
             # Finally replace if-node with result node
             node.parent.replace(node, node.thenPart)
 
         elif resultValue is False and hasattr(node, "elsePart"):
             # Fix missing processing of result node
-            __recurser(node.elsePart, scope, values, session)
+            __recurser(node.elsePart, scope, values, profile)
 
             # Finally replace if-node with result node
             node.parent.replace(node, node.elsePart)
@@ -99,7 +99,7 @@ def __recurser(node, scope, values, session):
     for child in list(node):
         # Ignore non-children... through possible interactive structure changes
         if child and child.parent is node:
-            __recurser(child, scope, values, session)
+            __recurser(child, scope, values, profile)
 
 
     # Update values of variables
@@ -167,7 +167,7 @@ def __recurser(node, scope, values, session):
 
     # Execute system commands
     elif node.type == "command":
-        repl = Util.executeCommand(node, session)
+        repl = Util.executeCommand(node, profile)
         if not repl is node:
             node.parent.replace(node, repl)
 

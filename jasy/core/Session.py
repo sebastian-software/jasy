@@ -1,7 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
-# Copyright 2013 Sebastian Werner
+# Copyright 2013-2014 Sebastian Werner
 #
 
 import atexit, os, zlib, shutil
@@ -26,7 +26,7 @@ class Session():
     """
 
     # Environment object used for executing jasyscript.py.
-    # Contains all items from the main projects jasyscript.py + 
+    # Contains all items from the main projects jasyscript.py +
     # all shared (namespaced) commands from all jasylibrary.py files.
     __scriptEnvironment = None
 
@@ -392,7 +392,7 @@ class Session():
         exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
 
         # Export destination name as global
-        Console.info("Imported %s.", Console.colorize("%s commands" % counter, "magenta"))    
+        Console.info("Imported %s.", Console.colorize("%s commands" % counter, "magenta"))
 
         return counter
 

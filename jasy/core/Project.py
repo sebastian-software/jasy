@@ -1,7 +1,7 @@
 #
 # Jasy - Web Tooling Framework
 # Copyright 2010-2012 Zynga Inc.
-# Copyright 2012-2013 Sebastian Werner
+# Copyright 2012-2014 Sebastian Werner
 #
 
 import os, re, fnmatch
