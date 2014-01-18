@@ -38,11 +38,11 @@ repositoryFolder = re.compile(r"^([a-zA-Z0-9\.\ _-]+)-([a-f0-9]{40})$")
 projects = {}
 
 
-def getProjectFromPath(path, config=None, version=None):
+def getProjectFromPath(path, session, config=None, version=None):
     global projects
 
     if not path in projects:
-        projects[path] = Project(path, config, version)
+        projects[path] = Project(path, session, config, version)
 
     return projects[path]
 
@@ -119,7 +119,7 @@ class Project():
     scanned = False
 
 
-    def __init__(self, path, config=None, version=None):
+    def __init__(self, path, session, config=None, version=None):
         """
         Constructor call of the project.
 
@@ -143,6 +143,8 @@ class Project():
         self.assets = {}
         self.docs = {}
         self.translations = {}
+
+        self.__session = session
 
         # Load project configuration
         self.__config = Config.Config(config)
@@ -505,7 +507,7 @@ class Project():
                 else:
                     fullversion = None
 
-                project = Project(path, config, fullversion)
+                project = Project(path, self.__session, config, fullversion)
                 projects[path] = project
 
             result.append(project)

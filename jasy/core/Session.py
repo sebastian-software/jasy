@@ -92,7 +92,7 @@ class Session():
             Console.indent()
 
             try:
-                self.addProject(Project.getProjectFromPath("."))
+                self.addProject(Project.getProjectFromPath(".", self))
 
             except UserError as err:
                 Console.outdent(True)
@@ -478,7 +478,7 @@ class Session():
         jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: virtual\npackage: ""\n')
 
         # Generate project instance from path, store and return
-        project = Project.getProjectFromPath(path)
+        project = Project.getProjectFromPath(path, self)
         self.__virtualProject = project
         self.__projects.append(project)
 
