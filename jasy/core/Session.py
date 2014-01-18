@@ -11,8 +11,11 @@ import jasy.core.Project as Project
 import jasy.core.Util as Util
 import jasy.core.Console as Console
 
-import jasy.item.Translation
+import jasy.item.Asset
 import jasy.item.Class
+import jasy.item.Doc
+import jasy.item.Style
+import jasy.item.Translation
 
 from jasy import UserError
 
@@ -61,6 +64,13 @@ class Session():
         self.__commands = {}
         self.__translationBundles = {}
         self.__postscans = []
+        self.__itemType = {}
+
+        self.addItemType("jasy.Asset", "Assets", jasy.item.Asset.AssetItem)
+        self.addItemType("jasy.Class", "Classes", jasy.item.Class.ClassItem)
+        self.addItemType("jasy.Doc", "Docs", jasy.item.Doc.DocItem)
+        self.addItemType("jasy.Style", "Styles", jasy.item.Style.StyleItem)
+        self.addItemType("jasy.Translation", "Translations", jasy.item.Translation.TranslationItem)
 
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
@@ -231,6 +241,22 @@ class Session():
 
         return None
 
+    #
+    # Item type handling
+    #
+    def addItemType(self, itemType, name, cls):
+        self.__itemType[itemType] = (name, cls)
+
+
+    def getItemType(self, itemType):
+        if not itemType in self.__itemType:
+            return None
+
+        return self.__itemType[itemType]
+
+
+    def getItemTypes(self):
+        return self.__itemType
 
 
     #
