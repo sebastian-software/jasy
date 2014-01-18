@@ -134,8 +134,9 @@ class OutputManager:
         # 4. Add asset data if needed
         if usesAssets:
             assetData = self.__assetManager.exportToJson(includedClasses)
-            assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
-            resolver.add(assetClassItem, prepend=True)
+            if assetData:
+                assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
+                resolver.add(assetClassItem, prepend=True)
 
         # 5. Add translation data
         if not inlineTranslations:
