@@ -76,6 +76,15 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
     kind = "class"
 
+    def generateId(self, relpath, package):
+        if package:
+            fileId = "%s/" % package
+        else:
+            fileId = ""
+
+        return (fileId + os.path.splitext(relpath)[0]).replace("/", ".")
+
+
     def __getTree(self):
         """
         Returns the abstract syntax tree
@@ -107,7 +116,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
             tree = copy.deepcopy(self.__getTree())
 
             # Logging
-            msg = "Processing class %s" % Console.colorize(self.id, "bold")
+            msg = "Optimizing class %s" % Console.colorize(self.id, "bold")
             if permutation:
                 msg += Console.colorize(" (%s)" % permutation, "grey")
 

@@ -81,6 +81,15 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     kind = "style"
 
+    def generateId(self, relpath, package):
+        if package:
+            fileId = "%s/" % package
+        else:
+            fileId = ""
+
+        return (fileId + os.path.splitext(relpath)[0]).replace("/", ".")
+
+
     def __getTree(self):
         """
         Returns the abstract syntax tree

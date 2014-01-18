@@ -68,13 +68,25 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
     __imageAnimationData = []
     __imageDimensionData = []
 
-    def __init__(self, project, id=None):
+    def __init__(self, project, id=None, package=None):
         # Call Item's init method first
-        super().__init__(project, id)
+        super().__init__(project, id, package)
 
+
+    def setId(self, id):
+        super().setId(id)
         self.extension = os.path.splitext(self.id.lower())[1]
         self.type = getKey(extensions, self.extension, "other")
         self.shortType = self.type[0]
+
+
+    def generateId(self, relpath, package):
+        if package:
+            fileId = "%s/" % package
+        else:
+            fileId = ""
+
+        return fileId + relpath
 
 
     def isImageSpriteConfig(self):

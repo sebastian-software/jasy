@@ -3,6 +3,8 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
+import os
+
 import jasy.js.api.Data as Data
 import jasy.core.Text as Text
 import jasy.item.Abstract as Abstract
@@ -12,6 +14,14 @@ from jasy import UserError
 class DocItem(Abstract.AbstractItem):
 
     kind = "doc"
+
+    def generateId(self, relpath, package):
+        if package:
+            fileId = "%s/" % package
+        else:
+            fileId = ""
+
+        return (fileId + os.path.splitext(relPath)[0]).replace("/", ".")
 
     def getApi(self):
         field = "api[%s]" % self.id
