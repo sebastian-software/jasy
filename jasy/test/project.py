@@ -7,6 +7,7 @@ jasyroot = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]), os.pardir
 sys.path.insert(0, jasyroot)
 
 import jasy.core.Project as Project
+import jasy.core.Session as Session
 
 
 class Tests(unittest.TestCase):
@@ -26,7 +27,7 @@ class Tests(unittest.TestCase):
     def createjpyaml_withContent(self, path):
         self.writeFile(path, "jasyproject.yaml", """name: myproject
 
-content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/main.css]}
+content: {myproject.Main: {type: "jasy.Class", source: [man/Main.js, man/Add.js]}, myproject/main.css: {type: "jasy.Asset", source: [man/main.css]}}
 """)
 
     def createCaseOne(self):
@@ -52,7 +53,7 @@ content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/ma
         createSampleClasses()
         createSampleAssets()
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, Session.Session())
 
 
     def createCaseTwo(self):
@@ -83,7 +84,7 @@ content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/ma
         createSampleAssets()
         createSampleTranslations()
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, Session.Session())
 
 
     def createCaseThree(self):
@@ -107,7 +108,7 @@ content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/ma
         createSampleClasses()
         createSampleAssets()
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, Session.Session())
 
 
     def createCaseFour(self):
@@ -137,7 +138,7 @@ content: {myproject.Main: [man/Main.js, man/Add.js], myproject/main.css: [man/ma
         createSampleAssets()
         createSampleTranslations()
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, Session.Session())
 
 
     def getProjects(self):

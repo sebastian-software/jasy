@@ -52,7 +52,7 @@ requires:"""
 
         return ruquirement
 
-    def createProject(self, requirements, onlyFileCreation=False):
+    def createProject(self, session, requirements, onlyFileCreation=False):
 
         global globProject
         globProject = tempfile.TemporaryDirectory()
@@ -87,13 +87,12 @@ requires:"""
         if onlyFileCreation:
             return path
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, session)
 
     def test_init(self):
 
-        self.createProject([], onlyFileCreation=True)
-
         session = Session.Session()
+        self.createProject(session, [], onlyFileCreation=True)
         session.init()
         self.assertTrue(session.getProjectByName("myproject") is not None)
 
@@ -101,7 +100,7 @@ requires:"""
     def test_pause_resume(self):
 
         session = Session.Session()
-        session.addProject(self.createProject([]))
+        session.addProject(self.createProject(session, []))
 
         try:
             session.pause()
@@ -113,12 +112,12 @@ requires:"""
 
     def test_other_process(self):
 
-        project = self.createProject([])
+        session = Session.Session()
+        session2 = Session.Session()
+        project = self.createProject(session2, [])
 
         try:
-            session = Session.Session()
             session.addProject(project)
-            session2 = Session.Session()
             session2.addProject(project)
             session2.pause()
             session.resume()
@@ -197,7 +196,7 @@ def add(number):
 
     def test_permutate(self):
         session = Session.Session()
-        session.addProject(self.createProject([]))
+        session.addProject(self.createProject(session, []))
 
         profile = Profile.Profile(session)
 
@@ -221,7 +220,7 @@ def add(number):
 
     def test_locale(self):
         session = Session.Session()
-        session.addProject(self.createProject([]))
+        session.addProject(self.createProject(session, []))
 
         profile = Profile.Profile(session)
         profile.setLocales(["de", "en_", "fr"])
