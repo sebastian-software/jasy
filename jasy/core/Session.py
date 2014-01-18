@@ -60,6 +60,7 @@ class Session():
         self.__fields = {}
         self.__commands = {}
         self.__translationBundles = {}
+        self.__postscans = []
 
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
@@ -123,6 +124,9 @@ class Session():
 
         for project in self.__projects:
             project.scan()
+
+        for postscan in self.__postscans:
+            postscan()
 
         Console.outdent()
 
