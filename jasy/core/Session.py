@@ -336,11 +336,24 @@ class Session():
 
             return func
 
+        def itemtype(type, name):
+            def wrap(cls):
+                id = "%s.%s" % (objectName, type[0].upper() + type[1:])
+                self.addItemType(id, name, cls)
+                return cls
+            return wrap
+
+        def postscan():
+            def wrap(f):
+                self.__postscans.append(f)
+                return f
+            return wrap
+
         # Execute given file. Using clean new global environment
         # but add additional decorator for allowing to define shared methods
         # and the session object (self).
         code = open(fileName, "r", encoding=encoding).read()
-        exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
+        exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "itemtype": itemtype, "postscan": postscan, "session" : self})
 
         # Export destination name as global
         self.__scriptEnvironment[objectName] = exportedModule
