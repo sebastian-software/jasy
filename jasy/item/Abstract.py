@@ -19,9 +19,20 @@ class AbstractItem:
     __cache = None
     __text = None
 
-    def __init__(self, project, id=None):
-        self.id = id
+    def __init__(self, project, id=None, package=None):
         self.project = project
+        if id:
+            self.setId(id)
+
+    @classmethod
+    def fromPath(cls, project, relpath, package=None):
+        "Initialize MyData from a dict's items"
+        item = cls(project)
+        item.setId(item.generateId(relpath, package))
+        return item
+
+    def generateId(self, relpath, package):
+        return "%s/%s" % (package,relpath)
 
     def attach(self, path):
         self.__path = path
