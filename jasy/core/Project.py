@@ -249,11 +249,20 @@ class Project():
                     scan = self.__resolveScanConfig({
                         "src/*.js" : {
                             "type" : "jasy.Class"
+                        },
+                        "src/*.style" : {
+                            "type" : "jasy.Style"
+                        },
+                        "src/*.{po,xlf,properties,txt}" : {
+                            "type" : "jasy.Translation"
+                        },
+                        "src/*" : {
+                            "type" : "jasy.Asset"
                         }
                     })
 
                 else:
-                    self.kind = "resource"
+                    self.kind = "flat"
 
                     scan = self.__resolveScanConfig({
                         "class/*.js" : {
@@ -335,9 +344,27 @@ class Project():
             if config["package"] == "":
                 config["package"] = None
 
+            config["origpath"] = path
             config["regex"], config["paths"] = self.__createPathRe(path)
             scan.append(config)
 
+
+        def specificitySort(item):
+            """ Sorts for specificy of given scan path """
+            origPath = item["origpath"]
+
+            if not "*" in origPath:
+                num = 10000
+            elif not origPath.endswith("*"):
+                num = 1000
+            else:
+                num = 0
+
+            num += len(origPath)
+            return -num
+
+
+        scan.sort(key=specificitySort)
         return scan
 
 
