@@ -4,7 +4,7 @@
 # Copyright 2012-2013 Sebastian Werner
 #
 
-import os, re
+import os, re, fnmatch
 
 import jasy.core.Cache
 import jasy.core.Config as Config
@@ -137,12 +137,8 @@ class Project():
         # Store given params
         self.version = version
 
-        # Intialize item registries
-        self.classes = {}
-        self.styles = {}
-        self.assets = {}
-        self.docs = {}
-        self.translations = {}
+        # Intialize item registry
+        self.items = {}
 
         self.__session = session
 
@@ -226,43 +222,71 @@ class Project():
             self.kind = "manual"
             self.__addContent(self.__config.get("content"))
 
-        # Application projects
-        elif self.__hasDir("source"):
-            self.kind = "application"
-
-            if self.__hasDir("source/class"):
-                self.__addDir("source/class", "classes")
-            if self.__hasDir("source/style"):
-                self.__addDir("source/style", "styles")
-            if self.__hasDir("source/asset"):
-                self.__addDir("source/asset", "assets")
-            if self.__hasDir("source/translation"):
-                self.__addDir("source/translation", "translations")
-
-        # Compat - please change to class/style/asset instead
-        elif self.__hasDir("src"):
-            self.kind = "resource"
-            self.__addDir("src", "classes")
-
-        # Resource projects
         else:
-            self.kind = "resource"
+            # Read scan path from config
+            if not self.__config.has("scan"):
+                if self.__hasDir("source"):
+                    self.kind = "application"
 
-            if self.__hasDir("class"):
-                self.__addDir("class", "classes")
-            if self.__hasDir("style"):
-                self.__addDir("style", "styles")
-            if self.__hasDir("asset"):
-                self.__addDir("asset", "assets")
-            if self.__hasDir("translation"):
-                self.__addDir("translation", "translations")
+                    scan = self.__resolveScanConfig({
+                        "source/class/*.js" : {
+                            "type" : "jasy.Class"
+                        },
+                        "source/style/*.style" : {
+                            "type" : "jasy.Style"
+                        },
+                        "source/translation/*.{po,xlf,properties,txt}" : {
+                            "type" : "jasy.Translation"
+                        },
+                        "source/asset/*" : {
+                            "type" : "jasy.Asset"
+                        }
+                    })
+
+                elif self.__hasDir("src"):
+                    self.kind = "resource"
+
+                    scan = self.__resolveScanConfig({
+                        "src/*.js" : {
+                            "type" : "jasy.Class"
+                        }
+                    })
+
+                else:
+                    self.kind = "resource"
+
+                    scan = self.__resolveScanConfig({
+                        "class/*.js" : {
+                            "type" : "jasy.Class"
+                        },
+                        "style/*.style" : {
+                            "type" : "jasy.Style"
+                        },
+                        "translation/*.{po,xlf,properties,txt}" : {
+                            "type" : "jasy.Translation"
+                        },
+                        "asset/*" : {
+                            "type" : "jasy.Asset"
+                        }
+                    })
+
+            else:
+                scan = self.__resolveScanConfig(self.__config.get("scan"))
+        
+            for config in scan:
+                if type(config["paths"]) == str:
+                    self.__addDir(config["paths"], config["regex"], config["type"], config["package"]) 
+                else:
+                    for path in config["paths"]:
+                        self.__addDir(path, config["regex"], config["type"], config["package"])
 
         # Generate summary
         summary = []
-        for section in ["classes", "styles", "translations", "assets"]:
-            content = getattr(self, section, None)
+        for section in self.items.keys():
+            content = self.items[section]
+            name, constructor = self.__resolveConstructor(section)
             if content:
-                summary.append(Console.colorize("%s %s" % (len(content), section), "magenta"))
+                summary.append(Console.colorize("%s %s" % (len(content), name), "magenta"))
 
         # Print out
         if summary:
@@ -273,6 +297,58 @@ class Project():
         Console.outdent()
 
 
+
+    def __createPathRe(self, path):
+        if not "{" in path:
+            return fnmatch.translate(path), os.path.dirname(path)
+
+        start = path.index("{")
+        end = path.index("}")
+        expanders = [p.strip() for p in path[start+1:end].split(",")]
+
+        prefix = path[:start]
+        postfix = path[end+1:]
+
+        pathres = [self.__createPathRe(prefix + element + postfix) for element in expanders]
+        regex = "|".join(["(" + pathel + ")" for pathel, path in pathres])
+        paths = set([path for pathel, path in pathres])
+
+        return regex, paths
+
+
+    def __resolveScanConfig(self, configs):
+        scan = []
+
+        for path, config in configs.items():
+            if type(config) == str:
+                config = {
+                    "type": config,
+                    "package": self.__package
+                }
+
+            if not "type" in config:
+                raise UserError("No type configured in jasyproject configuration (scan section)")
+
+            if not "package" in config:
+                config["package"] = self.__package
+
+            if config["package"] == "":
+                config["package"] = None
+
+            config["regex"], config["paths"] = self.__createPathRe(path)
+            scan.append(config)
+
+        return scan
+
+
+
+    def __resolveConstructor(self, itemType):
+        construct = self.__session.getItemType(itemType)
+
+        if not construct:
+            raise UserError("Could not resolve item type %s" % itemType)
+
+        return construct
 
 
     #
@@ -295,16 +371,11 @@ class Project():
 
         Console.indent()
         for fileId in content:
-            fileContent = content[fileId]
+            itemType = content[fileId]["type"]
+            fileContent = content[fileId]["source"]
+
             if len(fileContent) == 0:
                 raise UserError("Empty content!")
-
-            # If the user defines a file extension for JS public idenfiers
-            # (which is not required) we filter them out
-            if fileId.endswith(".js"):
-                raise UserError("JavaScript files should define the exported name, not a file name: %s" % fileId)
-
-            fileExtension = os.path.splitext(fileContent[0])[1]
 
             # Support for joining text content
             if len(fileContent) == 1:
@@ -312,50 +383,36 @@ class Project():
             else:
                 filePath = [os.path.join(self.__path, filePart) for filePart in fileContent]
 
-            # Structure files
-            if fileExtension in classExtensions:
-                construct = jasy.item.Class.ClassItem
-                dist = self.classes
-            elif fileExtension in styleExtensions:
-                construct = jasy.item.Style.StyleItem
-                dist = self.styles
-            elif fileExtension in translationExtensions:
-                construct = jasy.item.Translation.TranslationItem
-                dist = self.translations
-            else:
-                construct = jasy.item.Asset.AssetItem
-                dist = self.assets
-
-            # Check for duplication
-            if fileId in dist:
-                raise UserError("Item ID was registered before: %s" % fileId)
-
-            # Create instance
+            name, construct = self.__resolveConstructor(itemType)
             item = construct(self, fileId).attach(filePath)
             Console.debug("Registering %s %s" % (item.kind, fileId))
-            dist[fileId] = item
+
+            if not itemType in self.items:
+                self.items[itemType] = {}
+
+            # Check for duplication
+            if fileId in self.items[itemType]:
+                raise UserError("Item ID was registered before: %s" % fileId)
+
+            self.items[itemType][fileId] = item
 
         Console.outdent()
 
 
-    def __addDir(self, directory, distname):
-
-        Console.debug("Scanning directory: %s" % directory)
-        Console.indent()
+    def __addDir(self, directory, regex, type, package):
+        check = re.compile(regex)
 
         path = os.path.join(self.__path, directory)
         if not os.path.exists(path):
             return
 
+        Console.debug("Scanning directory: %s" % directory)
+        Console.indent()
+
         for dirPath, dirNames, fileNames in os.walk(path):
             for dirName in dirNames:
                 # Filter dotted directories like .git, .bzr, .hg, .svn, etc.
                 if dirName.startswith("."):
-                    dirNames.remove(dirName)
-
-                # Filter sub projects
-                projectConfBase = os.path.join(dirPath, dirName, "jasyproject.")
-                if os.path.exists(projectConfBase + "json") or os.path.exists(projectConfBase + "yaml"):
                     dirNames.remove(dirName)
 
             relDirPath = os.path.relpath(dirPath, path)
@@ -366,60 +423,34 @@ class Project():
                     continue
 
                 relPath = os.path.normpath(os.path.join(relDirPath, fileName)).replace(os.sep, "/")
-                fullPath = os.path.join(dirPath, fileName)
 
-                self.addFile(relPath, fullPath, distname)
+                if not check.match(os.path.join(directory, relPath).replace(os.sep, "/")):
+                    continue
+
+                fullPath = os.path.join(dirPath, fileName)
+                self.addFile(relPath, fullPath, type, package)
 
         Console.outdent()
 
 
-    def addFile(self, relPath, fullPath, distname, override=False):
+    def addFile(self, relPath, fullPath, itemType, package, override=False):
 
         fileName = os.path.basename(relPath)
         fileExtension = os.path.splitext(fileName)[1]
 
-        # Prepand package
-        if self.__package:
-            fileId = "%s/" % self.__package
-        else:
-            fileId = ""
+        name, construct = self.__resolveConstructor(itemType)
+        item = construct.fromPath(self, relPath, package).attach(fullPath)
+        fileId = item.getId()
+        Console.debug("Registering %s %s" % (item.kind, fileId))
 
-        # Structure files
-        if fileExtension in classExtensions and distname == "classes":
-            fileId += os.path.splitext(relPath)[0]
-            construct = jasy.item.Class.ClassItem
-            dist = self.classes
-        elif fileExtension in styleExtensions and distname == "styles":
-            fileId += os.path.splitext(relPath)[0]
-            construct = jasy.item.Style.StyleItem
-            dist = self.styles
-        elif fileExtension in translationExtensions and distname == "translations":
-            fileId += os.path.splitext(relPath)[0]
-            construct = jasy.item.Translation.TranslationItem
-            dist = self.translations
-        elif fileName in docFiles:
-            fileId += os.path.dirname(relPath)
-            fileId = fileId.strip("/") # edge case when top level directory
-            construct = jasy.item.Doc.DocItem
-            dist = self.docs
-        else:
-            fileId += relPath
-            construct = jasy.item.Asset.AssetItem
-            dist = self.assets
-
-        # Only assets keep unix style paths identifiers
-        if construct != jasy.item.Asset.AssetItem:
-            fileId = fileId.replace("/", ".")
+        if not itemType in self.items:
+            self.items[itemType] = {}
 
         # Check for duplication
-        if fileId in dist and not override:
+        if fileId in self.items[itemType] and not override:
             raise UserError("Item ID was registered before: %s" % fileId)
 
-        # Create instance
-        item = construct(self, fileId).attach(fullPath)
-        Console.debug("Registering %s %s" % (item.kind, fileId))
-        dist[fileId] = item
-
+        self.items[itemType][fileId] = item
 
 
 
@@ -608,43 +639,64 @@ class Project():
     # LIST ACCESSORS
     #
 
-    def getDocs(self):
-        """Returns all package docs"""
+    def getItems(self, type):
+        """ Returns all items of given type. """
 
         if not self.scanned:
             self.scan()
 
-        return self.docs
+        if not type in self.items:
+            return None
+
+        return self.items[type]
+
+
+    def getItem(self, type, name):
+        """ Return item of given type and name """
+        items = self.getItems(type)
+
+        if items and name in items:
+            return items[name]
+
+        return None
+
+
+    def addItem(self, type, item):
+        """ Add item to item list of given type """
+
+        if not type in self.items:
+            self.items[type] = {}
+
+        self.items[type][item.getId()] = item
+
+
+    def getDocs(self):
+        """Returns all package docs"""
+
+        raise UserError("getDocs To be implemented!")
+
+        if not self.scanned:
+            self.scan()
+
+        return self.docs or {}
 
     def getClasses(self):
         """ Returns all project classes. Requires all files to have a "js" extension. """
 
-        if not self.scanned:
-            self.scan()
-
-        return self.classes
+        return self.getItems("jasy.Class") or {}
 
     def getStyles(self):
         """ Returns all project style styles. Requires all files to have a "sht" extension. """
 
-        if not self.scanned:
-            self.scan()
-
-        return self.styles
+        return self.getItems("jasy.Style") or {}
 
     def getTranslations(self):
         """ Returns all translation objects """
 
-        if not self.scanned:
-            self.scan()
-
-        return self.translations
+        return self.getItems("jasy.Translation") or {}
 
     def getAssets(self):
         """ Returns all project asssets (images, stylesheets, static data, etc.). """
 
-        if not self.scanned:
-            self.scan()
-
-        return self.assets
+        return self.getItems("jasy.Asset") or {}
 
