@@ -80,7 +80,7 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         else:
             fileId = ""
 
-        return (fileId + os.path.splitext(relPath)[0]).replace("/", ".")
+        return (fileId + os.path.splitext(relpath)[0]).replace("/", ".")
 
 
     def attach(self, path):
