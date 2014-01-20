@@ -25,10 +25,13 @@ class Profile():
     # CONFIGURATION DATA STRUCTURE
     #
 
+    # Configuration data
     __data = None
+
+    # Application fields
     __fields = None
 
-    # The user configured application parts
+    # Application parts
     __parts = None
 
 
@@ -36,17 +39,13 @@ class Profile():
     # CURRENT STATE
     #
 
-    # Currently selected output path
-    __workingPath = None
-    __currentPermutation = None
-    __currentTranslationBundle = None
+    # Current permutation
+    __permutation = None
+
+    # Current permutation bundle
+    __translationBundle = None
 
 
-
-    # XXX
-
-    __compressionLevel = 0
-    __formattingLevel = 5
 
     __timeStamp = None
     __timeHash = None
@@ -323,15 +322,15 @@ class Profile():
         return self.setValue("working-path", path)
 
     def getCurrentTranslation(self):
-        return self.__currentTranslationBundle
+        return self.__translationBundle
 
     def getCurrentPermutation(self):
         """Returns current permutation object (useful during looping through permutations via permutate())."""
-        return self.__currentPermutation
+        return self.__permutation
 
     def resetCurrentPermutation(self):
         """Resets the current permutation object."""
-        self.__currentPermutation = None
+        self.__permutation = None
 
 
 
@@ -438,8 +437,8 @@ class Profile():
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.getDestinationUrl() or ""))
         setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
 
-
         # Output folder names
+
         for key, value in self.getOutputFolders().items():
 
             fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (key, value))
@@ -749,16 +748,16 @@ class Profile():
             Console.info("Permutation %s/%s:" % (pos+1, length))
             Console.indent()
 
-            self.__currentPermutation = current
-            self.__currentTranslationBundle = self.__session.getTranslationBundle(self.getCurrentLocale())
+            self.__permutation = current
+            self.__translationBundle = self.__session.getTranslationBundle(self.getCurrentLocale())
 
             yield current
             Console.outdent()
 
         Console.outdent()
 
-        self.__currentPermutation = None
-        self.__currentTranslationBundle = None
+        self.__permutation = None
+        self.__translationBundle = None
 
 
 
@@ -793,11 +792,11 @@ class Profile():
             combi[name] = argv[name]
 
         if not combi:
-            self.__currentPermutation = None
+            self.__permutation = None
             return None
 
         permutation = Permutation.getPermutation(combi)
-        self.__currentPermutation = permutation
+        self.__permutation = permutation
 
         return permutation
 
@@ -820,17 +819,17 @@ class Profile():
         if "{{destination}}" in fileName:
             fileName = fileName.replace("{{destination}}", self.getDestinationPath())
 
-        if self.__currentPermutation:
+        if self.__permutation:
             if "{{permutation}}" in fileName:
-                fileName = fileName.replace("{{permutation}}", self.__currentPermutation.getChecksum())
+                fileName = fileName.replace("{{permutation}}", self.__permutation.getChecksum())
 
             if "{{id}}" in fileName:
-                buildId = "%s@%s" % (self.__currentPermutation.getKey(), self.__session.getMain().getRevision())
+                buildId = "%s@%s" % (self.__permutation.getKey(), self.__session.getMain().getRevision())
                 buildHash = Util.generateChecksum(buildId)
                 fileName = fileName.replace("{{id}}", buildHash)
 
             if "{{locale}}" in fileName:
-                locale = self.__currentPermutation.get("locale")
+                locale = self.__permutation.get("locale")
                 fileName = fileName.replace("{{locale}}", locale)
 
         elif "{{id}}" in fileName:
@@ -891,11 +890,13 @@ class Profile():
         id = self.__id
         if id is None:
 
-####
-            # TODO: Add destination folders, current permutation, etc.
+            all = {
+                "data" : self.__data,
+                "permutation" : str(self.__permutation)
+            }
 
-            serialized = json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': '))
-            # Console.info("Re-generating ID: %s" % serialized)
+            serialized = json.dumps(all, sort_keys=True, indent=2, separators=(',', ': '))
+            Console.info("Re-generating ID: %s" % serialized)
             id = self.__id = jasy.core.Util.generateChecksum(serialized)
             Console.info("Re-generated profile ID: %s" % id)
 
