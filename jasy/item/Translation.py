@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import polib, json
+import polib, json, os
 
 import jasy.item.Abstract
 import jasy.core.Console as Console
@@ -54,10 +54,17 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         return self
 
 
-    def __init__(self, project, id=None, table=None):
+    def __init__(self, project, id=None, package=None, table=None):
         # Call Item's init method first
-        super().__init__(project, id)
+        super().__init__(project, id, package)
 
+        # Initialize translation table
+        self.table = table or {}
+
+
+    def setId(self, id):
+        super().setId(id)
+        
         # Extract language from file ID
         # Thinking of that all files are named like de.po, de.txt, de.properties, etc.
         lang = self.id
@@ -66,8 +73,14 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
         self.language = lang
 
-        # Initialize translation table
-        self.table = table or {}
+
+    def generateId(self, relpath, package):
+        if package:
+            fileId = "%s/" % package
+        else:
+            fileId = ""
+
+        return (fileId + os.path.splitext(relpath)[0]).replace("/", ".")
 
 
     def attach(self, path):

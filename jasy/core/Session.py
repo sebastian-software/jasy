@@ -11,8 +11,11 @@ import jasy.core.Project as Project
 import jasy.core.Util as Util
 import jasy.core.Console as Console
 
-import jasy.item.Translation
+import jasy.item.Asset
 import jasy.item.Class
+import jasy.item.Doc
+import jasy.item.Style
+import jasy.item.Translation
 
 from jasy import UserError
 
@@ -60,6 +63,14 @@ class Session():
         self.__fields = {}
         self.__commands = {}
         self.__translationBundles = {}
+        self.__postscans = []
+        self.__itemType = {}
+
+        self.addItemType("jasy.Asset", "Assets", jasy.item.Asset.AssetItem)
+        self.addItemType("jasy.Class", "Classes", jasy.item.Class.ClassItem)
+        self.addItemType("jasy.Doc", "Docs", jasy.item.Doc.DocItem)
+        self.addItemType("jasy.Style", "Styles", jasy.item.Style.StyleItem)
+        self.addItemType("jasy.Translation", "Translations", jasy.item.Translation.TranslationItem)
 
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
@@ -81,7 +92,7 @@ class Session():
             Console.indent()
 
             try:
-                self.addProject(Project.getProjectFromPath("."))
+                self.addProject(Project.getProjectFromPath(".", self))
 
             except UserError as err:
                 Console.outdent(True)
@@ -123,6 +134,9 @@ class Session():
 
         for project in self.__projects:
             project.scan()
+
+        for postscan in self.__postscans:
+            postscan()
 
         Console.outdent()
 
@@ -227,6 +241,22 @@ class Session():
 
         return None
 
+    #
+    # Item type handling
+    #
+    def addItemType(self, itemType, name, cls):
+        self.__itemType[itemType] = (name, cls)
+
+
+    def getItemType(self, itemType):
+        if not itemType in self.__itemType:
+            return None
+
+        return self.__itemType[itemType]
+
+
+    def getItemTypes(self):
+        return self.__itemType
 
 
     #
@@ -306,11 +336,24 @@ class Session():
 
             return func
 
+        def itemtype(type, name):
+            def wrap(cls):
+                id = "%s.%s" % (objectName, type[0].upper() + type[1:])
+                self.addItemType(id, name, cls)
+                return cls
+            return wrap
+
+        def postscan():
+            def wrap(f):
+                self.__postscans.append(f)
+                return f
+            return wrap
+
         # Execute given file. Using clean new global environment
         # but add additional decorator for allowing to define shared methods
         # and the session object (self).
         code = open(fileName, "r", encoding=encoding).read()
-        exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "session" : self})
+        exec(compile(code, os.path.abspath(fileName), "exec"), {"share" : share, "itemtype": itemtype, "postscan": postscan, "session" : self})
 
         # Export destination name as global
         self.__scriptEnvironment[objectName] = exportedModule
@@ -435,7 +478,7 @@ class Session():
         jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: virtual\npackage: ""\n')
 
         # Generate project instance from path, store and return
-        project = Project.getProjectFromPath(path)
+        project = Project.getProjectFromPath(path, self)
         self.__virtualProject = project
         self.__projects.append(project)
 

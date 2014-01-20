@@ -70,7 +70,7 @@ requires:"""
       name: %s""" % (reqpath, name))
 
 
-    def createProject(self, requirements):
+    def createProject(self, session, requirements):
 
         path = os.path.join(tempfile.TemporaryDirectory().name, "myproject")
         os.makedirs(path)
@@ -100,29 +100,29 @@ requires:"""
 
         os.chdir(path)
 
-        return Project.getProjectFromPath(path)
+        return Project.getProjectFromPath(path, session)
 
 
     def test_has_requires(self):
-        project = self.createProject([self.createRequirement("engine"), self.createRequirement("engine2")])
+        project = self.createProject(Session.Session(), [self.createRequirement("engine"), self.createRequirement("engine2")])
         project.scan()
         self.assertEqual(project.hasRequires(), True)
 
     def test_requires(self):
-        project = self.createProject([self.createRequirement("engine"), self.createRequirement("engine2")])
+        project = self.createProject(Session.Session(), [self.createRequirement("engine"), self.createRequirement("engine2")])
         project.scan()
         requires = project.getRequires()
         self.assertEqual(requires[0].getName(), "engine")
         self.assertEqual(requires[1].getName(), "engine2")
 
     def test_classes(self):
-        project = self.createProject([self.createRequirement("framework")])
+        project = self.createProject(Session.Session(), [self.createRequirement("framework")])
         project.scan()
         requires = project.getRequires()
         self.assertEqual(requires[0].getClassByName('framework.Base').getText(), ";")
 
     def test_subrequirement(self):
-        project = self.createProject([self.createRequirement("engine", [self.createSubRequirement("framework")])])
+        project = self.createProject(Session.Session(), [self.createRequirement("engine", [self.createSubRequirement("framework")])])
         project.scan()
         requires = project.getRequires()
         self.assertEqual(requires[0].getName(), "engine")
@@ -132,7 +132,7 @@ requires:"""
 
     def test_subrequirement_classes(self):
         session = Session.Session()
-        session.addProject(self.createProject([self.createRequirement("engine", [self.createSubRequirement("framework")])]))
+        session.addProject(self.createProject(session, [self.createRequirement("engine", [self.createSubRequirement("framework")])]))
 
         self.assertEqual(len(session.getProjects()), 3)
 
@@ -161,7 +161,7 @@ requires:"""
         requirement2 = self.createRequirement("engine2", [self.createSubRequirement("framework", manPath=frameworkPath)])
 
         session = Session.Session()
-        session.addProject(self.createProject([requirement1, requirement2]))
+        session.addProject(self.createProject(session, [requirement1, requirement2]))
 
         self.assertEqual(len(session.getProjects()), 4)
 
