@@ -891,8 +891,9 @@ class Profile():
         if id is None:
 
             all = {
-                "data" : self.__data,
-                "permutation" : str(self.__permutation)
+                "parts" : self.__parts,
+                "permutation" : str(self.__permutation),
+                "data" : self.__data
             }
 
             serialized = json.dumps(all, sort_keys=True, indent=2, separators=(',', ': '))
