@@ -506,7 +506,7 @@ class Profile():
         if not os.path.exists(path) or update:
             jasy.core.Locale.LocaleParser(locale).export(path)
 
-        return jasy.core.Project.getProjectFromPath(path)
+        return jasy.core.Project.getProjectFromPath(path, self.__session)
 
 
 

@@ -178,7 +178,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
         if os.path.isfile(os.path.join(originPath, "jasycreate.yaml")) or os.path.isfile(os.path.join(originPath, "jasycreate.json")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
             originProject = None
         else:
-            originProject = getProjectFromPath(originPath)
+            originProject = getProjectFromPath(originPath, session)
             originName = originProject.getName()
 
     else:
@@ -195,7 +195,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
             if os.path.isfile(os.path.join(originPath, "jasycreate.yaml")) or os.path.isfile(os.path.join(originPath, "jasycreate.json")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
                 originProject = None
             else:
-                originProject = getProjectFromPath(originPath)
+                originProject = getProjectFromPath(originPath, session)
                 originName = originProject.getName()
 
         else:
