@@ -890,6 +890,10 @@ class Profile():
     def getId(self):
         id = self.__id
         if id is None:
+
+####
+            # TODO: Add destination folders, current permutation, etc.
+
             serialized = json.dumps(self.__data, sort_keys=True, indent=2, separators=(',', ': '))
             # Console.info("Re-generating ID: %s" % serialized)
             id = self.__id = jasy.core.Util.generateChecksum(serialized)
