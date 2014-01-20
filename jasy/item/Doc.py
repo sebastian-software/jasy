@@ -22,7 +22,7 @@ class DocItem(Abstract.AbstractItem):
         else:
             fileId = ""
 
-        return (fileId + os.path.splitext(relPath)[0]).replace("/", ".")
+        return (fileId + os.path.dirname(relpath)).replace("/", ".")
 
     def getApi(self):
         field = "api[%s]" % self.id
