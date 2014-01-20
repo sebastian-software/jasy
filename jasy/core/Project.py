@@ -240,6 +240,9 @@ class Project():
                         },
                         "source/asset/*" : {
                             "type" : "jasy.Asset"
+                        },
+                        "source/class/*{package.md,readme.md}" : {
+                            "type" : "jasy.Doc"
                         }
                     })
 
@@ -255,6 +258,9 @@ class Project():
                         },
                         "src/*.{po,xlf,properties,txt}" : {
                             "type" : "jasy.Translation"
+                        },
+                        "src/*{package.md,readme.md}" : {
+                            "type" : "jasy.Doc"
                         },
                         "src/*" : {
                             "type" : "jasy.Asset"
@@ -273,6 +279,9 @@ class Project():
                         },
                         "translation/*.{po,xlf,properties,txt}" : {
                             "type" : "jasy.Translation"
+                        },
+                        "class/*{package.md,readme.md}" : {
+                            "type" : "jasy.Doc"
                         },
                         "asset/*" : {
                             "type" : "jasy.Asset"
@@ -700,27 +709,26 @@ class Project():
     def getDocs(self):
         """Returns all package docs"""
 
-        raise UserError("getDocs To be implemented!")
+        return self.getItems("jasy.Doc") or {}
 
-        if not self.scanned:
-            self.scan()
-
-        return self.docs or {}
 
     def getClasses(self):
         """ Returns all project classes. Requires all files to have a "js" extension. """
 
         return self.getItems("jasy.Class") or {}
 
+
     def getStyles(self):
         """ Returns all project style styles. Requires all files to have a "sht" extension. """
 
         return self.getItems("jasy.Style") or {}
 
+
     def getTranslations(self):
         """ Returns all translation objects """
 
         return self.getItems("jasy.Translation") or {}
+
 
     def getAssets(self):
         """ Returns all project asssets (images, stylesheets, static data, etc.). """
