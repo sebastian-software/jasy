@@ -12,6 +12,8 @@ import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
 import jasy.core.Util as Util
 import jasy.core.Permutation as Permutation
+import jasy.core.Locale as Locale
+import jasy.core.Project as Project
 
 import jasy.asset.Manager as AssetManager
 import jasy.item.Class as ClassItem
@@ -503,9 +505,9 @@ class Profile():
 
         path = os.path.abspath(os.path.join(".jasy", "locale", locale))
         if not os.path.exists(path) or update:
-            jasy.core.Locale.LocaleParser(locale).export(path)
+            Locale.LocaleParser(locale).export(path)
 
-        return jasy.core.Project.getProjectFromPath(path, self.__session)
+        return Project.getProjectFromPath(path, self.__session)
 
 
 
