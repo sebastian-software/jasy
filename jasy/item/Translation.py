@@ -12,7 +12,7 @@ import jasy.core.Console as Console
 
 def getFormat(path):
     """
-    Returns the file format of the translation. One of: gettext, xlf, properties and txt
+    Returns the file format of the translation. One of: gettext, properties and txt
     """
 
     if path:
@@ -107,14 +107,11 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
                         # This field contains all different plural cases (type=dict)
                         table[entryId] = entry.msgstr_plural
 
-        elif format is "xlf":
-            raise UserError("Parsing ICU/XLF files is currently not supported!")
-
         elif format is "properties":
-            raise UserError("Parsing ICU/Property files is currently not supported!")
+            raise UserError("Parsing property files is currently not supported!")
 
         elif format is "txt":
-            raise UserError("Parsing ICU/text files is currently not supported!")
+            raise UserError("Parsing text files is currently not supported!")
 
         Console.debug("Translation of %s entries ready" % len(table))
         Console.outdent()
