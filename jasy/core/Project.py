@@ -27,6 +27,57 @@ __all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
 
 repositoryFolder = re.compile(r"^([a-zA-Z0-9\.\ _-]+)-([a-f0-9]{40})$")
 projects = {}
+structures = {}
+
+def addStructure(name, structure):
+    structures[name] = structure
+
+
+addStructure("application", {
+    "source/class/*.js" : {
+        "type" : "jasy.Class"
+    },
+    "source/style/*.style" : {
+        "type" : "jasy.Style"
+    },
+    "source/translation/*.{po,properties,txt}" : {
+        "type" : "jasy.Translation"
+    },
+    "source/asset/*" : {
+        "type" : "jasy.Asset"
+    },
+    "source/class/*{package.md,readme.md}" : {
+        "type" : "jasy.Doc"
+    }
+})
+
+addStructure("resource", {
+    "src/*.js" : {
+        "type" : "jasy.Class"
+    },
+    "src/*.style" : {
+        "type" : "jasy.Style"
+    },
+    "src/*" : {
+        "type" : "jasy.Asset"
+    }
+})
+
+addStructure("flat", {
+    "class/*.js" : {
+        "type" : "jasy.Class"
+    },
+    "style/*.style" : {
+        "type" : "jasy.Style"
+    },
+    "asset/*" : {
+        "type" : "jasy.Asset"
+    },
+    "translation/*.{po,properties,txt}" : {
+        "type" : "jasy.Translation"
+    }
+})
+
 
 
 def getProjectFromPath(path, session, config=None, version=None):
@@ -218,57 +269,13 @@ class Project():
             if not self.__config.has("scan"):
                 if self.__hasDir("source"):
                     self.kind = "application"
-
-                    scan = self.__resolveScanConfig({
-                        "source/class/*.js" : {
-                            "type" : "jasy.Class"
-                        },
-                        "source/style/*.style" : {
-                            "type" : "jasy.Style"
-                        },
-                        "source/translation/*.{po,properties,txt}" : {
-                            "type" : "jasy.Translation"
-                        },
-                        "source/asset/*" : {
-                            "type" : "jasy.Asset"
-                        },
-                        "source/class/*{package.md,readme.md}" : {
-                            "type" : "jasy.Doc"
-                        }
-                    })
-
+                    scan = self.__resolveScanConfig(structures[self.kind])
                 elif self.__hasDir("src"):
                     self.kind = "resource"
-
-                    scan = self.__resolveScanConfig({
-                        "src/*.js" : {
-                            "type" : "jasy.Class"
-                        },
-                        "src/*.style" : {
-                            "type" : "jasy.Style"
-                        },
-                        "src/*" : {
-                            "type" : "jasy.Asset"
-                        }
-                    })
-
+                    scan = self.__resolveScanConfig(structures[self.kind])
                 else:
                     self.kind = "flat"
-
-                    scan = self.__resolveScanConfig({
-                        "class/*.js" : {
-                            "type" : "jasy.Class"
-                        },
-                        "style/*.style" : {
-                            "type" : "jasy.Style"
-                        },
-                        "asset/*" : {
-                            "type" : "jasy.Asset"
-                        },
-                        "translation/*.{po,properties,txt}" : {
-                            "type" : "jasy.Translation"
-                        }
-                    })
+                    scan = self.__resolveScanConfig(structures[self.kind])
 
             else:
                 scan = self.__resolveScanConfig(self.__config.get("scan"))
