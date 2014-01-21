@@ -1,3 +1,28 @@
+Jasy-1.5-beta4
+==============
+
+## Major changes
+
+
+### Added support for customizing projects structure
+
+- Support for adding cuctom item types (not limited to Class, Style, Asset, Translation anymore)
+- Added support to define the item type in manual content sections. No auto-handling anymore based on file extension!
+- Added new and generic `addItem()`/`getItem()` to `Project` for easily manually adding items to the registry.
+- Path to file ID transformation happens in each item type now, not centrally in `Project`.
+
+### Fine tuning for `Profile`
+
+- Massive cleanup to implementation.
+- Using new storage logic to generate unique IDs for each configuration using `getId()`.
+
+## Minor changes
+
+- Updated Copyrights to 2014 ;)
+- Minor fix for handling non existing asset data in `OutputManager`
+- Removed handling of "xlf" extension for supporting ICU translations. Still not implemented. Makes no sense to keep reporting it.
+- Removed filtering of projects inside resource folders of each projects. This should be pretty untypical and is a bad architecture choice. Warnings about this were removed as this effectively never produced a positive case as far as we know.
+
 Jasy 1.5-beta3
 ==============
 
