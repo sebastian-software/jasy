@@ -3,7 +3,7 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import hashlib, os
+import os
 
 import jasy.core.Console as Console
 import jasy.core.Util as Util
@@ -55,7 +55,7 @@ def getTargetFolder(url, version=None):
         identifier = "%s@%s" % (url, version)
         version = version[version.rindex("/")+1:]
 
-    hash = hashlib.sha1(identifier.encode("utf-8")).hexdigest()
+    hash = Util.generateChecksum(identifier)
     return "%s-%s-%s" % (folder, version, hash)
 
 
