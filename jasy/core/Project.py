@@ -264,6 +264,9 @@ class Project():
                         },
                         "asset/*" : {
                             "type" : "jasy.Asset"
+                        },
+                        "translation/*.{po,properties,txt}" : {
+                            "type" : "jasy.Translation"
                         }
                     })
 
