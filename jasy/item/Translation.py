@@ -18,8 +18,6 @@ def getFormat(path):
     if path:
         if path.endswith(".po"):
             return "gettext"
-        elif path.endswith(".xlf"):
-            return "xlf"
         elif path.endswith(".properties"):
             return "property"
         elif path.endswith(".txt"):
@@ -64,7 +62,7 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
     def setId(self, id):
         super().setId(id)
-        
+
         # Extract language from file ID
         # Thinking of that all files are named like de.po, de.txt, de.properties, etc.
         lang = self.id

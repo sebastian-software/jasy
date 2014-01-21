@@ -25,16 +25,7 @@ from jasy import UserError
 
 __all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
 
-
-classExtensions = (".js")
-styleExtensions = (".style")
-templateExtensions = (".tmpl")
-# Gettext .po files + ICU formats (http://userguide.icu-project.org/locale/localizing) (all formats but without .java support)
-translationExtensions = (".po", ".xlf", ".properties", ".txt")
-docFiles = ("package.md", "readme.md")
 repositoryFolder = re.compile(r"^([a-zA-Z0-9\.\ _-]+)-([a-f0-9]{40})$")
-
-
 projects = {}
 
 
@@ -235,7 +226,7 @@ class Project():
                         "source/style/*.style" : {
                             "type" : "jasy.Style"
                         },
-                        "source/translation/*.{po,xlf,properties,txt}" : {
+                        "source/translation/*.{po,properties,txt}" : {
                             "type" : "jasy.Translation"
                         },
                         "source/asset/*" : {
@@ -256,12 +247,6 @@ class Project():
                         "src/*.style" : {
                             "type" : "jasy.Style"
                         },
-                        "src/*.{po,xlf,properties,txt}" : {
-                            "type" : "jasy.Translation"
-                        },
-                        "src/*{package.md,readme.md}" : {
-                            "type" : "jasy.Doc"
-                        },
                         "src/*" : {
                             "type" : "jasy.Asset"
                         }
@@ -276,12 +261,6 @@ class Project():
                         },
                         "style/*.style" : {
                             "type" : "jasy.Style"
-                        },
-                        "translation/*.{po,xlf,properties,txt}" : {
-                            "type" : "jasy.Translation"
-                        },
-                        "class/*{package.md,readme.md}" : {
-                            "type" : "jasy.Doc"
                         },
                         "asset/*" : {
                             "type" : "jasy.Asset"
