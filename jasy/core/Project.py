@@ -407,10 +407,7 @@ class Project():
 
         Console.indent()
         for fileId in content:
-            Console.info("%s - %s", fileId, content)
-
             entry = content[fileId]
-
             if type(entry) is not dict:
                 raise UserError("Invalid manual content section for file %s. Requires a dict with type and source definition!" % fileId)
 

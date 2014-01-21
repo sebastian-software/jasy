@@ -899,7 +899,7 @@ class Profile():
             }
 
             serialized = json.dumps(all, sort_keys=True, indent=2, separators=(',', ': '))
-            Console.info("Re-generating ID: %s" % serialized)
+            # Console.info("Re-generating ID: %s" % serialized)
             id = self.__id = jasy.core.Util.generateChecksum(serialized)
             Console.info("Re-generated profile ID: %s" % id)
 
