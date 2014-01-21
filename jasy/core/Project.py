@@ -4,7 +4,7 @@
 # Copyright 2012-2014 Sebastian Werner
 #
 
-import os, re, fnmatch
+import os, re, fnmatch, copy
 
 import jasy.core.Cache
 import jasy.core.Config as Config
@@ -333,6 +333,9 @@ class Project():
                     "package": self.__package
                 }
 
+            else:
+                config = copy.deepcopy(config)
+
             if not "type" in config:
                 raise UserError("No type configured in jasyproject configuration (scan section)")
 
@@ -344,6 +347,7 @@ class Project():
 
             config["origpath"] = path
             config["regex"], config["paths"] = self.__createPathRe(path)
+
             scan.append(config)
 
 
@@ -363,6 +367,7 @@ class Project():
 
 
         scan.sort(key=specificitySort)
+
         return scan
 
 
