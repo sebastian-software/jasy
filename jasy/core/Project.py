@@ -290,10 +290,10 @@ class Project():
 
             else:
                 scan = self.__resolveScanConfig(self.__config.get("scan"))
-        
+
             for config in scan:
                 if type(config["paths"]) == str:
-                    self.__addDir(config["paths"], config["regex"], config["type"], config["package"]) 
+                    self.__addDir(config["paths"], config["regex"], config["type"], config["package"])
                 else:
                     for path in config["paths"]:
                         self.__addDir(path, config["regex"], config["type"], config["package"])
@@ -403,12 +403,19 @@ class Project():
 
 
     def __addContent(self, content):
-        Console.debug("Adding manual content")
+        Console.info("Adding manual content")
 
         Console.indent()
         for fileId in content:
-            itemType = content[fileId]["type"]
-            fileContent = content[fileId]["source"]
+            Console.info("%s - %s", fileId, content)
+
+            entry = content[fileId]
+
+            if type(entry) is not dict:
+                raise UserError("Invalid manual content section for file %s. Requires a dict with type and source definition!" % fileId)
+
+            itemType = entry["type"]
+            fileContent = entry["source"]
 
             if len(fileContent) == 0:
                 raise UserError("Empty content!")
