@@ -25,13 +25,13 @@ from jasy import UserError
 
 __all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
 
-repositoryFolder = re.compile(r"^([a-zA-Z0-9\.\ _-]+)-([a-f0-9]{40})$")
+repositoryHashPostfix = re.compile(r"^(.*)-([a-zA-Z0-9]{27,28})$")
+
 projects = {}
 structures = {}
 
 def addStructure(name, structure):
     structures[name] = structure
-
 
 addStructure("application", {
     "source/class/*.js" : {
@@ -140,15 +140,17 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
 
 
 
-def getProjectNameFromPath(path):
+def getProjectNameFromPath(path, fromurl=False):
     name = os.path.basename(path)
 
-    # Remove folder SHA1 postfix when cloned via git etc.
-    clone = repositoryFolder.match(name)
-    if clone is not None:
-        name = clone.group(1)
+    # Remove folder SHA1-Base62 postfix when project is auto-cloned
+    if fromurl:
+        clone = repositoryHashPostfix.match(name)
+        if clone is not None:
+            name = clone.group(1)
 
-    # Slashes are often used as a separator to optional data
+    # Slashes are often used as a separator to optional data.
+    # Let's remove the last one
     if "-" in name:
         name = name[:name.rindex("-")]
 
@@ -161,7 +163,7 @@ class Project():
     scanned = False
 
 
-    def __init__(self, path, session, config=None, version=None):
+    def __init__(self, path, session, config=None, version=None, fromurl=False):
         """
         Constructor call of the project.
 
@@ -204,7 +206,7 @@ class Project():
             self.__cache.store("project[version]", version)
 
         # Read name from manifest or use the basename of the project's path
-        self.__name = self.__config.get("name", getProjectNameFromPath(self.__path))
+        self.__name = self.__config.get("name", getProjectNameFromPath(self.__path, fromurl))
 
         # Read requires
         self.__requires = self.__config.get("requires", {})
@@ -572,7 +574,7 @@ class Project():
                 else:
                     fullversion = None
 
-                project = Project(path, self.__session, config, fullversion)
+                project = Project(path, self.__session, config=config, version=fullversion, fromurl=Repository.isUrl(source))
                 projects[path] = project
 
             result.append(project)
