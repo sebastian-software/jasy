@@ -8,8 +8,8 @@
 
 import sys
 
-if sys.version < "3.2":
-  print("Jasy requires Python 3.2 or higher")
+if sys.version < "3.3":
+  print("Jasy requires Python 3.3 or higher")
   sys.exit(1)
 
 # Prefer setuptools (aka distribute) over distutils
@@ -34,7 +34,7 @@ if uses == "distribute":
     "install_requires" : [
       "Pygments>=1.6",
       "polib>=1.0.3",
-      "requests>=2",
+      "requests>=2.3",
       "CherryPy>=3.2.4",
       "PyYAML>=3.10"
     ],
@@ -98,6 +98,7 @@ setup(
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.2',
     'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
     'Topic :: Documentation',
     'Topic :: Software Development :: Build Tools',
     'Topic :: Software Development :: Compilers',

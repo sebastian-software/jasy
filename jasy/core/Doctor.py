@@ -52,19 +52,19 @@ optionals = [
         "packageName": "hoedown",
         "minVersion": "0.2",
         "installPath": "'pip3 install hoedown'",
-        "updatePath": ""
+        "updatePath": "'pip3 install --upgrade hoedown'"
     },
     {
         "packageName": "sphinx",
         "minVersion": "1.2",
         "installPath": "'pip3 install sphinx'",
-        "updatePath": ""
+        "updatePath": "'pip3 install --upgrade sphinx'"
     },
     {
         "packageName": "pillow",
         "minVersion": "2.3.0",
         "installPath": "'pip3 install Pillow'",
-        "updatePath": ""
+        "updatePath": "'pip3 install --upgrade Pillow'"
     }
 ]
 
