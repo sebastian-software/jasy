@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import sys, os, yaml, json
+import sys, os, yaml, toml, json
 
 import jasy.core.Console as Console
 import jasy.core.File as File
@@ -19,20 +19,20 @@ __all__ = [ "Config", "findConfig", "loadConfig", "writeConfig" ]
 def findConfig(fileName):
     """
     Returns the name of a config file based on the given base file name (without extension).
-    Returns either a filename which endswith .json, .yaml or None
+    Returns either a filename which endswith .toml, .yaml, .json or None when no file was found.
     """
 
     fileExt = os.path.splitext(fileName)[1]
 
     # Auto discovery
     if not fileExt:
-        for tryExt in (".json", ".yaml"):
-            if os.path.exists(fileName + tryExt):
+        for tryExt in (".toml", ".yaml", ".json"):
+            if os.path.isfile(fileName + tryExt):
                 return fileName + tryExt
 
         return None
 
-    if os.path.exists(fileName) and fileExt in (".json", ".yaml"):
+    if os.path.isfile(fileName) and fileExt in (".toml", ".yaml", ".json"):
         return fileName
     else:
         return None
@@ -51,11 +51,13 @@ def loadConfig(fileName, encoding="utf-8"):
     fileHandle = open(configName, mode="r", encoding=encoding)
 
     fileExt = os.path.splitext(configName)[1]
-    if fileExt == ".json":
-        result = json.load(fileHandle)
 
+    if fileExt == ".toml":
+        result = toml.load(fileHandle)
     elif fileExt == ".yaml":
         result = yaml.load(fileHandle)
+    elif fileExt == ".json":
+        result = json.load(fileHandle)
 
     fileHandle.close()
     return result
@@ -64,18 +66,23 @@ def loadConfig(fileName, encoding="utf-8"):
 def writeConfig(data, fileName, indent=2, encoding="utf-8"):
     """
     Writes the given data structure to the given file name. Based on the given extension
-    a different file format is choosen. Currently use either .yaml or .json.
+    a different file format is choosen. Currently use either .toml, .yaml or .json.
     """
 
     fileHandle = open(fileName, mode="w", encoding=encoding)
 
     fileExt = os.path.splitext(fileName)[1]
-    if fileExt == ".json":
-        json.dump(data, fileHandle, indent=indent, ensure_ascii=False)
+
+    if fileExt == ".toml":
+        toml.dump(data, fileHandle)
         fileHandle.close()
 
     elif fileExt == ".yaml":
         yaml.dump(data, fileHandle, default_flow_style=False, indent=indent, allow_unicode=True)
+        fileHandle.close()
+
+    elif fileExt == ".json":
+        json.dump(data, fileHandle, indent=indent, ensure_ascii=False)
         fileHandle.close()
 
     else:
@@ -111,7 +118,7 @@ def matchesType(value, expected):
 
 class Config:
     """
-    Wrapper around JSON/YAML with easy to use import tools for using question files,
+    Wrapper around TOML/YAML/JSON with easy to use import tools for using question files,
     command line arguments, etc.
     """
 
