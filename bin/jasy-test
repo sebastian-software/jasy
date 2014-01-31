@@ -17,8 +17,8 @@ except ImportError:
     pass
 
 # Version check
-if sys.version_info[0] < 3:
-    sys.stderr.write("Jasy requires Python 3!\n")
+if sys.version < "3.3":
+    print("Jasy requires Python 3.3 or higher")
     sys.exit(1)
 
 # Include local Jasy into Python library path
