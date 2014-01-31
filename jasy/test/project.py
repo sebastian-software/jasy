@@ -21,13 +21,21 @@ class Tests(unittest.TestCase):
         return open(os.path.join(path, fileName), mode="r", encoding="utf-8").read()
 
     def createjpyaml(self, path):
-        self.writeFile(path, "jasyproject.yaml", """name: myproject
-""")
+        self.writeFile(path, "jasyproject.toml", """name = "myproject" """)
 
     def createjpyaml_withContent(self, path):
-        self.writeFile(path, "jasyproject.yaml", """name: myproject
-
-content: {myproject.Main: {type: "jasy.Class", source: [man/Main.js, man/Add.js]}, myproject/main.css: {type: "jasy.Asset", source: [man/main.css]}}
+        self.writeFile(path, "jasyproject.yaml", """
+name: myproject
+content: {
+    myproject.Main: {
+        type: "jasy.Class",
+        source: [man/Main.js, man/Add.js]
+    },
+    myproject/main.css: {
+        type: "jasy.Asset",
+        source: [man/main.css]
+    }
+}
 """)
 
     def createCaseOne(self):
