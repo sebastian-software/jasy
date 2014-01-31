@@ -10,7 +10,7 @@ import jasy
 
 from jasy.core.Project import getProjectFromPath
 from jasy.core.Util import getKey
-from jasy.core.Config import Config
+from jasy.core.Config import Config, findConfig
 from jasy import UserError
 
 import jasy.core.Console as Console
@@ -109,7 +109,7 @@ validProjectName = re.compile(r"^[a-z][a-z0-9]*$")
 
 def create(name="myproject", origin=None, originVersion=None, skeleton=None, destination=None, session=None, **argv):
     """
-    Creates a new project from a defined skeleton or an existing project's root directory (only if there is a jasycreate.yaml/.json).
+    Creates a new project from a defined skeleton or an existing project's root directory (only if there is a jasycreate config file).
 
     :param name: The name of the new created project
     :type name: string
@@ -175,7 +175,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
             raise UserError("Could not clone origin repository!")
 
         Console.debug("Cloned revision: %s" % originRevision)
-        if os.path.isfile(os.path.join(originPath, "jasycreate.yaml")) or os.path.isfile(os.path.join(originPath, "jasycreate.json")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
+        if findConfig(os.path.join(originPath, "jasycreate")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
             originProject = None
         else:
             originProject = getProjectFromPath(originPath, session)
@@ -192,7 +192,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
 
         elif os.path.isdir(origin):
             originPath = origin
-            if os.path.isfile(os.path.join(originPath, "jasycreate.yaml")) or os.path.isfile(os.path.join(originPath, "jasycreate.json")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
+            if findConfig(os.path.join(originPath, "jasycreate")) or os.path.isfile(os.path.join(originPath, "jasycreate.py")):
                 originProject = None
             else:
                 originProject = getProjectFromPath(originPath, session)
