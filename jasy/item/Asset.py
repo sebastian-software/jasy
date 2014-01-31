@@ -92,10 +92,10 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
 
 
     def isImageSpriteConfig(self):
-        return self.isText() and isConfigName(self.id)
+        return self.isText() and isConfigName(self.id, "jasysprite")
 
     def isImageAnimationConfig(self):
-        return self.isText() and isConfigName(self.id)
+        return self.isText() and isConfigName(self.id, "jasyanimation")
 
     def isText(self):
         return self.type == "text"

@@ -16,9 +16,14 @@ from jasy.core.Util import getKey
 __all__ = [ "Config", "findConfig", "isConfigName", "loadConfig", "writeConfig" ]
 
 
-def isConfigName(fileName):
-    fileExt = os.path.splitext(fileName)[1]
-    return fileExt in (".toml", ".yaml", ".json")
+def isConfigName(fileName, requiredBaseName=None):
+    baseName = os.path.basename(fileName)
+    fileSplit = os.path.splitext(baseName)
+
+    if requiredBaseName is not None and requiredBaseName != fileSplit[0]:
+        return False
+
+    return fileSplit[1] in (".toml", ".yaml", ".json")
 
 
 def findConfig(fileName):
