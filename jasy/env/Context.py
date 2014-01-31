@@ -36,7 +36,7 @@ from jasy.core.Util import executeCommand
 # Create config object
 import jasy.core.Config as Config
 config = Config.Config()
-config.__doc__ = "Auto initialized config object based on project's jasyscript.yaml/json"
+config.__doc__ = "Auto initialized config object based on project's jasyscript file"
 config.loadValues("jasyscript", optional=True)
 
 
