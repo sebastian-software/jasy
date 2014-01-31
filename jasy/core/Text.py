@@ -12,10 +12,11 @@ import re
 #
 
 try:
-    import misaka
+    import hoedown
 
-    misakaExt = misaka.EXT_AUTOLINK | misaka.EXT_NO_INTRA_EMPHASIS | misaka.EXT_FENCED_CODE
-    misakaRender = misaka.HTML_SKIP_STYLE | misaka.HTML_SMARTYPANTS
+    hoedownExt = hoedown.EXT_AUTOLINK | hoedown.EXT_NO_INTRA_EMPHASIS | hoedown.EXT_FENCED_CODE | hoedown.EXT_TABLES | hoedown.EXT_FOOTNOTES | hoedown.EXT_QUOTE | hoedown.EXT_STRIKETHROUGH | hoedown.EXT_UNDERLINE | hoedown.EXT_HIGHLIGHT
+    hoedownRender = hoedown.HTML_SKIP_STYLE | hoedown.HTML_SMARTYPANTS
+
     supportsMarkdown = True
 
 except:
@@ -27,7 +28,7 @@ def markdownToHtml(markdownStr):
     auto linking and typographic features by SmartyPants.
     """
 
-    return misaka.html(markdownStr, misakaExt, misakaRender)
+    return hoedown.html(markdownStr, hoedownExt, hoedownRender)
 
 
 #

@@ -29,7 +29,7 @@ needs = [
     },
     {
         "packageName": "requests",
-        "minVersion": "2.0",
+        "minVersion": "2.2",
         "installPath": "'pip3 install requests'",
         "updatePath": "'pip3 install --upgrade requests'"
     },
@@ -49,20 +49,20 @@ needs = [
 
 optionals = [
     {
-        "packageName": "misaka",
-        "minVersion": "1.0",
-        "installPath": "'pip3 install misaka'",
+        "packageName": "hoedown",
+        "minVersion": "0.2",
+        "installPath": "'pip3 install hoedown'",
         "updatePath": ""
     },
     {
         "packageName": "sphinx",
-        "minVersion": "1.1",
+        "minVersion": "1.2",
         "installPath": "'pip3 install sphinx'",
         "updatePath": ""
     },
     {
         "packageName": "pillow",
-        "minVersion": "2.2.0",
+        "minVersion": "2.3.0",
         "installPath": "'pip3 install Pillow'",
         "updatePath": ""
     }
@@ -88,9 +88,9 @@ def doCompleteDoctor():
             Console.info(Console.colorize('Found installation', "green"))
             if LooseVersion(minVersion) > LooseVersion("0.0"):
                 if LooseVersion(versions[packageName.lower()]) >= LooseVersion(minVersion):
-                    Console.info(Console.colorize('Version is OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "green"))
+                    Console.info(Console.colorize('Version is OK (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "green"))
                 else:
-                    Console.info(Console.colorize(Console.colorize('- Version is NOT OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
+                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
                     Console.info('Update to the newest version of %s using %s' % (packageName, updatePath))
         else:
             Console.info(Console.colorize(Console.colorize('Did NOT find installation', "red"), "bold"))
@@ -115,7 +115,7 @@ def doCompleteDoctor():
 
 
 def doInitializationDoctor():
-    """Checks for uninstalled or too old versions only of needed requirements and gives error output"""
+    """Checks for uninstalled or too old versions only of requirements and gives error output"""
 
     dists = [dist for dist in pip.get_installed_distributions()]
     keys = [dist.key for dist in pip.get_installed_distributions()]
@@ -130,7 +130,7 @@ def doInitializationDoctor():
                 if LooseVersion(versions[packageName.lower()]) < LooseVersion(minVersion):
                     Console.info(Console.colorize(Console.colorize('Jasy requirement error: "%s"' % packageName, "red"), "bold"))
                     Console.indent()
-                    Console.info(Console.colorize(Console.colorize('Version is NOT OK (needed: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
+                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
                     Console.info('Update to the newest version of %s using %s' % (packageName, updatePath))
                     Console.outdent()
                     return False
