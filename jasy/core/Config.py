@@ -245,7 +245,7 @@ class Config:
         exec(compile(code, os.path.abspath(fileName), "exec"), globals(), env)
 
         if autoDelete:
-            File.rm("jasycreate.py")
+            File.rm(fileName)
 
         return True
 
