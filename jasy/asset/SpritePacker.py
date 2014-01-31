@@ -89,7 +89,7 @@ class SpritePacker():
         self.base = base
         self.files = []
         self.types = types
-        self.dataFormat = 'toml';
+        self.dataFormat = 'yaml';
 
     def clear(self):
         """
@@ -336,7 +336,7 @@ class SpritePacker():
         return (sheets, extraBlocks, 0)
 
 
-    def setDataFormat(self, format='toml'):
+    def setDataFormat(self, format='yaml'):
         """Sets format for metadata output - for format support take a look at jasy.core.Config."""
         self.dataFormat = format;
 
