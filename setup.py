@@ -36,11 +36,12 @@ if uses == "distribute":
       "polib>=1.0.3",
       "requests>=2.3",
       "CherryPy>=3.2.4",
-      "PyYAML>=3.10"
+      "PyYAML>=3.10",
+      "toml>=0.8"
     ],
 
     "extras_require" : {
-      "jsdoc" : ["hoedown"],
+      "jsdoc" : ["hoedown", "misaka"],
       "daemon" : ["watchdog"],
       "sprites" : ["Pillow"],
       "doc" : ["sphinx"]
