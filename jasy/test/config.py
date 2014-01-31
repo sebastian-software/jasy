@@ -43,7 +43,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(Config.findConfig(os.path.join(tempDirectory, "test.yaml")), os.path.join(tempDirectory, "test.yaml"))
 
 
-    def test_write_and_read_json(self):
+    def test_write_and_read_yaml(self):
 
         tempDirectory = tempfile.TemporaryDirectory().name
         os.makedirs(tempDirectory)
