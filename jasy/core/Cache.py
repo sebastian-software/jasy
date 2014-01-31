@@ -109,7 +109,7 @@ class Cache:
 
         timeKey = key + "-timestamp"
         if key in self.__shelve and timeKey in self.__shelve:
-            if not timestamp or timestamp <= self.__shelve[timeKey]:
+            if not timestamp or timestamp == self.__shelve[timeKey]:
                 value = self.__shelve[key]
 
                 # Useful to debug serialized size. Often a performance
