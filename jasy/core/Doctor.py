@@ -44,6 +44,12 @@ needs = [
         "minVersion": "3.10",
         "installPath": "'pip install PyYAML'",
         "updatePath": "'pip3 install --upgrade PyYAML'"
+    },
+    {
+        "packageName": "toml",
+        "minVersion": "0.8",
+        "installPath": "'pip install toml'",
+        "updatePath": "'pip3 install --upgrade toml'"
     }
 ]
 
