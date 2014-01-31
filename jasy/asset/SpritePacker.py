@@ -89,7 +89,7 @@ class SpritePacker():
         self.base = base
         self.files = []
         self.types = types
-        self.dataFormat = 'yaml';
+        self.dataFormat = 'toml';
 
     def clear(self):
         """
@@ -335,9 +335,9 @@ class SpritePacker():
 
         return (sheets, extraBlocks, 0)
 
-    # extension can be set to 'yaml' or 'json'
-    def setDataFormat(self, format='yaml'):
-        """Sets format (json or yaml) for metadata output"""
+
+    def setDataFormat(self, format='toml'):
+        """Sets format for metadata output - for format support take a look at jasy.core.Config."""
         self.dataFormat = format;
 
 
@@ -362,7 +362,7 @@ class SpritePacker():
 
         Console.outdent()
 
-        # Generate JSON/YAML
+        # Generate config file
         Console.info('Exporting data...')
         script = os.path.join(self.base, path, 'jasysprite.%s' % self.dataFormat)
         writeConfig(data, script)
