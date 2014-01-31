@@ -13,7 +13,12 @@ from jasy import UserError
 from jasy.core.Util import getKey
 
 
-__all__ = [ "Config", "findConfig", "loadConfig", "writeConfig" ]
+__all__ = [ "Config", "findConfig", "isConfigName", "loadConfig", "writeConfig" ]
+
+
+def isConfigName(fileName):
+    fileExt = os.path.splitext(fileName)[1]
+    return fileExt in (".toml", ".yaml", ".json")
 
 
 def findConfig(fileName):
