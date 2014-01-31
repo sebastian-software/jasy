@@ -10,7 +10,7 @@ import jasy.asset.ImageInfo
 import jasy.item.Abstract
 
 from jasy.core.Util import getKey
-from jasy.core.Config import loadConfig
+from jasy.core.Config import loadConfig, isConfigName
 import jasy.core.Console as Console
 
 extensions = {
@@ -43,6 +43,7 @@ extensions = {
 
     ".json" : "text",
     ".yaml" : "text",
+    ".toml" : "text",
     ".md" : "text",
     ".svg" : "text",
     ".txt" : "text",
@@ -91,10 +92,10 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
 
 
     def isImageSpriteConfig(self):
-        return self.isText() and (os.path.basename(self.id) == "jasysprite.yaml" or os.path.basename(self.id) == "jasysprite.json")
+        return self.isText() and isConfigName(self.id)
 
     def isImageAnimationConfig(self):
-        return self.isText() and (os.path.basename(self.id) == "jasyanimation.yaml" or os.path.basename(self.id) == "jasyanimation.json")
+        return self.isText() and isConfigName(self.id)
 
     def isText(self):
         return self.type == "text"
