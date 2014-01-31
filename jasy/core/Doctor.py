@@ -61,6 +61,12 @@ optionals = [
         "updatePath": "'pip3 install --upgrade hoedown'"
     },
     {
+        "packageName": "misaka",
+        "minVersion": "1.0",
+        "installPath": "'pip3 install misaka'",
+        "updatePath": "'pip3 install --upgrade misaka'"
+    },
+    {
         "packageName": "sphinx",
         "minVersion": "1.2",
         "installPath": "'pip3 install sphinx'",
