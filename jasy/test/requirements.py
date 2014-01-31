@@ -39,19 +39,19 @@ requires:"""
             pass
 
         self.writeFile(os.path.join(reqpath, "class"), "Base.js", ";")
-        ruquirement = ("""
+        requirement = ("""
 - source: %s
   config:
     name: %s""" % (reqpath, name))
 
 
         if subrequirements is not None:
-            ruquirement += """
+            requirement += """
     requires:"""
             for s in subrequirements:
-                ruquirement += s;
+                requirement += s;
 
-        return ruquirement
+        return requirement
 
     def createSubRequirement(self, name, manPath=None):
         if manPath is not None:
