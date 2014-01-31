@@ -475,7 +475,7 @@ class Session():
         path = os.path.abspath(os.path.join(".jasy", "virtual"))
 
         # Set package to empty string to allow for all kind of namespaces in this virtual project
-        jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: virtual\npackage: ""\n')
+        jasy.core.File.write(os.path.join(path, "jasyproject.toml"), 'name = "virtual"\npackage: ""\n')
 
         # Generate project instance from path, store and return
         project = Project.getProjectFromPath(path, self)
