@@ -20,10 +20,6 @@ class AbstractItem:
     __cache = None
     __text = None
 
-    def __init__(self, project, id=None, package=None):
-        self.project = project
-        if id:
-            self.setId(id)
 
     @classmethod
     def fromPath(cls, project, relpath, package=None):
@@ -31,6 +27,14 @@ class AbstractItem:
         item = cls(project)
         item.setId(item.generateId(relpath, package))
         return item
+
+
+
+
+    def __init__(self, project, id=None, package=None):
+        self.project = project
+        if id:
+            self.setId(id)
 
     def generateId(self, relpath, package):
         return "%s/%s" % (package,relpath)
@@ -102,7 +106,9 @@ class AbstractItem:
 
 
     def getText(self, encoding="utf-8"):
-        """Reads the file (as UTF-8) and returns the text"""
+        """
+        Reads the file (as UTF-8) and returns the text
+        """
 
         if self.__text is not None:
             return self.__text
@@ -115,8 +121,11 @@ class AbstractItem:
         else:
             return open(self.__path, mode="r", encoding=encoding).read()
 
+
     def getChecksum(self, mode="rb"):
-        """Returns the SHA1 checksum of the item"""
+        """
+        Returns the SHA1 checksum of the item
+        """
 
         return File.sha1(open(self.getPath(), mode))
 
