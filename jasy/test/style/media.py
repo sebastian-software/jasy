@@ -60,6 +60,33 @@ class Tests(unittest.TestCase):
             '''), '@media (max-width:600px){.sidebar{display:none;}}')
 
 
+    def test_size_inner(self):
+        self.assertEqual(self.process('''
+            .sidebar {
+              @media (max-width: 600px) {
+                display: none;
+              }
+            }
+            '''), '@media (max-width:600px){.sidebar{display:none;}}')
+
+
+
+    def test_size_inner_children(self):
+        self.assertEqual(self.process('''
+            .sidebar {
+              @media (max-width: 600px) {
+                h1{
+                  display: none;
+                }
+
+                p{
+                  font-weight: bold;
+                }
+              }
+            }
+            '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}')
+
+
     def test_and(self):
         self.assertEqual(self.process('''
             @media tv and (min-width: 700px) and (orientation: landscape) {
