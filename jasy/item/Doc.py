@@ -14,7 +14,7 @@ from jasy import UserError
 
 class DocItem(Abstract.AbstractItem):
 
-    kind = "doc"
+    kind = "jasy.Doc"
 
     def generateId(self, relpath, package):
         if package:

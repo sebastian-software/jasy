@@ -13,7 +13,7 @@ class AbstractItem:
 
     id = None
     project = None
-    kind = "item"
+    kind = "jasy.Item"
     mtime = None
 
     __path = None

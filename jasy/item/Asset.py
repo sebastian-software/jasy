@@ -64,7 +64,7 @@ extensions = {
 
 class AssetItem(jasy.item.Abstract.AbstractItem):
 
-    kind = "asset"
+    kind = "jasy.Asset"
 
     __imageSpriteData = []
     __imageAnimationData = []

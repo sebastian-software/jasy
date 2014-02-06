@@ -75,7 +75,7 @@ class ClassError(Exception):
 
 class ClassItem(jasy.item.Abstract.AbstractItem):
 
-    kind = "class"
+    kind = "jasy.Class"
 
     def generateId(self, relpath, package):
         if package:
@@ -154,7 +154,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         result = set()
 
         for name in meta.breaks:
-            if name != self.id and name in items and items[name].kind == "class":
+            if name != self.id and name in items and items[name].kind == "jasy.Class":
                 result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
@@ -195,7 +195,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Manually defined names/classes
         for name in meta.requires:
-            if name != self.id and name in items and items[name].kind == "class":
+            if name != self.id and name in items and items[name].kind == "jasy.Class":
                 result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
@@ -208,7 +208,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Globally modified names (mostly relevant when working without namespaces)
         for name in scope.shared:
-            if name != self.id and name in items and items[name].kind == "class":
+            if name != self.id and name in items and items[name].kind == "jasy.Class":
                 result.add(items[name])
 
         # Add classes from detected package access
@@ -224,7 +224,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 if package == self.id:
                     break
 
-                elif package in items and items[package].kind == "class":
+                elif package in items and items[package].kind == "jasy.Class":
                     aliases[orig] = package
                     result.add(items[package])
                     break
@@ -238,7 +238,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Manually excluded names/classes
         for name in meta.optionals:
-            if name != self.id and name in items and items[name].kind == "class":
+            if name != self.id and name in items and items[name].kind == "jasy.Class":
                 result.remove(items[name])
             elif warnings:
                 Console.warn("Missing class (optional): %s in %s", name, self.id)
