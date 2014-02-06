@@ -83,6 +83,10 @@ class StyleItem(AbstractItem.AbstractItem):
     kind = "jasy.Style"
 
     def generateId(self, relpath, package):
+        """
+        Generates the fileId of this item as being used by other modules
+        """
+
         if package:
             packageId = "%s/" % package
         else:

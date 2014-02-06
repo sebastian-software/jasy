@@ -6,7 +6,7 @@
 
 import polib, json, os
 
-import jasy.item.Abstract
+import jasy.item.Abstract as AbstractItem
 import jasy.core.Console as Console
 
 
@@ -25,15 +25,17 @@ def generateMessageId(basic, plural=None, context=None):
     return result
 
 
-class TranslationItem(jasy.item.Abstract.AbstractItem):
+class TranslationItem(AbstractItem.AbstractItem):
 
     def __add__(self, other):
+
         self.table.update(other.getTable())
         return self
 
 
     def __init__(self, project, id=None, package=None, table=None):
-        # Call Item's init method first
+
+        # Call AbstractItem's init method first
         super().__init__(project, id, package)
 
         # Initialize translation table
@@ -41,6 +43,8 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
 
     def setId(self, id):
+
+        # Overridden to set the language based on the fileId automatically
         super().setId(id)
 
         # Extract language from file ID
@@ -53,6 +57,10 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
 
     def generateId(self, relpath, package):
+        """
+        Generates the fileId of this item as being used by other modules
+        """
+
         if package:
             fileId = "%s/" % package
         else:
@@ -62,7 +70,8 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
 
     def attach(self, path):
-        # Call Item's attach method first
+
+        # Call AbstractItem's attach method first
         super().attach(path)
 
         Console.debug("Loading translation file: %s", path)
@@ -93,7 +102,7 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         return self
 
 
-    def export(self, classes):
+    def export(self, classes, formatted=True):
         """
         Exports the translation table as JSON based on the given set of classes
         """
@@ -110,7 +119,10 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         result = { translationId: table[translationId] for translationId in relevantTranslations if translationId in table }
 
         if result:
-            return json.dumps(result, indent=2, sort_keys=True)
+            if formatted:
+                return json.dumps(result, indent=2, sort_keys=True)
+            else:
+                return json.dumps(result, sort_keys=True)
 
 
     def getTable(self):

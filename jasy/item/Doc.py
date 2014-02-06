@@ -6,23 +6,29 @@
 
 import os
 
-import jasy.js.api.Data as Data
-import jasy.core.Text as Text
-import jasy.item.Abstract as Abstract
-
 from jasy import UserError
 
-class DocItem(Abstract.AbstractItem):
+import jasy.js.api.Data as Data
+import jasy.core.Text as Text
+import jasy.item.Abstract as AbstractItem
+
+
+class DocItem(AbstractItem.AbstractItem):
 
     kind = "jasy.Doc"
 
     def generateId(self, relpath, package):
+        """
+        Generates the fileId of this item as being used by other modules
+        """
+
         if package:
             fileId = "%s/" % package
         else:
             fileId = ""
 
         return (fileId + os.path.dirname(relpath)).replace("/", ".")
+
 
     def getApi(self):
         field = "api[%s]" % self.id
