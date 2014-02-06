@@ -404,6 +404,12 @@ def Media(tokenizer, staticContext):
         background-color: yellow;
       }
     }
+
+    @media screen and (max-width: 300px) {
+      body{
+        background-color: orange;
+      }
+    }
     """
 
     node = Node.Node(tokenizer, "media")
