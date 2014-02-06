@@ -83,11 +83,13 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def generateId(self, relpath, package):
         if package:
-            fileId = "%s/" % package
+            packageId = "%s/" % package
         else:
-            fileId = ""
+            packageId = ""
 
-        return (fileId + os.path.splitext(relpath)[0]).replace("/", ".")
+        pathId = os.path.splitext(relpath)[0]
+
+        return (packageId + pathId).replace("/", ".")
 
 
     def __getTree(self):
