@@ -312,12 +312,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Engine.reduceTree(tree, profile)
 
             # Compress tree
-            compressed = Compressor.Compressor(formatting).compress(tree)
+            compressed = Compressor.Compressor(optimization, formatting).compress(tree)
 
             # Store in cache
             self.project.getCache().store(field, compressed, mtime)
 
         return compressed
-
-
 

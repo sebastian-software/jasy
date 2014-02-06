@@ -47,7 +47,11 @@ class Compressor:
 
 
 
-    def __init__(self, format=None):
+    def __init__(self, optimize=None, format=None):
+        if optimize:
+            if optimize.has("colors"):
+                self.__optimizeColorNames = True
+
         if format:
             if format.has("indent"):
                 self.__useIndenting = True
