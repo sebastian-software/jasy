@@ -202,7 +202,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
-            Console.info("Collecting meta data %s...", Console.colorize(self.id, "bold"))
+            Console.debug("Collecting meta data %s...", Console.colorize(self.id, "bold"))
             meta = MetaData.MetaData(self.__getPermutatedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
 
@@ -218,7 +218,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:fields[%s]" % self.id
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
-            Console.info("Collecting fields %s...", Console.colorize(self.id, "bold"))
+            Console.debug("Collecting fields %s...", Console.colorize(self.id, "bold"))
             fields = collectFields(self.__getTree())
             self.project.getCache().store(field, fields, self.mtime)
 
@@ -234,7 +234,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:includes[%s]" % self.id
         includes = self.project.getCache().read(field, self.mtime)
         if includes is None:
-            Console.info("Collecting includes %s...", Console.colorize(self.id, "bold"))
+            Console.debug("Collecting includes %s...", Console.colorize(self.id, "bold"))
             includes = []
             for includeName, includeNode in includeGenerator(self.__getPermutatedTree(permutation)):
                 includes.append(includeName)
