@@ -177,6 +177,9 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "media":
             return Media(tokenizer, staticContext)
 
+        elif tokenValue == "supports":
+            return Supports(tokenizer, staticContext)
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
@@ -387,6 +390,60 @@ def FontFace(tokenizer, staticContext):
     node.append(childNode, "rules")
 
     return node
+
+
+def Supports(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "supports")
+
+    tokenType = tokenizer.get()
+    test = ""
+    requiresSpace = False
+
+    while tokenType != "left_curly":
+        token = tokenizer.token
+
+        if tokenType == "identifier":
+            if requiresSpace :
+                test += " "
+            test += token.value
+            requiresSpace = True
+        elif tokenType == "colon":
+            test += ":"
+            requiresSpace = False
+        elif tokenType == "left_paren":
+            if requiresSpace:
+                test += " "
+            test += "("
+            requiresSpace = False
+        elif tokenType == "right_paren":
+            test += ")"
+            requiresSpace = True
+        elif tokenType == "string":
+            if requiresSpace:
+                test += " "
+            test += ascii_encoder.encode(token.value)
+            requiresSpace = True
+        elif tokenType == "number":
+            if requiresSpace:
+                test += " "
+            test += "%s%s" % (token.value, getattr(token, "unit", ""))
+            requiresSpace = True
+        else:
+            raise SyntaxError("Unsupported supports token %s" % tokenType, tokenizer)
+
+
+        tokenType = tokenizer.get()
+
+    # Split at commas, but ignore any white spaces (trim single selectors)
+    node.name = test
+
+    # Next process content of selector
+    tokenizer.unget()
+    childNode = Block(tokenizer, staticContext)
+    node.append(childNode, "rules")
+
+    return node
+
 
 
 def Media(tokenizer, staticContext):
