@@ -51,8 +51,6 @@ def collectFields(node, keys=None):
         else:
             raise Exception("Could not handle non string type in jasy.Env call at line: %s" % node.line)
 
-
-
     # Process children
     for child in reversed(node):
         if child != None:

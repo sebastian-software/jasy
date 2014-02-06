@@ -6,14 +6,13 @@
 
 import os.path
 
-import jasy.asset.ImageInfo
-import jasy.item.Abstract
-
-from jasy.core.Util import getKey
-from jasy.core.Config import loadConfig, isConfigName
+import jasy.asset.ImageInfo as ImageInfo
+import jasy.item.Abstract as AbstractItem
 import jasy.core.Console as Console
+import jasy.core.Util as Util
+import jasy.core.Config as Config
 
-extensions = {
+AssetExtensions = {
     ".png" : "image",
     ".jpeg" : "image",
     ".jpg" : "image",
@@ -62,7 +61,7 @@ extensions = {
 }
 
 
-class AssetItem(jasy.item.Abstract.AbstractItem):
+class AssetItem(AbstractItem.AbstractItem):
 
     kind = "jasy.Asset"
 
@@ -70,15 +69,20 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
     __imageAnimationData = []
     __imageDimensionData = []
 
+
     def __init__(self, project, id=None, package=None):
+
         # Call Item's init method first
         super().__init__(project, id, package)
 
 
+
     def setId(self, id):
+
         super().setId(id)
+
         self.extension = os.path.splitext(self.id.lower())[1]
-        self.type = getKey(extensions, self.extension, "other")
+        self.type = Util.getKey(AssetExtensions, self.extension, "other")
         self.shortType = self.type[0]
 
 
@@ -92,10 +96,12 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
 
 
     def isImageSpriteConfig(self):
-        return self.isText() and isConfigName(self.id, "jasysprite")
+        return self.isText() and Config.isConfigName(self.id, "jasysprite")
+
 
     def isImageAnimationConfig(self):
-        return self.isText() and isConfigName(self.id, "jasyanimation")
+        return self.isText() and Config.isConfigName(self.id, "jasyanimation")
+
 
     def isText(self):
         return self.type == "text"
@@ -116,8 +122,9 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
         else:
             return self.type
 
+
     def getParsedObject(self):
-        return loadConfig(self.getPath())
+        return Config.loadConfig(self.getPath())
 
 
     def addImageSpriteData(self, id, left, top):
@@ -145,7 +152,7 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
             if self.__imageDimensionData:
                 image = self.__imageDimensionData[:]
             else:
-                info = jasy.asset.ImageInfo.ImgInfo(self.getPath()).getInfo()
+                info = ImageInfo.ImgInfo(self.getPath()).getInfo()
                 if info is None:
                     raise Exception("Invalid image: %s" % fileId)
 
@@ -165,5 +172,4 @@ class AssetItem(jasy.item.Abstract.AbstractItem):
         # TODO: audio length, video codec, etc.?
 
         return None
-
 
