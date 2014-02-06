@@ -83,7 +83,7 @@ class StyleError(Exception):
 
 class StyleItem(jasy.item.Abstract.AbstractItem):
 
-    kind = "style"
+    kind = "jasy.Style"
 
     def generateId(self, relpath, package):
         if package:
@@ -146,8 +146,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getBreaks(self, permutation=None, items=None, warnings=True):
         """
-        Returns all down-priorized dependencies. This are dependencies which are required to
-        make the module work, but are not required being available before the current item.
+        Returns all down-priorized dependencies. These are dependencies which are required to
+        make the item work, but are not required being available before the current item.
         """
 
         meta = self.getMetaData(permutation)
@@ -156,7 +156,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         for entry in meta.breaks:
             if entry == self.id:
                 pass
-            elif entry in items and items[entry].kind == "style":
+            elif entry in items and items[entry].kind == "jasy.Style":
                 result.add(items[entry])
             elif "*" in entry:
                 reobj = re.compile(fnmatch.translate(entry))
@@ -174,8 +174,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
         """
         Returns a set of dependencies seen through the given list of known
-        items (ignoring all unknown items in original set). This method also
-        makes use of the meta data.
+        items (ignoring all unknown items in original set).
         """
 
         meta = self.getMetaData(permutation)
@@ -185,7 +184,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         for entry in meta.requires:
             if entry == self.id:
                 pass
-            elif entry in items and items[entry].kind == "style":
+            elif entry in items and items[entry].kind == "jasy.Style":
                 result.add(items[entry])
             elif "*" in entry:
                 reobj = re.compile(fnmatch.translate(entry))
@@ -270,7 +269,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getModificationTime(self, profile):
         """
-        Returns the newest modification date of the stylesheet (respecting all includes)
+        Returns the modification date of the stylesheet
+        (or the sum of modification dates when using includes)
         """
 
         mtime = self.mtime
@@ -290,7 +290,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getMergedTree(self, profile):
         """
-        Returns the merged (includes resolved) and optimized (permutation values applied) tree.
+        Returns the merged (includes resolved) and optimized
+        (permutation values applied) tree.
         """
 
         session = profile.getSession()
@@ -323,7 +324,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getCompressed(self, profile):
         """
-        Returns the compressed CSS code of this stylesheet.
+        Returns the compressed CSS code of this item.
         """
 
         field = "style:compressed[%s]-%s" % (self.id, profile.getId())
