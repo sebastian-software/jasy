@@ -50,6 +50,16 @@ class Tests(unittest.TestCase):
             '''), '::-ms-backdrop h1{color:red;}')
 
 
+    def test_atsupports(self):
+        self.assertEqual(self.process(r'''
+            @supports(-webkit-text-stroke: 1px black) {
+              h1{
+                -webkit-text-stroke: 1px black;
+              }
+            }
+            '''), '')
+
+
 
 
 
