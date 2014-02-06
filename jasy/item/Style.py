@@ -41,6 +41,10 @@ def includeGenerator(node):
 
 
 def collectFields(node, keys=None, condition=False):
+    """
+    Collects all fields accessed by the given root node
+    and all children. Returns a set of field names.
+    """
 
     if keys is None:
         keys = set()
@@ -64,6 +68,9 @@ def collectFields(node, keys=None, condition=False):
 
 
 class StyleError(Exception):
+    """
+    Error class used for issues during style processing
+    """
 
     def __init__(self, inst, msg):
         self.__msg = msg
