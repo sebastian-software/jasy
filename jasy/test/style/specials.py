@@ -39,7 +39,15 @@ class Tests(unittest.TestCase):
             }
             '''), ':-moz-full-screen body{background:rgba(0,0,0,0.3);}')
 
-        print("DONE")
+
+    def test_msbackdrop(self):
+        self.assertEqual(self.process(r'''
+            ::-ms-backdrop{
+              h1{
+                color: red;
+              }
+            }
+            '''), '')
 
 
 
