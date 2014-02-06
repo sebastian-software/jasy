@@ -107,6 +107,28 @@ class Tests(unittest.TestCase):
             '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}@media screen and (max-width:600px){.sidebar p{color:#272727;}}')
 
 
+
+    def test_inner_double_switched(self):
+        self.assertEqual(self.process('''
+            .sidebar {
+              @media screen {
+                h1{
+                  display: none;
+                }
+
+                p{
+                  font-weight: bold;
+
+                  @media (max-width: 600px) {
+                    color: #272727;
+                  }
+                }
+              }
+            }
+            '''), '@media screen{.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}@media screen and (max-width:600px){.sidebar p{color:#272727;}}')
+
+
+
     def test_inner_not_double(self):
         self.assertEqual(self.process('''
             .sidebar {
