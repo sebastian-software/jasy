@@ -27,6 +27,8 @@ def generateMessageId(basic, plural=None, context=None):
 
 class TranslationItem(AbstractItem.AbstractItem):
 
+    kind = "jasy.Translation"
+
     def __add__(self, other):
 
         self.table.update(other.getTable())
