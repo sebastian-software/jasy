@@ -53,7 +53,7 @@ def process(tree):
             if combinedMedia and node.type in ("selector", "mixin"):
                 # Dynamically create matching media query
                 mediaNode = Node.Node(None, "media")
-                mediaNode.name = [combinedMedia]
+                mediaNode.name = combinedMedia
 
                 mediaBlock = Node.Node(None, "block")
                 mediaNode.append(mediaBlock, "rules")
@@ -64,6 +64,10 @@ def process(tree):
 
             elif node.type == "media":
                 # Insert direct properties into new selector:block
+
+                # Update media query of found media query as it might
+                # contain more than the local media query (e.g. queries in parent nodes)
+                node.name = combinedMedia
 
                 selectorNode = Node.Node(None, "selector")
                 selectorNode.name = combinedSelector
