@@ -33,9 +33,11 @@ class Tests(unittest.TestCase):
     def test_mozfullscreen(self):
         self.assertEqual(self.process(r'''
             :-moz-full-screen{
-              background: rgba(0, 0, 0, 0.3);
+              body{
+                background: rgba(0, 0, 0, 0.3);
+              }
             }
-            '''), '')
+            '''), ':-moz-full-screen body{background:rgba(0,0,0,0.3);}')
 
         print("DONE")
 
