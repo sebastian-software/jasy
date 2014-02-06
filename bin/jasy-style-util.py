@@ -53,8 +53,15 @@ for fname in sys.argv[2:]:
         tree = Engine.reduceTree(tree)
         print(Engine.compressTree(tree, formatting))
 
+    elif job == "reduced":
+        formatting = Formatting.Formatting("blocks", "whitespace", "statements", "indent")
+        tree = Engine.getTree(text, fname)
+        tree = Engine.reduceTree(tree)
+        print(tree.toXml())
+
     elif job == "tree":
-        print(Engine.getTree(text, fname).toXml())
+        tree = Engine.getTree(text, fname)
+        print(tree.toXml())
 
     elif job == "tokens":
         Engine.printTokens(text, fname)
