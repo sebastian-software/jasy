@@ -88,7 +88,7 @@ class Tests(unittest.TestCase):
                 height: 30px;
               }
             }
-            '''), '@media handheld and (min-width:20em){header{height:30px;}}')
+            '''), '')
 
 
     def test_reallife_pixel(self):
@@ -102,7 +102,7 @@ class Tests(unittest.TestCase):
                 background-size: 60px 20px;
               }
             }
-            '''), '@media (-webkit-min-device-pixel-ratio:2){button{background-size:60px 20px;}}')
+            '''), '')
 
 
 
