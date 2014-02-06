@@ -10,23 +10,7 @@ import jasy.item.Abstract
 import jasy.core.Console as Console
 
 
-def getFormat(path):
-    """
-    Returns the file format of the translation. One of: gettext, properties and txt
-    """
-
-    if path:
-        if path.endswith(".po"):
-            return "gettext"
-        elif path.endswith(".properties"):
-            return "property"
-        elif path.endswith(".txt"):
-            return "txt"
-
-    return None
-
-
-def generateId(basic, plural=None, context=None):
+def generateMessageId(basic, plural=None, context=None):
     """
     Returns a unique message ID based on info typically stored in the code: id, plural, context
     """
@@ -42,10 +26,6 @@ def generateId(basic, plural=None, context=None):
 
 
 class TranslationItem(jasy.item.Abstract.AbstractItem):
-    """
-    Internal instances mapping a translation file in different formats
-    with a conventient API.
-    """
 
     def __add__(self, other):
         self.table.update(other.getTable())
@@ -91,27 +71,19 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         # Flat data strucuture where the keys are unique
         table = {}
         path = self.getPath()
-        format = self.getFormat()
 
         # Decide infrastructure/parser to use based on file name
-        if format is "gettext":
-            po = polib.pofile(path)
-            Console.debug("Translated messages: %s=%s%%", self.language, po.percent_translated())
+        po = polib.pofile(path)
+        Console.debug("Translated messages: %s=%s%%", self.language, po.percent_translated())
 
-            for entry in po.translated_entries():
-                entryId = generateId(entry.msgid, entry.msgid_plural, entry.msgctxt)
-                if not entryId in table:
-                    if entry.msgstr != "":
-                        table[entryId] = entry.msgstr
-                    elif entry.msgstr_plural:
-                        # This field contains all different plural cases (type=dict)
-                        table[entryId] = entry.msgstr_plural
-
-        elif format is "properties":
-            raise UserError("Parsing property files is currently not supported!")
-
-        elif format is "txt":
-            raise UserError("Parsing text files is currently not supported!")
+        for entry in po.translated_entries():
+            entryId = generateMessageId(entry.msgid, entry.msgid_plural, entry.msgctxt)
+            if not entryId in table:
+                if entry.msgstr != "":
+                    table[entryId] = entry.msgstr
+                elif entry.msgstr_plural:
+                    # This field contains all different plural cases (type=dict)
+                    table[entryId] = entry.msgstr_plural
 
         Console.debug("Translation of %s entries ready" % len(table))
         Console.outdent()
@@ -120,8 +92,11 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
 
         return self
 
+
     def export(self, classes):
-        """Exports the translation table as JSON based on the given set of classes"""
+        """
+        Exports the translation table as JSON based on the given set of classes
+        """
 
         # Based on the given class list figure out which translations are actually used
         relevantTranslations = set()
@@ -137,14 +112,19 @@ class TranslationItem(jasy.item.Abstract.AbstractItem):
         if result:
             return json.dumps(result, indent=2, sort_keys=True)
 
+
     def getTable(self):
-        """Returns the translation table"""
+        """
+        Returns the translation table
+        """
+
         return self.table
 
+
     def getLanguage(self):
-        """Returns the language of the translation file"""
+        """
+        Returns the language of the translation file
+        """
+
         return self.language
 
-    def getFormat(self):
-        """Returns the format of the localization file"""
-        return getFormat(self.getPath())
