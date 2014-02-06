@@ -110,6 +110,36 @@ def castNativeToNode(value):
     return node
 
 
+# list of media types which should be prepended in "and" connections
+cssMediaTypes = set(["all", "aural", "braille", "handheld", "print", "projection", "screen", "tty", "tv", "embossed"])
+
+# Prepend all media queries which contain not, only or any valid media type
+RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\b')
+
+
+def combineMediaQueries(media):
+    if media is None:
+        return media
+
+    if len(media) == 1:
+        return media[0]
+
+    combinedMedia = []
+    for item in itertools.product(*reversed(media)):
+        parts = []
+        for entry in item:
+            # Prepend media types and not/only operators
+            if RE_PREPEND_QUERY.search(entry):
+                parts.insert(0, entry)
+            else:
+                parts.append(entry)
+
+        combinedMedia.append(" and ".join(parts))
+
+    return combinedMedia
+
+
+
 def combineSelector(node, stop=None):
     """
     Figures out the fully qualified selector of the given Node
@@ -156,15 +186,8 @@ def combineSelector(node, stop=None):
 
         combinedSelectors.append(combined)
 
-    if media:
-        # Use compact format when possible
-        if len(media) > 1:
-            # So we join collected media data in reversed order, too, to get the normal order back
-            combinedMedia = "(%s)" % ")and(".join(",".join(query) for query in reversed(media))
-        else:
-            combinedMedia = ",".join(media[0])
-    else:
-        combinedMedia = None
+    # Combine media queries
+    combinedMedia = combineMediaQueries(media)
 
     return combinedSelectors, combinedMedia
 
