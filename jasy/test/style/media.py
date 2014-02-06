@@ -60,7 +60,7 @@ class Tests(unittest.TestCase):
             '''), '@media (max-width:600px){.sidebar{display:none;}}')
 
 
-    def test_size_inner(self):
+    def test_inner(self):
         self.assertEqual(self.process('''
             .sidebar {
               @media (max-width: 600px) {
@@ -71,7 +71,7 @@ class Tests(unittest.TestCase):
 
 
 
-    def test_size_inner_children(self):
+    def test_inner_children(self):
         self.assertEqual(self.process('''
             .sidebar {
               @media (max-width: 600px) {
@@ -87,7 +87,7 @@ class Tests(unittest.TestCase):
             '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}')
 
 
-    def test_size_inner_double(self):
+    def test_inner_double(self):
         self.assertEqual(self.process('''
             .sidebar {
               @media (max-width: 600px) {
@@ -101,6 +101,42 @@ class Tests(unittest.TestCase):
                   @media screen {
                     color: #272727;
                   }
+                }
+              }
+            }
+            '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}@media screen and (max-width:600px){.sidebar p{color:#272727;}}')
+
+
+    def test_inner_not_double(self):
+        self.assertEqual(self.process('''
+            .sidebar {
+              @media (max-width: 600px) {
+                h1{
+                  display: none;
+                }
+
+                p{
+                  font-weight: bold;
+
+                  @media not screen {
+                    color: #272727;
+                  }
+                }
+              }
+            }
+            '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}@media not screen and (max-width:600px){.sidebar p{color:#272727;}}')
+
+
+    def test_inner_double_list(self):
+        self.assertEqual(self.process('''
+            .sidebar {
+              @media (max-width: 600px) {
+                h1{
+                  display: none;
+                }
+
+                p{
+                  font-weight: bold;
 
                   @media print, tv{
                     color: black;
@@ -108,7 +144,7 @@ class Tests(unittest.TestCase):
                 }
               }
             }
-            '''), '')
+            '''), '@media (max-width:600px){.sidebar h1{display:none;}.sidebar p{font-weight:bold;}}@media print and (max-width:600px),tv and (max-width:600px){.sidebar p{color:black;}}')
 
 
 
