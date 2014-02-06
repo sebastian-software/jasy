@@ -242,21 +242,22 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
-    def getMergedMtime(self, profile):
+    def getModificationTime(self, profile):
         """
         Returns the newest modification date of the stylesheet (respecting all includes)
         """
 
         mtime = self.mtime
         permutation = self.filterPermutation(profile.getCurrentPermutation())
+        session = profile.getSession()
 
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(permutation)
 
-        # Run the actual resolver engine and figure out newest mtime
-        for item, include in includeGenerator(tree, profile.getSession()):
-
-            mtime = max(mtime, item.getMergedMtime(profile))
+        # Run the actual resolver engine and figure out the sum of mtimes
+        mtime = 0
+        for item, include in includeGenerator(tree, session):
+            mtime += item.getModificationTime(profile)
 
         return mtime
 
@@ -295,9 +296,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         """
 
         field = "style:compressed[%s]-%s" % (self.id, profile.getId())
-        mtime = self.getMergedMtime(profile)
-        compressed = self.project.getCache().read(field, mtime)
+        mtime = self.getModificationTime(profile)
 
+        compressed = self.project.getCache().read(field, mtime)
         if compressed is None:
 
             # Start with the merged tree (includes resolved)
@@ -314,7 +315,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             compressed = Compressor.Compressor(formatting).compress(tree)
 
             # Store in cache
-            # self.project.getCache().store(field, compressed, mtime)
+            self.project.getCache().store(field, compressed, mtime)
 
         return compressed
 
