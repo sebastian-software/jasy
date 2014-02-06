@@ -6,14 +6,11 @@
 import os, copy, fnmatch, re
 
 import jasy.core.Console as Console
-
-import jasy.item.Abstract
-
+import jasy.core.MetaData as MetaData
+import jasy.item.Abstract as AbstractItem
 import jasy.style.Util as Util
 import jasy.style.Engine as Engine
 
-import jasy.core.MetaData as MetaData
-import jasy.style.output.Compressor as Compressor
 
 
 def includeGenerator(node):
@@ -81,7 +78,7 @@ class StyleError(Exception):
 
 
 
-class StyleItem(jasy.item.Abstract.AbstractItem):
+class StyleItem(AbstractItem.AbstractItem):
 
     kind = "jasy.Style"
 
@@ -98,7 +95,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def __getTree(self):
         """
-        Returns the abstract syntax tree
+        Returns the abstract syntax tree of the stylesheet.
         """
 
         field = "style:tree[%s]" % self.id
@@ -119,8 +116,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def __getPermutatedTree(self, permutation=None):
         """
-        Returns an permutated tree: a copy of the normal tree
-        where the conditions are resolved based on the given permutation.
+        Returns a permutated tree: a copy of the original tree
+        where conditions based on the given permutation are resolved.
         """
 
         if permutation is None:
@@ -141,33 +138,6 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, tree, self.mtime, True)
 
         return tree
-
-
-
-    def getBreaks(self, permutation=None, items=None, warnings=True):
-        """
-        Returns all down-priorized dependencies. These are dependencies which are required to
-        make the item work, but are not required being available before the current item.
-        """
-
-        meta = self.getMetaData(permutation)
-        result = set()
-
-        for entry in meta.breaks:
-            if entry == self.id:
-                pass
-            elif entry in items and items[entry].kind == "jasy.Style":
-                result.add(items[entry])
-            elif "*" in entry:
-                reobj = re.compile(fnmatch.translate(entry))
-                for itemId in items:
-                    if itemId != self.id:
-                        if reobj.match(itemId):
-                            result.add(items[itemId])
-            elif warnings:
-                Console.warn("Missing item for break command: %s in %s", entry, self.id)
-
-        return result
 
 
 
@@ -199,6 +169,33 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
 
 
+    def getBreaks(self, permutation=None, items=None, warnings=True):
+        """
+        Returns all down-priorized dependencies. These are dependencies which are required to
+        make the item work, but are not required being available before the current item.
+        """
+
+        meta = self.getMetaData(permutation)
+        result = set()
+
+        for entry in meta.breaks:
+            if entry == self.id:
+                pass
+            elif entry in items and items[entry].kind == "jasy.Style":
+                result.add(items[entry])
+            elif "*" in entry:
+                reobj = re.compile(fnmatch.translate(entry))
+                for itemId in items:
+                    if itemId != self.id:
+                        if reobj.match(itemId):
+                            result.add(items[itemId])
+            elif warnings:
+                Console.warn("Missing item for break command: %s in %s", entry, self.id)
+
+        return result
+
+
+
     def getMetaData(self, permutation):
         """
         Returns the meta data of this stylesheet
@@ -219,7 +216,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getFields(self):
         """
-        Returns the fields which are accessed by this stylesheet.
+        Returns the fields which are used by this stylesheet.
         """
 
         field = "style:fields[%s]" % self.id
@@ -235,7 +232,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
     def getIncludes(self, permutation):
         """
-        Returns the includes which are references by this stylesheet.
+        Returns the includes which are referenced by this stylesheet.
         """
 
         field = "style:includes[%s]" % self.id
@@ -347,7 +344,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
             Engine.reduceTree(tree, profile)
 
             # Compress tree
-            compressed = Compressor.Compressor(optimization, formatting).compress(tree)
+            compressed = Engine.compressTree(tree, optimization, formatting)
 
             # Store in cache
             self.project.getCache().store(field, compressed, mtime)

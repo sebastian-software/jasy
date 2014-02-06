@@ -102,12 +102,12 @@ def reduceTree(tree, profile=None):
 
 
 
-def compressTree(tree, formatting=None):
+def compressTree(tree, optimization=None, formatting=None):
     """
     Returns the compressed result from the given tree
     """
 
-    return Compressor.Compressor(formatting).compress(tree)
+    return Compressor.Compressor(optimization, formatting).compress(tree)
 
 
 
