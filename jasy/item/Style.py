@@ -16,7 +16,7 @@ import jasy.core.MetaData as MetaData
 import jasy.style.output.Compressor as Compressor
 
 
-def includeGenerator(node, session):
+def includeGenerator(node):
     """
     A generator which yiels style items and include nodes
     for every include in the given root node
@@ -32,14 +32,10 @@ def includeGenerator(node, session):
             else:
                 raise Exception("Invalid include: %s" % valueNode)
 
-            item = session.getStyleByName(includeName)
-            if item is None:
-                raise Exception("Did not find style sheet: %s" % item.name)
-
-            yield item, child
+            yield includeName, child
 
         else:
-            includeGenerator(child, session)
+            includeGenerator(child)
 
 
 
@@ -99,8 +95,9 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
 
         field = "style:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
+
         if not tree:
-            Console.info("Processing stylesheet %s...", Console.colorize(self.id, "bold"))
+            Console.info("Parsing stylesheet %s...", Console.colorize(self.id, "bold"))
 
             Console.indent()
             tree = Engine.getTree(self.getText(), self.id)
@@ -128,12 +125,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         if not tree:
             tree = copy.deepcopy(self.__getTree())
 
-            Console.debug("Permutating tree...")
+            Console.info("Permutating stylesheet %s...", Console.colorize(self.id, "bold"))
             Console.indent()
             Engine.permutateTree(tree, permutation)
             Console.outdent()
 
-            # self.project.getCache().store(field, tree, self.mtime, True)
+            self.project.getCache().store(field, tree, self.mtime, True)
 
         return tree
 
@@ -205,6 +202,7 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:meta[%s]-%s" % (self.id, permutation)
         meta = self.project.getCache().read(field, self.mtime)
         if meta is None:
+            Console.info("Collecting meta data %s...", Console.colorize(self.id, "bold"))
             meta = MetaData.MetaData(self.__getPermutatedTree(permutation))
             self.project.getCache().store(field, meta, self.mtime)
 
@@ -220,10 +218,30 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         field = "style:fields[%s]" % self.id
         fields = self.project.getCache().read(field, self.mtime)
         if fields is None:
+            Console.info("Collecting fields %s...", Console.colorize(self.id, "bold"))
             fields = collectFields(self.__getTree())
             self.project.getCache().store(field, fields, self.mtime)
 
         return fields
+
+
+
+    def getIncludes(self, permutation):
+        """
+        Returns the includes which are references by this stylesheet.
+        """
+
+        field = "style:includes[%s]" % self.id
+        includes = self.project.getCache().read(field, self.mtime)
+        if includes is None:
+            Console.info("Collecting includes %s...", Console.colorize(self.id, "bold"))
+            includes = []
+            for includeName, includeNode in includeGenerator(self.__getPermutatedTree(permutation)):
+                includes.append(includeName)
+
+            self.project.getCache().store(field, includes, self.mtime)
+
+        return includes
 
 
 
@@ -251,13 +269,12 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         permutation = self.filterPermutation(profile.getCurrentPermutation())
         session = profile.getSession()
 
-        # Work is on base of optimized tree
-        tree = self.__getPermutatedTree(permutation)
-
-        # Run the actual resolver engine and figure out the sum of mtimes
-        mtime = 0
-        for item, include in includeGenerator(tree, session):
-            mtime += item.getModificationTime(profile)
+        mtime = self.mtime
+        for includeName in self.getIncludes(profile):
+            styleItem = session.getStyleByName(includeName)
+            if styleItem is None:
+                raise Exception("Did not find style sheet: %s" % includeName)
+            mtime += styleItem.getModificationTime(profile)
 
         return mtime
 
@@ -268,6 +285,8 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         Returns the merged (includes resolved) and optimized (permutation values applied) tree.
         """
 
+        session = profile.getSession()
+
         # Work is on base of optimized tree
         tree = self.__getPermutatedTree(profile.getCurrentPermutation())
 
@@ -275,16 +294,20 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         tree = copy.deepcopy(tree)
 
         # Run the actual resolver engine
-        for item, include in includeGenerator(tree, profile.getSession()):
+        for includeName, includeNode in includeGenerator(tree):
+
+            styleItem = session.getStyleByName(includeName)
+            if styleItem is None:
+                raise Exception("Did not find style sheet: %s" % includeName)
 
             # Use merged tree for children as well...
-            childRoot = item.getMergedTree(profile)
+            childRoot = styleItem.getMergedTree(profile)
 
             # Copy it for being able to freely modify it
             childRoot = copy.deepcopy(childRoot)
 
             # Then replace it with include node
-            include.parent.replace(include, childRoot)
+            includeNode.parent.replace(includeNode, childRoot)
 
         return tree
 
@@ -299,7 +322,10 @@ class StyleItem(jasy.item.Abstract.AbstractItem):
         mtime = self.getModificationTime(profile)
 
         compressed = self.project.getCache().read(field, mtime)
+
         if compressed is None:
+
+            Console.info("Compressing tree %s...", Console.colorize(self.id, "bold"))
 
             # Start with the merged tree (includes resolved)
             tree = self.getMergedTree(profile)
