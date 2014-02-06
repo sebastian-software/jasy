@@ -425,7 +425,7 @@ class AssetManager():
         if not result:
             return None
 
-        Console.info("Exported %s assets", len(result))
+        Console.debug("Exported %s assets", len(result))
 
         return json.dumps({
             "assets" : self.__structurize(result)
