@@ -18,24 +18,25 @@ import jasy.style.output.Compressor as Compressor
 
 def includeGenerator(node):
     """
-    A generator which yiels style items and include nodes
+    A generator which yiels include names and the origin include nodes
     for every include in the given root node
     """
 
     for child in node:
-        if child.type == "include":
-            valueNode = child[0]
-            if valueNode.type in ("string", "identifier"):
-                includeName = valueNode.value
-            elif valueNode.type == "dot":
-                includeName = Util.assembleDot(valueNode)
+        if child:
+            if child.type == "include":
+                valueNode = child[0]
+                if valueNode.type in ("string", "identifier"):
+                    includeName = valueNode.value
+                elif valueNode.type == "dot":
+                    includeName = Util.assembleDot(valueNode)
+                else:
+                    raise Exception("Invalid include: %s" % valueNode)
+
+                yield includeName, child
+
             else:
-                raise Exception("Invalid include: %s" % valueNode)
-
-            yield includeName, child
-
-        else:
-            includeGenerator(child)
+                includeGenerator(child)
 
 
 
