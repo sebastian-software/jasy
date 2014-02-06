@@ -279,7 +279,7 @@ class StyleItem(AbstractItem.AbstractItem):
         session = profile.getSession()
 
         mtime = self.mtime
-        for includeName in self.getIncludes(profile):
+        for includeName in self.getIncludes(permutation):
             styleItem = session.getStyleByName(includeName)
             if styleItem is None:
                 raise Exception("Did not find style sheet: %s" % includeName)
