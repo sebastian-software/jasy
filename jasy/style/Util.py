@@ -118,8 +118,8 @@ RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|pro
 
 
 def combineMediaQueries(media):
-    if media is None:
-        return media
+    if not media:
+        return None
 
     if len(media) == 1:
         return media[0]
