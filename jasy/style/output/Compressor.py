@@ -356,6 +356,20 @@ class Compressor:
         return self.indent(result)
 
 
+    def type_supports(self, node):
+        if self.__useBlockBreaks:
+            separator = ",\n"
+        elif self.__useWhiteSpace:
+            separator = ", "
+        else:
+            separator = ","
+
+        result = "@supports %s" % node.name
+        result += self.compress(node.rules)
+
+        return self.indent(result)
+
+
     def type_fontface(self, node):
         result = "@font-face" + self.compress(node.rules)
 
