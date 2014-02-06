@@ -23,7 +23,7 @@ if len(sys.argv) == 1:
     sys.stderr.write("Missing job name\n")
     sys.exit(1)
 
-supported = set(("tokens", "tree", "compress", "optimize"))
+supported = set(("tokens", "tree", "compress", "optimize", "reduced"))
 job = sys.argv[1]
 if not job in supported:
     sys.stderr.write("Invalid job %s\n" % job)
