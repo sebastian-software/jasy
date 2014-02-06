@@ -160,9 +160,9 @@ def combineSelector(node, stop=None):
         # Use compact format when possible
         if len(media) > 1:
             # So we join collected media data in reversed order, too, to get the normal order back
-            combinedMedia = "(%s)" % ")and(".join(query[0] for query in reversed(media))
+            combinedMedia = "(%s)" % ")and(".join(",".join(query) for query in reversed(media))
         else:
-            combinedMedia = media[0][0]
+            combinedMedia = ",".join(media[0])
     else:
         combinedMedia = None
 
