@@ -47,7 +47,7 @@ class Tests(unittest.TestCase):
                 color: red;
               }
             }
-            '''), '')
+            '''), '::-ms-backdrop h1{color:red;}')
 
 
 
