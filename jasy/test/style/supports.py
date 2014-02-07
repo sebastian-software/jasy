@@ -104,7 +104,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(self.process(r'''
             @supports(color: black) {
               p{
-                @media print{
+                @media print, tv{
                   color: black;
                 }
 
@@ -113,7 +113,7 @@ class Tests(unittest.TestCase):
                 }
               }
             }
-            '''), '')
+            '''), '@media print,tv{@supports (color:black){p{color:black;}}}@media screen{@supports (color:black){p{color:#333;}}}')
 
 
 if __name__ == '__main__':

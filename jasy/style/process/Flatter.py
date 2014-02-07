@@ -90,17 +90,7 @@ def process(tree):
                 elif node.type == "supports":
                     node.name = combinedSupports
 
-                if node.type != "media" and combinedMedia:
-                    # Dynamically create matching media query
-                    mediaNode = Node.Node(None, "media")
-                    mediaNode.name = combinedMedia
-
-                    mediaBlock = Node.Node(None, "block")
-                    mediaNode.append(mediaBlock, "rules")
-
-                    # Move this node
-                    node.append(mediaBlock)
-
+                # Create new selector node where we move all rules into
                 selectorNode = Node.Node(None, "selector")
                 selectorNode.name = combinedSelector
 
@@ -112,8 +102,40 @@ def process(tree):
                     if nonSelectorChild:
                         selectorBlock.append(nonSelectorChild)
 
-                # Then insert the newly created and filled selector block into the media/support node
-                node.rules.append(selectorNode)
+                if node.type == "supports" and combinedMedia:
+                    # Dynamically create matching mediaquery node
+                    mediaNode = Node.Node(None, "media")
+                    mediaNode.name = combinedMedia
+
+                    mediaBlock = Node.Node(None, "block")
+                    mediaNode.append(mediaBlock, "rules")
+
+                    # Replace current node with media node
+                    node.parent.replace(node, mediaNode)
+
+                    # Then append this node to the media node
+                    mediaBlock.append(node)
+
+                    # Selector should be placed inside this node
+                    node.rules.append(selectorNode)
+
+                elif node.type == "media" and combinedSupports:
+                    # Dynamically create matching supports node
+                    supportsNode = Node.Node(None, "supports")
+                    supportsNode.name = combinedSupports
+
+                    supportsBlock = Node.Node(None, "block")
+                    supportsNode.append(supportsBlock, "rules")
+
+                    # Move supports node into this node
+                    node.rules.append(supportsNode)
+
+                    # The supports block is the parent of the selector
+                    supportsBlock.append(selectorNode)
+
+                else:
+                    node.rules.append(selectorNode)
+
 
         if process:
 
