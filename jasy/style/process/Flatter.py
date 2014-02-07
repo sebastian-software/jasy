@@ -18,7 +18,7 @@ def process(tree):
     def __flatter(node, dest):
         """
         Moves all selectors to the top tree node while keeping media queries intact
-        and/or making them CSS2 compatible (regarding formatting)
+        and/or making them CSS2 compatible (regarding structure)
         """
 
         process = node.type in ("selector", "mixin", "media", "supports")
@@ -167,7 +167,7 @@ def process(tree):
                 __clean(child)
 
         if hasattr(node, "rules") and len(node.rules) == 0:
-            Console.debug("Cleaning up empty selector/mixin at line %s" % node.line)
+            Console.debug("Cleaning up empty selector/mixin/@media/@supports at line %s" % node.line)
             node.parent.remove(node)
 
         elif node.type == "content":

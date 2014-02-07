@@ -150,7 +150,6 @@ class Tests(unittest.TestCase):
             '''), '@media screen{@supports (color:black){p{color:black;}span{color:#333;}}}')
 
 
-
     def test_atmedia_deeper(self):
         self.assertEqual(self.process(r'''
             @media (min-width:800px) {
