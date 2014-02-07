@@ -177,7 +177,8 @@ def combineSupportList(supports):
 
 def combineSelector(node, stop=None):
     """
-    Figures out the fully qualified selector of the given Node
+    Figures out the fully qualified selector, media query
+    and @supports value of the given Node.
     """
 
     # Fast path and fix for identical start/stop
