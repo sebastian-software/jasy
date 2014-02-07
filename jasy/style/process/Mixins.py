@@ -102,7 +102,7 @@ def __extend(node, scanMixins=False):
         selector, media, supports = Util.combineSelector(node.parent, stop=mixin.parent)
 
         if media or supports:
-            Console.warn("Extending inside media query/support queries behaves like including (less efficient): %s %s + %s", media, supports, ", ".join(selector))
+            Console.warn("Extending inside @media/@support behaves like including (larger result size): %s %s + %s", media, supports, ", ".join(selector))
 
             replacements = __resolveMixin(mixin, None)
 
