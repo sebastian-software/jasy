@@ -100,6 +100,20 @@ class Tests(unittest.TestCase):
             '''), '@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}@supports (color:black) and (-webkit-text-stroke:1px black){body h1 em{color:black;}}')
 
 
+    def test_atmedia(self):
+        self.assertEqual(self.process(r'''
+            @supports(color: black) {
+              p{
+                @media print{
+                  color: black;
+                }
+
+                @media screen{
+                  color: #333;
+                }
+              }
+            }
+            '''), '')
 
 
 if __name__ == '__main__':
