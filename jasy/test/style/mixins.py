@@ -108,6 +108,26 @@ class Tests(unittest.TestCase):
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
 
 
+    def test_local_extend_with_atsupports(self):
+        self.assertEqual(self.process('''
+          h1{
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            $font;
+
+            @supports (color:lightgreen){
+              font-size: 20pt;
+              color: lightgreen;
+            }
+
+            color: #333;
+          }
+          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@supports (color:lightgreen){h1{font-size:20pt;color:lightgreen;}}')
+
+
     def test_local_extend_with_inner_atmedia(self):
         self.assertEqual(self.process('''
           h1{
