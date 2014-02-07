@@ -180,6 +180,34 @@ class Tests(unittest.TestCase):
             '''), '@media tv and (min-width:700px) and (orientation:landscape){.headline{float:left;}}')
 
 
+    def test_and_color(self):
+        self.assertEqual(self.process('''
+            @media tv and (min-width: 700px) and (orientation: landscape) and (color) {
+              .headline {
+                float: left;
+              }
+            }
+            '''), '@media tv and (min-width:700px) and (orientation:landscape) and (color){.headline{float:left;}}')
+
+
+
+
+    def test_and_inner(self):
+        self.assertEqual(self.process('''
+            @media tv and (min-width: 700px) {
+              .headline {
+                float: right;
+
+                @media (orientation: landscape) and (color){
+                  float: left;
+                }
+              }
+            }
+            '''), '@media tv and (min-width:700px){.headline{float:right;}}@media tv and (min-width:700px) and (orientation:landscape) and (color){.headline{float:left;}}')
+
+
+
+
     def test_ratio(self):
         self.assertEqual(self.process('''
             @media screen and (min-aspect-ratio: 1/1) {
