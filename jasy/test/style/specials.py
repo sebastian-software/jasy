@@ -50,7 +50,7 @@ class Tests(unittest.TestCase):
             '''), '::-ms-backdrop h1{color:red;}')
 
 
-    def test_atsupports(self):
+    def test_atsupports_outer(self):
         self.assertEqual(self.process(r'''
             @supports(-webkit-text-stroke: 1px black) {
               h1{
@@ -58,6 +58,32 @@ class Tests(unittest.TestCase):
               }
             }
             '''), '@supports (-webkit-text-stroke:1px black){h1{-webkit-text-stroke:1px black;}}')
+
+
+    def test_atsupports_between(self):
+        self.assertEqual(self.process(r'''
+            body{
+              @supports(-webkit-text-stroke: 1px black) {
+                h1{
+                  -webkit-text-stroke: 1px black;
+                }
+              }
+            }
+            '''), '@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}')
+
+
+    def test_atsupports_inner(self):
+        self.assertEqual(self.process(r'''
+            body{
+              h1{
+                color: black;
+
+                @supports(-webkit-text-stroke: 1px black) {
+                  -webkit-text-stroke: 1px black;
+                }
+              }
+            }
+            '''), 'body h1{color:black;}@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}')
 
 
 
