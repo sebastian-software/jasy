@@ -32,7 +32,7 @@ class Tests(unittest.TestCase):
         return Engine.compressTree(tree)
 
 
-    def test_mixin_param(self):
+    def test_param(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
@@ -51,7 +51,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
-    def test_mixin_param_forcall(self):
+    def test_param_forcall(self):
         self.assertEqual(self.process('''
             $icon($fullywild){
               background: @jasy.asset($fullywild);
@@ -69,7 +69,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{background:url(resolved/foo/bar.gif);color:blue;}h2{background:url(resolved/foo/rotate.gif);color:red;}')
 
 
-    def test_mixin_param_toomany(self):
+    def test_param_toomany(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
@@ -88,7 +88,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
-    def test_mixin_param_missing(self):
+    def test_param_missing(self):
         import jasy.style.process.Executer as Executer
 
         def wrapper():
@@ -112,7 +112,7 @@ class Tests(unittest.TestCase):
         self.assertRaises(Executer.ExecuterError, wrapper)
 
 
-    def test_mixin_default_param(self):
+    def test_default_param(self):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
@@ -131,7 +131,7 @@ class Tests(unittest.TestCase):
             '''), 'h2{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}')
 
 
-    def test_mixin_default_param_two_extends(self):
+    def test_default_param_two_extends(self):
         self.assertEqual(self.process('''
             $font($size=2){
               font-family: Arial, sans-serif;
@@ -155,7 +155,7 @@ class Tests(unittest.TestCase):
             '''), 'h2,h3{font-family:Arial,sans-serif;font-size:30px;}h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{color:red;}h3{color:green;}')
 
 
-    def test_mixin_param_transparent_units(self):
+    def test_param_transparent_units(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
@@ -174,7 +174,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:30px;color:red;}')
 
 
-    def test_mixin_param_mixed_units(self):
+    def test_param_mixed_units(self):
         import jasy.style.process.Operation as Operation
 
         def wrapper():
@@ -199,7 +199,7 @@ class Tests(unittest.TestCase):
 
 
 
-    def test_mixin_param_with_compution(self):
+    def test_param_with_compution(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
@@ -218,7 +218,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:37.5px;color:red;}')
 
 
-    def test_mixin_param_with_mixed_compution(self):
+    def test_param_with_mixed_compution(self):
         self.assertEqual(self.process('''
             $font($size){
               font-family: Arial, sans-serif;
@@ -237,7 +237,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:45px;color:blue;}h2{font-family:Arial,sans-serif;font-size:75px;color:red;}')
 
 
-    def test_mixin_param_uses_extend(self):
+    def test_param_uses_extend(self):
         self.assertEqual(self.process('''
             $arial{
               font-family: Arial, sans-serif;
@@ -260,7 +260,7 @@ class Tests(unittest.TestCase):
             '''), 'h1,h2{font-family:Arial,sans-serif;}h1{font-size:45px;color:blue;}h2{font-size:30px;color:red;}')
 
 
-    def test_mixin_param_name_conflicts(self):
+    def test_param_name_conflicts(self):
         self.assertEqual(self.process('''
             $style($size, $color){
               font-size: @expr(15px * $size);
@@ -275,7 +275,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:45px;color:blue;background:yellow;}')
 
 
-    def test_mixin_param_name_conflicts_default_ignore(self):
+    def test_param_name_conflicts_default_ignore(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
               font-size: @expr(15px * $size);
@@ -290,7 +290,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:45px;color:blue;background:yellow;}')
 
 
-    def test_mixin_param_name_conflicts_default_use(self):
+    def test_param_name_conflicts_default_use(self):
         self.assertEqual(self.process('''
             $style($size, $color=red){
               font-size: @expr(15px * $size);
@@ -305,7 +305,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:45px;color:red;background:yellow;}')
 
 
-    def test_mixin_param_name_default_from_outer(self):
+    def test_param_name_default_from_outer(self):
         self.assertEqual(self.process('''
             $titleColor = orange;
 
@@ -321,7 +321,7 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-size:45px;color:orange;border-bottom:1px solid orange;}')
 
 
-    def test_mixin_wrong_place_call(self):
+    def test_wrong_place_call(self):
         import jasy.style.parse.Parser as Parser
 
         def wrapper():
@@ -338,7 +338,7 @@ class Tests(unittest.TestCase):
         self.assertRaises(Parser.SyntaxError, wrapper)
 
 
-    def test_mixin_wrong_place_variable(self):
+    def test_wrong_place_variable(self):
         import jasy.style.process.Executer as Executer
 
         def wrapper():
@@ -355,7 +355,7 @@ class Tests(unittest.TestCase):
         self.assertRaises(Executer.ExecuterError, wrapper)
 
 
-    def test_mixin_content_simple(self):
+    def test_content_simple(self):
         self.assertEqual(self.process('''
             $icon(){
               &::before{
@@ -372,7 +372,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::before{display:inline-block;margin-right:2px;}')
 
 
-    def test_mixin_content_none(self):
+    def test_content_none(self):
         self.assertEqual(self.process('''
             $icon(){
               &::before{
@@ -388,7 +388,7 @@ class Tests(unittest.TestCase):
             '''), 'h2::before{display:inline-block;}h2{color:blue;}')
 
 
-    def test_mixin_content_complex(self):
+    def test_content_complex(self):
         self.assertEqual(self.process('''
             $icon(){
               &::before{
@@ -417,7 +417,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::before,h2::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;}h1::before{margin-right:2px;margin-top:1px;}h2{color:blue;}')
 
 
-    def test_mixin_content_double(self):
+    def test_content_double(self):
         self.assertEqual(self.process('''
             $virtual(){
               &::before{
@@ -437,7 +437,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::after{content:"|";}h1::before{content:"|";}')
 
 
-    def test_mixin_content_with_param(self):
+    def test_content_with_param(self):
         self.assertEqual(self.process('''
             $icon(){
               &::before{
@@ -460,7 +460,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::before{content:"u1929";font-family:Icons;width:22px;height:22px;display:inline-block;margin-right:2px;margin-top:1px;}')
 
 
-    def test_mixin_content_with_param_double(self):
+    def test_content_with_param_double(self):
         self.assertEqual(self.process('''
             $virtual($width, $height){
               &::before{
@@ -486,7 +486,7 @@ class Tests(unittest.TestCase):
             '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')
 
 
-    def test_mixin_local_override(self):
+    def test_local_override(self):
         self.assertEqual(self.process('''
             $icon(){
               &::after{

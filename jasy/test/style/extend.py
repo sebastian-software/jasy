@@ -31,7 +31,7 @@ class Tests(unittest.TestCase):
         tree = Engine.reduceTree(tree, profile)
         return Engine.compressTree(tree)
 
-    def test_extend(self):
+    def test_basic(self):
         self.assertEqual(self.process('''
             $font{
               font-family: Arial, sans-serif;
@@ -50,7 +50,88 @@ class Tests(unittest.TestCase):
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
 
 
-    def test_local_extend(self):
+    def test_atmedia(self):
+        self.assertEqual(self.process('''
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            @media screen{
+              h1{
+                $font;
+                color: blue;
+              }
+            }
+
+            h1{
+              $font;
+              color: black;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@media screen{h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
+
+    def test_atsupport(self):
+        self.assertEqual(self.process('''
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            @supports (color:blue){
+              h1{
+                $font;
+                color: blue;
+              }
+            }
+
+            h1{
+              $font;
+              color: black;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@supports (color:blue){h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
+
+
+    def test_def_as_func(self):
+        self.assertEqual(self.process('''
+            $font(){
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            h1{
+              $font;
+              color: blue;
+            }
+
+            h2{
+              $font;
+              color: red;
+            }
+            '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
+
+
+    def test_call(self):
+        self.assertEqual(self.process('''
+            $font(){
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            h1{
+              $font();
+              color: blue;
+            }
+
+            h2{
+              $font();
+              color: red;
+            }
+            '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
+
+
+    def test_local(self):
         self.assertEqual(self.process('''
             h1{
               $font{
@@ -69,7 +150,7 @@ class Tests(unittest.TestCase):
             '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')
 
 
-    def test_local_extend_with_atmedia(self):
+    def test_local_with_atmedia(self):
         self.assertEqual(self.process('''
           h1{
             $font{
@@ -89,7 +170,7 @@ class Tests(unittest.TestCase):
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
 
 
-    def test_local_extend_with_atsupports(self):
+    def test_local_with_atsupports(self):
         self.assertEqual(self.process('''
           h1{
             $font{
@@ -109,7 +190,7 @@ class Tests(unittest.TestCase):
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@supports (color:lightgreen){h1{font-size:20pt;color:lightgreen;}}')
 
 
-    def test_local_extend_with_inner_atmedia(self):
+    def test_local_with_inner_atmedia(self):
         self.assertEqual(self.process('''
           h1{
             $font{
@@ -133,7 +214,7 @@ class Tests(unittest.TestCase):
           '''), 'h1,h1 small{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1,h1 small{font-size:20pt;color:#111;}}h1 small{color:red;}')
 
 
-    def test_local_extend_with_inner_atsupports(self):
+    def test_local_with_inner_atsupports(self):
         self.assertEqual(self.process('''
           h1{
             $font{
@@ -157,7 +238,7 @@ class Tests(unittest.TestCase):
           '''), 'h1,h1 small{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@supports (color:lightgreen){h1,h1 small{font-size:20pt;color:lightgreen;}}h1 small{color:red;}')
 
 
-    def test_local_extend_complex(self):
+    def test_local_complex(self):
         self.assertEqual(self.process('''
             h1{
               $font{
@@ -184,7 +265,7 @@ class Tests(unittest.TestCase):
             '''), 'h1,h1 span,h1 span small{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;background:blue;font-weight:bold;}h1 span{font-size:70%;}h1 span small{font-size:50%;}')
 
 
-    def test_local_extend_deeper(self):
+    def test_local_deeper(self):
         self.assertEqual(self.process('''
             h1{
               color: black;
@@ -214,88 +295,7 @@ class Tests(unittest.TestCase):
             '''), 'h1 strong{font-family:Arial,sans-serif;font-size:30px;}h1 small{font-family:Arial,sans-serif;font-size:20px;}h1{color:black;text-decoration:underline;}h1 strong{color:black;}h1 small{color:grey;}')
 
 
-    def test_extend_atmedia(self):
-        self.assertEqual(self.process('''
-            $font{
-              font-family: Arial, sans-serif;
-              font-size: 15px;
-            }
-
-            @media screen{
-              h1{
-                $font;
-                color: blue;
-              }
-            }
-
-            h1{
-              $font;
-              color: black;
-            }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@media screen{h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
-
-
-    def test_extend_atsupport(self):
-        self.assertEqual(self.process('''
-            $font{
-              font-family: Arial, sans-serif;
-              font-size: 15px;
-            }
-
-            @supports (color:blue){
-              h1{
-                $font;
-                color: blue;
-              }
-            }
-
-            h1{
-              $font;
-              color: black;
-            }
-            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@supports (color:blue){h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
-
-
-
-    def test_extend_def_as_func(self):
-        self.assertEqual(self.process('''
-            $font(){
-              font-family: Arial, sans-serif;
-              font-size: 15px;
-            }
-
-            h1{
-              $font;
-              color: blue;
-            }
-
-            h2{
-              $font;
-              color: red;
-            }
-            '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
-
-
-    def test_extend_call(self):
-        self.assertEqual(self.process('''
-            $font(){
-              font-family: Arial, sans-serif;
-              font-size: 15px;
-            }
-
-            h1{
-              $font();
-              color: blue;
-            }
-
-            h2{
-              $font();
-              color: red;
-            }
-            '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
-
-
-    def test_extend_local_override(self):
+    def test_local_override(self):
         self.assertEqual(self.process('''
             $icon(){
               &::after{
