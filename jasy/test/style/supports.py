@@ -116,6 +116,23 @@ class Tests(unittest.TestCase):
             '''), '@media print,tv{@supports (color:black){p{color:black;}}}@media screen{@supports (color:black){p{color:#333;}}}')
 
 
+    def test_join(self):
+        self.assertEqual(self.process(r'''
+            @supports(color: black) {
+              p{
+                color: black;
+              }
+            }
+
+            @supports(color: black) {
+              span{
+                color: #333;
+              }
+            }
+            '''), '@supports (color:black){p{color:black;}span{color:#333;}}')
+
+
+
     def test_atmedia_deeper(self):
         self.assertEqual(self.process(r'''
             @media (min-width:800px) {

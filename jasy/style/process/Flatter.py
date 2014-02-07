@@ -191,6 +191,7 @@ def process(tree):
 
         previousSelector = None
         previousMedia = None
+        previousSupports = None
 
         # Work on a copy to be safe for remove situations during merges
         treecopy = list(tree)
@@ -208,6 +209,7 @@ def process(tree):
 
                 previousSelector = child.name
                 previousMedia = None
+                previousSupports = None
 
             elif child.type == "media":
                 if child.name == previousMedia:
@@ -219,6 +221,19 @@ def process(tree):
 
                 previousMedia = child.name
                 previousSelector = None
+                previousSupports = None
+
+            elif child.type == "supports":
+                if child.name == previousSupports:
+                    previous = treecopy[pos-1]
+                    previous.rules.insertAll(None, child.rules)
+                    tree.remove(child)
+
+                    Console.debug("Combined supports of line %s into %s" % (child.line, previous.line))
+
+                previousSupports = child.name
+                previousSelector = None
+                previousMedia = None
 
 
         # Re-run combiner inside all media queries.
