@@ -80,12 +80,17 @@ def process(tree):
                 # Insert direct properties into new selector block
                 # Goal is to place in this structure: @media->@supports->selector
 
+                # Update media query of found media queries as it might
+                # contain more than the local one (e.g. queries in parent nodes)
                 if node.type == "media":
-                    # Update media query of found media query as it might
-                    # contain more than the local media query (e.g. queries in parent nodes)
                     node.name = combinedMedia
 
-                elif combinedMedia:
+                # Update support query of found supports query as it might
+                # contain more than the local one (e.g. queries in parent nodes)
+                elif node.type == "supports":
+                    node.name = combinedSupports
+
+                if node.type != "media" and combinedMedia:
                     # Dynamically create matching media query
                     mediaNode = Node.Node(None, "media")
                     mediaNode.name = combinedMedia
