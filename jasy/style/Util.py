@@ -117,6 +117,28 @@ cssMediaTypes = set(["all", "aural", "braille", "handheld", "print", "projection
 RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\b')
 
 
+def combineSelectors(selector, stop):
+    combinedSelectors = []
+    for item in itertools.product(*reversed(selector)):
+        combined = ""
+        for part in item:
+            if combined:
+                if "&" in part:
+                    combined = part.replace("&", combined)
+                else:
+                    combined = "%s %s" % (combined, part)
+            else:
+                # Tolerate open/unsolvable "&" parent reference when we stop too early
+                if not stop and "&" in part:
+                    raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
+                else:
+                    combined = part
+
+        combinedSelectors.append(combined)
+
+    return combinedSelectors
+
+
 def combineMediaQueries(media):
     if not media:
         return None
@@ -139,6 +161,10 @@ def combineMediaQueries(media):
     return combinedMedia
 
 
+def combineSupports(supports):
+    # Supports rules are not a list of different @support rule sets
+    return supports
+
 
 def combineSelector(node, stop=None):
     """
@@ -149,8 +175,14 @@ def combineSelector(node, stop=None):
     if node is stop:
         return ["&"], None
 
+    # list of list of selectors
     selector = []
+
+    # list of list of media queries
     media = []
+
+    # list of @support directives (no list in list)
+    supports = []
 
     # Selector and media lists are in reversed order...
     current = node
@@ -158,9 +190,11 @@ def combineSelector(node, stop=None):
         if current.type == "selector":
             selector.append(current.name)
         elif current.type == "mixin":
-            selector.append(current.selector)
+            selector.append(current.selector) # extend for this mixin
         elif current.type == "media":
             media.append(current.name)
+        elif current.type == "supports":
+            supports.append(current.name)
 
         current = getattr(current, "parent", None)
 
@@ -168,26 +202,13 @@ def combineSelector(node, stop=None):
         raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
 
     # So we process collected selector data in reversed order, too, to get the normal order back
-    combinedSelectors = []
-    for item in itertools.product(*reversed(selector)):
-        combined = ""
-        for part in item:
-            if combined:
-                if "&" in part:
-                    combined = part.replace("&", combined)
-                else:
-                    combined = "%s %s" % (combined, part)
-            else:
-                # Tolerate open/unsolvable "&" parent reference when we stop too early
-                if not stop and "&" in part:
-                    raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
-                else:
-                    combined = part
-
-        combinedSelectors.append(combined)
+    combinedSelectors = combineSelectors(selector, stop)
 
     # Combine media queries
     combinedMedia = combineMediaQueries(media)
 
-    return combinedSelectors, combinedMedia
+    # Supports rules are not a list of different @support rule sets
+    combinedSupports = supports
+
+    return combinedSelectors, combinedMedia, combinedSupports
 
