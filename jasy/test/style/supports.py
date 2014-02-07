@@ -116,6 +116,28 @@ class Tests(unittest.TestCase):
             '''), '@media print,tv{@supports (color:black){p{color:black;}}}@media screen{@supports (color:black){p{color:#333;}}}')
 
 
+    def test_atmedia_deeper(self):
+        self.assertEqual(self.process(r'''
+            @media (min-width:800px) {
+              @supports(color: black) {
+                p{
+                  @media print, tv{
+                    color: black;
+                  }
+
+                  @media screen{
+                    small{
+                      color: #333;
+                    }
+                  }
+                }
+              }
+            }
+            '''), '''@media print and (min-width:800px),tv and (min-width:800px){@supports (color:black){p{color:black;}}}@media screen and (min-width:800px){@supports (color:black){p small{color:#333;}}}''')
+
+
+
+
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
