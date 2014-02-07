@@ -132,6 +132,24 @@ class Tests(unittest.TestCase):
             '''), '@supports (color:black){p{color:black;}span{color:#333;}}')
 
 
+    def test_join_inside_atmedia(self):
+        self.assertEqual(self.process(r'''
+            @media screen{
+              @supports(color: black) {
+                p{
+                  color: black;
+                }
+              }
+
+              @supports(color: black) {
+                span{
+                  color: #333;
+                }
+              }
+            }
+            '''), '@media screen{@supports (color:black){p{color:black;}span{color:#333;}}}')
+
+
 
     def test_atmedia_deeper(self):
         self.assertEqual(self.process(r'''

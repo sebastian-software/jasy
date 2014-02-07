@@ -186,7 +186,7 @@ def process(tree):
 
     def __combine(tree, top=True):
         """
-        Combines follow up selector/media nodes with the same name.
+        Combines follow up selector/media/supports nodes with the same name.
         """
 
         previousSelector = None
@@ -240,7 +240,7 @@ def process(tree):
         # Selectors in there are allowed and could be combined, too
         if top:
             for child in tree:
-                if child and child.type == "media":
+                if child and (child.type == "media" or child.type == "supports"):
                     __combine(child.rules, False)
 
 
