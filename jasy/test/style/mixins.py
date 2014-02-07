@@ -88,8 +88,8 @@ class Tests(unittest.TestCase):
             '''), 'h1,h1 span{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h1 span{font-size:70%;}')
 
 
-    def test_local_extend_with_media(self):
-      self.assertEqual(self.process('''
+    def test_local_extend_with_atmedia(self):
+        self.assertEqual(self.process('''
           h1{
             $font{
               font-family: Arial, sans-serif;
@@ -108,8 +108,8 @@ class Tests(unittest.TestCase):
           '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
 
 
-    def test_local_extend_with_inner_media(self):
-      self.assertEqual(self.process('''
+    def test_local_extend_with_inner_atmedia(self):
+        self.assertEqual(self.process('''
           h1{
             $font{
               font-family: Arial, sans-serif;
@@ -130,6 +130,30 @@ class Tests(unittest.TestCase):
             }
           }
           '''), 'h1,h1 small{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1,h1 small{font-size:20pt;color:#111;}}h1 small{color:red;}')
+
+
+    def test_local_extend_with_inner_atsupports(self):
+        self.assertEqual(self.process('''
+          h1{
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+
+              @supports (color:lightgreen){
+                font-size: 20pt;
+                color: lightgreen;
+              }
+            }
+
+            $font;
+            color: #333;
+
+            small{
+              $font;
+              color: red;
+            }
+          }
+          '''), 'h1,h1 small{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@supports (color:lightgreen){h1,h1 small{font-size:20pt;color:lightgreen;}}h1 small{color:red;}')
 
 
     def test_local_extend_complex(self):
@@ -189,7 +213,7 @@ class Tests(unittest.TestCase):
             '''), 'h1 strong{font-family:Arial,sans-serif;font-size:30px;}h1 small{font-family:Arial,sans-serif;font-size:20px;}h1{color:black;text-decoration:underline;}h1 strong{color:black;}h1 small{color:grey;}')
 
 
-    def test_extend_media(self):
+    def test_extend_atmedia(self):
         self.assertEqual(self.process('''
             $font{
               font-family: Arial, sans-serif;
@@ -208,6 +232,28 @@ class Tests(unittest.TestCase):
               color: black;
             }
             '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@media screen{h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
+
+    def test_extend_atsupport(self):
+        self.assertEqual(self.process('''
+            $font{
+              font-family: Arial, sans-serif;
+              font-size: 15px;
+            }
+
+            @supports (color:blue){
+              h1{
+                $font;
+                color: blue;
+              }
+            }
+
+            h1{
+              $font;
+              color: black;
+            }
+            '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@supports (color:blue){h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
+
 
 
     def test_extend_def_as_func(self):
