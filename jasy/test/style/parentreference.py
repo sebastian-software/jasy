@@ -78,6 +78,29 @@ class Tests(unittest.TestCase):
             '''), 'li[selected]{color:blue;}')
 
 
+    def test_inside(self):
+        self.assertEqual(self.process('''
+            li{
+              list-item-type: square;
+
+              .&st-item{
+                color: blue;
+              }
+            }
+            '''), 'li{list-item-type:square;}.list-item{color:blue;}')
+
+
+    def test_inside_variant(self):
+        self.assertEqual(self.process('''
+            header{
+              list-item-type: square;
+
+              .fullscreen,
+              .&-fullscreen{
+                color: blue;
+              }
+            }
+            '''), 'header{list-item-type:square;}header .fullscreen,.header-fullscreen{color:blue;}')
 
 
 if __name__ == '__main__':

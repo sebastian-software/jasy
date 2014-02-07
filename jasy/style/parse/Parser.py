@@ -249,7 +249,9 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "dot":
         nextTokenType = tokenizer.peek()
 
-        if nextTokenType == "identifier":
+        # The ampersand might be used to inject the current path inside the new selector
+        # e.g. header { &.-fullscreen {} } => .header-fullscreen{}
+        if nextTokenType == "identifier" or nextTokenType == "ampersand":
             node = Selector(tokenizer, staticContext)
             return node
 
