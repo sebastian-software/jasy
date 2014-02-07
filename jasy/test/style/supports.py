@@ -30,7 +30,7 @@ class Tests(unittest.TestCase):
         return Engine.compressTree(tree)
 
 
-    def test_atsupports_outer(self):
+    def test_outer(self):
         self.assertEqual(self.process(r'''
             @supports(-webkit-text-stroke: 1px black) {
               h1{
@@ -40,7 +40,7 @@ class Tests(unittest.TestCase):
             '''), '@supports (-webkit-text-stroke:1px black){h1{-webkit-text-stroke:1px black;}}')
 
 
-    def test_atsupports_between(self):
+    def test_between(self):
         self.assertEqual(self.process(r'''
             body{
               @supports(-webkit-text-stroke: 1px black) {
@@ -52,7 +52,7 @@ class Tests(unittest.TestCase):
             '''), '@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}')
 
 
-    def test_atsupports_inner(self):
+    def test_inner(self):
         self.assertEqual(self.process(r'''
             body{
               h1{
@@ -66,7 +66,7 @@ class Tests(unittest.TestCase):
             '''), 'body h1{color:black;}@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}')
 
 
-    def test_atsupports_combined(self):
+    def test_combined(self):
         self.assertEqual(self.process(r'''
             body{
               @supports(-webkit-text-stroke: 1px black) {
@@ -82,7 +82,7 @@ class Tests(unittest.TestCase):
             '''), '@supports (-webkit-text-stroke:1px black){body h1{-webkit-text-stroke:1px black;}}@supports (color:black) and (-webkit-text-stroke:1px black){body h1{color:black;}}')
 
 
-    def test_atsupports_combined_inner(self):
+    def test_combined_inner(self):
         self.assertEqual(self.process(r'''
             body{
               @supports(-webkit-text-stroke: 1px black) {
