@@ -637,7 +637,40 @@ class Tests(unittest.TestCase):
         self.assertRaises(Executer.ExecuterError, wrapper)
 
 
-    def test_mixin_content(self):
+    def test_mixin_content_simple(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                display: inline-block;
+                @content;
+              }
+            }
+
+            h1{
+              $icon() < {
+                margin-right: 2px;
+              }
+            }
+            '''), 'h1::before{display:inline-block;margin-right:2px;}')
+
+
+    def test_mixin_content_none(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                display: inline-block;
+                @content;
+              }
+            }
+
+            h2{
+              $icon;
+              color: blue;
+            }
+            '''), 'h2::before{display:inline-block;}h2{color:blue;}')
+
+
+    def test_mixin_content_complex(self):
         self.assertEqual(self.process('''
             $icon(){
               &::before{
