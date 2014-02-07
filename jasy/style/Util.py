@@ -117,7 +117,7 @@ cssMediaTypes = set(["all", "aural", "braille", "handheld", "print", "projection
 RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\b')
 
 
-def combineSelectors(selector, stop):
+def combineSelectorList(selector, stop):
     combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
         combined = ""
@@ -139,7 +139,7 @@ def combineSelectors(selector, stop):
     return combinedSelectors
 
 
-def combineMediaQueries(media):
+def combineMediaQueryList(media):
     if not media:
         return None
 
@@ -161,7 +161,7 @@ def combineMediaQueries(media):
     return combinedMedia
 
 
-def combineSupports(supports):
+def combineSupportList(supports):
     if not supports:
         return None
 
@@ -212,9 +212,9 @@ def combineSelector(node, stop=None):
 
     # So we need process collected selector data etc. in reversed
     # order, too, to get the normal order back.
-    combinedSelectors = combineSelectors(selector, stop)
-    combinedMedia = combineMediaQueries(media)
-    combinedSupports = combineSupports(supports)
+    combinedSelectors = combineSelectorList(selector, stop)
+    combinedMedia = combineMediaQueryList(media)
+    combinedSupports = combineSupportList(supports)
 
     return combinedSelectors, combinedMedia, combinedSupports
 
