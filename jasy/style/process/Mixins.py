@@ -99,10 +99,10 @@ def __extend(node, scanMixins=False):
 
         Console.debug("Found matching mixin declaration at line: %s", mixin.line)
 
-        selector, media = Util.combineSelector(node.parent, stop=mixin.parent)
+        selector, media, supports = Util.combineSelector(node.parent, stop=mixin.parent)
 
-        if media:
-            Console.warn("Extending inside media query behaves like including (less efficient): %s + %s", media, ", ".join(selector))
+        if media or supports:
+            Console.warn("Extending inside media query/support queries behaves like including (less efficient): %s %s + %s", media, supports, ", ".join(selector))
 
             replacements = __resolveMixin(mixin, None)
 
@@ -128,7 +128,7 @@ def __extend(node, scanMixins=False):
             __extendContent(mixin.rules, node, virtualBlock, mixin)
 
             if len(virtualBlock) > 0:
-                callSelector, callMedia = Util.combineSelector(node)
+                callSelector, callMedia, callSupports = Util.combineSelector(node)
 
                 if callSelector:
                     virtualSelector = Node.Node(type="selector")
@@ -228,8 +228,8 @@ def __injectContent(node, call):
 
 def __extendContent(node, call, targetBlock, stopCombineAt):
     """
-    Builds up a list of selector/mediaqueries to insert after the extend to produce
-    the @content sections on the intended selectors.
+    Builds up a list of selector/mediaqueries/supportqueries to insert after
+    the extend to produce the @content sections on the intended selectors.
     """
 
     for child in reversed(node):
@@ -243,7 +243,7 @@ def __extendContent(node, call, targetBlock, stopCombineAt):
 
         Console.debug("Inserting content section into new virtual selector")
 
-        selector, media = Util.combineSelector(node, stop=stopCombineAt)
+        selector, media, supports = Util.combineSelector(node, stop=stopCombineAt)
 
         selectorNode = Node.Node(type="selector")
         selectorNode.name = selector

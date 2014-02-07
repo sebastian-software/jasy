@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
                 -webkit-text-stroke: 1px black;
               }
             }
-            '''), '')
+            '''), '@supports (-webkit-text-stroke:1px black){h1{-webkit-text-stroke:1px black;}}')
 
 
 

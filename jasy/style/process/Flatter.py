@@ -21,7 +21,7 @@ def process(tree):
         and/or making them CSS2 compatible (regarding formatting)
         """
 
-        process = node.type in ("selector", "mixin", "media")
+        process = node.type in ("selector", "mixin", "media", "supports")
 
         # Insert all children of top-level nodes into a helper element first
         # This is required to place mixins first, before the current node and append
@@ -41,7 +41,7 @@ def process(tree):
         if process and hasattr(node, "rules") and len(node.rules) > 0:
 
             # Combine selector and/or media query
-            combinedSelector, combinedMedia = Util.combineSelector(node)
+            combinedSelector, combinedMedia, combinedSupports = Util.combineSelector(node)
 
             if node.type == "selector":
                 node.name = combinedSelector
@@ -49,25 +49,52 @@ def process(tree):
                 node.selector = combinedSelector
             elif node.type == "media":
                 pass
+            elif node.type == "supports":
+                pass
 
-            if combinedMedia and node.type in ("selector", "mixin"):
-                # Dynamically create matching media query
-                mediaNode = Node.Node(None, "media")
-                mediaNode.name = combinedMedia
+            if (combinedMedia or combinedSupports) and node.type in ("selector", "mixin"):
 
-                mediaBlock = Node.Node(None, "block")
-                mediaNode.append(mediaBlock, "rules")
+                if combinedSupports:
+                    # Dynamically create matching media query
+                    supportsNode = Node.Node(None, "supports")
+                    supportsNode.name = combinedSupports
 
-                mediaBlock.append(node)
-                node = mediaNode
+                    supportsBlock = Node.Node(None, "block")
+                    supportsNode.append(supportsBlock, "rules")
 
+                    supportsBlock.append(node)
+                    node = supportsNode
 
-            elif node.type == "media":
-                # Insert direct properties into new selector:block
+                if combinedMedia:
+                    # Dynamically create matching media query
+                    mediaNode = Node.Node(None, "media")
+                    mediaNode.name = combinedMedia
 
-                # Update media query of found media query as it might
-                # contain more than the local media query (e.g. queries in parent nodes)
-                node.name = combinedMedia
+                    mediaBlock = Node.Node(None, "block")
+                    mediaNode.append(mediaBlock, "rules")
+
+                    mediaBlock.append(node)
+                    node = mediaNode
+
+            elif node.type == "media" or node.type == "supports":
+                # Insert direct properties into new selector block
+                # Goal is to place in this structure: @media->@supports->selector
+
+                if node.type == "media":
+                    # Update media query of found media query as it might
+                    # contain more than the local media query (e.g. queries in parent nodes)
+                    node.name = combinedMedia
+
+                elif combinedMedia:
+                    # Dynamically create matching media query
+                    mediaNode = Node.Node(None, "media")
+                    mediaNode.name = combinedMedia
+
+                    mediaBlock = Node.Node(None, "block")
+                    mediaNode.append(mediaBlock, "rules")
+
+                    # Move this node
+                    node.append(mediaBlock)
 
                 selectorNode = Node.Node(None, "selector")
                 selectorNode.name = combinedSelector
@@ -75,14 +102,13 @@ def process(tree):
                 selectorBlock = Node.Node(None, "block")
                 selectorNode.append(selectorBlock, "rules")
 
-                # Move all rules from local block into selector block
-                for mediaChild in list(node.rules):
-                    if mediaChild:
-                        selectorBlock.append(mediaChild)
+                # Move all rules from local media/supports block into new selector block
+                for nonSelectorChild in list(node.rules):
+                    if nonSelectorChild:
+                        selectorBlock.append(nonSelectorChild)
 
-                # Then insert the newly created and filled selector block into the media node
+                # Then insert the newly created and filled selector block into the media/support node
                 node.rules.append(selectorNode)
-
 
         if process:
 

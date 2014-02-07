@@ -162,8 +162,17 @@ def combineMediaQueries(media):
 
 
 def combineSupports(supports):
-    # Supports rules are not a list of different @support rule sets
-    return supports
+    if not supports:
+        return None
+
+    # Supports rules are not a list of different @support rule sets,
+    # but just a plain list of "and" connected expressions.
+
+    if len(supports) > 1:
+        return " and ".join(supports)
+    else:
+        return supports[0]
+
 
 
 def combineSelector(node, stop=None):
@@ -173,7 +182,7 @@ def combineSelector(node, stop=None):
 
     # Fast path and fix for identical start/stop
     if node is stop:
-        return ["&"], None
+        return ["&"], None, None
 
     # list of list of selectors
     selector = []
@@ -201,14 +210,11 @@ def combineSelector(node, stop=None):
     if not selector and not media:
         raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
 
-    # So we process collected selector data in reversed order, too, to get the normal order back
+    # So we need process collected selector data etc. in reversed
+    # order, too, to get the normal order back.
     combinedSelectors = combineSelectors(selector, stop)
-
-    # Combine media queries
     combinedMedia = combineMediaQueries(media)
-
-    # Supports rules are not a list of different @support rule sets
-    combinedSupports = supports
+    combinedSupports = combineSupports(supports)
 
     return combinedSelectors, combinedMedia, combinedSupports
 
