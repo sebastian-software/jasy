@@ -101,8 +101,12 @@ def __extend(node, scanMixins=False):
 
         selector, media, supports = Util.combineSelector(node.parent, stop=mixin.parent)
 
+        # There is no possibility to handle this in a series of CSS selectors. This is why
+        # we have to use an include like approach instead of extend to correctly deal
+        # with the situation. This should work well, but is not as efficient regarding
+        # output file size.
         if media or supports:
-            Console.warn("Extending inside @media/@support behaves like including (larger result size): %s %s + %s", media, supports, ", ".join(selector))
+            Console.warn("Extending inside a @media/@support structure behaves like including (larger result size): %s %s + %s", media, supports, ", ".join(selector))
 
             replacements = __resolveMixin(mixin, None)
 
