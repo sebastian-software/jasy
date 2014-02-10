@@ -118,6 +118,9 @@ RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|pro
 
 
 def combineSelectorList(selector, stop):
+    if not selector:
+        return None
+
     combinedSelectors = []
     for item in itertools.product(*reversed(selector)):
         combined = ""
@@ -208,8 +211,8 @@ def combineSelector(node, stop=None):
 
         current = getattr(current, "parent", None)
 
-    if not selector and not media:
-        raise Exception("Node %s at line %s is not a selector/mixin/mediaquery and is no child of any selector/mixin/mediaquery." % (node.type, node.line))
+    #if not selector and not media and not supports:
+    #    raise Exception("Node %s at line %s is not a selector/mixin/@media/@supports and is no child of any selector/mixin/@media/@supports." % (node.type, node.line))
 
     # So we need process collected selector data etc. in reversed
     # order, too, to get the normal order back.
