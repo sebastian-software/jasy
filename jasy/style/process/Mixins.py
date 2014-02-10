@@ -79,7 +79,7 @@ def __extend(node, scanMixins=False):
 
     modified = 0
 
-    for child in reversed(node):
+    for child in list(reversed(node)):
         # Ignore all mixin declarations. Can't operate inside them.
         # For these things to work we have to wait for the include mechanics to resolve them first
         # (which actually just remove these mixin declarations though)
