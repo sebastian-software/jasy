@@ -185,7 +185,7 @@ def __process(node, scanMixins=False, active=None):
     if active is None:
         active = not scanMixins
 
-    for child in reversed(node):
+    for child in reversed(list(node)):
         if child is not None:
             if child.type == "mixin":
                 if scanMixins:
@@ -225,7 +225,7 @@ def __injectContent(node, call):
     Inserts content section of call into prepared content area of mixin clone
     """
 
-    for child in reversed(node):
+    for child in reversed(list(node)):
         if child:
             __injectContent(child, call)
 
@@ -244,7 +244,7 @@ def __extendContent(node, call, targetBlock, stopCombineAt):
     the extend to produce the @content sections on the intended selectors.
     """
 
-    for child in reversed(node):
+    for child in reversed(list(node)):
         if child:
             __extendContent(child, call, targetBlock, stopCombineAt)
 
