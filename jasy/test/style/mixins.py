@@ -369,6 +369,12 @@ class Tests(unittest.TestCase):
                 margin-right: 2px;
               }
             }
+
+            p{
+              $icon() < {
+                margin-right: 4px;
+              }
+            }
             '''), 'h1::before{display:inline-block;margin-right:2px;}')
 
 

@@ -92,6 +92,26 @@ class Tests(unittest.TestCase):
             '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}@supports (color:blue){h1{font-family:Arial,sans-serif;font-size:15px;color:blue;}}h1{color:black;}')
 
 
+    def test_content_simple(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              display: inline-block;
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $inlineblock();
+            }
+            '''), '')
+
 
     def test_def_as_func(self):
         self.assertEqual(self.process('''
