@@ -232,7 +232,7 @@ def __injectContent(node, call):
 
 def __extendContent(node, call, targetBlock, stopCombineAt):
     """
-    Builds up a list of selector/mediaqueries/supportqueries to insert after
+    Builds up a list of selector/@media/@support to insert after
     the extend to produce the @content sections on the intended selectors.
     """
 
