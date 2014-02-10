@@ -254,15 +254,34 @@ def __extendContent(node, call, targetBlock, stopCombineAt):
 
         selectorNode.append(copy.deepcopy(call.rules), "rules")
 
-        # Support media queries, too
+        # Support @supports
+        if supports:
+            supportsNode = Node.Node(type="supports")
+            supportsNode.name = supports
+
+            supportsBlock = Node.Node(type="block")
+            supportsBlock.append(selectorNode)
+            supportsNode.append(supportsBlock, "rules")
+
+            # Update reference
+            selectorNode = supportsNode
+
+        # Support @media
         if media:
             mediaNode = Node.Node(type="media")
             mediaNode.name = media
-            mediaNode.append(selectorNode)
-            targetBlock.append(mediaNode)
 
-        else:
-            targetBlock.append(selectorNode)
+            mediaBlock = Node.Node(type="block")
+            mediaBlock.append(selectorNode)
+            mediaNode.append(mediaBlock, "rules")
+
+            # Update reference
+            selectorNode = mediaNode
+
+        # Insert selectorNode (or media node or supports node when updated)
+        # If all kinds are used we should have the following structure:
+        # @media->@supports->selector
+        targetBlock.append(selectorNode)
 
 
 def __findMixin(node, name):
