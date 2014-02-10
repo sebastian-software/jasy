@@ -159,6 +159,53 @@ class Tests(unittest.TestCase):
             '''), 'h1,p{zoom:1;}@supports (display:inline-block){h1,p{display:inline-block;}}h1{margin-right:2px;}')
 
 
+
+    def test_content_with_media_in_call(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              display: inline-block;
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              @media (min-width: 800px){
+                $inlineblock();
+              }
+            }
+            '''), 'h1{display:inline-block;zoom:1;}h1{margin-right:2px;}@media (min-width:800px){p{display:inline-block;zoom:1;}}')
+
+
+    def test_content_with_media_in_mixin(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              @media (min-width: 800px){
+                display: inline-block;
+              }
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $inlineblock();
+            }
+            '''), 'h1,p{zoom:1;}@media (min-width:800px){h1,p{display:inline-block;}}h1{margin-right:2px;}')
+
+
     def test_content_deeper(self):
         self.assertEqual(self.process('''
             $icon(){
