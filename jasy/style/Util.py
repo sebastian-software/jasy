@@ -200,14 +200,15 @@ def combineSelector(node, stop=None):
     # Selector and media lists are in reversed order...
     current = node
     while current and current is not stop:
-        if current.type == "selector":
-            selector.append(current.name)
-        elif current.type == "mixin":
+        if current.type == "mixin" and current.selector:
             selector.append(current.selector) # extend for this mixin
-        elif current.type == "media":
-            media.append(current.name)
-        elif current.type == "supports":
-            supports.append(current.name)
+        elif hasattr(current, "name") and current.name:
+            if current.type == "selector":
+                selector.append(current.name)
+            elif current.type == "media":
+                media.append(current.name)
+            elif current.type == "supports":
+                supports.append(current.name)
 
         current = getattr(current, "parent", None)
 
