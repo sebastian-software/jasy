@@ -142,12 +142,20 @@ def __extend(node, scanMixins=False):
                     virtualMedia = Node.Node(type="media")
                     virtualMedia.name = callMedia
 
+                if callSupports:
+                    virtualSupports = Node.Node(type="supports")
+                    virtualSupports.name = callSupports
+
                 if callSelector:
                     virtualSelector.append(virtualBlock, "rules")
                 elif callMedia:
                     virtualMedia.append(virtualBlock, "rules")
+                elif callSupports:
+                    virtualSupports.append(virtualBlock, "rules")
 
-                if callMedia:
+                if callSupports:
+                    virtualTop = virtualSupports
+                elif callMedia:
                     virtualTop = virtualMedia
                 elif callSelector:
                     virtualTop = virtualSelector
