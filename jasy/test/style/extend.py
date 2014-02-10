@@ -110,7 +110,30 @@ class Tests(unittest.TestCase):
             p{
               $inlineblock();
             }
-            '''), '')
+            '''), 'h1,p{display:inline-block;zoom:1;}h1{margin-right:2px;}')
+
+
+    def test_content_deeper(self):
+        self.assertEqual(self.process('''
+            $icon(){
+              &::before{
+                display: inline-block;
+                @content;
+              }
+            }
+
+            h1{
+              $icon() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $icon() < {
+                margin-right: 4px;
+              }
+            }
+            '''), 'h1::before,p::before{display:inline-block;}h1::before{margin-right:2px;}p::before{margin-right:4px;}')
 
 
     def test_def_as_func(self):

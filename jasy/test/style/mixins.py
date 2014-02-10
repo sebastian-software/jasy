@@ -357,25 +357,26 @@ class Tests(unittest.TestCase):
 
     def test_content_simple(self):
         self.assertEqual(self.process('''
-            $icon(){
+            $icon($align){
               &::before{
                 display: inline-block;
+                vertical-align: $align;
                 @content;
               }
             }
 
             h1{
-              $icon() < {
+              $icon(left) < {
                 margin-right: 2px;
               }
             }
 
             p{
-              $icon() < {
+              $icon(top) < {
                 margin-right: 4px;
               }
             }
-            '''), 'h1::before{display:inline-block;margin-right:2px;}')
+            '''), 'h1::before{display:inline-block;vertical-align:left;margin-right:2px;}p::before{display:inline-block;vertical-align:top;margin-right:4px;}')
 
 
     def test_content_none(self):
