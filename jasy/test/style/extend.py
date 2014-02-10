@@ -113,6 +113,52 @@ class Tests(unittest.TestCase):
             '''), 'h1,p{display:inline-block;zoom:1;}h1{margin-right:2px;}')
 
 
+    def test_content_with_supports_in_call(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              display: inline-block;
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              @supports (display:inline-block){
+                $inlineblock();
+              }
+            }
+            '''), 'h1{display:inline-block;zoom:1;}h1{margin-right:2px;}@supports (display:inline-block){p{display:inline-block;zoom:1;}}')
+
+
+    def test_content_with_supports_in_mixin(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              @supports (display:inline-block){
+                display: inline-block;
+              }
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $inlineblock();
+            }
+            '''), 'h1,p{zoom:1;}@supports (display:inline-block){h1,p{display:inline-block;}}h1{margin-right:2px;}')
+
+
     def test_content_deeper(self):
         self.assertEqual(self.process('''
             $icon(){
