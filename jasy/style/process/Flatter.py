@@ -119,7 +119,7 @@ def process(tree):
                     # Selector should be placed inside this node
                     node.rules.append(selectorNode)
 
-                    # Update reference for further updates
+                    # Update node reference to new outer node for further processing
                     node = mediaNode
 
                 elif node.type == "media" and combinedSupports:
@@ -135,9 +135,6 @@ def process(tree):
 
                     # The supports block is the parent of the selector
                     supportsBlock.append(selectorNode)
-
-                    # Update reference for further updates
-                    node = mediaNode
 
                 else:
                     node.rules.append(selectorNode)
