@@ -49,6 +49,39 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
 
+    def test_double(self):
+        self.assertEqual(self.process('''
+            $family{
+              font-family: Arial, sans-serif;
+            }
+
+            $big{
+              $family;
+              font-size: 30px;
+            }
+
+            $small{
+              $family;
+              font-size: 15px;
+            }
+
+            h1{
+              $big;
+              color: blue;
+            }
+
+            h2{
+              $small;
+              color: red;
+            }
+
+            small{
+              $family;
+              font-size: 10px;
+            }
+            '''), '')
+
+
 
     def test_atmedia(self):
         self.assertEqual(self.process('''

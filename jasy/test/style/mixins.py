@@ -198,7 +198,6 @@ class Tests(unittest.TestCase):
         self.assertRaises(Operation.OperationError, wrapper)
 
 
-
     def test_param_with_compution(self):
         self.assertEqual(self.process('''
             $font($size){
@@ -353,6 +352,37 @@ class Tests(unittest.TestCase):
             ''')
 
         self.assertRaises(Executer.ExecuterError, wrapper)
+
+
+    def test_double(self):
+        self.assertEqual(self.process('''
+            $font($size){
+              font-family: Arial, sans-serif;
+              font-size: $size;
+            }
+
+            $big($size=30px){
+              $font($size);
+            }
+
+            $small($size=15px){
+              $font($size);
+            }
+
+            h1{
+              $big;
+              color: blue;
+            }
+
+            h2{
+              $small(10px);
+              color: red;
+            }
+
+            p{
+              $font;
+            }
+            '''), '')
 
 
     def test_content_simple(self):
