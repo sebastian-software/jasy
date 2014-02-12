@@ -119,6 +119,9 @@ def process(tree):
                     # Selector should be placed inside this node
                     node.rules.append(selectorNode)
 
+                    # Update reference for further updates
+                    node = mediaNode
+
                 elif node.type == "media" and combinedSupports:
                     # Dynamically create matching supports node
                     supportsNode = Node.Node(None, "supports")
@@ -132,6 +135,9 @@ def process(tree):
 
                     # The supports block is the parent of the selector
                     supportsBlock.append(selectorNode)
+
+                    # Update reference for further updates
+                    node = mediaNode
 
                 else:
                     node.rules.append(selectorNode)
