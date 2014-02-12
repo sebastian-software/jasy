@@ -49,6 +49,7 @@ class Tests(unittest.TestCase):
             }
             '''), 'h1,h2{font-family:Arial,sans-serif;font-size:15px;}h1{color:blue;}h2{color:red;}')
 
+
     def test_double(self):
         self.assertEqual(self.process('''
             $family{
@@ -75,11 +76,15 @@ class Tests(unittest.TestCase):
               color: red;
             }
 
-            small{
+            header{
+              $big;
+            }
+
+            small, p.small{
               $family;
               font-size: 10px;
             }
-            '''), '')
+            '''), 'h1,header,h2,small,p.small{font-family:Arial,sans-serif;}h1,header{font-size:30px;}h2{font-size:15px;}h1{color:blue;}h2{color:red;}small,p.small{font-size:10px;}')
 
 
 
