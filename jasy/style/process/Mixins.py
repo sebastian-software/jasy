@@ -65,7 +65,7 @@ def isMixinCall(node):
 
 
 
-def __extend(node, scanMixins=False):
+def __extend(node):
     """
     Finds extend requests for mixins aka
 
@@ -79,11 +79,11 @@ def __extend(node, scanMixins=False):
 
     modified = 0
 
-    for child in list(reversed(node)):
+    for child in reversed(list(node)):
         # Ignore all mixin declarations. Can't operate inside them.
         # For these things to work we have to wait for the include mechanics to resolve them first
         # (which actually just remove these mixin declarations though)
-        if child is not None and (scanMixins or child.type != "mixin"):
+        if child is not None:
             modified += __extend(child)
 
     if isExtendCall(node):
