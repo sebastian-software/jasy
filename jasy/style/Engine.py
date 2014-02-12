@@ -74,6 +74,8 @@ def reduceTree(tree, profile=None):
     # Resolve all mixins
     Mixins.processMixins(tree)
     Mixins.processSelectors(tree)
+    ScopeScanner.scan(tree)
+    Unused.cleanup(tree)
 
     # PHASE 4
     # Assign selectors to mixins (support for extend)
