@@ -363,10 +363,12 @@ class Tests(unittest.TestCase):
 
             $big($bsize=30px){
               $font($bsize);
+              text-transform: uppercase;
             }
 
             $small($ssize=15px){
               $font($ssize);
+              text-transform: lowercase;
             }
 
             h1{
@@ -380,9 +382,9 @@ class Tests(unittest.TestCase):
             }
 
             p{
-              $font;
+              $font(15px);
             }
-            '''), '')
+            '''), 'h1{font-family:Arial,sans-serif;font-size:30px;text-transform:uppercase;color:blue;}h2{font-family:Arial,sans-serif;font-size:10px;text-transform:lowercase;color:red;}p{font-family:Arial,sans-serif;font-size:15px;}')
 
 
     def test_content_simple(self):
