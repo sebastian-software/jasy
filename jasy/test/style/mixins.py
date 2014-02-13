@@ -356,18 +356,18 @@ class Tests(unittest.TestCase):
 
     def test_double(self):
         self.assertEqual(self.process('''
-            $font($msize){
+            $font($size){
               font-family: Arial, sans-serif;
-              font-size: $msize;
+              font-size: $size;
             }
 
-            $big($bsize=30px){
-              $font($bsize);
+            $big($size=30px){
+              $font($size);
               text-transform: uppercase;
             }
 
-            $small($ssize=15px){
-              $font($ssize);
+            $small($size=15px){
+              $font($size);
               text-transform: lowercase;
             }
 
