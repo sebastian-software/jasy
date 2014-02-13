@@ -225,7 +225,7 @@ def process(tree):
                     previous.rules.insertAll(None, child.rules)
                     tree.remove(child)
 
-                    Console.debug("Combined media of line %s into %s" % (child.line, previous.line))
+                    Console.debug("Combined @media of line %s into %s" % (child.line, previous.line))
 
                 previousMedia = child.name
                 previousSelector = None
@@ -237,7 +237,7 @@ def process(tree):
                     previous.rules.insertAll(None, child.rules)
                     tree.remove(child)
 
-                    Console.debug("Combined supports of line %s into %s" % (child.line, previous.line))
+                    Console.debug("Combined @supports of line %s into %s" % (child.line, previous.line))
 
                 previousSupports = child.name
                 previousSelector = None
