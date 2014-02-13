@@ -202,15 +202,20 @@ def process(tree):
             if not child:
                 continue
 
-            if child.type == "selector":
-                if child.name == previousSelector:
+            if child.type == "selector" or child.type == "mixin":
+                if child.type == "selector":
+                    thisSelector = child.name
+                elif child.type == "mixin":
+                    thisSelector = child.selector
+
+                if thisSelector == previousSelector:
                     previous = treecopy[pos-1]
                     previous.rules.insertAll(None, child.rules)
                     tree.remove(child)
 
                     Console.debug("Combined selector of line %s into %s" % (child.line, previous.line))
 
-                previousSelector = child.name
+                previousSelector = thisSelector
                 previousMedia = None
                 previousSupports = None
 
