@@ -171,7 +171,7 @@ class Tests(unittest.TestCase):
                 $inlineblock();
               }
             }
-            '''), 'h1{display:inline-block;zoom:1;}h1{margin-right:2px;}@supports (display:inline-block){p{display:inline-block;zoom:1;}}')
+            '''), 'h1{display:inline-block;zoom:1;margin-right:2px;}@supports (display:inline-block){p{display:inline-block;zoom:1;}}')
 
 
     def test_content_with_supports_in_mixin(self):
@@ -218,7 +218,7 @@ class Tests(unittest.TestCase):
                 $inlineblock();
               }
             }
-            '''), 'h1{display:inline-block;zoom:1;}h1{margin-right:2px;}@media (min-width:800px){p{display:inline-block;zoom:1;}}')
+            '''), 'h1{display:inline-block;zoom:1;margin-right:2px;}@media (min-width:800px){p{display:inline-block;zoom:1;}}')
 
 
     def test_content_with_media_in_mixin(self):
@@ -375,7 +375,7 @@ class Tests(unittest.TestCase):
 
             color: #333;
           }
-          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
+          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;color:#333;}@media print{h1{font-size:20pt;color:#111;}}')
 
 
     def test_local_with_atsupports(self):
@@ -395,7 +395,7 @@ class Tests(unittest.TestCase):
 
             color: #333;
           }
-          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;}h1{color:#333;}@supports (color:lightgreen){h1{font-size:20pt;color:lightgreen;}}')
+          '''), 'h1{font-family:Arial,sans-serif;font-size:15px;color:#333;}@supports (color:lightgreen){h1{font-size:20pt;color:lightgreen;}}')
 
 
     def test_local_with_inner_atmedia(self):
