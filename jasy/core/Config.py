@@ -122,7 +122,7 @@ def matchesType(value, expected):
 
 class Config:
     """
-    Wrapper around TOML/YAML/JSON with easy to use import tools for using question files,
+    Wrapper around YAML/JSON with easy to use import tools for using question files,
     command line arguments, etc.
     """
 
