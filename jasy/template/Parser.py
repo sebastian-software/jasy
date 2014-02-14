@@ -23,11 +23,12 @@ tagSplitter = r"(\{\{[^\{\}}]*\}\})"
 tagMatcher = r"^\{\{\s*([#\^\/\?\!\<\>\$\=_]?)\s*([^\{\}}]*?)\s*\}\}$"
 
 
-#/**
-# * {Array} Processes a list of @tokens {String[]} to create a tree.
-# * Optional @stack {Array?} is used internally during recursion.
-# */
 def buildTree(tokens, stack):
+    """
+    Processes a list of @tokens {String[]} to create a tree.
+    Optional @stack {Array?} is used internally during recursion.
+    """
+
     instructions = []
 
     while len(tokens) > 0:
@@ -48,17 +49,16 @@ def buildTree(tokens, stack):
     return instructions
 
 
-
-
-#/**
-# * {String[]} Tokenizer for template @text {String}. Returns an array of tokens
-# * where tags are returned as an object with the keys `tag` and `name` while
-# * normal strings are kept as strings.
-# *
-# * Optionally you can keep white spaces (line breaks,
-# * leading, trailing, etc.) by enabling @nostrip {Boolean?false}.
-# */
 def tokenize(text, nostrip=False):
+    """
+    Tokenizer for template @text {String}. Returns an array of tokens
+    where tags are returned as an object with the keys `tag` and `name` while
+    normal strings are kept as strings.
+
+    Optionally you can keep white spaces (line breaks,
+    leading, trailing, etc.) by enabling @nostrip {Boolean?false}.
+    """
+
     if not nostrip:
         text = "".join([line.strip() for line in text.split("\n")])
 
@@ -87,19 +87,18 @@ def tokenize(text, nostrip=False):
     return tokens
 
 
-#/**
-# * {String[]} Returns the token tree of the given template @text {String}.
-# *
-# * A token holds the following information:
-# *
-# * - `tag`: tag of the token
-# * - `name`: name of the token
-# * - `nodes`: children of the node
-# *
-# * Optionally you can keep white spaces (line breaks,
-# * leading, trailing, etc.) by enabling @nostrip {Boolean?false}.
-# */
 def parse(text, nostrip=False):
-    """ Returns the token tree of the fiven template text """
-    print("-- parse --> ", text)
+    """
+    Returns the token tree of the given template @text {String}.
+
+    A token holds the following information:
+
+    - `tag`: tag of the token
+    - `name`: name of the token
+    - `nodes`: children of the node
+
+    Optionally you can keep white spaces (line breaks,
+    leading, trailing, etc.) by enabling @nostrip {Boolean?false}.
+    """
+
     return buildTree(collections.deque(tokenize(text, nostrip)), collections.deque())
