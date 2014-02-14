@@ -15,6 +15,7 @@ import jasy.item.Asset
 import jasy.item.Class
 import jasy.item.Doc
 import jasy.item.Style
+import jasy.item.Template
 import jasy.item.Translation
 
 from jasy import UserError
@@ -70,6 +71,7 @@ class Session():
         self.addItemType("jasy.Class", "Classes", jasy.item.Class.ClassItem)
         self.addItemType("jasy.Doc", "Docs", jasy.item.Doc.DocItem)
         self.addItemType("jasy.Style", "Styles", jasy.item.Style.StyleItem)
+        self.addItemType("jasy.Template", "Templates", jasy.item.Template.TemplateItem)
         self.addItemType("jasy.Translation", "Translations", jasy.item.Translation.TranslationItem)
 
 
