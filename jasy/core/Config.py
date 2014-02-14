@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import sys, os, yaml, toml, json
+import sys, os, yaml, json
 
 import jasy.core.Console as Console
 import jasy.core.File as File
@@ -23,26 +23,26 @@ def isConfigName(fileName, requiredBaseName=None):
     if requiredBaseName is not None and requiredBaseName != fileSplit[0]:
         return False
 
-    return fileSplit[1] in (".toml", ".yaml", ".json")
+    return fileSplit[1] in (".yaml", ".json")
 
 
 def findConfig(fileName):
     """
     Returns the name of a config file based on the given base file name (without extension).
-    Returns either a filename which endswith .toml, .yaml, .json or None when no file was found.
+    Returns either a filename which endswith .yaml, .json or None when no file was found.
     """
 
     fileExt = os.path.splitext(fileName)[1]
 
     # Auto discovery
     if not fileExt:
-        for tryExt in (".toml", ".yaml", ".json"):
+        for tryExt in (".yaml", ".json"):
             if os.path.isfile(fileName + tryExt):
                 return fileName + tryExt
 
         return None
 
-    if os.path.isfile(fileName) and fileExt in (".toml", ".yaml", ".json"):
+    if os.path.isfile(fileName) and fileExt in (".yaml", ".json"):
         return fileName
     else:
         return None
@@ -62,9 +62,7 @@ def loadConfig(fileName, encoding="utf-8"):
 
     fileExt = os.path.splitext(configName)[1]
 
-    if fileExt == ".toml":
-        result = toml.load(fileHandle)
-    elif fileExt == ".yaml":
+    if fileExt == ".yaml":
         result = yaml.load(fileHandle)
     elif fileExt == ".json":
         result = json.load(fileHandle)
@@ -76,18 +74,14 @@ def loadConfig(fileName, encoding="utf-8"):
 def writeConfig(data, fileName, indent=2, encoding="utf-8"):
     """
     Writes the given data structure to the given file name. Based on the given extension
-    a different file format is choosen. Currently use either .toml, .yaml or .json.
+    a different file format is choosen. Currently use either .yaml or .json.
     """
 
     fileHandle = open(fileName, mode="w", encoding=encoding)
 
     fileExt = os.path.splitext(fileName)[1]
 
-    if fileExt == ".toml":
-        toml.dump(data, fileHandle)
-        fileHandle.close()
-
-    elif fileExt == ".yaml":
+    if fileExt == ".yaml":
         yaml.dump(data, fileHandle, default_flow_style=False, indent=indent, allow_unicode=True)
         fileHandle.close()
 

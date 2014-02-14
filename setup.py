@@ -34,10 +34,9 @@ if uses == "distribute":
     "install_requires" : [
       "Pygments>=1.6",
       "polib>=1.0.3",
-      "requests>=2.3",
+      "requests>=2.2",
       "CherryPy>=3.2.4",
-      "PyYAML>=3.10",
-      "toml>=0.8"
+      "PyYAML>=3.10"
     ],
 
     "extras_require" : {

@@ -21,7 +21,7 @@ class Tests(unittest.TestCase):
         return open(os.path.join(path, fileName), mode="r", encoding="utf-8").read()
 
     def createjpyaml(self, path):
-        self.writeFile(path, "jasyproject.toml", """name = "myproject" """)
+        self.writeFile(path, "jasyproject.yaml", """name: myproject """)
 
     def createjpyaml_withContent(self, path):
         self.writeFile(path, "jasyproject.yaml", """

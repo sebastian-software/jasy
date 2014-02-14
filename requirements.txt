@@ -7,4 +7,3 @@ Sphinx
 hoedown
 misaka
 Pillow
-toml

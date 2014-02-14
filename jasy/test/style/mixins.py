@@ -525,6 +525,46 @@ class Tests(unittest.TestCase):
             '''), 'h1::before{width:24px;height:30px;content:"|";}h1::after{width:24px;height:30px;content:"|";}')
 
 
+    def test_content_mediaquery_case(self):
+        self.assertEqual(self.process('''
+            $respond-to($media) {
+              @if $media == "small" {
+                @media only screen and (max-width: 480px) {
+                  @content;
+                }
+              }
+              @elif $media == "medium" {
+                @media only screen and (min-width: 481px) and (max-width: 768px) {
+                  @content;
+                }
+              }
+              @elif $media == "large" {
+                @media only screen and (min-width: 769px) {
+                  @content;
+                }
+              }
+            }
+
+            $respond-to("small") < {
+              h1{
+                font-size: 20px;
+              }
+            }
+
+            $respond-to("medium") < {
+              h1{
+                font-size: 25px;
+              }
+            }
+
+            $respond-to("large") < {
+              h1{
+                font-size: 30px;
+              }
+            }
+        '''), '@media only screen and (max-width:480px){h1{font-size:20px;}}@media only screen and (min-width:481px) and (max-width:768px){h1{font-size:25px;}}@media only screen and (min-width:769px){h1{font-size:30px;}}')
+
+
     def test_local_override(self):
         self.assertEqual(self.process('''
             $icon(){
