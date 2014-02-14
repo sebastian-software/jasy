@@ -44,6 +44,7 @@ class TemplateItem(AbstractItem.AbstractItem):
     def attach(self, path):
         super().attach(path)
 
+        # Force adding an matching class item to the registry
         self.getClassItem()
 
 
@@ -69,4 +70,3 @@ class TemplateItem(AbstractItem.AbstractItem):
             classItem.setText(self.getText())
 
         return classItem
-
