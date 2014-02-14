@@ -54,27 +54,6 @@ class Tests(unittest.TestCase):
         self.assertEqual(data, [{'two': 2, 'one': 1}, {'four': 4, 'three': 3}])
 
 
-    def test_write_toml(self):
-
-        tempDirectory = tempfile.TemporaryDirectory().name
-        os.makedirs(tempDirectory)
-
-        Config.writeConfig({"name": "mypackage", "version": 1.23, "list" : [1,2,3]}, os.path.join(tempDirectory, "test.toml"))
-
-        self.assertEqual(Config.findConfig(os.path.join(tempDirectory, "test.toml")), os.path.join(tempDirectory, "test.toml"))
-
-
-    def test_write_and_read_toml(self):
-
-        tempDirectory = tempfile.TemporaryDirectory().name
-        os.makedirs(tempDirectory)
-
-        Config.writeConfig({"name": "mypackage", "version": 1.23, "list" : [1,2,3]}, os.path.join(tempDirectory, "test.toml"))
-        data = Config.loadConfig(os.path.join(tempDirectory, "test.toml"))
-
-        self.assertEqual(data, {"name": "mypackage", "version": 1.23, "list" : [1,2,3]})
-
-
     def test_matching_types(self):
 
         self.assertTrue(Config.matchesType(42, "int"))

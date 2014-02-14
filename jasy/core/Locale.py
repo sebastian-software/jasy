@@ -170,7 +170,7 @@ class LocaleParser():
         Console.info("Target directory: %s", path)
         Console.indent()
 
-        jasy.core.File.write(os.path.join(path, "jasyproject.toml"), 'name = "locale"\npackage = ""\n')
+        jasy.core.File.write(os.path.join(path, "jasyproject.yaml"), 'name: locale\npackage: ""\n')
         count = self.__exportRecurser(self.__data, "locale", path)
 
         Console.info("Created %s classes", count)
