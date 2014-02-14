@@ -36,6 +36,9 @@ class Profile():
     # Application parts
     __parts = None
 
+    # Supported commands
+    __commands = None
+
 
     #
     # CURRENT STATE
@@ -82,10 +85,6 @@ class Profile():
         # Enforce scan of projects
         session.scan()
 
-        # No further steps when session has no projects e.g. during "distclean"
-        if not session.getProjects():
-            return
-
         # Part registry holds information about all parts of the application to build
         self.__parts = {}
 
@@ -97,6 +96,10 @@ class Profile():
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
+
+        # No further steps when session has no projects e.g. during "distclean"
+        if not session.getProjects():
+            return
 
         # Initialize asset manager
         Console.info("Initializing asset manager...")
