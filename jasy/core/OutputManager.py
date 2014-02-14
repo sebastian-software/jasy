@@ -215,7 +215,7 @@ class OutputManager:
         files = []
 
         for item in items:
-            # Ignore already ompressed items
+            # Ignore already compressed items
             if item.getId() in ("core.io.Script", "core.io.Queue"):
                 continue
 
