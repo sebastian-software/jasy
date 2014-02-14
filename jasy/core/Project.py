@@ -40,6 +40,9 @@ addStructure("application", {
     "source/style/*.style" : {
         "type" : "jasy.Style"
     },
+    "source/style/*.tmpl" : {
+        "type" : "jasy.Template"
+    },
     "source/translation/*.po" : {
         "type" : "jasy.Translation"
     },
@@ -58,6 +61,9 @@ addStructure("resource", {
     "src/*.style" : {
         "type" : "jasy.Style"
     },
+    "src/*.tmpl" : {
+        "type" : "jasy.Template"
+    },
     "src/*" : {
         "type" : "jasy.Asset"
     }
@@ -69,6 +75,9 @@ addStructure("flat", {
     },
     "style/*.style" : {
         "type" : "jasy.Style"
+    },
+    "template/*" : {
+        "type" : "jasy.Template"
     },
     "asset/*" : {
         "type" : "jasy.Asset"
