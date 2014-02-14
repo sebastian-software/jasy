@@ -42,10 +42,12 @@ class TemplateItem(AbstractItem.AbstractItem):
 
 
     def attach(self, path):
-        super().attach(path)
+        result = super().attach(path)
 
         # Force adding an matching class item to the registry
         self.getClassItem()
+
+        return result
 
 
     def getClassItem(self):
@@ -55,11 +57,12 @@ class TemplateItem(AbstractItem.AbstractItem):
 
         classId = self.getId() + "Template"
 
+        session = self.project.getSession()
         virtualProject = session.getVirtualProject()
         classItem = virtualProject.getItem("jasy.Class", classId)
 
         if classItem is None:
-            classItem = ClassItem.ClassItem(project, classId)
+            classItem = ClassItem.ClassItem(virtualProject, classId)
             classItem.setTextFilter(templateFilter)
 
             virtualProject.addItem("jasy.Class", classItem)
