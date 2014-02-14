@@ -19,6 +19,7 @@ class AbstractItem:
     __path = None
     __cache = None
     __text = None
+    __textFilter = None
 
 
     @classmethod
@@ -111,15 +112,32 @@ class AbstractItem:
         """
 
         if self.__text is not None:
-            return self.__text
+            if self.__textFilter is not None:
+                return self.__textFilter(self.__text, self)
+            else:
+                return self.__text
 
         if self.__path is None:
             return None
 
         if type(self.__path) == list:
-            return "".join([open(filename, mode="r", encoding=encoding).read() for filename in self.__path])
+            text = "".join([open(filename, mode="r", encoding=encoding).read() for filename in self.__path])
         else:
-            return open(self.__path, mode="r", encoding=encoding).read()
+            text = open(self.__path, mode="r", encoding=encoding).read()
+
+        if self.__textFilter is not None:
+            return self.__textFilter(text, self)
+        else:
+            return text
+
+
+    def setTextFilter(self, filterCallback):
+        """
+        Sets text filter callback that is called on getText().
+        With this callback e.g. transformations from CoffeeScript to JavaScript are possible.
+        The callback gets two parameter (text, ItemClass)
+        """
+        self.__textFilter = filterCallback
 
 
     def getChecksum(self, mode="rb"):
