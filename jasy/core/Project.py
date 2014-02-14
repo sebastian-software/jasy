@@ -40,7 +40,7 @@ addStructure("application", {
     "source/style/*.style" : {
         "type" : "jasy.Style"
     },
-    "source/translation/*.{po,properties,txt}" : {
+    "source/translation/*.po" : {
         "type" : "jasy.Translation"
     },
     "source/asset/*" : {
@@ -73,7 +73,7 @@ addStructure("flat", {
     "asset/*" : {
         "type" : "jasy.Asset"
     },
-    "translation/*.{po,properties,txt}" : {
+    "translation/*.po" : {
         "type" : "jasy.Translation"
     }
 })
