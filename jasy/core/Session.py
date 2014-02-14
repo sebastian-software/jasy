@@ -491,6 +491,23 @@ class Session():
         return project
 
 
+    def getVirtualFilePathFromId(self, fileId, extension=None):
+        """
+        Returns a valid virtual path for the given file item ID.
+        Supports adding an optional extension for files where the extension
+        is not part of the idea (effectively this are most of them, but not assets)
+        """
+
+        virtualProject = self.getVirtualProject()
+
+        fileName = fileId.replace(".", os.sep)
+        if extension is not None:
+            fileName += extension
+
+        # Place file into "src" folder
+        return os.path.join(virtualProject.getPath(), "src", fileName)
+
+
     def getVirtualItem(self, baseName, itemClass, text, extension):
         virtualProject = self.getVirtualProject()
 
@@ -505,8 +522,7 @@ class Session():
             return item
 
         # Generate path from file ID.
-        # Put file into "src" folder
-        filePath = os.path.join(virtualProject.getPath(), "src", fileId.replace(".", os.sep)) + extension
+        filePath = self.getVirtualFilePathFromId(fileId, extension)
 
         # Create a class dynamically and add it to both,
         # the virtual project and our requirements list.
