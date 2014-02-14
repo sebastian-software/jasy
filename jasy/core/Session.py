@@ -129,6 +129,10 @@ class Session():
     def scan(self):
         """ Scans all registered projects """
 
+        # Check for whether session is still alive
+        if not self.__projects:
+            return
+
         Console.info("Scanning projects...")
         Console.indent()
 

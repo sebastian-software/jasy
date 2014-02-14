@@ -51,6 +51,7 @@ class Profile():
 
     __timeStamp = None
     __timeHash = None
+    __fileManager = None
 
 
     def __init__(self, session):
@@ -75,9 +76,15 @@ class Profile():
         self.setFormattingLevel(100)
 
 
+        # Initialize file manager
+        fileManager = self.__fileManager = FileManager.FileManager(self)
 
         # Enforce scan of projects
         session.scan()
+
+        # No further steps when session has no projects e.g. during "distclean"
+        if not session.getProjects():
+            return
 
         # Part registry holds information about all parts of the application to build
         self.__parts = {}
@@ -90,9 +97,6 @@ class Profile():
         # Behaves like Date.now() in JavaScript: UTC date in milliseconds
         self.__timeStamp = int(round(time.time() * 1000))
         self.__timeHash = Util.generateChecksum(str(self.__timeStamp))
-
-        # Initialize objects
-        fileManager = self.__fileManager = FileManager.FileManager(self)
 
         # Initialize asset manager
         Console.info("Initializing asset manager...")
