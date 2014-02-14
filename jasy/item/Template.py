@@ -64,6 +64,7 @@ class TemplateItem(AbstractItem.AbstractItem):
         if classItem is None:
             classItem = ClassItem.ClassItem(virtualProject, classId)
             classItem.setTextFilter(templateFilter)
+            classItem.setPath(session.getVirtualFilePathFromId(classId, ".js"))
 
             virtualProject.addItem("jasy.Class", classItem)
 
