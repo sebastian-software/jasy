@@ -78,7 +78,16 @@ class AbstractItem:
 
     def getPath(self):
         """Returns the exact position of the class file in the file system."""
+
+        # Automatically write file (from eventually processed text content) when it does not exist
+        if self.__text is not None and not File.exists(self.__path):
+            File.write(self.__path, self.getText())
+
         return self.__path
+
+    def setPath(self, path):
+        """Sets the path for the item"""
+        self.__path = path
 
     def getModificationTime(self):
         """Returns last modification time of the class"""
