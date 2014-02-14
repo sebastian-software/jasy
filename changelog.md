@@ -1,8 +1,43 @@
+Jasy-1.5-beta5
+==============
+
+## Notes
+
+- Updated required Python version to 3.3 as this is the version for which all development happens right now.
+- Updated dependencies to Sphinx-1.2 and Pillow-2.3.
+
+## Major changes
+
+The progress on the style sheet processing was enormous. A lot of new cases are now being dealt with. A lot of new tests have been added and code has been fixed to make them work.
+
+- Caching for style sheets have been enabled. The system now should safely support all kind of include/require variants and improve re-execution times by usage of a good amount of cache infrastructure.
+- Improved include processing for greater stability.
+- Improved detection and handling of modification times and cache invalidation.
+- Added support for `@supports` and major improvements to support of `@media`.
+- Many issues around mixin/extend mechanism have been fixed.
+- Added support for placeholders inide selectors `header { &.-fullscreen {} }`
+
+
+
+## Minor changes
+
+- Support for alternative translation formats have been finally removed. Now Jasy uses Gettext for all build-in translation requirements. There were basically unimplemented alternatives for Java property files and ICU data, but this was never implemented to be usable. Now the system basically only accepts `.po` files as input for translations and is much cleaner is this regard.
+- `jasy-style-util.py` supports a new task "reduced" to print out the tree just before compression.
+- Added `isConfigName` to `jasy.core.Config` for validating if a filename is a config file is either JSON or YAML.
+- Fixed issue with auto deleting config files during scaffolding of new projects.
+- Improved output formatting of jasy.Doctor.
+- Improved some logging levels to reduce output of new features e.g. profile ID generation.
+- Fixed minor issues with Base62-based checkout folder names where automatic project ID generation failed for projects like Bootstrap.
+- Played with alternative Markdown processor called Howdown. This one has the same performance like Misaka but offers a richer set of features (Markdown extensions). Unfortunately it crashes reproducable right now, so it's disabled for the moment. Issue was reported to the author: https://github.com/hhatto/python-hoedown/issues/5
+- Added missing constructor to `jasy.item.Abstract`.
+- Cleanup of imports in `jasy.item.Asset`.
+- Renamed `kind` properties of all built-in items with the prefix `jasy.` so they are now called `jasy.Class`, `jasy.Asset`, ... This is mainly for extensibility of Jasy for new item types.
+
+
 Jasy-1.5-beta4
 ==============
 
 ## Major changes
-
 
 ### Added support for customizing projects structure
 
