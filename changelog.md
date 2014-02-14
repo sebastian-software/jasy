@@ -5,6 +5,7 @@ Jasy-1.5-beta5
 
 - Updated required Python version to 3.3 as this is the version for which all development happens right now.
 - Updated dependencies to Sphinx-1.2 and Pillow-2.3.
+- Support for alternative translation formats have been finally removed. Now Jasy uses Gettext for all build-in translation requirements. There were basically unimplemented alternatives for Java property files and ICU data, but this was never implemented to be usable. Now the system basically only accepts `.po` files as input for translations and is much cleaner is this regard.
 
 ## Major changes
 
@@ -17,11 +18,9 @@ The progress on the style sheet processing was enormous. A lot of new cases are 
 - Many issues around mixin/extend mechanism have been fixed.
 - Added support for placeholders inide selectors `header { &.-fullscreen {} }`
 
-
-
 ## Minor changes
 
-- Support for alternative translation formats have been finally removed. Now Jasy uses Gettext for all build-in translation requirements. There were basically unimplemented alternatives for Java property files and ICU data, but this was never implemented to be usable. Now the system basically only accepts `.po` files as input for translations and is much cleaner is this regard.
+- Preparations for supporting alternative text readers for `jasy.Class` e.g. to support things like CoffeeScript, templates etc. as input for class files.
 - `jasy-style-util.py` supports a new task "reduced" to print out the tree just before compression.
 - Added `isConfigName` to `jasy.core.Config` for validating if a filename is a config file is either JSON or YAML.
 - Fixed issue with auto deleting config files during scaffolding of new projects.
