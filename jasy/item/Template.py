@@ -7,17 +7,17 @@ import os
 
 from jasy import UserError
 
+import jasy.core.Console as Console
 import jasy.item.Abstract as AbstractItem
 import jasy.item.Class as ClassItem
+import jasy.template.Compiler as Compiler
 
 def templateFilter(text, item):
-    js = """
-        core.Main.declareNamespace("%(name)s", core.template.Compiler.compile("%(content)s"));
-    """ % {
+    Console.info("Creating template class %s", item.getId())
+    return 'core.Main.declareNamespace("%(name)s", %(content)s);' % {
         "name": item.getId(),
-        "content" : escapeContent(text)
+        "content" : Compiler.compile(text)
     }
-    return js
 
 
 def escapeContent(content):

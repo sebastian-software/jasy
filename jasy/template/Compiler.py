@@ -16,7 +16,7 @@
 
 __all__ = ["compile"]
 
-import Parser
+import jasy.template.Parser as Parser
 
 accessTags = [
     "#",      # go into section / loop start
@@ -46,9 +46,9 @@ def walk(node, labels, nostrip):
 
     for current in node:
         if type(current) == str:
-            code += 'buf+="' + escapeMatcher(current) + '";'
+            code += 'buf+="' + escapeMatcher(current) + '";\n'
         elif current["tag"] == "\n":
-            code += 'buf+="\\n";'
+            code += 'buf+="\\n";\n'
         else:
             tag = current["tag"]
             name = current["name"]
@@ -68,36 +68,33 @@ def walk(node, labels, nostrip):
                     innerCode = walk(current["nodes"], labels, nostrip)
 
                 if tag == "?":
-                    code += 'if(this._has(' + accessorCode + ')){' + innerCode + '}'
+                    code += 'if(this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
                 elif tag == "^":
-                    code += 'if(!this._has(' + accessorCode + ')){' + innerCode + '}'
+                    code += 'if(!this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
                 elif tag == "#":
-                    code += 'this._section(' + accessorCode + ',partials,labels,function(data,partials,labels){' + innerCode + '});'
+                    code += 'this._section(' + accessorCode + ',partials,labels,function(data,partials,labels){\n' + innerCode + '\n});\n'
                 elif tag == "=":
-                    code += 'buf+=this._data(' + accessorCode + ');'
+                    code += 'buf+=this._data(' + accessorCode + ');\n'
                 elif tag == "$":
-                    code += 'buf+=this._variable(' + accessorCode + ');';
+                    code += 'buf+=this._variable(' + accessorCode + ');\n';
 
             elif tag == ">":
-                code += 'buf+=this._partial("' + escaped + '",data,partials,labels);'
+                code += 'buf+=this._partial("' + escaped + '",data,partials,labels);\n'
             elif tag == "_":
                 if labels and escaped in labels:
                     code += walk(Parser.parse(labels[escaped], True), labels);
                 else:
-                    code += 'buf+=this._label("' + escaped + '",data,partials,labels);'
+                    code += 'buf+=this._label("' + escaped + '",data,partials,labels);\n'
 
     return code
 
 
 def compile(text, labels=[], nostrip=False, name=None):
     tree = Parser.parse(text, nostrip)
-    wrapped = escapeContent('var buf="";' + walk(tree, labels, nostrip) + 'return buf;');
+    wrapped = 'var buf="";' + walk(tree, labels, nostrip) + 'return buf;'
 
-    if name:
-        name = escapeContent("\"%s\"" % name)
-    else:
+    if name is None:
         name = "null"
 
-    text = escapeContent(text)
+    return "new core.template.Template(function(data, partials, labels){%s}, null, %s)" % (wrapped, name)
 
-    return "new core.template.Template(new Function('data', 'partials', 'labels', \"%s\"), \"%s\", %s);" % (wrapped, text, name)
