@@ -494,6 +494,10 @@ class Project():
     # ESSENTIALS
     #
 
+    def getSession(self):
+        return self.__session
+
+
     def hasRequires(self):
         return len(self.__requires) > 0
 

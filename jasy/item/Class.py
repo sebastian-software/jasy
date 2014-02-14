@@ -76,6 +76,10 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
     kind = "jasy.Class"
 
     def generateId(self, relpath, package):
+        """
+        Generates the fileId of this item as being used by other modules
+        """
+
         if package:
             fileId = "%s/" % package
         else:
