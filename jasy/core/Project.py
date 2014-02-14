@@ -34,7 +34,7 @@ addStructure("application", {
     "source/style/*.style" : {
         "type" : "jasy.Style"
     },
-    "source/style/*.tmpl" : {
+    "source/template/*.tmpl" : {
         "type" : "jasy.Template"
     },
     "source/translation/*.po" : {
@@ -70,7 +70,7 @@ addStructure("flat", {
     "style/*.style" : {
         "type" : "jasy.Style"
     },
-    "template/*" : {
+    "template/*.tmpl" : {
         "type" : "jasy.Template"
     },
     "asset/*" : {
