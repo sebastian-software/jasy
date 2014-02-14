@@ -197,7 +197,6 @@ class Tests(unittest.TestCase):
             '''), 'h1,p{zoom:1;}@supports (display:inline-block){h1,p{display:inline-block;}}h1{margin-right:2px;}')
 
 
-
     def test_content_with_media_in_call(self):
         self.assertEqual(self.process('''
             $inlineblock(){
@@ -331,7 +330,6 @@ class Tests(unittest.TestCase):
               color: red;
             }
             '''), 'h1,p{width:auto;margin-left:auto;margin-right:auto;}@media (min-width:30em){h1,p{width:30em;}}@media (min-width:50em){h1,p{width:50em;}@supports (width:intrinsic){h1,p{width:intrinsic;}}}h1{color:blue;}p{color:red;}')
-
 
 
     def test_content_deeper(self):
