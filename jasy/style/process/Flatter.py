@@ -197,8 +197,8 @@ def process(tree):
         previousSupports = None
 
         # Work on a copy to be safe for remove situations during merges
-        treecopy = list(tree)
-        for pos, child in enumerate(treecopy):
+        previousChild = None
+        for child in list(tree):
             if not child:
                 continue
 
@@ -209,11 +209,11 @@ def process(tree):
                     thisSelector = child.selector
 
                 if thisSelector == previousSelector:
-                    previous = treecopy[pos-1]
-                    previous.rules.insertAll(None, child.rules)
+                    previousChild.rules.insertAll(None, child.rules)
                     tree.remove(child)
-
-                    Console.debug("Combined selector of line %s into %s" % (child.line, previous.line))
+                    Console.debug("Combined selector of line %s into %s" % (child.line, previousChild.line))
+                else:
+                    previousChild = child
 
                 previousSelector = thisSelector
                 previousMedia = None
@@ -221,11 +221,11 @@ def process(tree):
 
             elif child.type == "media":
                 if child.name == previousMedia:
-                    previous = treecopy[pos-1]
-                    previous.rules.insertAll(None, child.rules)
+                    previousChild.rules.insertAll(None, child.rules)
                     tree.remove(child)
-
-                    Console.debug("Combined @media of line %s into %s" % (child.line, previous.line))
+                    Console.debug("Combined @media of line %s into %s" % (child.line, previousChild.line))
+                else:
+                    previousChild = child
 
                 previousMedia = child.name
                 previousSelector = None
@@ -233,14 +233,20 @@ def process(tree):
 
             elif child.type == "supports":
                 if child.name == previousSupports:
-                    previous = treecopy[pos-1]
-                    previous.rules.insertAll(None, child.rules)
+                    previousChild.rules.insertAll(None, child.rules)
                     tree.remove(child)
-
-                    Console.debug("Combined @supports of line %s into %s" % (child.line, previous.line))
+                    Console.debug("Combined @supports of line %s into %s" % (child.line, previousChild.line))
+                else:
+                    previousChild = child
 
                 previousSupports = child.name
                 previousSelector = None
+                previousMedia = None
+
+            else:
+                previousChild = None
+                previousSelector = None
+                previousSupports = None
                 previousMedia = None
 
 
