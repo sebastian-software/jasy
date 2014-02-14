@@ -112,7 +112,7 @@ class AbstractItem:
         """
 
         if self.__text is not None:
-            if self.__textFilter in not None:
+            if self.__textFilter is not None:
                 return self.__textFilter(self.__text, self)
             else:
                 return self.__text
