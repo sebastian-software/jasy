@@ -14,12 +14,6 @@ import jasy.core.Util as Util
 
 import jasy.vcs.Repository as Repository
 
-import jasy.item.Abstract
-import jasy.item.Doc
-import jasy.item.Translation
-import jasy.item.Class
-import jasy.item.Asset
-
 from jasy import UserError
 
 
