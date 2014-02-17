@@ -20,6 +20,7 @@ class AbstractItem:
     __cache = None
     __text = None
     __textFilter = None
+    __filteredText = None
 
 
     @classmethod
@@ -122,7 +123,11 @@ class AbstractItem:
 
         if self.__text is not None:
             if self.__textFilter is not None:
-                return self.__textFilter(self.__text, self)
+                if not self.__filteredText:
+                    self.__filteredText = self.__textFilter(self.__text, self)
+
+                return self.__filteredText
+
             else:
                 return self.__text
 
