@@ -59,6 +59,18 @@ class Tests(unittest.TestCase):
             '''), '@font-face{font-family:FiraSans;src:url(FiraSans-Bold.woff);font-style:normal;font-weight:bold;}@font-face{font-family:FiraSans;src:url(FiraSans-BoldItalic.woff);font-style:italic;font-weight:bold;}')
 
 
+    def test_multi_local(self):
+        self.assertEqual(self.process(r'''
+          @font-face {
+            font-family: MyHelvetica;
+            src: local("Helvetica Neue Bold"),
+              local("HelveticaNeue-Bold"),
+              url(MgOpenModernaBold.ttf);
+            font-weight: bold;
+          }
+        '''), '@font-face{font-family:MyHelvetica;src:local("Helvetica Neue Bold"),local("HelveticaNeue-Bold");font-weight:bold;}')
+
+
 
 
 if __name__ == '__main__':
