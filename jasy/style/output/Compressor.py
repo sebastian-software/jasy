@@ -342,6 +342,17 @@ class Compressor:
         return result
 
 
+    def type_page(self, node):
+        result = "@page"
+
+        if node.name:
+            result += " %s" % node.name
+
+        result += self.compress(node.rules)
+
+        return self.indent(result)
+
+
     def type_media(self, node):
         if self.__useBlockBreaks:
             separator = ",\n"

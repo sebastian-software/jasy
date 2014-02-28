@@ -63,7 +63,7 @@ class Tests(unittest.TestCase):
             margin-left: 2cm;
             margin-right: 2cm;
           }
-        '''), '')
+        '''), '@page{margin-left:2cm;margin-right:2cm;}')
 
 
     def test_page_selector_left(self):
@@ -72,7 +72,7 @@ class Tests(unittest.TestCase):
             margin-left: 4cm;
             margin-right: 3cm;
           }
-        '''), '')
+        '''), '@page :left{margin-left:4cm;margin-right:3cm;}')
 
 
     def test_page_selector_right(self):
@@ -81,7 +81,7 @@ class Tests(unittest.TestCase):
             margin-left: 3cm;
             margin-right: 4cm;
           }
-        '''), '')
+        '''), '@page :right{margin-left:3cm;margin-right:4cm;}')
 
 
     def test_page_selector_first(self):
@@ -91,7 +91,7 @@ class Tests(unittest.TestCase):
             margin-right: 1cm;
             page-break: avoid;
           }
-        '''), '')
+        '''), '@page :first{margin-left:1cm;margin-right:1cm;page-break:avoid;}')
 
 
 if __name__ == '__main__':
