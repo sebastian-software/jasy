@@ -197,14 +197,11 @@ class Tests(unittest.TestCase):
         '''), '.date,.color{color:black;background:white;}.date__dialog,.date__overlay,.color__dialog,.color__overlay{position:absolute;}')
 
 
-    def test_parentreference_inline_multidist_extend_content(self):
+
+    def test_parentreference_extend_content_single(self):
         self.assertEqual(self.process('''
           $field{
-            color: black;
-            background: white;
-
-            @root &__dialog, &__overlay{
-              position: absolute;
+            @root &__dialog{
               @content;
             }
           }
@@ -212,17 +209,31 @@ class Tests(unittest.TestCase):
           .date{
             $field < {
               width: 100px;
-              height: 50px;
+            }
+          }
+        '''), '.date__dialog{width:100px;}')
+
+
+    def test_parentreference_extend_content_double(self):
+        self.assertEqual(self.process('''
+          $field{
+            @root &__dialog{
+              @content;
+            }
+          }
+
+          .date{
+            $field < {
+              width: 100px;
             }
           }
 
           .color{
             $field < {
               width: 200px;
-              height: 200px;
             }
           }
-        '''), '')
+        '''), '.date__dialog{width:100px;}.color__dialog{width:200px;}')
 
 
 
