@@ -831,6 +831,15 @@ def Variable(tokenizer, staticContext):
     elif tokenizer.peek() == "colon":
         return Property(tokenizer, staticContext)
 
+    # Extend "call" with content section
+    elif tokenizer.peek() == "lt":
+        node = Node.Node(tokenizer, "call")
+        node.name = name
+
+        # Ignore smaller symbol / Jump to block
+        tokenizer.get()
+        node.append(Block(tokenizer, staticContext), "rules")
+
     else:
         node = Node.Node(tokenizer, "variable")
         node.name = name
