@@ -51,12 +51,26 @@ class Tests(unittest.TestCase):
             color: red;
 
             @root .bar {
-              .baz{
+              .deeper{
                 color: gray;
               }
             }
           }
-        '''), '.foo{color:red;}.bar .baz{color:gray;}')
+        '''), '.foo{color:red;}.bar .deeper{color:gray;}')
+
+
+    def test_deep_multidist(self):
+        self.assertEqual(self.process('''
+          .foo {
+            color: red;
+
+            @root .bar, .baz {
+              .deeper{
+                color: gray;
+              }
+            }
+          }
+        '''), '.foo{color:red;}.bar .deeper,.baz .deeper{color:gray;}')
 
 
     def test_parentreference_append(self):
@@ -124,6 +138,20 @@ class Tests(unittest.TestCase):
             }
           }
         '''), '.date,.color{color:black;background:white;}.date__dialog,.color__dialog{position:absolute;}')
+
+
+    def test_parentreference_inline_multiroot_multidist(self):
+        self.assertEqual(self.process('''
+          .date,
+          .color{
+            color: black;
+            background: white;
+
+            @root &__dialog, &__overlay{
+              position: absolute;
+            }
+          }
+        '''), '.date,.color{color:black;background:white;}.date__dialog,.date__overlay,.color__dialog,.color__overlay{position:absolute;}')
 
 
 
