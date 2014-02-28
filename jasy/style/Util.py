@@ -130,9 +130,16 @@ def combineSelectorList(selector, stop, root=None):
         for item in itertools.product(*reversed(selector)):
             combined = ""
             for part in item:
+                # Keep root command separated by space
+                if part == "@(root)":
+                    part += " "
+
                 if combined:
                     if "&" in part:
-                        combined = part.replace("&", currentRoot+combined)
+                        if "@(root)" in combined:
+                            combined += currentRoot + part
+                        else:
+                            combined = part.replace("&", currentRoot+combined)
                     else:
                         combined = "%s %s" % (combined, part)
                 else:
@@ -211,7 +218,7 @@ def combineSelector(node, stop=None):
 
     # Selector and media lists are in reversed order...
     current = node
-    while current and current is not stop and current.type is not "root":
+    while current and current is not stop and (current.type is not "root" or stop):
         if current.type == "mixin" and current.selector:
             selector.append(current.selector) # extend for this mixin
         elif hasattr(current, "name") and current.name:
@@ -221,19 +228,19 @@ def combineSelector(node, stop=None):
                 media.append(current.name)
             elif current.type == "supports":
                 supports.append(current.name)
+        elif current.type == "root":
+            selector.append(["@(root)"])
 
         current = getattr(current, "parent", None)
-        if current is not None and current.type == "root":
+        if current is not None and current.type == "root" and not stop:
             root = current
-
-    #if not selector and not media and not supports:
-    #    raise Exception("Node %s at line %s is not a selector/mixin/@media/@supports and is no child of any selector/mixin/@media/@supports." % (node.type, node.line))
 
     rootSelectors = None
     rootMedia = None
     rootSupports = None
 
     if root:
+        # Combine selectors of root's parent for supporting parent references
         rootSelectors, rootMedia, rootSupports = combineSelector(root.parent)
 
     # So we need process collected selector data etc. in reversed
@@ -241,6 +248,14 @@ def combineSelector(node, stop=None):
     combinedSelectors = combineSelectorList(selector, stop, rootSelectors)
     combinedMedia = combineMediaQueryList(media)
     combinedSupports = combineSupportList(supports)
+
+    # Post process @root items when we are not executing with a stop mark
+    # aka after mixins have been processed during e.g. flattening.
+    if not stop:
+        for pos, selector in enumerate(combinedSelectors):
+            if "@(root)" in selector:
+                selector = selector[selector.index("@(root) ")+8:]
+                combinedSelectors[pos] = selector
 
     return combinedSelectors, combinedMedia, combinedSupports
 
