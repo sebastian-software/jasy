@@ -151,6 +151,51 @@ class Tests(unittest.TestCase):
             '''), 'h1,p{display:inline-block;zoom:1;}h1{margin-right:2px;}')
 
 
+    def test_content_simple_double(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              display: inline-block;
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock() < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $inlineblock() < {
+                margin-right: 1px;
+              }
+            }
+            '''), 'h1,p{display:inline-block;zoom:1;}h1{margin-right:2px;}p{margin-right:1px;}')
+
+
+
+    def test_content_without_call(self):
+        self.assertEqual(self.process('''
+            $inlineblock(){
+              display: inline-block;
+              zoom: 1;
+
+              @content;
+            }
+
+            h1{
+              $inlineblock < {
+                margin-right: 2px;
+              }
+            }
+
+            p{
+              $inlineblock();
+            }
+            '''), 'h1,p{display:inline-block;zoom:1;}h1{margin-right:2px;}')
+
+
     def test_content_with_supports_in_call(self):
         self.assertEqual(self.process('''
             $inlineblock(){
