@@ -57,7 +57,41 @@ class Tests(unittest.TestCase):
         self.assertRaises(Parser.SyntaxError, wrapper)
 
 
+    def test_page(self):
+        self.assertEqual(self.process(r'''
+          @page{
+            margin-left: 2cm;
+            margin-right: 2cm;
+          }
+        '''), '')
 
+
+    def test_page_selector_left(self):
+        self.assertEqual(self.process(r'''
+          @page :left {
+            margin-left: 4cm;
+            margin-right: 3cm;
+          }
+        '''), '')
+
+
+    def test_page_selector_right(self):
+        self.assertEqual(self.process(r'''
+          @page :right {
+            margin-left: 3cm;
+            margin-right: 4cm;
+          }
+        '''), '')
+
+
+    def test_page_selector_first(self):
+        self.assertEqual(self.process(r'''
+          @page :first {
+            margin-left: 1cm;
+            margin-right: 1cm;
+            page-break: avoid;
+          }
+        '''), '')
 
 
 if __name__ == '__main__':

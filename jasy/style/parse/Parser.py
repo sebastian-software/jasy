@@ -184,6 +184,9 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "charset":
             return Charset(tokenizer, staticContext)
 
+        elif tokenValue == "page":
+            return Page(tokenizer, staticContext)
+
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
 
@@ -470,6 +473,54 @@ def Charset(tokenizer, staticContext):
     return Node.Node(tokenizer, "block")
 
 
+
+def Page(tokenizer, staticContext):
+    """
+    Supports e.g.:
+
+    @page{
+      margin: 1cm;
+    }
+
+    @page :first{
+      margin: 5cm 2cm;
+    }
+    """
+
+    node = Node.Node(tokenizer, "page")
+
+    tokenType = tokenizer.get()
+    selector = ""
+    requiresSpace = False
+
+    while tokenType != "left_curly":
+        token = tokenizer.token
+
+        if tokenType == "identifier":
+            if requiresSpace :
+                selector += " "
+            selector += token.value
+            requiresSpace = True
+        elif tokenType == "colon":
+            selector += ":"
+            requiresSpace = False
+        else:
+            raise SyntaxError("Unsupported page selector token %s" % tokenType, tokenizer)
+
+        tokenType = tokenizer.get()
+
+    # Set page selector as name
+    node.name = selector
+
+    # Next process content of selector
+    tokenizer.unget()
+    childNode = Block(tokenizer, staticContext)
+    node.append(childNode, "rules")
+
+    return node
+
+
+
 def Media(tokenizer, staticContext):
     """
     Supports e.g.:
@@ -540,7 +591,7 @@ def Media(tokenizer, staticContext):
             query += tokenType
             requiresSpace = True
         else:
-            raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
+            raise SyntaxError("Unsupported media query token %s" % tokenType, tokenizer)
 
 
         tokenType = tokenizer.get()
