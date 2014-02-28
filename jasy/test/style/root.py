@@ -45,6 +45,40 @@ class Tests(unittest.TestCase):
         '''), '.foo{color:red;}.bar{color:gray;}')
 
 
+
+    def test_basic_supports(self):
+        self.assertEqual(self.process('''
+          .foo {
+            color: red;
+
+            @root .bar {
+              @supports(color:gray){
+                color: gray;
+              }
+            }
+          }
+        '''), '.foo{color:red;}@supports (color:gray){.bar{color:gray;}}')
+
+
+
+    def test_basic_media(self):
+        self.assertEqual(self.process('''
+          .foo {
+            color: red;
+
+            @root .bar {
+              @media screen{
+                color: gray;
+              }
+
+              @media print{
+                color: black;
+              }
+            }
+          }
+        '''), '.foo{color:red;}@media screen{.bar{color:gray;}}@media print{.bar{color:black;}}')
+
+
     def test_deep(self):
         self.assertEqual(self.process('''
           .foo {
@@ -264,6 +298,33 @@ class Tests(unittest.TestCase):
             }
           }
         '''), '.date__dialog{width:100px;}.color__dialog{width:200px;}')
+
+
+
+    def test_parentreference_extend_content_double_deeper(self):
+        self.assertEqual(self.process('''
+          $field{
+            @root &__dialog{
+              @content;
+            }
+          }
+
+          .date{
+            $field < {
+              width: 100px;
+            }
+          }
+
+          .color{
+            $field < {
+              width: 200px;
+
+              .button{
+                border: 2px solid red;
+              }
+            }
+          }
+        '''), '.date__dialog{width:100px;}.color__dialog{width:200px;}.color__dialog .button{border:2px solid red;}')
 
 
     def test_parentreference_extend_content_double_multi(self):
