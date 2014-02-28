@@ -541,7 +541,7 @@ def Root(tokenizer, staticContext):
       background: white;
 
       @root{
-        .&__dialog{
+        &__dialog{
           position: absolute;
         }
       }
