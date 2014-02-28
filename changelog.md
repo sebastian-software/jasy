@@ -15,8 +15,11 @@ The progress on the style sheet processing was enormous. A lot of new cases are 
 - Improved include processing for greater stability.
 - Improved detection and handling of modification times and cache invalidation.
 - Added support for `@supports` and major improvements to support of `@media`.
+- Added support for `@root` which is inspired by Sass-3.3's `@at-root` command.
+- Added support for the built-in CSS syntax `@charset` and `@page`.
 - Many issues around mixin/extend mechanism have been fixed.
 - Added support for placeholders inide selectors `header { &.-fullscreen {} }`
+- Added support for BEM-syntax usage e.g. `.messagebox{ &--warning{} }`
 
 ## Minor changes
 
