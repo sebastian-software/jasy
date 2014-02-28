@@ -559,8 +559,6 @@ def Root(tokenizer, staticContext):
         childNode = Block(tokenizer, staticContext)
         node.append(childNode, "rules")
 
-        print(node)
-
     return node
 
 
