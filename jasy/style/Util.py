@@ -207,16 +207,16 @@ def combineSelector(node, stop=None):
     if node is stop:
         return ["&"], None, None
 
-    # list of list of selectors
+    # List of list of selectors
     selector = []
 
-    # list of list of media queries
+    # List of list of media queries
     media = []
 
-    # list of @support directives (no list in list)
+    # List of @support directives (no list in list)
     supports = []
 
-    # Selector and media lists are in reversed order...
+    # Selectors, Media Queries and Support Queries are stored in reversed order...
     current = node
     while current and current is not stop and (current.type is not "root" or stop):
         if current.type == "mixin" and current.selector:
@@ -254,8 +254,8 @@ def combineSelector(node, stop=None):
     if not stop:
         for pos, selector in enumerate(combinedSelectors):
             if "@(root)" in selector:
-                selector = selector[selector.index("@(root) ")+8:]
-                combinedSelectors[pos] = selector
+                # Remove all before and including the @(root) placeholder
+                combinedSelectors[pos] = selector[selector.index("@(root) ")+8:]
 
     return combinedSelectors, combinedMedia, combinedSupports
 
