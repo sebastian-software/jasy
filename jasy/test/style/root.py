@@ -71,6 +71,19 @@ class Tests(unittest.TestCase):
         '''), '.foo{color:red;}.bar .foo{color:gray;}')
 
 
+    def test_parentreference_append_multiroot(self):
+        self.assertEqual(self.process('''
+          .foo,
+          h1 .innerfoo {
+            color: red;
+
+            @root .bar & {
+              color: gray;
+            }
+          }
+        '''), '.foo,h1 .innerfoo{color:red;}.bar .foo,.bar h1 .innerfoo{color:gray;}')
+
+
     def test_parentreference_inline_inner(self):
         self.assertEqual(self.process('''
           .date{
@@ -97,6 +110,20 @@ class Tests(unittest.TestCase):
             }
           }
         '''), '.date{color:black;background:white;}.date__dialog{position:absolute;}')
+
+
+    def test_parentreference_inline_multiroot(self):
+        self.assertEqual(self.process('''
+          .date,
+          .color{
+            color: black;
+            background: white;
+
+            @root &__dialog{
+              position: absolute;
+            }
+          }
+        '''), '.date,.color{color:black;background:white;}.date__dialog,.color__dialog{position:absolute;}')
 
 
 
