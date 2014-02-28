@@ -21,6 +21,11 @@ The progress on the style sheet processing was enormous. A lot of new cases are 
 - Added support for placeholders inide selectors `header { &.-fullscreen {} }`
 - Added support for BEM-syntax usage e.g. `.messagebox{ &--warning{} }`
 
+Added support for a built-in template system to process Core-esque template files.
+
+- Supports dynamic JS class representation of such a class for easy usage in applications.
+
+
 ## Minor changes
 
 - Preparations for supporting alternative text readers for `jasy.Class` e.g. to support things like CoffeeScript, templates etc. as input for class files.
