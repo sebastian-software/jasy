@@ -87,7 +87,7 @@ class Tests(unittest.TestCase):
 
     def test_parentreference_between(self):
         self.assertEqual(self.process('''
-          .foo {
+          .message {
             color: red;
 
             @root & .title-bar {
@@ -95,7 +95,7 @@ class Tests(unittest.TestCase):
               font-weight: bold;
             }
           }
-        '''), '.foo{color:red;}.foo .title-bar{background:gray;font-weight:bold;}')
+        '''), '.message{color:red;}.message .title-bar{background:gray;font-weight:bold;}')
 
 
     def test_parentreference_generatedcontent(self):
