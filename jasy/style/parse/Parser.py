@@ -171,10 +171,6 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "font-face":
             return FontFace(tokenizer, staticContext)
 
-        # Special case: Support keyframe command with engine prefix
-        elif tokenValue == "keyframes" or tokenValue.endswith("-keyframes"):
-            return KeyFrames(tokenizer, staticContext)
-
         elif tokenValue == "media":
             return Media(tokenizer, staticContext)
 
@@ -186,6 +182,10 @@ def Statement(tokenizer, staticContext):
 
         elif tokenValue == "page":
             return Page(tokenizer, staticContext)
+
+        # Special case: Support keyframe command with optional engine prefix
+        elif tokenValue == "keyframes" or tokenValue.endswith("-keyframes"):
+            return KeyFrames(tokenizer, staticContext)
 
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
