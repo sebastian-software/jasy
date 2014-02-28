@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
 import jasy.style.Engine as Engine
 import jasy.core.Permutation as Permutation
-
+import jasy.style.parse.Parser as Parser
 
 
 class Tests(unittest.TestCase):
@@ -32,19 +32,29 @@ class Tests(unittest.TestCase):
 
     def test_charset(self):
         self.assertEqual(self.process(r'''
-/* Set the encoding of the style sheet to Unicode UTF-8 */
+/* Set the encoding of the style sheet to Unicode UTF-8 - dropped with warning */
 @charset "UTF-8";
+'''), '')
 
-/* Set the encoding of the style sheet to Latin-9 (Western European languages, with euro sign) */
+
+    def test_charset_invalid(self):
+      def wrapper():
+        self.process(r'''
+/* Set the encoding of the style sheet to Latin-9 (Western European languages, with euro sign) - throws error */
 @charset 'iso-8859-15';
-            '''), '')
+        ''')
+
+      self.assertRaises(Parser.SyntaxError, wrapper)
 
 
-    def test_charset_wrong(self):
-        self.assertEqual(self.process(r'''
+    def test_charset_wrong_syntax(self):
+        def wrapper():
+          self.process(r'''
 /* Invalid as it requires quotes */
 @charset iso-8859-15;
-            '''), '')
+          ''')
+
+        self.assertRaises(Parser.SyntaxError, wrapper)
 
 
 

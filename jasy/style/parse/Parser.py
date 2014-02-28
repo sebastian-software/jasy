@@ -8,6 +8,7 @@ import re, json
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
 import jasy.style.Util as Util
+import jasy.core.Console as Console
 
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
@@ -179,6 +180,9 @@ def Statement(tokenizer, staticContext):
 
         elif tokenValue == "supports":
             return Supports(tokenizer, staticContext)
+
+        elif tokenValue == "charset":
+            return Charset(tokenizer, staticContext)
 
         else:
             raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
@@ -446,6 +450,24 @@ def Supports(tokenizer, staticContext):
 
     return node
 
+
+
+def Charset(tokenizer, staticContext):
+    tokenType = tokenizer.get()
+
+    Console.warn("CSS @charset %s ", tokenType)
+
+    if tokenType != "string":
+        raise SyntaxError("Invalid @charset declaration. Requires the encoding being a string!", tokenizer)
+
+    encoding = tokenizer.token.value
+
+    if encoding.lower() != "utf-8":
+        raise SyntaxError("Jasy is not able to process non UTF-8 stylesheets!", tokenizer)
+
+    Console.warn("Found unnecessary @charset definition for encoding %s", encoding)
+
+    return Node.Node(tokenizer, "block")
 
 
 def Media(tokenizer, staticContext):
