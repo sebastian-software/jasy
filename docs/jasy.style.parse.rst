@@ -1,27 +1,38 @@
-parse Package
-=============
+jasy.style.parse package
+========================
 
-:mod:`Node` Module
-------------------
+Submodules
+----------
+
+jasy.style.parse.Node module
+----------------------------
 
 .. automodule:: jasy.style.parse.Node
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Parser` Module
---------------------
+jasy.style.parse.Parser module
+------------------------------
 
 .. automodule:: jasy.style.parse.Parser
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ScopeScanner` Module
---------------------------
+jasy.style.parse.ScopeScanner module
+------------------------------------
 
 .. automodule:: jasy.style.parse.ScopeScanner
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.style.parse
+    :members:
+    :undoc-members:
+    :show-inheritance:

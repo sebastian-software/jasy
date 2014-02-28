@@ -1,35 +1,46 @@
-process Package
-===============
+jasy.style.process package
+==========================
 
-:mod:`Executer` Module
-----------------------
+Submodules
+----------
+
+jasy.style.process.Executer module
+----------------------------------
 
 .. automodule:: jasy.style.process.Executer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Flatter` Module
----------------------
+jasy.style.process.Flatter module
+---------------------------------
 
 .. automodule:: jasy.style.process.Flatter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Mixins` Module
---------------------
+jasy.style.process.Mixins module
+--------------------------------
 
 .. automodule:: jasy.style.process.Mixins
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Operation` Module
------------------------
+jasy.style.process.Operation module
+-----------------------------------
 
 .. automodule:: jasy.style.process.Operation
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.style.process
+    :members:
+    :undoc-members:
+    :show-inheritance:

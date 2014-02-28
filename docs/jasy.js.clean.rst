@@ -1,27 +1,38 @@
-clean Package
-=============
+jasy.js.clean package
+=====================
 
-:mod:`DeadCode` Module
-----------------------
+Submodules
+----------
+
+jasy.js.clean.DeadCode module
+-----------------------------
 
 .. automodule:: jasy.js.clean.DeadCode
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Permutate` Module
------------------------
+jasy.js.clean.Permutate module
+------------------------------
 
 .. automodule:: jasy.js.clean.Permutate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Unused` Module
---------------------
+jasy.js.clean.Unused module
+---------------------------
 
 .. automodule:: jasy.js.clean.Unused
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.js.clean
+    :members:
+    :undoc-members:
+    :show-inheritance:

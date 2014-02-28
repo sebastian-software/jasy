@@ -1,21 +1,21 @@
-jasy.parse package
-==================
+jasy.template package
+=====================
 
 Submodules
 ----------
 
-jasy.parse.AbstractNode module
-------------------------------
+jasy.template.Compiler module
+-----------------------------
 
-.. automodule:: jasy.parse.AbstractNode
+.. automodule:: jasy.template.Compiler
     :members:
     :undoc-members:
     :show-inheritance:
 
-jasy.parse.ScopeData module
+jasy.template.Parser module
 ---------------------------
 
-.. automodule:: jasy.parse.ScopeData
+.. automodule:: jasy.template.Parser
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ jasy.parse.ScopeData module
 Module contents
 ---------------
 
-.. automodule:: jasy.parse
+.. automodule:: jasy.template
     :members:
     :undoc-members:
     :show-inheritance:

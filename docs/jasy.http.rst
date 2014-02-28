@@ -1,19 +1,30 @@
-http Package
-============
+jasy.http package
+=================
 
-:mod:`Request` Module
----------------------
+Submodules
+----------
+
+jasy.http.Request module
+------------------------
 
 .. automodule:: jasy.http.Request
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Server` Module
---------------------
+jasy.http.Server module
+-----------------------
 
 .. automodule:: jasy.http.Server
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.http
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,19 +1,30 @@
-clean Package
-=============
+jasy.style.clean package
+========================
 
-:mod:`Permutate` Module
------------------------
+Submodules
+----------
+
+jasy.style.clean.Permutate module
+---------------------------------
 
 .. automodule:: jasy.style.clean.Permutate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Unused` Module
---------------------
+jasy.style.clean.Unused module
+------------------------------
 
 .. automodule:: jasy.style.clean.Unused
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.style.clean
+    :members:
+    :undoc-members:
+    :show-inheritance:

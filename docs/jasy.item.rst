@@ -1,51 +1,70 @@
-item Package
-============
+jasy.item package
+=================
 
-:mod:`Abstract` Module
-----------------------
+Submodules
+----------
+
+jasy.item.Abstract module
+-------------------------
 
 .. automodule:: jasy.item.Abstract
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Asset` Module
--------------------
+jasy.item.Asset module
+----------------------
 
 .. automodule:: jasy.item.Asset
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Class` Module
--------------------
+jasy.item.Class module
+----------------------
 
 .. automodule:: jasy.item.Class
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Doc` Module
------------------
+jasy.item.Doc module
+--------------------
 
 .. automodule:: jasy.item.Doc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Style` Module
--------------------
+jasy.item.Style module
+----------------------
 
 .. automodule:: jasy.item.Style
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Translation` Module
+jasy.item.Template module
 -------------------------
+
+.. automodule:: jasy.item.Template
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+jasy.item.Translation module
+----------------------------
 
 .. automodule:: jasy.item.Translation
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.item
+    :members:
+    :undoc-members:
+    :show-inheritance:

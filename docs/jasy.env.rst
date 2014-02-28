@@ -1,35 +1,38 @@
-env Package
-===========
+jasy.env package
+================
 
-:mod:`env` Package
-------------------
+Submodules
+----------
 
-.. automodule:: jasy.env
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`Context` Module
----------------------
+jasy.env.Context module
+-----------------------
 
 .. automodule:: jasy.env.Context
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`State` Module
--------------------
+jasy.env.State module
+---------------------
 
 .. automodule:: jasy.env.State
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Task` Module
-------------------
+jasy.env.Task module
+--------------------
 
 .. automodule:: jasy.env.Task
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.env
+    :members:
+    :undoc-members:
+    :show-inheritance:

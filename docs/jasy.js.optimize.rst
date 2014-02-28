@@ -1,51 +1,62 @@
-optimize Package
-================
+jasy.js.optimize package
+========================
 
-:mod:`BlockReducer` Module
---------------------------
+Submodules
+----------
+
+jasy.js.optimize.BlockReducer module
+------------------------------------
 
 .. automodule:: jasy.js.optimize.BlockReducer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ClosureWrapper` Module
-----------------------------
+jasy.js.optimize.ClosureWrapper module
+--------------------------------------
 
 .. automodule:: jasy.js.optimize.ClosureWrapper
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`CombineDeclarations` Module
----------------------------------
+jasy.js.optimize.CombineDeclarations module
+-------------------------------------------
 
 .. automodule:: jasy.js.optimize.CombineDeclarations
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`CryptPrivates` Module
----------------------------
+jasy.js.optimize.CryptPrivates module
+-------------------------------------
 
 .. automodule:: jasy.js.optimize.CryptPrivates
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`LocalVariables` Module
-----------------------------
+jasy.js.optimize.LocalVariables module
+--------------------------------------
 
 .. automodule:: jasy.js.optimize.LocalVariables
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Translation` Module
--------------------------
+jasy.js.optimize.Translation module
+-----------------------------------
 
 .. automodule:: jasy.js.optimize.Translation
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.js.optimize
+    :members:
+    :undoc-members:
+    :show-inheritance:

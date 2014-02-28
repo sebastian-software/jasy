@@ -1,179 +1,190 @@
-core Package
-============
+jasy.core package
+=================
 
-:mod:`Base62` Module
---------------------
+Submodules
+----------
+
+jasy.core.Base62 module
+-----------------------
 
 .. automodule:: jasy.core.Base62
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`BuildTool` Module
------------------------
+jasy.core.BuildTool module
+--------------------------
 
 .. automodule:: jasy.core.BuildTool
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Cache` Module
--------------------
+jasy.core.Cache module
+----------------------
 
 .. automodule:: jasy.core.Cache
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Config` Module
---------------------
+jasy.core.Config module
+-----------------------
 
 .. automodule:: jasy.core.Config
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Console` Module
----------------------
+jasy.core.Console module
+------------------------
 
 .. automodule:: jasy.core.Console
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Create` Module
---------------------
+jasy.core.Create module
+-----------------------
 
 .. automodule:: jasy.core.Create
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Doctor` Module
---------------------
+jasy.core.Doctor module
+-----------------------
 
 .. automodule:: jasy.core.Doctor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`File` Module
-------------------
+jasy.core.File module
+---------------------
 
 .. automodule:: jasy.core.File
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`FileManager` Module
--------------------------
+jasy.core.FileManager module
+----------------------------
 
 .. automodule:: jasy.core.FileManager
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`FlagSet` Module
----------------------
+jasy.core.FlagSet module
+------------------------
 
 .. automodule:: jasy.core.FlagSet
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Inspect` Module
----------------------
+jasy.core.Inspect module
+------------------------
 
 .. automodule:: jasy.core.Inspect
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Locale` Module
---------------------
+jasy.core.Locale module
+-----------------------
 
 .. automodule:: jasy.core.Locale
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`MetaData` Module
-----------------------
+jasy.core.MetaData module
+-------------------------
 
 .. automodule:: jasy.core.MetaData
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Options` Module
----------------------
+jasy.core.Options module
+------------------------
 
 .. automodule:: jasy.core.Options
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`OutputManager` Module
----------------------------
+jasy.core.OutputManager module
+------------------------------
 
 .. automodule:: jasy.core.OutputManager
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Permutation` Module
--------------------------
+jasy.core.Permutation module
+----------------------------
 
 .. automodule:: jasy.core.Permutation
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Profile` Module
----------------------
+jasy.core.Profile module
+------------------------
 
 .. automodule:: jasy.core.Profile
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Project` Module
----------------------
+jasy.core.Project module
+------------------------
 
 .. automodule:: jasy.core.Project
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Session` Module
----------------------
+jasy.core.Session module
+------------------------
 
 .. automodule:: jasy.core.Session
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Text` Module
-------------------
+jasy.core.Text module
+---------------------
 
 .. automodule:: jasy.core.Text
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Types` Module
--------------------
+jasy.core.Types module
+----------------------
 
 .. automodule:: jasy.core.Types
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Util` Module
-------------------
+jasy.core.Util module
+---------------------
 
 .. automodule:: jasy.core.Util
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.core
+    :members:
+    :undoc-members:
+    :show-inheritance:

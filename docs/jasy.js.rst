@@ -1,21 +1,5 @@
-js Package
-==========
-
-:mod:`Resolver` Module
-----------------------
-
-.. automodule:: jasy.js.Resolver
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`Sorter` Module
---------------------
-
-.. automodule:: jasy.js.Sorter
-    :members:
-    :undoc-members:
-    :show-inheritance:
+jasy.js package
+===============
 
 Subpackages
 -----------
@@ -30,3 +14,30 @@ Subpackages
     jasy.js.tokenize
     jasy.js.util
 
+Submodules
+----------
+
+jasy.js.Resolver module
+-----------------------
+
+.. automodule:: jasy.js.Resolver
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+jasy.js.Sorter module
+---------------------
+
+.. automodule:: jasy.js.Sorter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: jasy.js
+    :members:
+    :undoc-members:
+    :show-inheritance:

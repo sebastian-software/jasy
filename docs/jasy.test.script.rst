@@ -1,99 +1,110 @@
-script Package
-==============
+jasy.test.script package
+========================
 
-:mod:`api` Module
------------------
+Submodules
+----------
+
+jasy.test.script.api module
+---------------------------
 
 .. automodule:: jasy.test.script.api
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`blockreduce` Module
--------------------------
+jasy.test.script.blockreduce module
+-----------------------------------
 
 .. automodule:: jasy.test.script.blockreduce
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`combinedecl` Module
--------------------------
+jasy.test.script.combinedecl module
+-----------------------------------
 
 .. automodule:: jasy.test.script.combinedecl
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`comments` Module
-----------------------
+jasy.test.script.comments module
+--------------------------------
 
 .. automodule:: jasy.test.script.comments
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`compressor` Module
-------------------------
+jasy.test.script.compressor module
+----------------------------------
 
 .. automodule:: jasy.test.script.compressor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`deadcode` Module
-----------------------
+jasy.test.script.deadcode module
+--------------------------------
 
 .. automodule:: jasy.test.script.deadcode
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`inject` Module
---------------------
+jasy.test.script.inject module
+------------------------------
 
 .. automodule:: jasy.test.script.inject
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`localvariables` Module
-----------------------------
+jasy.test.script.localvariables module
+--------------------------------------
 
 .. automodule:: jasy.test.script.localvariables
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`meta` Module
-------------------
+jasy.test.script.meta module
+----------------------------
 
 .. automodule:: jasy.test.script.meta
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`privates` Module
-----------------------
+jasy.test.script.privates module
+--------------------------------
 
 .. automodule:: jasy.test.script.privates
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`translation` Module
--------------------------
+jasy.test.script.translation module
+-----------------------------------
 
 .. automodule:: jasy.test.script.translation
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`unused` Module
---------------------
+jasy.test.script.unused module
+------------------------------
 
 .. automodule:: jasy.test.script.unused
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: jasy.test.script
+    :members:
+    :undoc-members:
+    :show-inheritance:

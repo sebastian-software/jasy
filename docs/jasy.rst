@@ -1,13 +1,5 @@
-jasy Package
+jasy package
 ============
-
-:mod:`jasy` Package
--------------------
-
-.. automodule:: jasy.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
@@ -23,6 +15,14 @@ Subpackages
     jasy.js
     jasy.parse
     jasy.style
+    jasy.template
     jasy.test
     jasy.vcs
 
+Module contents
+---------------
+
+.. automodule:: jasy
+    :members:
+    :undoc-members:
+    :show-inheritance:
