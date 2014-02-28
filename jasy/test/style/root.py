@@ -214,6 +214,7 @@ class Tests(unittest.TestCase):
         '''), '.date__dialog{width:100px;}')
 
 
+
     def test_parentreference_extend_content_double(self):
         self.assertEqual(self.process('''
           $field{
@@ -234,6 +235,37 @@ class Tests(unittest.TestCase):
             }
           }
         '''), '.date__dialog{width:100px;}.color__dialog{width:200px;}')
+
+
+    def test_parentreference_extend_content_double_multi(self):
+        self.assertEqual(self.process('''
+          $field{
+            border: 1px solid black;
+
+            @root &__dialog, &__overlay{
+              position: absolute;
+              @content;
+            }
+          }
+
+          .date{
+            background: blue;
+
+            $field < {
+              width: 100px;
+              height: 50px;
+            }
+          }
+
+          .color{
+            background: red;
+
+            $field < {
+              width: 200px;
+              height: 200px;
+            }
+          }
+        '''), '.date,.color{border:1px solid black;}.date__dialog,.date__overlay,.color__dialog,.color__overlay{position:absolute;}.date__dialog,.date__overlay{width:100px;height:50px;}.color__dialog,.color__overlay{width:200px;height:200px;}.date{background:blue;}.color{background:red;}')
 
 
 
