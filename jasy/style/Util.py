@@ -117,27 +117,36 @@ cssMediaTypes = set(["all", "aural", "braille", "handheld", "print", "projection
 RE_PREPEND_QUERY = re.compile(r'\b(not|only|all|aural|braille|handheld|print|projection|screen|tty|tv|embossed)\b')
 
 
-def combineSelectorList(selector, stop):
+def combineSelectorList(selector, stop, root=None):
     if not selector:
         return None
 
-    combinedSelectors = []
-    for item in itertools.product(*reversed(selector)):
-        combined = ""
-        for part in item:
-            if combined:
-                if "&" in part:
-                    combined = part.replace("&", combined)
-                else:
-                    combined = "%s %s" % (combined, part)
-            else:
-                # Tolerate open/unsolvable "&" parent reference when we stop too early
-                if not stop and "&" in part:
-                    raise Exception("Can't merge selector %s - parent missing - at line %s!" % (part, node.line))
-                else:
-                    combined = part
+    if root is None:
+        root = [""]
 
-        combinedSelectors.append(combined)
+    combinedSelectors = []
+
+    for currentRoot in root:
+        for item in itertools.product(*reversed(selector)):
+            combined = ""
+            for part in item:
+                if combined:
+                    if "&" in part:
+                        combined = part.replace("&", currentRoot+combined)
+                    else:
+                        combined = "%s %s" % (combined, part)
+                else:
+                    if "&" in part:
+                        if currentRoot:
+                            combined = part.replace("&", currentRoot)
+
+                        # Tolerate open/unsolvable "&" parent reference when we stop too early
+                        elif not stop:
+                            raise Exception("Can't merge selector %s - parent missing!" % part)
+                    else:
+                        combined = part
+
+            combinedSelectors.append(combined)
 
     return combinedSelectors
 
@@ -184,6 +193,8 @@ def combineSelector(node, stop=None):
     and @supports value of the given Node.
     """
 
+    root = None
+
     # Fast path and fix for identical start/stop
     if node is stop:
         return ["&"], None, None
@@ -211,13 +222,22 @@ def combineSelector(node, stop=None):
                 supports.append(current.name)
 
         current = getattr(current, "parent", None)
+        if current is not None and current.type == "root":
+            root = current
 
     #if not selector and not media and not supports:
     #    raise Exception("Node %s at line %s is not a selector/mixin/@media/@supports and is no child of any selector/mixin/@media/@supports." % (node.type, node.line))
 
+    rootSelectors = None
+    rootMedia = None
+    rootSupports = None
+
+    if root:
+        rootSelectors, rootMedia, rootSupports = combineSelector(root.parent)
+
     # So we need process collected selector data etc. in reversed
     # order, too, to get the normal order back.
-    combinedSelectors = combineSelectorList(selector, stop)
+    combinedSelectors = combineSelectorList(selector, stop, rootSelectors)
     combinedMedia = combineMediaQueryList(media)
     combinedSupports = combineSupportList(supports)
 
