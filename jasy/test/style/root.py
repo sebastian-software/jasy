@@ -60,7 +60,6 @@ class Tests(unittest.TestCase):
         '''), '.foo{color:red;}@supports (color:gray){.bar{color:gray;}}')
 
 
-
     def test_basic_media(self):
         self.assertEqual(self.process('''
           .foo {
