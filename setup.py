@@ -135,6 +135,7 @@ setup(
     'jasy.style.parse',
     'jasy.style.process',
     'jasy.style.tokenize',
+    'jasy.template',
     'jasy.test',
     'jasy.test.script',
     'jasy.test.style',
