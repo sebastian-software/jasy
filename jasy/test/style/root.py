@@ -155,6 +155,77 @@ class Tests(unittest.TestCase):
 
 
 
+    def test_parentreference_inline_extend(self):
+        self.assertEqual(self.process('''
+          $field{
+            color: black;
+            background: white;
+
+            @root &__dialog{
+              position: absolute;
+            }
+          }
+
+          .date{
+            $field;
+          }
+
+          .color{
+            $field;
+          }
+        '''), '.date,.color{color:black;background:white;}.date__dialog,.color__dialog{position:absolute;}')
+
+
+    def test_parentreference_inline_multidist_extend(self):
+        self.assertEqual(self.process('''
+          $field{
+            color: black;
+            background: white;
+
+            @root &__dialog, &__overlay{
+              position: absolute;
+            }
+          }
+
+          .date{
+            $field;
+          }
+
+          .color{
+            $field;
+          }
+        '''), '.date,.color{color:black;background:white;}.date__dialog,.date__overlay,.color__dialog,.color__overlay{position:absolute;}')
+
+
+    def test_parentreference_inline_multidist_extend_content(self):
+        self.assertEqual(self.process('''
+          $field{
+            color: black;
+            background: white;
+
+            @root &__dialog, &__overlay{
+              position: absolute;
+              @content;
+            }
+          }
+
+          .date{
+            $field < {
+              width: 100px;
+              height: 50px;
+            }
+          }
+
+          .color{
+            $field < {
+              width: 200px;
+              height: 200px;
+            }
+          }
+        '''), '')
+
+
+
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
