@@ -43,6 +43,20 @@ class Tests(unittest.TestCase):
             '''), '@keyframes bump{from{color:red;}to{color:white;}}')
 
 
+    def test_named_prefixed(self):
+        self.assertEqual(self.process('''
+            @-webkit-keyframes bump {
+              from {
+                color: red;
+              }
+              to {
+                color: white;
+              }
+            }
+            '''), '@-webkit-keyframes bump{from{color:red;}to{color:white;}}')
+
+
+
     def test_percent(self):
         self.assertEqual(self.process('''
             @keyframes bump {
@@ -67,11 +81,6 @@ class Tests(unittest.TestCase):
               }
             }
             '''), '@keyframes bump{0%,100%{font-size:10px;}50%{font-size:12px;}}')
-
-
-
-
-
 
 
 
