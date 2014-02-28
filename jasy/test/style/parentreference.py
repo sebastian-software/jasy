@@ -102,6 +102,18 @@ class Tests(unittest.TestCase):
             }
             '''), 'header{list-item-type:square;}header .fullscreen,.header-fullscreen{color:blue;}')
 
+    def test_bem(self):
+        self.assertEqual(self.process('''
+            .block {
+                &__element {
+                  color: red;
+                }
+                &--modifier {
+                  color: blue;
+                }
+            }
+            '''), '.block__element{color:red;}.block--modifier{color:blue;}')
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)

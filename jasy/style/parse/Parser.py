@@ -275,7 +275,7 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "ampersand":
         nextTokenType = tokenizer.peek()
 
-        if nextTokenType == "identifier" or nextTokenType == "colon" or nextTokenType == "left_curly" or nextTokenType == "left_bracket":
+        if nextTokenType in ("identifier", "colon", "left_curly", "left_bracket", "minus"):
             node = Selector(tokenizer, staticContext)
             return node
 
@@ -557,7 +557,7 @@ def Selector(tokenizer, staticContext):
     while tokenType != "left_curly":
         token = tokenizer.token
 
-        if tokenType in ("identifier", "colon", "dot", "ampersand", "command"):
+        if tokenType in ("identifier", "colon", "dot", "ampersand", "command", "minus"):
             if not nospace and selector != "" and (tokenizer.skippedSpaces or tokenizer.skippedLineBreaks):
                 selector += " "
 
@@ -569,6 +569,8 @@ def Selector(tokenizer, staticContext):
                 selector += ":"
             elif tokenType == "dot":
                 selector += "."
+            elif tokenType == "minus":
+                selector += "-"
             elif tokenType == "ampersand":
                 selector += "&"
             elif tokenType == "command":
