@@ -139,10 +139,11 @@ def combineSelectorList(selector, stop, root=None):
                     if "&" in part:
                         if currentRoot:
                             combined = part.replace("&", currentRoot)
-
-                        # Tolerate open/unsolvable "&" parent reference when we stop too early
                         elif not stop:
+                            # Tolerate open/unsolvable "&" parent reference only when we stop early
                             raise Exception("Can't merge selector %s - parent missing!" % part)
+                        else:
+                            combined = part
                     else:
                         combined = part
 
