@@ -42,7 +42,7 @@ class Tests(unittest.TestCase):
               color: gray;
             }
           }
-        '''), '.foo{color:red}.bar{color:gray;}')
+        '''), '.foo{color:red;}.bar{color:gray;}')
 
 
     def test_deep(self):
@@ -56,10 +56,10 @@ class Tests(unittest.TestCase):
               }
             }
           }
-        '''), '.foo{color:red}.bar .baz{color:gray;}')
+        '''), '.foo{color:red;}.bar .baz{color:gray;}')
 
 
-    def test_parentreference(self):
+    def test_parentreference_append(self):
         self.assertEqual(self.process('''
           .foo {
             color: red;
@@ -68,9 +68,35 @@ class Tests(unittest.TestCase):
               color: gray;
             }
           }
-        '''), '.foo{color:red}.bar .foo{color:gray;}')
+        '''), '.foo{color:red;}.bar .foo{color:gray;}')
 
 
+    def test_parentreference_inline_inner(self):
+        self.assertEqual(self.process('''
+          .date{
+            color: black;
+            background: white;
+
+            @root{
+              &__dialog{
+                position: absolute;
+              }
+            }
+          }
+        '''), '.date{color:black;background:white;}.date__dialog{position:absolute;}')
+
+
+    def test_parentreference_inline(self):
+        self.assertEqual(self.process('''
+          .date{
+            color: black;
+            background: white;
+
+            @root &__dialog{
+              position: absolute;
+            }
+          }
+        '''), '.date{color:black;background:white;}.date__dialog{position:absolute;}')
 
 
 

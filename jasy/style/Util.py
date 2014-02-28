@@ -199,7 +199,7 @@ def combineSelector(node, stop=None):
 
     # Selector and media lists are in reversed order...
     current = node
-    while current and current is not stop:
+    while current and current is not stop and current.type is not "root":
         if current.type == "mixin" and current.selector:
             selector.append(current.selector) # extend for this mixin
         elif hasattr(current, "name") and current.name:

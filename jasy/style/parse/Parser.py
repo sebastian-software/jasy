@@ -183,6 +183,9 @@ def Statement(tokenizer, staticContext):
         elif tokenValue == "page":
             return Page(tokenizer, staticContext)
 
+        elif tokenValue == "root":
+            return Root(tokenizer, staticContext)
+
         # Special case: Support keyframe command with optional engine prefix
         elif tokenValue == "keyframes" or tokenValue.endswith("-keyframes"):
             return KeyFrames(tokenizer, staticContext)
@@ -518,6 +521,48 @@ def Page(tokenizer, staticContext):
     node.append(childNode, "rules")
 
     return node
+
+
+
+def Root(tokenizer, staticContext):
+    """
+    Supports e.g.:
+
+    h1{
+      font-size: 20px;
+
+      @root html.desktop &{
+        font-size: 30px;
+      }
+    }
+
+    .date{
+      color: black;
+      background: white;
+
+      @root{
+        .&__dialog{
+          position: absolute;
+        }
+      }
+    }
+    """
+
+    node = Node.Node(tokenizer, "root")
+
+    tokenType = tokenizer.get()
+
+    if tokenType != "left_curly":
+        node.append(Selector(tokenizer, staticContext))
+    else:
+        tokenizer.unget()
+        childNode = Block(tokenizer, staticContext)
+        node.append(childNode, "rules")
+
+        print(node)
+
+    return node
+
 
 
 

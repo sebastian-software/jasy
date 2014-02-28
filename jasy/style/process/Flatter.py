@@ -185,6 +185,11 @@ def process(tree):
             Console.debug("Inlining content of unnecessary block node at line %s" % node.line)
             node.parent.insertAllReplace(node, node)
 
+        elif node.type == "root" and len(node) == 0:
+            Console.debug("Cleaning up left over @root at line %s" % node.line)
+            node.parent.remove(node)
+
+
 
 
     def __combine(tree, top=True):
