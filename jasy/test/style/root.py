@@ -85,6 +85,35 @@ class Tests(unittest.TestCase):
         '''), '.foo{color:red;}.bar .foo{color:gray;}')
 
 
+    def test_parentreference_between(self):
+        self.assertEqual(self.process('''
+          .foo {
+            color: red;
+
+            @root & .title-bar {
+              background: gray;
+              font-weight: bold;
+            }
+          }
+        '''), '.foo{color:red;}.foo .title-bar{background:gray;font-weight:bold;}')
+
+
+    def test_parentreference_generatedcontent(self):
+        self.assertEqual(self.process('''
+          .foo {
+            color: red;
+
+            &::after{
+              content: "DESKTOP";
+            }
+
+            @root html.mobile &::after {
+              content: "MOBILE";
+            }
+          }
+        '''), '.foo{color:red;}.foo::after{content:"DESKTOP";}html.mobile .foo::after{content:"MOBILE";}')
+
+
     def test_parentreference_append_multiroot(self):
         self.assertEqual(self.process('''
           .foo,
