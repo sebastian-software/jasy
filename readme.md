@@ -1,7 +1,5 @@
 [![Build Status](https://secure.travis-ci.org/sebastian-software/jasy.png)](http://travis-ci.org/sebastian-software/jasy)
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sebastian-software/jasy/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
 
 Jasy - Web Tooling Framework
 ============================
