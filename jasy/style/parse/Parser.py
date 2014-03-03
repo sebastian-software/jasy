@@ -1088,7 +1088,7 @@ def MemberExpression(tokenizer, staticContext):
                 if node.value == "url":
                     childNode.append(UrlArgumentList(tokenizer, staticContext), "params")
                 else:
-                    childNode.append(ArgumentList(tokenizer, staticContext), "params")
+                    childNode.append(CssArgumentList(tokenizer, staticContext), "params")
 
             elif node.type == "command":
                 if node.name == "raw":
@@ -1189,6 +1189,33 @@ def ArgumentList(tokenizer, staticContext):
     while True:
         childNode = AssignExpression(tokenizer, staticContext)
         node.append(childNode)
+
+        if not tokenizer.match("comma"):
+            break
+
+    tokenizer.mustMatch("right_paren")
+
+    return node
+
+
+def CssArgumentList(tokenizer, staticContext):
+    node = Node.Node(tokenizer, "list")
+
+    if tokenizer.match("right_paren", True):
+        return node
+
+    while True:
+        collection = Node.Node(tokenizer, "list")
+
+        while True:
+            childNode = AssignExpression(tokenizer, staticContext)
+            collection.append(childNode)
+
+            # Comma ends the collection + Right paren ends the list
+            if tokenizer.peek() in ("comma", "right_paren"):
+                break
+
+        node.append(collection)
         if not tokenizer.match("comma"):
             break
 
