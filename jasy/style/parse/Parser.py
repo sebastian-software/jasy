@@ -293,6 +293,18 @@ def Statement(tokenizer, staticContext):
             raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
+    # Child selectors e.g. > li {...
+    elif tokenType == "gt":
+        nextTokenType = tokenizer.peek()
+
+        if nextTokenType in ("identifier", "colon", "left_curly", "left_bracket", "minus", "dot", "mul"):
+            node = Selector(tokenizer, staticContext)
+            return node
+
+        else:
+            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+
+
     elif tokenType == "semicolon":
         node = Node.Node(tokenizer, "semicolon")
         return node
