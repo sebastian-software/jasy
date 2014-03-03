@@ -118,7 +118,7 @@ def __extend(node):
             pos = parent.index(node)
             parent.insertAll(pos, replacements)
 
-        else:
+        elif selector:
             Console.debug("Extending selector of mixin by: %s", ", ".join(selector))
 
             if hasattr(mixin, "selector"):
