@@ -219,7 +219,7 @@ def combineSelector(node, stop=None):
     # Selectors, Media Queries and Support Queries are stored in reversed order...
     current = node
     while current and current is not stop and (current.type is not "root" or stop):
-        if current.type == "mixin" and current.selector:
+        if current.type == "mixin" and hasattr(current, "selector") and current.selector:
             selector.append(current.selector) # extend for this mixin
         elif hasattr(current, "name") and current.name:
             if current.type == "selector":
