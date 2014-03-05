@@ -183,7 +183,7 @@ class OutputManager:
         return "".join(result)
 
 
-    def __generateScriptLoader(self, items, urlPrefix=None):
+    def __generateScriptLoader(self, items):
 
         # For loading items we require core.ui.Queue and core.io.Script
         # being available. If they are not part of the kernel, we have to
@@ -225,10 +225,10 @@ class OutputManager:
             # (typically in projects with custom layout/structure e.g. 3rd party)
             if type(path) is list:
                 for singleFileName in path:
-                    files.append(main.toRelativeUrl(singleFileName, urlPrefix))
+                    files.append(main.toRelativeUrl(singleFileName))
 
             else:
-                files.append(main.toRelativeUrl(path, urlPrefix))
+                files.append(main.toRelativeUrl(path))
 
         if self.__addDividers:
             loaderList = '"%s"' % '",\n"'.join(files)
@@ -290,13 +290,13 @@ class OutputManager:
         Console.outdent()
 
 
-    def storeLoaderScript(self, items, fileName, bootCode="", urlPrefix=None):
+    def storeLoaderScript(self, items, fileName, bootCode=""):
 
         Console.info("Generating loader script...")
         Console.indent()
 
         sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts)
-        loaderCode = self.__generateScriptLoader(sortedClasses, urlPrefix=urlPrefix)
+        loaderCode = self.__generateScriptLoader(sortedClasses)
         self.__fileManager.writeFile(fileName, loaderCode)
 
         Console.outdent()
