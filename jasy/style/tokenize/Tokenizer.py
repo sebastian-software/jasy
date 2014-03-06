@@ -65,9 +65,9 @@ class Token:
     __slots__ = ["type", "start", "line", "assignOp", "end", "value", "unit", "quote"]
 
 
-class ParseError(Exception):
+class TokenizerError(Exception):
     def __init__(self, message, fileId, line):
-        Exception.__init__(self, "Syntax error: %s\n%s:%s" % (message, fileId, line))
+        Exception.__init__(self, "Tokenization Error: %s\n%s:%s" % (message, fileId, line))
 
 
 class Tokenizer(object):
@@ -101,7 +101,7 @@ class Tokenizer(object):
 
     def mustMatch(self, tokenType):
         if not self.match(tokenType):
-            raise ParseError("Missing " + tokenType, self.fileId, self.line)
+            raise TokenizerError("Missing " + tokenType, self.fileId, self.line)
 
         return self.token
 
@@ -201,7 +201,7 @@ class Tokenizer(object):
                         ch = input[self.cursor]
                         self.cursor += 1
                     except IndexError:
-                        raise ParseError("Unterminated comment", self.fileId, self.line)
+                        raise TokenizerError("Unterminated comment", self.fileId, self.line)
 
                     if ch == "*":
                         next = input[self.cursor]
@@ -387,11 +387,15 @@ class Tokenizer(object):
         hasEscapes = False
         delim = ch
         ch = input[self.cursor]
+        length = len(input)
         self.cursor += 1
         while ch != delim:
             if ch == "\\":
                 hasEscapes = True
                 self.cursor += 1
+
+            if self.cursor >= length:
+                raise TokenizerError("Missing end quote for string!", self.fileId, self.line)
 
             ch = input[self.cursor]
             self.cursor += 1
@@ -433,7 +437,7 @@ class Tokenizer(object):
             token.assignOp = None
 
         else:
-            raise ParseError("Unknown operator: %s!" % op, self.fileId, self.line)
+            raise TokenizerError("Unknown operator: %s!" % op, self.fileId, self.line)
 
 
     def lexIdent(self, ch):
@@ -481,13 +485,13 @@ class Tokenizer(object):
         if inVariableBlock:
             # Check whether next character would be the required curly brace
             if input[self.cursor] != "}":
-                raise ParseError("Invalid variable block identifier: %s" % identifier, self.fileId, self.line)
+                raise TokenizerError("Invalid variable block identifier: %s" % identifier, self.fileId, self.line)
 
             # Jump over closing curly brace
             self.cursor += 1
 
         if len(identifier) == 0 and (isCommand or isVariable or isHex):
-            raise ParseError("Invalid identifier: %s" % identifier, self.fileId, self.line)
+            raise TokenizerError("Invalid identifier: %s" % identifier, self.fileId, self.line)
 
         if isCommand:
             token.type = "command"
@@ -579,7 +583,7 @@ class Tokenizer(object):
             self.lexString(ch)
 
         else:
-            raise ParseError("Illegal token: %s (Code: %s) - Next: %s (Code: %s)" % (ch, ord(ch), nextCh, nextCh and ord(nextCh)), self.fileId, self.line)
+            raise TokenizerError("Illegal token: %s (Code: %s) - Next: %s (Code: %s)" % (ch, ord(ch), nextCh, nextCh and ord(nextCh)), self.fileId, self.line)
 
         token.end = self.cursor
         return token.type
@@ -590,7 +594,7 @@ class Tokenizer(object):
         self.lookahead += 1
 
         if self.lookahead == 4:
-            raise ParseError("PANIC: too much lookahead!", self.fileId, self.line)
+            raise TokenizerError("PANIC: too much lookahead!", self.fileId, self.line)
 
         self.tokenIndex = (self.tokenIndex - 1) & 3
 

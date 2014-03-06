@@ -24,13 +24,20 @@ def parseExpression(source, fileId=None, line=1):
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext()
 
-    return Expression(tokenizer, staticContext)
+    try:
+        return Expression(tokenizer, staticContext)
+    except Tokenizer.TokenizerError as ex:
+        raise ParseError("Unable to parse file: %s" % ex, tokenizer)
 
 
 def parse(source, fileId=None, line=1):
     tokenizer = Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext()
-    node = Sheet(tokenizer, staticContext)
+
+    try:
+        node = Sheet(tokenizer, staticContext)
+    except Tokenizer.TokenizerError as ex:
+        raise ParseError("Unable to parse file: %s" % ex, tokenizer)
 
     # store fileId on top-level node
     node.fileId = tokenizer.fileId
@@ -45,15 +52,15 @@ def parse(source, fileId=None, line=1):
         addComments(node, None, tokenizer.getComments())
 
     if not tokenizer.done():
-        raise SyntaxError("Unexpected end of file", tokenizer)
+        raise ParseError("Unexpected end of file", tokenizer)
 
     return node
 
 
 
-class SyntaxError(Exception):
+class ParseError(Exception):
     def __init__(self, message, tokenizer):
-        Exception.__init__(self, "Syntax error: %s\n%s at line %s" % (message, tokenizer.fileId, tokenizer.line))
+        Exception.__init__(self, "Parse Error: %s\n%s at line %s" % (message, tokenizer.fileId, tokenizer.line))
 
 
 
@@ -191,7 +198,7 @@ def Statement(tokenizer, staticContext):
             return KeyFrames(tokenizer, staticContext)
 
         else:
-            raise SyntaxError("Unknown system command: %s" % tokenValue, tokenizer)
+            raise ParseError("Unknown system command: %s" % tokenValue, tokenizer)
 
 
     elif tokenType == "identifier" or tokenType == "mul":
@@ -222,7 +229,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     # Declaration / Assignment
@@ -252,7 +259,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     # Class selectors e.g. .message {...
@@ -266,7 +273,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     # Attribute selectors e.g. [hidden] {...
@@ -278,7 +285,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     # Class selectors e.g. &.selected, &::after {...
@@ -290,7 +297,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     # Child selectors e.g. > li {...
@@ -302,7 +309,7 @@ def Statement(tokenizer, staticContext):
             return node
 
         else:
-            raise SyntaxError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
+            raise ParseError("Warning: Unhandled: %s in Statement()" % nextTokenType, tokenizer)
 
 
     elif tokenType == "semicolon":
@@ -311,7 +318,7 @@ def Statement(tokenizer, staticContext):
 
 
     else:
-        raise SyntaxError("Warning: Unsupported token in Statement(): %s" % tokenType, tokenizer)
+        raise ParseError("Warning: Unsupported token in Statement(): %s" % tokenType, tokenizer)
 
 
 
@@ -343,7 +350,7 @@ def Property(tokenizer, staticContext):
             node.name += token.value
 
     if not tokenizer.mustMatch("colon"):
-        raise SyntaxError("Invalid property definition", tokenizer)
+        raise ParseError("Invalid property definition", tokenizer)
 
     # Add all values until we find a semicolon or right curly
     while tokenizer.peek() not in ("semicolon", "right_curly"):
@@ -453,7 +460,7 @@ def Supports(tokenizer, staticContext):
             test += "%s%s" % (token.value, getattr(token, "unit", ""))
             requiresSpace = True
         else:
-            raise SyntaxError("Unsupported supports token %s" % tokenType, tokenizer)
+            raise ParseError("Unsupported supports token %s" % tokenType, tokenizer)
 
 
         tokenType = tokenizer.get()
@@ -476,12 +483,12 @@ def Charset(tokenizer, staticContext):
     Console.warn("CSS @charset %s ", tokenType)
 
     if tokenType != "string":
-        raise SyntaxError("Invalid @charset declaration. Requires the encoding being a string!", tokenizer)
+        raise ParseError("Invalid @charset declaration. Requires the encoding being a string!", tokenizer)
 
     encoding = tokenizer.token.value
 
     if encoding.lower() != "utf-8":
-        raise SyntaxError("Jasy is not able to process non UTF-8 stylesheets!", tokenizer)
+        raise ParseError("Jasy is not able to process non UTF-8 stylesheets!", tokenizer)
 
     Console.warn("Found unnecessary @charset definition for encoding %s", encoding)
 
@@ -520,7 +527,7 @@ def Page(tokenizer, staticContext):
             selector += ":"
             requiresSpace = False
         else:
-            raise SyntaxError("Unsupported page selector token %s" % tokenType, tokenizer)
+            raise ParseError("Unsupported page selector token %s" % tokenType, tokenizer)
 
         tokenType = tokenizer.get()
 
@@ -646,7 +653,7 @@ def Media(tokenizer, staticContext):
             query += tokenType
             requiresSpace = True
         else:
-            raise SyntaxError("Unsupported media query token %s" % tokenType, tokenizer)
+            raise ParseError("Unsupported media query token %s" % tokenType, tokenizer)
 
 
         tokenType = tokenizer.get()
@@ -740,7 +747,7 @@ def Selector(tokenizer, staticContext):
                     if token.assignOp == "mul":
                         selector += "*"
                     else:
-                        raise SyntaxError("Invalid attribute selector expression %s" % token.assignOp, tokenizer)
+                        raise ParseError("Invalid attribute selector expression %s" % token.assignOp, tokenizer)
                 selector += "="
             elif tokenType == "string":
                 selector += ascii_encoder.encode(token.value)
@@ -754,7 +761,7 @@ def Selector(tokenizer, staticContext):
 
                 selector += "${%s}" % token.value
             else:
-                raise SyntaxError("Unsupported selector token %s" % tokenType, tokenizer)
+                raise ParseError("Unsupported selector token %s" % tokenType, tokenizer)
 
         tokenType = tokenizer.get()
 
@@ -927,7 +934,7 @@ def AssignExpression(tokenizer, staticContext):
     if lhs.type == "variable":
         pass
     else:
-        raise SyntaxError("Bad left-hand side of assignment", tokenizer)
+        raise ParseError("Bad left-hand side of assignment", tokenizer)
 
     node.assignOp = tokenizer.token.assignOp
     node.append(lhs)
@@ -969,7 +976,7 @@ def EqualityExpression(tokenizer, staticContext):
 
         express = RelationalExpression(tokenizer, staticContext)
         if express.type == "identifier":
-            raise SyntaxError("Invalid expression", tokenizer)
+            raise ParseError("Invalid expression", tokenizer)
 
         childNode.append(express)
         node = childNode
@@ -990,7 +997,7 @@ def RelationalExpression(tokenizer, staticContext):
 
         express = AddExpression(tokenizer, staticContext)
         if express.type == "identifier":
-            raise SyntaxError("Invalid expression", tokenizer)
+            raise ParseError("Invalid expression", tokenizer)
 
         childNode.append(express)
         node = childNode
@@ -1022,7 +1029,7 @@ def AddExpression(tokenizer, staticContext):
 
         express = MultiplyExpression(tokenizer, staticContext)
         if express.type == "identifier":
-            raise SyntaxError("Invalid expression", tokenizer)
+            raise ParseError("Invalid expression", tokenizer)
 
         childNode.append(express)
         node = childNode
@@ -1041,7 +1048,7 @@ def MultiplyExpression(tokenizer, staticContext):
 
         express = UnaryExpression(tokenizer, staticContext)
         if express.type == "identifier":
-            raise SyntaxError("Invalid expression", tokenizer)
+            raise ParseError("Invalid expression", tokenizer)
 
         childNode.append(express)
         node = childNode
@@ -1101,7 +1108,7 @@ def MemberExpression(tokenizer, staticContext):
                     childNode.append(ArgumentList(tokenizer, staticContext), "params")
 
             else:
-                raise SyntaxError("Unsupported mixin include in expression statement", tokenizer)
+                raise ParseError("Unsupported mixin include in expression statement", tokenizer)
 
         else:
             tokenizer.unget()
@@ -1114,7 +1121,7 @@ def MemberExpression(tokenizer, staticContext):
 
 def RawArgument(tokenizer, staticContext):
     if tokenizer.match("right_paren", True):
-        raise SyntaxError("Expected expression", tokenizer)
+        raise ParseError("Expected expression", tokenizer)
 
     node = Node.Node(tokenizer, "raw")
     node.append(PrimaryExpression(tokenizer, staticContext))
@@ -1126,7 +1133,7 @@ def RawArgument(tokenizer, staticContext):
 
 def ExpressionArgument(tokenizer, staticContext):
     if tokenizer.match("right_paren", True):
-        raise SyntaxError("Expected expression", tokenizer)
+        raise ParseError("Expected expression", tokenizer)
 
     node = Node.Node(tokenizer, "expr")
     node.append(AddExpression(tokenizer, staticContext))
@@ -1171,7 +1178,7 @@ def UrlArgumentList(tokenizer, staticContext):
             return node
         else:
             token = tokenizer.token
-            raise SyntaxError("Invalid token in URL parameter: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)), tokenizer)
+            raise ParseError("Invalid token in URL parameter: Type = %s ; Value = %s" % (token.type, getattr(token, "value", None)), tokenizer)
 
     urlParam = Node.Node(tokenizer, "identifier")
     urlParam.value = url
@@ -1256,7 +1263,7 @@ def PrimaryExpression(tokenizer, staticContext):
             node.type = "slash"
 
     else:
-        raise SyntaxError("Missing operand. Found type: %s" % tokenType, tokenizer)
+        raise ParseError("Missing operand. Found type: %s" % tokenType, tokenizer)
 
     return node
 
