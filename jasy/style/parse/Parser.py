@@ -27,7 +27,7 @@ def parseExpression(source, fileId=None, line=1):
     try:
         return Expression(tokenizer, staticContext)
     except Tokenizer.TokenizerError as ex:
-        raise ParseError("Unable to parse file: %s" % ex, tokenizer)
+        raise ParseError("Unable to parse file: %s" % ex.message, tokenizer)
 
 
 def parse(source, fileId=None, line=1):
@@ -37,7 +37,7 @@ def parse(source, fileId=None, line=1):
     try:
         node = Sheet(tokenizer, staticContext)
     except Tokenizer.TokenizerError as ex:
-        raise ParseError("Unable to parse file: %s" % ex, tokenizer)
+        raise ParseError("Unable to parse file: %s" % ex.message, tokenizer)
 
     # store fileId on top-level node
     node.fileId = tokenizer.fileId
@@ -60,7 +60,14 @@ def parse(source, fileId=None, line=1):
 
 class ParseError(Exception):
     def __init__(self, message, tokenizer):
-        Exception.__init__(self, "Parse Error: %s\n%s at line %s" % (message, tokenizer.fileId, tokenizer.line))
+        self.message = "Parse Error: %s" % message
+        self.fileId = tokenizer.fileId
+        self.line = tokenizer.line
+
+        Exception.__init__(self, self.message)
+
+    def __str__(self):
+        return "%s in %s at %s" % (self.message, self.fileId, self.line)
 
 
 

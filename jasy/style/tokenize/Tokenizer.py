@@ -67,7 +67,14 @@ class Token:
 
 class TokenizerError(Exception):
     def __init__(self, message, fileId, line):
-        Exception.__init__(self, "Tokenization Error: %s\n%s:%s" % (message, fileId, line))
+        self.message = "Tokenization Error: %s" % message
+        self.fileId = fileId
+        self.line = line
+
+        Exception.__init__(self, self.message)
+
+    def __str__(self):
+        return "%s in %s at %s" % (self.message, self.fileId, self.line)
 
 
 class Tokenizer(object):
