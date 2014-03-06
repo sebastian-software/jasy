@@ -44,7 +44,7 @@ class Tests(unittest.TestCase):
 @charset 'iso-8859-15';
         ''')
 
-      self.assertRaises(Parser.SyntaxError, wrapper)
+      self.assertRaises(Parser.ParseError, wrapper)
 
 
     def test_charset_wrong_syntax(self):
@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
 @charset iso-8859-15;
           ''')
 
-        self.assertRaises(Parser.SyntaxError, wrapper)
+        self.assertRaises(Parser.ParseError, wrapper)
 
 
     def test_page(self):

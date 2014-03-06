@@ -334,7 +334,7 @@ class Tests(unittest.TestCase):
             }
             ''')
 
-        self.assertRaises(Parser.SyntaxError, wrapper)
+        self.assertRaises(Parser.ParseError, wrapper)
 
 
     def test_wrong_place_variable(self):
