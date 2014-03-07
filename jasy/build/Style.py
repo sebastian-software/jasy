@@ -4,6 +4,8 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+import os
+
 import jasy.core.Console as Console
 
 from jasy.item.Style import StyleError
