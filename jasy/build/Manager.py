@@ -26,8 +26,8 @@ def run(profile):
     for permutation in profile.permutate():
         for part in parts:
             if part != KERNEL_NAME:
-                scriptBuilder.buildPart(parts[part]["class"])
-                styleBuilder.buildPart(parts[part]["style"])
+                scriptBuilder.buildPart(part, parts[part]["class"])
+                styleBuilder.buildPart(part, parts[part]["style"])
 
     if profile.getCopyAssets():
         profile.getAssetManager().copyAssets()

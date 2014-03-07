@@ -31,7 +31,7 @@ class ScriptBuilder:
         self.__assetManager = profile.getAssetManager()
         self.__fileManager = profile.getFileManager()
 
-        self.__outputPath = os.path.join(destinationFolder, profile.getJsOutputFolder())
+        self.__outputPath = os.path.join(profile.getDestinationPath(), profile.getJsOutputFolder())
 
         self.__kernelScripts = []
 
@@ -202,21 +202,27 @@ class ScriptBuilder:
 
 
     def buildKernel(self, fileId):
-        profile.setWorkingPath(scriptBuilder.getWorkingPath())
-        scriptBuilder.storeKernelScript("kernel.js", bootCode="%s.boot();" % fileId)
+        if not fileId:
+            return
+
+        self.__profile.setWorkingPath(self.getWorkingPath())
+        self.storeKernelScript("kernel.js", bootCode="%s.boot();" % fileId)
 
 
-    def buildPart(self, fileId):
+    def buildPart(self, partId, fileId):
+        if not fileId:
+            return
+
         Console.info("Generating script (%s)...", fileId)
         Console.indent()
 
-        profile.setWorkingPath(scriptBuilder.getWorkingPath())
-        classItems = ScriptResolver.Resolver(profile).add(fileId).getSorted()
+        self.__profile.setWorkingPath(self.getWorkingPath())
+        classItems = ScriptResolver.Resolver(self.__profile).add(fileId).getSorted()
 
-        if profile.getUseSource():
-            scriptBuilder.storeLoaderScript(classItems, "%s-{{id}}.js" % part, "new %s;" % fileId)
+        if self.__profile.getUseSource():
+            self.storeLoaderScript(classItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
         else:
-            scriptBuilder.storeCompressedScript(classItems, "%s-{{id}}.js" % part, "new %s;" % fileId)
+            self.storeCompressedScript(classItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
 
         Console.outdent()
 

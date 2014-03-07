@@ -28,7 +28,7 @@ class StyleBuilder:
         self.__session = profile.getSession()
         self.__fileManager = profile.getFileManager()
 
-        self.__outputPath = os.path.join(destinationFolder, profile.getCssOutputFolder())
+        self.__outputPath = os.path.join(profile.getDestinationPath(), profile.getCssOutputFolder())
 
         self.__styleOptimization = StyleOptimization.Optimization()
         self.__styleFormatting = StyleFormatting.Formatting()
@@ -81,13 +81,24 @@ class StyleBuilder:
         return self.__outputPath
 
 
-    def buildPart(self, fileId):
+    def buildKernel(self, fileId):
+        if not fileId:
+            return
+
+        if fileId:
+            raise Exception("Non permuated styles are not supported yet!")
+
+
+    def buildPart(self, partId, fileId):
+        if not fileId:
+            return
+
         Console.info("Generating style (%s)...", fileId)
         Console.indent()
 
-        profile.setWorkingPath(styleBuilder.getWorkingPath())
-        styleItems = StyleResolver.Resolver(profile).add(fileId).getSorted()
-        styleBuilder.storeCompressedStylesheet(styleItems, "%s-{{id}}.css" % part)
+        self.__profile.setWorkingPath(self.getWorkingPath())
+        styleItems = StyleResolver.Resolver(self.__profile).add(fileId).getSorted()
+        self.storeCompressedStylesheet(styleItems, "%s-{{id}}.css" % partId)
 
         Console.outdent()
 
