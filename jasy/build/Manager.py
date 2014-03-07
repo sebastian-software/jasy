@@ -19,9 +19,9 @@ def run(profile):
     session = profile.getSession()
     parts = profile.getParts()
 
-    assetBuilder = AssetBuilder.Asset(profile)
-    scriptBuilder = ScriptBuilder.Script(profile)
-    styleBuilder = StyleBuilder.Style(profile)
+    assetBuilder = AssetBuilder.AssetBuilder(profile)
+    scriptBuilder = ScriptBuilder.ScriptBuilder(profile)
+    styleBuilder = StyleBuilder.StyleBuilder(profile)
 
     destinationFolder = profile.getDestinationPath()
 
