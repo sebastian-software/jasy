@@ -13,7 +13,7 @@ from jasy.env.State import session
 import jasy.core.Console as Console
 import jasy.env.Task as Task
 import jasy.vcs.Repository as Repository
-import jasy.core.BuildTool as BuildTool
+import jasy.build.Manager as BuildManager
 
 # Common Classes
 from jasy.core.Profile import Profile

@@ -6,15 +6,22 @@
 import os.path
 
 import jasy.core.Console as Console
-import jasy.core.OutputManager as OutputManager
+
 import jasy.js.Resolver as ScriptResolver
 import jasy.style.Resolver as StyleResolver
+
+import jasy.build.Asset as AssetBuilder
+import jasy.build.Script as ScriptBuilder
+import jasy.build.Style as StyleBuilder
+
 
 def run(profile):
     session = profile.getSession()
     parts = profile.getParts()
 
-    outputManager = OutputManager.OutputManager(profile)
+    assetBuilder = AssetBuilder.Asset(profile)
+    scriptBuilder = ScriptBuilder.Script(profile)
+    styleBuilder = StyleBuilder.Style(profile)
 
     destinationFolder = profile.getDestinationPath()
 
@@ -32,7 +39,7 @@ def run(profile):
 
         # Store kernel script
         kernelClass = parts["kernel"]["class"]
-        outputManager.storeKernelScript("%s/kernel.js" % jsOutputPath, bootCode="%s.boot();" % kernelClass)
+        scriptBuilder.storeKernelScript("%s/kernel.js" % jsOutputPath, bootCode="%s.boot();" % kernelClass)
 
         Console.outdent()
 
@@ -60,9 +67,9 @@ def run(profile):
                 classItems = ScriptResolver.Resolver(profile).add(partClass).getSorted()
 
                 if profile.getUseSource():
-                    outputManager.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    scriptBuilder.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
                 else:
-                    outputManager.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    scriptBuilder.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
 
                 Console.outdent()
 
@@ -77,7 +84,7 @@ def run(profile):
                 Console.indent()
 
                 styleItems = StyleResolver.Resolver(profile).add(partStyle).getSorted()
-                outputManager.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
+                styleBuilder.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
 
                 Console.outdent()
 
