@@ -25,11 +25,6 @@ def run(profile):
 
     destinationFolder = profile.getDestinationPath()
 
-    jsOutputPath = os.path.join(destinationFolder, profile.getJsOutputFolder())
-    cssOutputPath = os.path.join(destinationFolder, profile.getCssOutputFolder())
-    assetOutputPath = os.path.join(destinationFolder, profile.getAssetOutputFolder())
-    templateOutputPath = os.path.join(destinationFolder, profile.getTemplateOutputFolder())
-
     if "kernel" in parts:
 
         profile.setWorkingPath(profile.getDestinationPath())
@@ -39,7 +34,7 @@ def run(profile):
 
         # Store kernel script
         kernelClass = parts["kernel"]["class"]
-        scriptBuilder.storeKernelScript("%s/kernel.js" % jsOutputPath, bootCode="%s.boot();" % kernelClass)
+        scriptBuilder.storeKernelScript("kernel.js", bootCode="%s.boot();" % kernelClass)
 
         Console.outdent()
 
@@ -67,9 +62,9 @@ def run(profile):
                 classItems = ScriptResolver.Resolver(profile).add(partClass).getSorted()
 
                 if profile.getUseSource():
-                    scriptBuilder.storeLoaderScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    scriptBuilder.storeLoaderScript(classItems, "%s-{{id}}.js" % part, "new %s;" % partClass)
                 else:
-                    scriptBuilder.storeCompressedScript(classItems, "%s/%s-{{id}}.js" % (jsOutputPath, part), "new %s;" % partClass)
+                    scriptBuilder.storeCompressedScript(classItems, "%s-{{id}}.js" % part, "new %s;" % partClass)
 
                 Console.outdent()
 
@@ -84,7 +79,7 @@ def run(profile):
                 Console.indent()
 
                 styleItems = StyleResolver.Resolver(profile).add(partStyle).getSorted()
-                styleBuilder.storeCompressedStylesheet(styleItems, "%s/%s-{{id}}.css" % (cssOutputPath, part))
+                styleBuilder.storeCompressedStylesheet(styleItems, "%s-{{id}}.css" % part)
 
                 Console.outdent()
 

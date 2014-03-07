@@ -17,6 +17,8 @@ class AssetBuilder:
         self.__profile = profile
         self.__assetManager = profile.getAssetManager()
 
+        assetOutputPath = os.path.join(destinationFolder, profile.getAssetOutputFolder())
+
 
 
     # --------------------------------------------------------------------------------------------

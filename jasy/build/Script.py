@@ -27,13 +27,17 @@ class ScriptBuilder:
         self.__assetManager = profile.getAssetManager()
         self.__fileManager = profile.getFileManager()
 
-        compressionLevel = profile.getCompressionLevel()
-        formattingLevel = profile.getFormattingLevel()
+        self.__outputPath = os.path.join(destinationFolder, profile.getJsOutputFolder())
 
         self.__kernelScripts = []
 
         self.__scriptOptimization = ScriptOptimization.Optimization()
         self.__scriptFormatting = ScriptFormatting.Formatting()
+
+
+
+        compressionLevel = profile.getCompressionLevel()
+        formattingLevel = profile.getFormattingLevel()
 
         self.__addDividers = formattingLevel > 0
 
@@ -201,7 +205,7 @@ class ScriptBuilder:
         # Sort and compress
         sortedClasses = self.__sortScriptItems(items, bootCode, inlineTranslations=True)
         compressedCode = self.__compressScripts(sortedClasses)
-        self.__fileManager.writeFile(fileName, compressedCode)
+        self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), compressedCode)
         self.__kernelScripts = sortedClasses
 
         Console.outdent()
@@ -214,7 +218,7 @@ class ScriptBuilder:
 
         sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts)
         loaderCode = self.__generateScriptLoader(sortedClasses)
-        self.__fileManager.writeFile(fileName, loaderCode)
+        self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), loaderCode)
 
         Console.outdent()
 
@@ -226,6 +230,6 @@ class ScriptBuilder:
 
         sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
         compressedCode = self.__compressScripts(sortedClasses)
-        self.__fileManager.writeFile(fileName, compressedCode)
+        self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), compressedCode)
 
         Console.outdent()

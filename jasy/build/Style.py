@@ -24,11 +24,15 @@ class StyleBuilder:
         self.__session = profile.getSession()
         self.__fileManager = profile.getFileManager()
 
-        compressionLevel = profile.getCompressionLevel()
-        formattingLevel = profile.getFormattingLevel()
+        self.__outputPath = os.path.join(destinationFolder, profile.getCssOutputFolder())
 
         self.__styleOptimization = StyleOptimization.Optimization()
         self.__styleFormatting = StyleFormatting.Formatting()
+
+
+
+        compressionLevel = profile.getCompressionLevel()
+        formattingLevel = profile.getFormattingLevel()
 
         self.__addDividers = formattingLevel > 0
 
@@ -77,6 +81,6 @@ class StyleBuilder:
         relativeToMain = self.__session.getMain().toRelativeUrl(fileName)
 
         compressedCode = self.__compressStyles(styles)
-        self.__fileManager.writeFile(fileName, compressedCode)
+        self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), compressedCode)
 
         Console.outdent()
