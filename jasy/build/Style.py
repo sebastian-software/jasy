@@ -71,6 +71,12 @@ class StyleBuilder:
     #   PUBLIC API
     # --------------------------------------------------------------------------------------------
 
+    def getWorkingPath(self):
+        # Locations inside stylesheets are always relative to the stylesheet folder
+        # Note: We think of output stylesheets being stored without sub folder here
+        return self.__outputPath
+
+
     def storeCompressedStylesheet(self, styles, fileName):
 
         Console.info("Generating compressed stylesheet...")

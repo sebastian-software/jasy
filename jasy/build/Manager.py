@@ -27,7 +27,7 @@ def run(profile):
 
     if "kernel" in parts:
 
-        profile.setWorkingPath(profile.getDestinationPath())
+        profile.setWorkingPath(scriptBuilder.getWorkingPath())
 
         Console.info("Building part kernel...")
         Console.indent()
@@ -54,11 +54,10 @@ def run(profile):
 
             partClass = parts[part]["class"]
             if partClass:
-                profile.setWorkingPath(profile.getDestinationPath())
-
                 Console.info("Generating script (%s)...", partClass)
                 Console.indent()
 
+                profile.setWorkingPath(scriptBuilder.getWorkingPath())
                 classItems = ScriptResolver.Resolver(profile).add(partClass).getSorted()
 
                 if profile.getUseSource():
@@ -73,11 +72,10 @@ def run(profile):
 
             partStyle = parts[part]["style"]
             if partStyle:
-                profile.setWorkingPath(cssOutputPath)
-
                 Console.info("Generating style (%s)...", partStyle)
                 Console.indent()
 
+                profile.setWorkingPath(styleBuilder.getWorkingPath())
                 styleItems = StyleResolver.Resolver(profile).add(partStyle).getSorted()
                 styleBuilder.storeCompressedStylesheet(styleItems, "%s-{{id}}.css" % part)
 

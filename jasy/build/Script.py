@@ -191,6 +191,12 @@ class ScriptBuilder:
     #   PUBLIC API
     # --------------------------------------------------------------------------------------------
 
+    def getWorkingPath(self):
+        # Locations inside scripts are always relative to the application root folder
+        # aka the folder where HTML files are loaded from
+        return self.__profile.getDestinationPath()
+
+
     def storeKernelScript(self, fileName, bootCode=""):
 
         Console.info("Generating kernel script...")
