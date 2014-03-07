@@ -4,29 +4,16 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os
-
 import jasy.core.Console as Console
 
-from jasy.core.Permutation import getPermutation
 from jasy.item.Class import ClassError
 from jasy.item.Class import ClassItem
-from jasy.item.Style import StyleError
-from jasy.item.Style import StyleItem
+
 from jasy.js.Resolver import Resolver
-
-from jasy import UserError
-
 import jasy.js.output.Optimization as ScriptOptimization
 import jasy.js.output.Formatting as ScriptFormatting
 
-import jasy.style.output.Optimization as StyleOptimization
-import jasy.style.output.Formatting as StyleFormatting
-
-from jasy.core.FileManager import FileManager
-
-
-class OutputManager:
+class ScriptBuilder:
 
     # --------------------------------------------------------------------------------------------
     #   ESSENTIALS
@@ -48,9 +35,6 @@ class OutputManager:
         self.__scriptOptimization = ScriptOptimization.Optimization()
         self.__scriptFormatting = ScriptFormatting.Formatting()
 
-        self.__styleOptimization = StyleOptimization.Optimization()
-        self.__styleFormatting = StyleFormatting.Formatting()
-
         self.__addDividers = formattingLevel > 0
 
         if compressionLevel > 0:
@@ -61,52 +45,10 @@ class OutputManager:
             self.__scriptOptimization.enable("blocks")
             self.__scriptOptimization.enable("privates")
 
-        if formattingLevel > 0:
-            self.__styleFormatting.enable("blocks")
-
         if formattingLevel > 1:
             self.__scriptFormatting.enable("semicolon")
             self.__scriptFormatting.enable("comma")
-            self.__styleFormatting.enable("statements")
 
-        if formattingLevel > 2:
-            self.__styleFormatting.enable("whitespace")
-            self.__styleFormatting.enable("indent")
-
-
-
-    # --------------------------------------------------------------------------------------------
-    #   ASSETS
-    # --------------------------------------------------------------------------------------------
-
-    def deployAssets(self, items, assetFolder=None, hashNames=False):
-        """
-        Deploys assets for the given items and all their dependencies
-
-        :param items: List of items to deploy assets for
-        :type items: list
-        :param assetFolder: Destination folder of assets (defaults to {{prefix}}/asset)
-        :type assetFolder: string
-        """
-
-        Console.info("Deploying assets...")
-        Console.indent()
-
-        resolver = Resolver(self.__profile)
-
-        for itemId in items:
-            resolver.add(itemId)
-
-        self.__assetManager.deploy(resolver.getIncluded(), assetFolder=assetFolder, hashNames=hashNames)
-
-        Console.outdent()
-
-
-
-
-    # --------------------------------------------------------------------------------------------
-    #   SCRIPT API
-    # --------------------------------------------------------------------------------------------
 
     def __sortScriptItems(self, items, bootCode=None, filterBy=None, inlineTranslations=False):
 
@@ -242,31 +184,6 @@ class OutputManager:
 
 
     # --------------------------------------------------------------------------------------------
-    #   STYLE API
-    # --------------------------------------------------------------------------------------------
-
-    def __compressStyles(self, styles):
-        try:
-            profile = self.__profile
-            result = []
-
-            for styleObj in styles:
-                compressed = styleObj.getCompressed(profile)
-
-                if self.__addDividers:
-                    result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
-                else:
-                    result.append(compressed)
-
-        except StyleError as error:
-            raise UserError("Error during stylesheet compression! %s" % error)
-
-        return "".join(result)
-
-
-
-
-    # --------------------------------------------------------------------------------------------
     #   PUBLIC API
     # --------------------------------------------------------------------------------------------
 
@@ -312,21 +229,3 @@ class OutputManager:
         self.__fileManager.writeFile(fileName, compressedCode)
 
         Console.outdent()
-
-
-    def storeCompressedStylesheet(self, styles, fileName):
-
-        Console.info("Generating compressed stylesheet...")
-        Console.indent()
-
-        # Resolve placeholders first
-        fileName = self.__profile.expandFileName(fileName)
-        relativeToMain = self.__session.getMain().toRelativeUrl(fileName)
-
-        compressedCode = self.__compressStyles(styles)
-        self.__fileManager.writeFile(fileName, compressedCode)
-
-        Console.outdent()
-
-
-

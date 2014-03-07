@@ -116,6 +116,7 @@ setup(
     'jasy.abstract',
     'jasy.asset',
     'jasy.asset.sprite',
+    'jasy.build',
     'jasy.core',
     'jasy.env',
     'jasy.http',
