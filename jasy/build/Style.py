@@ -9,6 +9,8 @@ import jasy.core.Console as Console
 from jasy.item.Style import StyleError
 from jasy.item.Style import StyleItem
 
+import jasy.style.Resolver as StyleResolver
+
 import jasy.style.output.Optimization as StyleOptimization
 import jasy.style.output.Formatting as StyleFormatting
 
@@ -75,6 +77,17 @@ class StyleBuilder:
         # Locations inside stylesheets are always relative to the stylesheet folder
         # Note: We think of output stylesheets being stored without sub folder here
         return self.__outputPath
+
+
+    def buildPart(self, fileId):
+        Console.info("Generating style (%s)...", fileId)
+        Console.indent()
+
+        profile.setWorkingPath(styleBuilder.getWorkingPath())
+        styleItems = StyleResolver.Resolver(profile).add(fileId).getSorted()
+        styleBuilder.storeCompressedStylesheet(styleItems, "%s-{{id}}.css" % part)
+
+        Console.outdent()
 
 
     def storeCompressedStylesheet(self, styles, fileName):

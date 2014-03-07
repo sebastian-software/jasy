@@ -9,7 +9,9 @@ import jasy.core.Console as Console
 from jasy.item.Class import ClassError
 from jasy.item.Class import ClassItem
 
+import jasy.js.Resolver as ScriptResolver
 from jasy.js.Resolver import Resolver
+
 import jasy.js.output.Optimization as ScriptOptimization
 import jasy.js.output.Formatting as ScriptFormatting
 
@@ -195,6 +197,26 @@ class ScriptBuilder:
         # Locations inside scripts are always relative to the application root folder
         # aka the folder where HTML files are loaded from
         return self.__profile.getDestinationPath()
+
+
+    def buildKernel(self, fileId):
+        profile.setWorkingPath(scriptBuilder.getWorkingPath())
+        scriptBuilder.storeKernelScript("kernel.js", bootCode="%s.boot();" % fileId)
+
+
+    def buildPart(self, fileId):
+        Console.info("Generating script (%s)...", fileId)
+        Console.indent()
+
+        profile.setWorkingPath(scriptBuilder.getWorkingPath())
+        classItems = ScriptResolver.Resolver(profile).add(fileId).getSorted()
+
+        if profile.getUseSource():
+            scriptBuilder.storeLoaderScript(classItems, "%s-{{id}}.js" % part, "new %s;" % fileId)
+        else:
+            scriptBuilder.storeCompressedScript(classItems, "%s-{{id}}.js" % part, "new %s;" % fileId)
+
+        Console.outdent()
 
 
     def storeKernelScript(self, fileName, bootCode=""):
