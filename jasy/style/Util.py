@@ -44,6 +44,16 @@ def executeCommand(node, profile):
 
         params.append(value)
 
+    # Catch simple casting requests
+    if command in ("identifier", "string", "number"):
+        if len(params) != 1:
+            raise Exception("Invalid number of arguments for type casting!")
+
+        repl = Node.Node(type=command)
+        repl.value = params[0]
+
+        return repl
+
     # print("Looking for command: %s(%s)" % (command, ", ".join([str(param) for param in params])))
     result, restype = profile.executeCommand(command, params)
 

@@ -74,30 +74,6 @@ class Session():
         self.addItemType("jasy.Template", "Templates", jasy.item.Template.TemplateItem)
         self.addItemType("jasy.Translation", "Translations", jasy.item.Translation.TranslationItem)
 
-        def castToString(node):
-            if node.type == "string":
-                return node
-            elif node.type == "identifier":
-                node.type = "string"
-                return node
-            elif node.type == "number":
-                node.value = str(node.value)
-                return node
-            else:
-                raise Exception("Unable to convert %s to string" % node.type)
-
-        def castToIdentifier(node):
-            if node.type == "identifier":
-                return node
-            elif node.type == "string":
-                node.type = "identifier"
-                return node
-            else:
-                raise Exception("Unable to convert %s to string" % node.type)
-
-        self.addCommand("identifier", castToIdentifier, "identifier", True)
-        self.addCommand("string", castToString, "string", True)
-
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
         """
