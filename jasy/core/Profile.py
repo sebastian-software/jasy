@@ -851,12 +851,14 @@ class Profile():
 
 
 
-    def addCommand(self, name, func, restype=None):
+    def addCommand(self, name, func, resultType=None, globalName=False):
         """
         Registers the given function as a new command
         """
 
-        if len(name.split(".")) != 2:
+        if globalName and "." in name:
+            raise Exception("Invalid global name: %s!" % name)
+        elif not globalName and len(name.split(".")) != 2:
             raise Exception("Command names should always match namespace.name! Tried with: %s!" % name)
 
         commands = self.__commands
@@ -866,7 +868,7 @@ class Profile():
 
         commands[name] = {
             "func" : func,
-            "restype" : restype
+            "type" : resultType
         }
 
 
@@ -884,14 +886,14 @@ class Profile():
             raise UserError("Unsupported command %s" % command)
 
         entry = commands[command]
-        restype = entry["restype"]
+        resultType = entry["type"]
 
         if params:
             result = entry["func"](*params)
         else:
             result = entry["func"]()
 
-        return result, restype
+        return result, resultType
 
 
 

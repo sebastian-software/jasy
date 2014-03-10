@@ -74,6 +74,30 @@ class Session():
         self.addItemType("jasy.Template", "Templates", jasy.item.Template.TemplateItem)
         self.addItemType("jasy.Translation", "Translations", jasy.item.Translation.TranslationItem)
 
+        def castToString(node):
+            if node.type == "string":
+                return node
+            elif node.type == "identifier":
+                node.type = "string"
+                return node
+            elif node.type == "number":
+                node.value = str(node.value)
+                return node
+            else:
+                raise Exception("Unable to convert %s to string" % node.type)
+
+        def castToIdentifier(node):
+            if node.type == "identifier":
+                return node
+            elif node.type == "string":
+                node.type = "identifier"
+                return node
+            else:
+                raise Exception("Unable to convert %s to string" % node.type)
+
+        self.addCommand("identifier", castToIdentifier, "identifier", True)
+        self.addCommand("string", castToString, "string", True)
+
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
         """
@@ -403,10 +427,12 @@ class Session():
         return counter
 
 
-    def addCommand(self, name, func, restype=None):
+    def addCommand(self, name, func, resultType=None, globalName=False):
         """ Registers the given function as a new command """
 
-        if len(name.split(".")) != 2:
+        if globalName and "." in name:
+            raise Exception("Invalid global name: %s!" % name)
+        elif not globalName and len(name.split(".")) != 2:
             raise Exception("Command names should always match namespace.name! Tried with: %s!" % name)
 
         commands = self.__commands
@@ -416,7 +442,7 @@ class Session():
 
         commands[name] = {
             "func" : func,
-            "restype" : restype
+            "type" : resultType
         }
 
 
@@ -425,6 +451,22 @@ class Session():
 
         return self.__commands
 
+
+    def executeCommand(self, name, params):
+        commands = self.__commands
+
+        if not name in commands:
+            raise Exception("Unknown command %s!" % name)
+
+        entry = commands[name]
+        resultType = entry["type"]
+
+        if params:
+            result = entry["func"](*params)
+        else:
+            result = entry["func"]()
+
+        return result, resultType
 
 
     def getProjects(self):
