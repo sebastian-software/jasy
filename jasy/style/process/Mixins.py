@@ -199,6 +199,9 @@ def __process(node, scanMixins=False, active=None):
         name = node.name
 
         mixin = __findMixin(node.parent, name)
+        if not mixin:
+            raise Exception("Unknown mixin \"%s\" to include! Do you miss an include for another style sheet?" % (name))
+
         replacements = __resolveMixin(mixin, getattr(node, "params", None))
 
         Console.debug("Replacing call %s at line %s with mixin from line %s" % (name, node.line, replacements.line))

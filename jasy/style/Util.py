@@ -39,8 +39,10 @@ def executeCommand(node, profile):
             return node
         elif param.type == "unary_minus":
             value = -param[0].value
-        else:
+        elif hasattr(param, "value"):
             value = param.value
+        else:
+            raise Exception("Invalid value for command execution: Type is %s in %s!" % (param.type, param.line))
 
         params.append(value)
 

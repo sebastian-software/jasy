@@ -340,15 +340,11 @@ class StyleItem(AbstractItem.AbstractItem):
             # Start with the merged tree (includes resolved)
             tree = self.getMergedTree(profile)
 
-            # Read out profile config
-            optimization = profile.getCurrentOptimization()
-            formatting = profile.getCurrentFormatting()
-
             # Reduce tree
             Engine.reduceTree(tree, profile)
 
             # Compress tree
-            compressed = Engine.compressTree(tree, optimization, formatting)
+            compressed = Engine.compressTree(tree, profile.getCompressionLevel(), profile.getFormattingLevel())
 
             # Store in cache
             self.project.getCache().store(field, compressed, mtime)

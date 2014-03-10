@@ -27,28 +27,7 @@ class StyleBuilder:
         self.__profile = profile
         self.__session = profile.getSession()
         self.__fileManager = profile.getFileManager()
-
         self.__outputPath = os.path.join(profile.getDestinationPath(), profile.getCssOutputFolder())
-
-        self.__styleOptimization = StyleOptimization.Optimization()
-        self.__styleFormatting = StyleFormatting.Formatting()
-
-
-
-        compressionLevel = profile.getCompressionLevel()
-        formattingLevel = profile.getFormattingLevel()
-
-        self.__addDividers = formattingLevel > 0
-
-        if formattingLevel > 0:
-            self.__styleFormatting.enable("blocks")
-
-        if formattingLevel > 1:
-            self.__styleFormatting.enable("statements")
-
-        if formattingLevel > 2:
-            self.__styleFormatting.enable("whitespace")
-            self.__styleFormatting.enable("indent")
 
 
     def __compressStyles(self, styles):
@@ -59,7 +38,7 @@ class StyleBuilder:
             for styleObj in styles:
                 compressed = styleObj.getCompressed(profile)
 
-                if self.__addDividers:
+                if profile.getFormattingLevel() > 0:
                     result.append("/* FILE ID: %s */\n%s\n\n" % (styleObj.getId(), compressed))
                 else:
                     result.append(compressed)

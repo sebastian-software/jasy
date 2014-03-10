@@ -15,6 +15,9 @@ import jasy.style.parse.ScopeScanner as ScopeScanner
 import jasy.style.clean.Unused as Unused
 import jasy.style.clean.Permutate as Permutate
 
+import jasy.style.output.Formatting as Formatting
+import jasy.style.output.Optimization as Optimization
+
 import jasy.style.process.Mixins as Mixins
 import jasy.style.process.Flatter as Flatter
 import jasy.style.process.Executer as Executer
@@ -104,10 +107,23 @@ def reduceTree(tree, profile=None):
 
 
 
-def compressTree(tree, optimization=None, formatting=None):
+def compressTree(tree, optimizationLevel=0, formattingLevel=0):
     """
     Returns the compressed result from the given tree
     """
+
+    optimization = Optimization.Optimization()
+    formatting = Formatting.Formatting()
+
+    if formattingLevel > 0:
+        formatting.enable("blocks")
+
+    if formattingLevel > 1:
+        formatting.enable("statements")
+
+    if formattingLevel > 2:
+        formatting.enable("whitespace")
+        formatting.enable("indent")
 
     return Compressor.Compressor(optimization, formatting).compress(tree)
 
