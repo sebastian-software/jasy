@@ -1066,7 +1066,18 @@ def MultiplyExpression(tokenizer, staticContext):
 def UnaryExpression(tokenizer, staticContext):
     tokenType = tokenizer.get(True)
 
-    if tokenType in ["not", "plus", "minus"]:
+    if tokenType == "not":
+        node = Node.Node(tokenizer, tokenType)
+        child = UnaryExpression(tokenizer, staticContext)
+
+        # Supports prefixes with not e.g. !important
+        if child.type == "identifier":
+            child.value = "!%s" % child.value
+            return child
+        else:
+            node.append(child)
+
+    elif tokenType in ["plus", "minus"]:
         if tokenType == "plus":
             tokenType = "unary_plus"
         elif tokenType == "minus":
