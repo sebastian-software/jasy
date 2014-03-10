@@ -230,11 +230,25 @@ def compute(node, first=None, second=None, operator=None, session=None):
     elif first.type == "string" or second.type == "string":
         repl = Node.Node(type="string")
 
-        if operator == "plus":
-            repl.value = str(first.value) + str(second.value)
-            return repl
+        if first.type == "identifier" or second.type == "identifier":
+            if operator == "plus":
+                repl.value = first.value + second.value
+                return repl
+            elif operator == "eq":
+                return Util.castNativeToNode(first.value == second.value)
+            elif operator == "ne":
+                return Util.castNativeToNode(first.value != second.value)
+
+            else:
+                raise OperationError("Unsupported string/identifier operation", node)
+
         else:
-            raise OperationError("Unsupported string operation", node)
+
+            if operator == "plus":
+                repl.value = str(first.value) + str(second.value)
+                return repl
+            else:
+                raise OperationError("Unsupported string operation", node)
 
 
     # Just handle when not both are null - equal condition is already done before
