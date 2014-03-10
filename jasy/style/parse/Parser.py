@@ -1070,14 +1070,14 @@ def UnaryExpression(tokenizer, staticContext):
         node = Node.Node(tokenizer, tokenType)
         child = UnaryExpression(tokenizer, staticContext)
 
-        # Supports prefixes with not e.g. !important
+        # Support for prefixes with "not" e.g. "!important"
         if child.type == "identifier":
             child.value = "!%s" % child.value
             return child
         else:
             node.append(child)
 
-    elif tokenType in ["plus", "minus"]:
+    elif tokenType in ("plus", "minus"):
         if tokenType == "plus":
             tokenType = "unary_plus"
         elif tokenType == "minus":
