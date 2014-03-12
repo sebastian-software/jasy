@@ -1,7 +1,14 @@
 Jasy-1.5-beta6
 ==============
 
+## Notes
+
 - Splitted `jasy.core.BuildTool` and `jasy.core.OutputManager` into separate tools `jasy.build.Asset`, `jasy.build.Script` and `jasy.build.Style`. All of them are managed by `jasy.build.Manager`
+- Renamed `jasy.js` to `jasy.script` and `Class` to `Script`- you might have to update your references as well. Goal for these changes was to unify the overall names of item types, parsing/processing implementation and build tools.
+
+
+## Changes
+
 - Added support for optionally registering commands (for stylesheets, templates, ...) globally aka without any project name as a prefix.
 - Re-added the `executeCommand` method for `Session` - got lost somehow.
 - Added support for formatting/optimization of Stylesheets. Also improved location where flags for these settings are transferred into a settings object (now part of the Style engine).
