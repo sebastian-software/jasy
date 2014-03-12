@@ -12,8 +12,8 @@ Subpackages
     jasy.env
     jasy.http
     jasy.item
-    jasy.js
     jasy.parse
+    jasy.script
     jasy.style
     jasy.template
     jasy.test

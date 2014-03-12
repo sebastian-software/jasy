@@ -124,6 +124,14 @@ jasy.test.style.supports module
     :undoc-members:
     :show-inheritance:
 
+jasy.test.style.values module
+-----------------------------
+
+.. automodule:: jasy.test.style.values
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 jasy.test.style.variables module
 --------------------------------
 

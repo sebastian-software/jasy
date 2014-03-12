@@ -20,18 +20,18 @@ jasy.item.Asset module
     :undoc-members:
     :show-inheritance:
 
-jasy.item.Script module
-----------------------
-
-.. automodule:: jasy.item.Script
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 jasy.item.Doc module
 --------------------
 
 .. automodule:: jasy.item.Doc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+jasy.item.Script module
+-----------------------
+
+.. automodule:: jasy.item.Script
     :members:
     :undoc-members:
     :show-inheritance:

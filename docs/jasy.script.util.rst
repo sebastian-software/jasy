@@ -1,10 +1,10 @@
-jasy.js.util package
-====================
+jasy.script.util package
+========================
 
 Module contents
 ---------------
 
-.. automodule:: jasy.js.util
+.. automodule:: jasy.script.util
     :members:
     :undoc-members:
     :show-inheritance:

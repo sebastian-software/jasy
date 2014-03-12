@@ -12,14 +12,6 @@ jasy.core.Base62 module
     :undoc-members:
     :show-inheritance:
 
-jasy.core.BuildTool module
---------------------------
-
-.. automodule:: jasy.core.BuildTool
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 jasy.core.Cache module
 ----------------------
 
@@ -112,14 +104,6 @@ jasy.core.Options module
 ------------------------
 
 .. automodule:: jasy.core.Options
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-jasy.core.OutputManager module
-------------------------------
-
-.. automodule:: jasy.core.OutputManager
     :members:
     :undoc-members:
     :show-inheritance:
