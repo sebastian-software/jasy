@@ -1,3 +1,18 @@
+Jasy-1.5-beta6
+==============
+
+- Splitted `jasy.core.BuildTool` and `jasy.core.OutputManager` into separate tools `jasy.build.Asset`, `jasy.build.Script` and `jasy.build.Style`. All of them are managed by `jasy.build.Manager`
+- Added support for optionally registering commands (for stylesheets, templates, ...) globally aka without any project name as a prefix.
+- Re-added the `executeCommand` method for `Session` - got lost somehow.
+- Added support for formatting/optimization of Stylesheets. Also improved location where flags for these settings are transferred into a settings object (now part of the Style engine).
+- Added support for simple casing of `identifier`, `string` and `number` objects in stylesheets using `@identifier`, ...
+- Stability improvements for stylesheet processing with more edge cases fixed and improved error handling.
+- Added support for "!important" in stylesheets and comparable expressions.
+- Added support for special CSS argument lists to support multi value parameters inside CSS expressions e.g. linear-gradient(startColor startPos, endColor endPos) - CSS has definitely a lot of these edge cases.
+- Added support for identifier based operations (plus/join, equals and not equals)
+- Improved error handling when end-quote of strings is missing in Stylesheets
+
+
 Jasy-1.5-beta5
 ==============
 
