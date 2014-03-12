@@ -8,11 +8,11 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.js.parse.Parser as Parser
-import jasy.js.parse.ScopeScanner as ScopeScanner
-import jasy.js.output.Compressor as Compressor
-import jasy.js.clean.Unused as Unused
-import jasy.js.clean.DeadCode as DeadCode
+import jasy.script.parse.Parser as Parser
+import jasy.script.parse.ScopeScanner as ScopeScanner
+import jasy.script.output.Compressor as Compressor
+import jasy.script.clean.Unused as Unused
+import jasy.script.clean.DeadCode as DeadCode
 
 
 class Tests(unittest.TestCase):

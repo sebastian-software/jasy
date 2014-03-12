@@ -8,9 +8,9 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.js.parse.Parser as Parser
-import jasy.js.parse.ScopeScanner as ScopeScanner
-import jasy.js.api.Data as Data
+import jasy.script.parse.Parser as Parser
+import jasy.script.parse.ScopeScanner as ScopeScanner
+import jasy.script.api.Data as Data
 
 
 class Tests(unittest.TestCase):

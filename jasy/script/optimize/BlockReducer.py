@@ -4,10 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import jasy.js.parse.Node as Node
-import jasy.js.output.Compressor as Compressor
+import jasy.script.parse.Node as Node
+import jasy.script.output.Compressor as Compressor
 
-import jasy.js.parse.Lang
+import jasy.script.parse.Lang
 
 import jasy.core.Console as Console
 
@@ -299,11 +299,11 @@ def cleanParens(node):
         # parens aroudn an expression
         node.parenthesized = False
 
-    elif node.type in jasy.js.parse.Lang.expressions and parent.type == "return":
+    elif node.type in jasy.script.parse.Lang.expressions and parent.type == "return":
         # Returns never need parens around the expression
         node.parenthesized = False
 
-    elif node.type in jasy.js.parse.Lang.expressions and parent.type == "list" and parent.parent.type == "call":
+    elif node.type in jasy.script.parse.Lang.expressions and parent.type == "list" and parent.parent.type == "call":
         # Parameters don't need to be wrapped in parans
         node.parenthesized = False
 
@@ -320,9 +320,9 @@ def cleanParens(node):
         # x+(+x) => x++x => FAIL
         pass
 
-    elif node.type in jasy.js.parse.Lang.expressions and parent.type in jasy.js.parse.Lang.expressions:
-        prio = jasy.js.parse.Lang.expressionOrder[node.type]
-        parentPrio = jasy.js.parse.Lang.expressionOrder[node.parent.type]
+    elif node.type in jasy.script.parse.Lang.expressions and parent.type in jasy.script.parse.Lang.expressions:
+        prio = jasy.script.parse.Lang.expressionOrder[node.type]
+        parentPrio = jasy.script.parse.Lang.expressionOrder[node.parent.type]
 
         # Only higher priorities are optimized. Others are just to complex e.g.
         # "hello" + (3+4) + "world" is not allowed to be translated to
@@ -342,9 +342,9 @@ def fixParens(node):
     """
     parent = node.parent
 
-    if parent.type in jasy.js.parse.Lang.expressions:
-        prio = jasy.js.parse.Lang.expressionOrder[node.type]
-        parentPrio = jasy.js.parse.Lang.expressionOrder[node.parent.type]
+    if parent.type in jasy.script.parse.Lang.expressions:
+        prio = jasy.script.parse.Lang.expressionOrder[node.type]
+        parentPrio = jasy.script.parse.Lang.expressionOrder[node.parent.type]
 
         needsParens = prio < parentPrio
         if needsParens:

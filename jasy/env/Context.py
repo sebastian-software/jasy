@@ -20,8 +20,8 @@ from jasy.core.Profile import Profile
 from jasy.asset.SpritePacker import SpritePacker
 
 # Script Features
-from jasy.js.Resolver import Resolver as ScriptResolver
-from jasy.js.api.Writer import ApiWriter as ScriptDoc
+from jasy.script.Resolver import Resolver as ScriptResolver
+from jasy.script.api.Writer import ApiWriter as ScriptDoc
 
 # Style Features
 from jasy.style.Resolver import Resolver as StyleResolver

@@ -8,7 +8,7 @@ import os
 
 from jasy import UserError
 
-import jasy.js.api.Data as Data
+import jasy.script.api.Data as Data
 import jasy.core.Text as Text
 import jasy.item.Abstract as AbstractItem
 

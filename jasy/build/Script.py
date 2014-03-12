@@ -11,11 +11,11 @@ import jasy.core.Console as Console
 from jasy.item.Script import ScriptError
 from jasy.item.Script import ScriptItem
 
-import jasy.js.Resolver as ScriptResolver
-from jasy.js.Resolver import Resolver
+import jasy.script.Resolver as ScriptResolver
+from jasy.script.Resolver import Resolver
 
-import jasy.js.output.Optimization as ScriptOptimization
-import jasy.js.output.Formatting as ScriptFormatting
+import jasy.script.output.Optimization as ScriptOptimization
+import jasy.script.output.Formatting as ScriptFormatting
 
 class ScriptBuilder:
 

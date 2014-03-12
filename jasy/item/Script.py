@@ -9,16 +9,16 @@ import os, copy, fnmatch, re
 import jasy.core.MetaData as MetaData
 import jasy.core.Console as Console
 import jasy.item.Abstract
-import jasy.js.parse.Parser as Parser
-import jasy.js.parse.ScopeScanner as ScopeScanner
-import jasy.js.clean.DeadCode
-import jasy.js.clean.Unused
-import jasy.js.clean.Permutate
-import jasy.js.optimize.Translation
-import jasy.js.output.Optimization
-import jasy.js.api.Data
-import jasy.js.output.Compressor as Compressor
-import jasy.js.util as Util
+import jasy.script.parse.Parser as Parser
+import jasy.script.parse.ScopeScanner as ScopeScanner
+import jasy.script.clean.DeadCode
+import jasy.script.clean.Unused
+import jasy.script.clean.Permutate
+import jasy.script.optimize.Translation
+import jasy.script.output.Optimization
+import jasy.script.api.Data
+import jasy.script.output.Compressor as Compressor
+import jasy.script.util as Util
 
 from jasy import UserError
 
@@ -130,13 +130,13 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
             if permutation:
                 Console.debug("Patching tree with permutation: %s", permutation)
                 Console.indent()
-                jasy.js.clean.Permutate.patch(tree, permutation)
+                jasy.script.clean.Permutate.patch(tree, permutation)
                 Console.outdent()
 
             # Cleanups
-            jasy.js.clean.DeadCode.cleanup(tree)
+            jasy.script.clean.DeadCode.cleanup(tree)
             ScopeScanner.scan(tree)
-            jasy.js.clean.Unused.cleanup(tree)
+            jasy.script.clean.Unused.cleanup(tree)
 
             self.project.getCache().store(field, tree, self.mtime, True)
             Console.outdent()
@@ -271,7 +271,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
         field = "script:api[%s]-%s" % (self.id, highlight)
         apidata = self.project.getCache().read(field, self.mtime, inMemory=False)
         if apidata is None:
-            apidata = jasy.js.api.Data.ApiData(self.id, highlight)
+            apidata = jasy.script.api.Data.ApiData(self.id, highlight)
 
             tree = self.__getTree()
             Console.indent()
@@ -342,7 +342,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
         field = "script:translations[%s]" % (self.id)
         result = self.project.getCache().read(field, self.mtime)
         if result is None:
-            result = jasy.js.optimize.Translation.collectTranslations(self.__getTree())
+            result = jasy.script.optimize.Translation.collectTranslations(self.__getTree())
             self.project.getCache().store(field, result, self.mtime)
 
         return result
@@ -374,12 +374,12 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
                 tree = copy.deepcopy(tree)
 
                 if translation:
-                    jasy.js.optimize.Translation.optimize(tree, translation)
+                    jasy.script.optimize.Translation.optimize(tree, translation)
 
                 if optimization:
                     try:
                         optimization.apply(tree)
-                    except jasy.js.output.Optimization.Error as error:
+                    except jasy.script.output.Optimization.Error as error:
                         raise ScriptError(self, "Could not compress class! %s" % error)
 
             compressed = Compressor.Compressor(formatting).compress(tree)

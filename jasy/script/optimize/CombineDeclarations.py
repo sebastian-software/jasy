@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import jasy.js.parse.Node as Node
+import jasy.script.parse.Node as Node
 import jasy.core.Console as Console
 
 

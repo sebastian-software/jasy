@@ -6,11 +6,11 @@
 
 import copy, re, os, json
 
-import jasy.js.api.Data as Data
-import jasy.js.api.Text as Text
+import jasy.script.api.Data as Data
+import jasy.script.api.Text as Text
 import jasy.core.File as File
 
-from jasy.js.util import *
+from jasy.script.util import *
 import jasy.core.Console as Console
 from jasy import UserError
 

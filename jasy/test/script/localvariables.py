@@ -8,10 +8,10 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.js.parse.Parser as Parser
-import jasy.js.parse.ScopeScanner as ScopeScanner
-import jasy.js.output.Compressor as Compressor
-import jasy.js.optimize.LocalVariables as LocalVariables
+import jasy.script.parse.Parser as Parser
+import jasy.script.parse.ScopeScanner as ScopeScanner
+import jasy.script.output.Compressor as Compressor
+import jasy.script.optimize.LocalVariables as LocalVariables
 
 
 

@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-from jasy.js.output.Compressor import Compressor
+from jasy.script.output.Compressor import Compressor
 
 # Shared instance
 compressor = Compressor()

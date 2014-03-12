@@ -8,7 +8,7 @@ if __name__ == "__main__":
     sys.path.insert(0, jasyroot)
     print("Running from %s..." % jasyroot)
 
-import jasy.js.parse.Parser as Parser
+import jasy.script.parse.Parser as Parser
 
 
 

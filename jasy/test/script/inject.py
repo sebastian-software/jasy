@@ -10,10 +10,10 @@ if __name__ == "__main__":
 
 import jasy.core.Permutation as Permutation
 
-import jasy.js.parse.Parser as Parser
-import jasy.js.parse.ScopeScanner as ScopeScanner
-import jasy.js.output.Compressor as Compressor
-import jasy.js.clean.Permutate as Permutate
+import jasy.script.parse.Parser as Parser
+import jasy.script.parse.ScopeScanner as ScopeScanner
+import jasy.script.output.Compressor as Compressor
+import jasy.script.clean.Permutate as Permutate
 
 
 class Tests(unittest.TestCase):

@@ -4,9 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import jasy.js.api.Text as Text
+import jasy.script.api.Text as Text
 
-from jasy.js.util import *
+from jasy.script.util import *
 import jasy.core.Console as Console
 from jasy import UserError
 

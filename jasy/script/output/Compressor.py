@@ -6,8 +6,8 @@
 
 import re, sys, json
 
-from jasy.js.tokenize.Lang import keywords
-from jasy.js.parse.Lang import expressions, futureReserved
+from jasy.script.tokenize.Lang import keywords
+from jasy.script.parse.Lang import expressions, futureReserved
 
 high_unicode = re.compile(r"\\u[2-9A-Fa-f][0-9A-Fa-f]{3}")
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)

@@ -10,7 +10,7 @@ import jasy.core.Text as Text
 import jasy.core.Console as Console
 
 from jasy import UserError
-from jasy.js.util import *
+from jasy.script.util import *
 
 
 # Used to measure the doc indent size (with leading stars in front of content)

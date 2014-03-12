@@ -6,7 +6,7 @@
 
 import jasy.abstract.Resolver as AbstractResolver
 import jasy.item.Script as ScriptItem
-import jasy.js.Sorter as Sorter
+import jasy.script.Sorter as Sorter
 
 
 class Resolver(AbstractResolver.Resolver):

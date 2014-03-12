@@ -4,8 +4,8 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import jasy.js.parse.Node as Node
-import jasy.js.parse.ScopeScanner as ScopeScanner
+import jasy.script.parse.Node as Node
+import jasy.script.parse.ScopeScanner as ScopeScanner
 
 import jasy.core.Console as Console
 

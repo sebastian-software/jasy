@@ -13,8 +13,8 @@
 
 import re, copy
 
-import jasy.js.tokenize.Lang as Lang
-import jasy.js.api.Comment as Comment
+import jasy.script.tokenize.Lang as Lang
+import jasy.script.api.Comment as Comment
 import jasy.core.Console as Console
 
 

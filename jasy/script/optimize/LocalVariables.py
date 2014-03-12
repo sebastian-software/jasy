@@ -5,7 +5,7 @@
 #
 
 import string
-import jasy.js.tokenize.Lang
+import jasy.script.tokenize.Lang
 
 
 
@@ -107,7 +107,7 @@ def __patch(node, blocked=None, enable=False, translate=None):
                     while True:
                         repl = __baseEncode(pos)
                         pos += 1
-                        if not repl in usedRepl and not repl in jasy.js.tokenize.Lang.keywords and not repl in blocked:
+                        if not repl in usedRepl and not repl in jasy.script.tokenize.Lang.keywords and not repl in blocked:
                             break
 
                     # print("Translate: %s => %s" % (name, repl))

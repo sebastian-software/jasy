@@ -6,7 +6,7 @@
 import re, copy
 
 import jasy.core.Console as Console
-import jasy.js.api.Comment as Comment
+import jasy.script.api.Comment as Comment
 
 
 # Operator and punctuator mapping from token to tree node type name.

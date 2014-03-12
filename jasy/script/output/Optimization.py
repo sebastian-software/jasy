@@ -6,11 +6,11 @@
 
 import jasy.core.FlagSet as FlagSet
 
-import jasy.js.optimize.CryptPrivates as CryptPrivates
-import jasy.js.optimize.BlockReducer as BlockReducer
-import jasy.js.optimize.LocalVariables as LocalVariables
-import jasy.js.optimize.CombineDeclarations as CombineDeclarations
-import jasy.js.optimize.ClosureWrapper as ClosureWrapper
+import jasy.script.optimize.CryptPrivates as CryptPrivates
+import jasy.script.optimize.BlockReducer as BlockReducer
+import jasy.script.optimize.LocalVariables as LocalVariables
+import jasy.script.optimize.CombineDeclarations as CombineDeclarations
+import jasy.script.optimize.ClosureWrapper as ClosureWrapper
 
 
 class Error(Exception):

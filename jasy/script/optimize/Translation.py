@@ -6,7 +6,7 @@
 
 import re, copy, polib
 
-import jasy.js.parse.Node as Node
+import jasy.script.parse.Node as Node
 import jasy.item.Translation as Translation
 
 from jasy import UserError

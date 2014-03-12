@@ -11,21 +11,21 @@
 #   - Sebastian Werner <info@sebastian-werner.net> (Python Port) (2010-2012)
 #
 
-import jasy.js.tokenize.Tokenizer
-import jasy.js.parse.VanillaBuilder
-import jasy.js.tokenize.Lang
+import jasy.script.tokenize.Tokenizer
+import jasy.script.parse.VanillaBuilder
+import jasy.script.tokenize.Lang
 
 __all__ = [ "parse", "parseExpression" ]
 
 def parseExpression(source, fileId=None, line=1, builder=None):
     if builder == None:
-        builder = jasy.js.parse.VanillaBuilder.VanillaBuilder()
+        builder = jasy.script.parse.VanillaBuilder.VanillaBuilder()
 
     # Convert source into expression statement to be friendly to the Tokenizer
     if not source.endswith(";"):
         source = source + ";"
 
-    tokenizer = jasy.js.tokenize.Tokenizer.Tokenizer(source, fileId, line)
+    tokenizer = jasy.script.tokenize.Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext(False, builder)
 
     return Expression(tokenizer, staticContext)
@@ -34,9 +34,9 @@ def parseExpression(source, fileId=None, line=1, builder=None):
 
 def parse(source, fileId=None, line=1, builder=None):
     if builder == None:
-        builder = jasy.js.parse.VanillaBuilder.VanillaBuilder()
+        builder = jasy.script.parse.VanillaBuilder.VanillaBuilder()
 
-    tokenizer = jasy.js.tokenize.Tokenizer.Tokenizer(source, fileId, line)
+    tokenizer = jasy.script.tokenize.Tokenizer.Tokenizer(source, fileId, line)
     staticContext = StaticContext(False, builder)
     node = Script(tokenizer, staticContext)
 
@@ -1397,7 +1397,7 @@ def PrimaryExpression(tokenizer, staticContext):
                         break
 
                     else:
-                        if tokenValue in jasy.js.tokenize.Lang.keywords:
+                        if tokenValue in jasy.script.tokenize.Lang.keywords:
                             id = builder.PRIMARY_build(tokenizer, "identifier")
                             builder.PRIMARY_finish(id)
                         else:
