@@ -299,7 +299,7 @@ def Statement(tokenizer, staticContext):
     elif tokenType == "ampersand":
         nextTokenType = tokenizer.peek()
 
-        if nextTokenType in ("identifier", "colon", "left_curly", "left_bracket", "minus", "dot", "plus"):
+        if nextTokenType in ("identifier", "colon", "left_curly", "left_bracket", "minus", "dot", "plus", "comma"):
             node = Selector(tokenizer, staticContext)
             return node
 
