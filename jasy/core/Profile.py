@@ -16,7 +16,7 @@ import jasy.core.Locale as Locale
 import jasy.core.Project as Project
 
 import jasy.asset.Manager as AssetManager
-import jasy.item.Class as ClassItem
+import jasy.item.Script as ScriptItem
 
 class Profile():
     """
@@ -413,7 +413,7 @@ class Profile():
         return "host:%s|id:%s|user:%s" % (hostName, hostId, userName)
 
 
-    def getSetupClasses(self):
+    def getSetupScripts(self):
         """
         Returns a list of (virtual) classes which are relevant for initial setup.
         """
@@ -421,37 +421,37 @@ class Profile():
         setups = {}
 
         # Add user configured fields from session
-        setups.update(self.getFieldSetupClasses())
+        setups.update(self.getFieldSetupScripts())
 
 
 
         # Info about actual build
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.env",4,"%s"' % self.__getEnvironmentId())
-        setups["jasy.build.env"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        setups["jasy.build.env"] = self.__session.getVirtualItem("jasy.generated.FieldData", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.rev",4,"%s"' % self.__session.getMain().getRevision())
-        setups["jasy.build.rev"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        setups["jasy.build.rev"] = self.__session.getVirtualItem("jasy.generated.FieldData", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.build.time",4,%s' % self.__timeStamp)
-        setups["jasy.build.time"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        setups["jasy.build.time"] = self.__session.getVirtualItem("jasy.generated.FieldData", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         # Version of Jasy which was used for build
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.version",4,"%s"' % jasy.__version__)
-        setups["jasy.version"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        setups["jasy.version"] = self.__session.getVirtualItem("jasy.generated.FieldData", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         # Destination URL e.g. CDN
 
         fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.url",4,"%s"' % (self.getDestinationUrl() or ""))
-        setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ClassItem.ClassItem, fieldSetup, ".js")
+        setups["jasy.url"] = self.__session.getVirtualItem("jasy.generated.FieldData", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         # Output folder names
 
         for key, value in self.getOutputFolders().items():
 
             fieldSetup = "jasy.Env.addField([%s]);" % ('"jasy.folder.%s",4,"%s"' % (key, value))
-            setups["jasy.folder.%s" % key] = self.__session.getVirtualItem("jasy.generated.OutputFolder", ClassItem.ClassItem, fieldSetup, ".js")
+            setups["jasy.folder.%s" % key] = self.__session.getVirtualItem("jasy.generated.OutputFolder", ScriptItem.ScriptItem, fieldSetup, ".js")
 
         return setups
 
@@ -604,7 +604,7 @@ class Profile():
 
         # Store class which is responsible for detection (overrides data from project)
         if detect:
-            if not self.getClassByName(detect):
+            if not self.getScriptByName(detect):
                 raise Exception("Could not permutate field: %s! Unknown detect class %s." % detect)
 
             entry["detect"] = detect
@@ -638,14 +638,14 @@ class Profile():
 
 
 
-    def getFieldSetupClasses(self):
+    def getFieldSetupScripts(self):
         detects = self.__exportFieldDetects()
         setups = {}
 
         for fieldName in detects:
             fieldSetup = "jasy.Env.addField(%s);" % self.__exportField(fieldName)
-            fieldSetupClass = self.__session.getVirtualItem("jasy.generated.FieldData", jasy.item.Class.ClassItem, fieldSetup, ".js")
-            setups[fieldName] = fieldSetupClass
+            fieldSetupScript = self.__session.getVirtualItem("jasy.generated.FieldData", jasy.item.Script.ScriptItem, fieldSetup, ".js")
+            setups[fieldName] = fieldSetupScript
 
         return setups
 

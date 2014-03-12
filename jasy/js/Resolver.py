@@ -5,7 +5,7 @@
 #
 
 import jasy.abstract.Resolver as AbstractResolver
-import jasy.item.Class as Class
+import jasy.item.Script as ScriptItem
 import jasy.js.Sorter as Sorter
 
 
@@ -14,10 +14,10 @@ class Resolver(AbstractResolver.Resolver):
     def __init__(self, profile):
         super().__init__(profile)
 
-        self.fields = profile.getFieldSetupClasses()
+        self.fields = profile.getFieldSetupScripts()
 
         for project in profile.getProjects():
-            self.items.update(project.getClasses())
+            self.items.update(project.getScripts())
 
 
     def getItemDependencies(self, item):
@@ -44,5 +44,5 @@ class Resolver(AbstractResolver.Resolver):
         class object is automatically added to the resolver (and sorter).
         """
 
-        classItem = self.profile.getVirtualItem(name, Class.ClassItem, text, ".js")
-        return self.add(classItem)
+        ScriptItem = self.profile.getVirtualItem(name, ScriptItem.ScriptItem, text, ".js")
+        return self.add(ScriptItem)

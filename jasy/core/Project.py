@@ -29,7 +29,7 @@ def addStructure(name, structure):
 
 addStructure("application", {
     "source/class/*.js" : {
-        "type" : "jasy.Class"
+        "type" : "jasy.Script"
     },
     "source/style/*.style" : {
         "type" : "jasy.Style"
@@ -50,7 +50,7 @@ addStructure("application", {
 
 addStructure("resource", {
     "src/*.js" : {
-        "type" : "jasy.Class"
+        "type" : "jasy.Script"
     },
     "src/*.style" : {
         "type" : "jasy.Style"
@@ -65,7 +65,7 @@ addStructure("resource", {
 
 addStructure("flat", {
     "class/*.js" : {
-        "type" : "jasy.Class"
+        "type" : "jasy.Script"
     },
     "style/*.style" : {
         "type" : "jasy.Style"
@@ -593,11 +593,11 @@ class Project():
         """ Return the project defined fields which may be configured by the build script """
         return self.__fields
 
-    def getClassByName(self, className):
+    def getScriptByName(self, className):
         """ Finds a class by its name."""
 
         try:
-            return self.getClasses()[className]
+            return self.getScripts()[className]
         except KeyError:
             return None
 
@@ -719,10 +719,10 @@ class Project():
         return self.getItems("jasy.Doc") or {}
 
 
-    def getClasses(self):
+    def getScripts(self):
         """ Returns all project classes. Requires all files to have a "js" extension. """
 
-        return self.getItems("jasy.Class") or {}
+        return self.getItems("jasy.Script") or {}
 
 
     def getStyles(self):

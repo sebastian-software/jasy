@@ -14,7 +14,7 @@ class Sorter(AbstractSorter.AbstractSorter):
     def __init__(self, resolver):
         super().__init__(resolver)
 
-        self.fields = self.profile.getFieldSetupClasses()
+        self.fields = self.profile.getFieldSetupScripts()
 
 
     def getItemDependencies(self, item):

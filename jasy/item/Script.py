@@ -60,7 +60,7 @@ def collectFields(node, keys=None):
 
 
 
-class ClassError(Exception):
+class ScriptError(Exception):
 
     def __init__(self, inst, msg):
         self.__msg = msg
@@ -71,9 +71,9 @@ class ClassError(Exception):
 
 
 
-class ClassItem(jasy.item.Abstract.AbstractItem):
+class ScriptItem(jasy.item.Abstract.AbstractItem):
 
-    kind = "jasy.Class"
+    kind = "jasy.Script"
 
     def generateId(self, relpath, package):
         """
@@ -156,7 +156,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
         result = set()
 
         for name in meta.breaks:
-            if name != self.id and name in items and items[name].kind == "jasy.Class":
+            if name != self.id and name in items and items[name].kind == "jasy.Script":
                 result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
@@ -197,7 +197,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Manually defined names/classes
         for name in meta.requires:
-            if name != self.id and name in items and items[name].kind == "jasy.Class":
+            if name != self.id and name in items and items[name].kind == "jasy.Script":
                 result.add(items[name])
             elif "*" in name:
                 reobj = re.compile(fnmatch.translate(name))
@@ -210,7 +210,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Globally modified names (mostly relevant when working without namespaces)
         for name in scope.shared:
-            if name != self.id and name in items and items[name].kind == "jasy.Class":
+            if name != self.id and name in items and items[name].kind == "jasy.Script":
                 result.add(items[name])
 
         # Add classes from detected package access
@@ -226,7 +226,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                 if package == self.id:
                     break
 
-                elif package in items and items[package].kind == "jasy.Class":
+                elif package in items and items[package].kind == "jasy.Script":
                     aliases[orig] = package
                     result.add(items[package])
                     break
@@ -240,7 +240,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
 
         # Manually excluded names/classes
         for name in meta.optionals:
-            if name != self.id and name in items and items[name].kind == "jasy.Class":
+            if name != self.id and name in items and items[name].kind == "jasy.Script":
                 result.remove(items[name])
             elif warnings:
                 Console.warn("Missing class (optional): %s in %s", name, self.id)
@@ -380,7 +380,7 @@ class ClassItem(jasy.item.Abstract.AbstractItem):
                     try:
                         optimization.apply(tree)
                     except jasy.js.output.Optimization.Error as error:
-                        raise ClassError(self, "Could not compress class! %s" % error)
+                        raise ScriptError(self, "Could not compress class! %s" % error)
 
             compressed = Compressor.Compressor(formatting).compress(tree)
             self.project.getCache().store(field, compressed, self.mtime)

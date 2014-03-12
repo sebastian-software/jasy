@@ -8,8 +8,8 @@ import os
 
 import jasy.core.Console as Console
 
-from jasy.item.Class import ClassError
-from jasy.item.Class import ClassItem
+from jasy.item.Script import ScriptError
+from jasy.item.Script import ScriptItem
 
 import jasy.js.Resolver as ScriptResolver
 from jasy.js.Resolver import Resolver
@@ -70,46 +70,46 @@ class ScriptBuilder:
 
         # 2. Add optional boot code
         if bootCode:
-            bootClassItem = session.getVirtualItem("jasy.generated.BootCode", ClassItem, "(function(){%s})();" % bootCode, ".js")
-            resolver.add(bootClassItem)
+            bootScriptItem = session.getVirtualItem("jasy.generated.BootCode", ScriptItem, "(function(){%s})();" % bootCode, ".js")
+            resolver.add(bootScriptItem)
 
         # 3. Check for asset usage
-        includedClasses = resolver.getIncluded()
+        includedScripts = resolver.getIncluded()
         usesAssets = False
-        for item in includedClasses:
+        for item in includedScripts:
             if item.getId() == "jasy.Asset":
                 usesAssets = True
                 break
 
         # 4. Add asset data if needed
         if usesAssets:
-            assetData = self.__assetManager.exportToJson(includedClasses)
+            assetData = self.__assetManager.exportToJson(includedScripts)
             if assetData:
-                assetClassItem = session.getVirtualItem("jasy.generated.AssetData", ClassItem, "jasy.Asset.addData(%s);" % assetData, ".js")
-                resolver.add(assetClassItem, prepend=True)
+                assetScriptItem = session.getVirtualItem("jasy.generated.AssetData", ScriptItem, "jasy.Asset.addData(%s);" % assetData, ".js")
+                resolver.add(assetScriptItem, prepend=True)
 
         # 5. Add translation data
         if not inlineTranslations:
             translationBundle = session.getTranslationBundle(profile.getCurrentLocale())
             if translationBundle:
-                translationData = translationBundle.export(includedClasses)
+                translationData = translationBundle.export(includedScripts)
                 if translationData:
-                    translationClassItem = session.getVirtualItem("jasy.generated.TranslationData", ClassItem, "jasy.Translate.addData(%s);" % translationData, ".js")
-                    resolver.add(translationClassItem, prepend=True)
+                    translationScriptItem = session.getVirtualItem("jasy.generated.TranslationData", ScriptItem, "jasy.Translate.addData(%s);" % translationData, ".js")
+                    resolver.add(translationScriptItem, prepend=True)
 
         # 6. Sorting items
-        sortedClasses = resolver.getSorted()
+        sortedScripts = resolver.getSorted()
 
         # 7. Apply filter
         if filterBy:
-            filteredClasses = []
-            for item in sortedClasses:
+            filteredScripts = []
+            for item in sortedScripts:
                 if not item in filterBy:
-                    filteredClasses.append(item)
+                    filteredScripts.append(item)
 
-            sortedClasses = filteredClasses
+            sortedScripts = filteredScripts
 
-        return sortedClasses
+        return sortedScripts
 
 
     def __compressScripts(self, items):
@@ -127,7 +127,7 @@ class ScriptBuilder:
                 else:
                     result.append(compressed)
 
-        except ClassError as error:
+        except ScriptError as error:
             raise UserError("Error during script compression! %s" % error)
 
         return "".join(result)
@@ -217,12 +217,12 @@ class ScriptBuilder:
         Console.indent()
 
         self.__profile.setWorkingPath(self.getWorkingPath())
-        classItems = ScriptResolver.Resolver(self.__profile).add(fileId).getSorted()
+        ScriptItems = ScriptResolver.Resolver(self.__profile).add(fileId).getSorted()
 
         if self.__profile.getUseSource():
-            self.storeLoaderScript(classItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
+            self.storeLoaderScript(ScriptItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
         else:
-            self.storeCompressedScript(classItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
+            self.storeCompressedScript(ScriptItems, "%s-{{id}}.js" % partId, "new %s;" % fileId)
 
         Console.outdent()
 
@@ -233,16 +233,16 @@ class ScriptBuilder:
         Console.indent()
 
         # Export all profile data for the kernel
-        items = self.__profile.getSetupClasses().values()
+        items = self.__profile.getSetupScripts().values()
 
         # Transfer all hard-wired fields into a permutation
         self.__profile.setStaticPermutation()
 
         # Sort and compress
-        sortedClasses = self.__sortScriptItems(items, bootCode, inlineTranslations=True)
-        compressedCode = self.__compressScripts(sortedClasses)
+        sortedScripts = self.__sortScriptItems(items, bootCode, inlineTranslations=True)
+        compressedCode = self.__compressScripts(sortedScripts)
         self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), compressedCode)
-        self.__kernelScripts = sortedClasses
+        self.__kernelScripts = sortedScripts
 
         Console.outdent()
 
@@ -252,8 +252,8 @@ class ScriptBuilder:
         Console.info("Generating loader script...")
         Console.indent()
 
-        sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts)
-        loaderCode = self.__generateScriptLoader(sortedClasses)
+        sortedScripts = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts)
+        loaderCode = self.__generateScriptLoader(sortedScripts)
         self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), loaderCode)
 
         Console.outdent()
@@ -264,8 +264,8 @@ class ScriptBuilder:
         Console.info("Generating compressed script...")
         Console.indent()
 
-        sortedClasses = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
-        compressedCode = self.__compressScripts(sortedClasses)
+        sortedScripts = self.__sortScriptItems(items, bootCode, filterBy=self.__kernelScripts, inlineTranslations=True)
+        compressedCode = self.__compressScripts(sortedScripts)
         self.__fileManager.writeFile(os.path.join(self.__outputPath, fileName), compressedCode)
 
         Console.outdent()

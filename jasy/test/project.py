@@ -28,7 +28,7 @@ class Tests(unittest.TestCase):
 name: myproject
 content: {
     myproject.Main: {
-        type: "jasy.Class",
+        type: "jasy.Script",
         source: [man/Main.js, man/Add.js]
     },
     myproject/main.css: {
@@ -47,7 +47,7 @@ content: {
         def createFolders():
             os.makedirs(os.path.join(path, "man"))
 
-        def createSampleClasses():
+        def createSampleScripts():
             self.writeFile(os.path.join(path, "man"), "index.html", """<html></html>""")
             self.writeFile(os.path.join(path, "man"), "Main.js", ";")
             self.writeFile(os.path.join(path, "man"), "Add.js", ";")
@@ -58,7 +58,7 @@ content: {
 
         createFolders()
         self.createjpyaml_withContent(path)
-        createSampleClasses()
+        createSampleScripts()
         createSampleAssets()
 
         return Project.getProjectFromPath(path, Session.Session())
@@ -76,7 +76,7 @@ content: {
             os.makedirs(os.path.join(os.path.join(path, "source"), "asset"))
             os.makedirs(os.path.join(os.path.join(path, "source"), "translation"))
 
-        def createSampleClasses():
+        def createSampleScripts():
             self.writeFile(os.path.join(path, "source"), "index.html", """<html></html>""")
             self.writeFile(os.path.join(os.path.join(path, "source"), "class"), "Main.js", ";")
 
@@ -88,7 +88,7 @@ content: {
 
         createFolders()
         self.createjpyaml(path)
-        createSampleClasses()
+        createSampleScripts()
         createSampleAssets()
         createSampleTranslations()
 
@@ -104,7 +104,7 @@ content: {
         def createFolders():
             os.makedirs(os.path.join(path, "src"))
 
-        def createSampleClasses():
+        def createSampleScripts():
             self.writeFile(os.path.join(path, "src"), "index.html", """<html></html>""")
             self.writeFile(os.path.join(path, "src"), "Main.js", ";")
 
@@ -113,7 +113,7 @@ content: {
 
         createFolders()
         self.createjpyaml(path)
-        createSampleClasses()
+        createSampleScripts()
         createSampleAssets()
 
         return Project.getProjectFromPath(path, Session.Session())
@@ -130,7 +130,7 @@ content: {
             os.makedirs(os.path.join(path, "asset"))
             os.makedirs(os.path.join(path, "translation"))
 
-        def createSampleClasses():
+        def createSampleScripts():
             self.writeFile(os.path.join(path, "class"), "index.html", """<html></html>""")
             self.writeFile(os.path.join(path, "class"), "Main.js", ";")
 
@@ -142,7 +142,7 @@ content: {
 
         createFolders()
         self.createjpyaml(path)
-        createSampleClasses()
+        createSampleScripts()
         createSampleAssets()
         createSampleTranslations()
 
@@ -175,8 +175,8 @@ content: {
 
     def test_get_class_by_name(self):
         for project in self.getProjects():
-            self.assertEqual(project.getClassByName("myproject.Main"), project.getClasses()["myproject.Main"])
-            self.assertEqual(type(project.getClassByName("myproject.Main")).__name__, "ClassItem")
+            self.assertEqual(project.getScriptByName("myproject.Main"), project.getScripts()["myproject.Main"])
+            self.assertEqual(type(project.getScriptByName("myproject.Main")).__name__, "ScriptItem")
 
     def test_assets(self):
         for project in self.getProjects():
@@ -187,7 +187,7 @@ content: {
             self.assertEqual(type(project.getTranslations()["myproject.de"]).__name__, "TranslationItem")
 
     def test_manual_class_fusion(self):
-        self.assertEqual(self.createCaseOne().getClassByName("myproject.Main").getText(), ";;")
+        self.assertEqual(self.createCaseOne().getScriptByName("myproject.Main").getText(), ";;")
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)

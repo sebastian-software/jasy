@@ -20,10 +20,10 @@ jasy.item.Asset module
     :undoc-members:
     :show-inheritance:
 
-jasy.item.Class module
+jasy.item.Script module
 ----------------------
 
-.. automodule:: jasy.item.Class
+.. automodule:: jasy.item.Script
     :members:
     :undoc-members:
     :show-inheritance:

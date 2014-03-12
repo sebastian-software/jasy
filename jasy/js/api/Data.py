@@ -14,7 +14,7 @@ from jasy import UserError
 class ApiData():
     """
     Container for all relevant API data.
-    Automatically generated, filled and cached by jasy.item.Class.getApiDocs().
+    Automatically generated, filled and cached by jasy.item.Script.getApiDocs().
     """
 
 

@@ -91,41 +91,41 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
     for pos, section in enumerate(("members", "properties", "events")):
         mixinItems = getattr(mixinApi, section, None)
         if mixinItems:
-            classItems = getattr(classApi, section, None)
-            if not classItems:
-                classItems = {}
-                setattr(classApi, section, classItems)
+            ScriptItems = getattr(classApi, section, None)
+            if not ScriptItems:
+                ScriptItems = {}
+                setattr(classApi, section, ScriptItems)
 
             for name in mixinItems:
 
                 # Overridden Check
-                if name in classItems:
+                if name in ScriptItems:
 
                     # If it was included, just store another origin
-                    if "origin" in classItems[name]:
-                        classItems[name]["origin"].append({
+                    if "origin" in ScriptItems[name]:
+                        ScriptItems[name]["origin"].append({
                             "name": mixinName,
                             "link": "%s:%s~%s" % (sectionLink[pos], mixinName, name)
                         })
 
                     # Otherwise add it to the overridden list
                     else:
-                        if not "overridden" in classItems[name]:
-                            classItems[name]["overridden"] = []
+                        if not "overridden" in ScriptItems[name]:
+                            ScriptItems[name]["overridden"] = []
 
-                        classItems[name]["overridden"].append({
+                        ScriptItems[name]["overridden"].append({
                             "name": mixinName,
                             "link": "%s:%s~%s" % (sectionLink[pos], mixinName, name)
                         })
 
                 # Remember where classes are included from
                 else:
-                    classItems[name] = {}
-                    classItems[name].update(mixinItems[name])
-                    if not "origin" in classItems[name]:
-                        classItems[name]["origin"] = []
+                    ScriptItems[name] = {}
+                    ScriptItems[name].update(mixinItems[name])
+                    if not "origin" in ScriptItems[name]:
+                        ScriptItems[name]["origin"] = []
 
-                    classItems[name]["origin"].append({
+                    ScriptItems[name]["origin"].append({
                         "name": mixinName,
                         "link": "%s:%s~%s" % (sectionLink[pos], mixinName, name)
                     })
@@ -333,7 +333,7 @@ class ApiWriter():
         highlightedCode = {}
 
         for project in self.__session.getProjects():
-            classes = project.getClasses()
+            classes = project.getScripts()
 
             Console.info("Loading API of project %s: %s...", Console.colorize(project.getName(), "bold"), Console.colorize("%s classes" % len(classes), "cyan"))
             Console.indent()

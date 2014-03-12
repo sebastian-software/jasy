@@ -12,7 +12,7 @@ import jasy.core.Util as Util
 import jasy.core.Console as Console
 
 import jasy.item.Asset
-import jasy.item.Class
+import jasy.item.Script
 import jasy.item.Doc
 import jasy.item.Style
 import jasy.item.Template
@@ -68,7 +68,7 @@ class Session():
         self.__itemType = {}
 
         self.addItemType("jasy.Asset", "Assets", jasy.item.Asset.AssetItem)
-        self.addItemType("jasy.Class", "Classes", jasy.item.Class.ClassItem)
+        self.addItemType("jasy.Script", "Classes", jasy.item.Script.ScriptItem)
         self.addItemType("jasy.Doc", "Docs", jasy.item.Doc.DocItem)
         self.addItemType("jasy.Style", "Styles", jasy.item.Style.StyleItem)
         self.addItemType("jasy.Template", "Templates", jasy.item.Template.TemplateItem)
@@ -214,7 +214,7 @@ class Session():
         return self.__fields
 
 
-    def getClassByName(self, className):
+    def getScriptByName(self, className):
         """
         Queries all currently registered projects for the given class and returns the class item.
         Returns None when no matching class item was found.
@@ -224,7 +224,7 @@ class Session():
         """
 
         for project in self.__projects:
-            classes = project.getClasses()
+            classes = project.getScripts()
             if className in classes:
                 return classes[className]
 
@@ -535,7 +535,8 @@ class Session():
         fileId = "%s-%s" % (baseName, checksum)
 
         # Try to reuse existing item e.g. from previous run
-        item = virtualProject.getClassByName(fileId)
+        # TODO: Use same type as item class here... not just scripts!
+        item = virtualProject.getScriptByName(fileId)
         if item:
             return item
 

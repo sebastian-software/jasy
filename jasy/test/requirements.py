@@ -119,7 +119,7 @@ requires:"""
         project = self.createProject(Session.Session(), [self.createRequirement("framework")])
         project.scan()
         requires = project.getRequires()
-        self.assertEqual(requires[0].getClassByName('framework.Base').getText(), ";")
+        self.assertEqual(requires[0].getScriptByName('framework.Base').getText(), ";")
 
     def test_subrequirement(self):
         project = self.createProject(Session.Session(), [self.createRequirement("engine", [self.createSubRequirement("framework")])])

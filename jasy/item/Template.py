@@ -9,7 +9,7 @@ from jasy import UserError
 
 import jasy.core.Console as Console
 import jasy.item.Abstract as AbstractItem
-import jasy.item.Class as ClassItem
+import jasy.item.Script as ScriptItem
 import jasy.template.Compiler as Compiler
 
 def templateFilter(text, item):
@@ -45,12 +45,12 @@ class TemplateItem(AbstractItem.AbstractItem):
         result = super().attach(path)
 
         # Force adding an matching class item to the registry
-        self.getClassItem()
+        self.getScriptItem()
 
         return result
 
 
-    def getClassItem(self):
+    def getScriptItem(self):
         """
         Returns a class representation for the template instance
         """
@@ -59,18 +59,18 @@ class TemplateItem(AbstractItem.AbstractItem):
 
         session = self.project.getSession()
         virtualProject = session.getVirtualProject()
-        classItem = virtualProject.getItem("jasy.Class", classId)
+        ScriptItem = virtualProject.getItem("jasy.Script", classId)
 
-        if classItem is None:
-            classItem = ClassItem.ClassItem(virtualProject, classId)
-            classItem.setTextFilter(templateFilter)
-            classItem.setPath(session.getVirtualFilePathFromId(classId, ".js"))
+        if ScriptItem is None:
+            ScriptItem = ScriptItem.ScriptItem(virtualProject, classId)
+            ScriptItem.setTextFilter(templateFilter)
+            ScriptItem.setPath(session.getVirtualFilePathFromId(classId, ".js"))
 
-            virtualProject.addItem("jasy.Class", classItem)
+            virtualProject.addItem("jasy.Script", ScriptItem)
 
         # Be sure that class item is up-to-date
-        if classItem.mtime != self.mtime:
-            classItem.mtime = self.mtime
-            classItem.setText(self.getText())
+        if ScriptItem.mtime != self.mtime:
+            ScriptItem.mtime = self.mtime
+            ScriptItem.setText(self.getText())
 
-        return classItem
+        return ScriptItem
