@@ -62,6 +62,9 @@ class AssetManager():
         # Make URL relative to current working path
         url = os.path.relpath(url, self.__profile.getWorkingPath())
 
+        # Use URL separators instead of system seperators
+        url.replace(os.sep, "/")
+
         # Post append asset param/query
         if matched:
             url += postFix
