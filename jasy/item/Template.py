@@ -59,18 +59,18 @@ class TemplateItem(AbstractItem.AbstractItem):
 
         session = self.project.getSession()
         virtualProject = session.getVirtualProject()
-        ScriptItem = virtualProject.getItem("jasy.Script", classId)
+        scriptItem = virtualProject.getItem("jasy.Script", classId)
 
-        if ScriptItem is None:
-            ScriptItem = ScriptItem.ScriptItem(virtualProject, classId)
-            ScriptItem.setTextFilter(templateFilter)
-            ScriptItem.setPath(session.getVirtualFilePathFromId(classId, ".js"))
+        if scriptItem is None:
+            scriptItem = ScriptItem.ScriptItem(virtualProject, classId)
+            scriptItem.setTextFilter(templateFilter)
+            scriptItem.setPath(session.getVirtualFilePathFromId(classId, ".js"))
 
-            virtualProject.addItem("jasy.Script", ScriptItem)
+            virtualProject.addItem("jasy.Script", scriptItem)
 
         # Be sure that class item is up-to-date
-        if ScriptItem.mtime != self.mtime:
-            ScriptItem.mtime = self.mtime
-            ScriptItem.setText(self.getText())
+        if scriptItem.mtime != self.mtime:
+            scriptItem.mtime = self.mtime
+            scriptItem.setText(self.getText())
 
-        return ScriptItem
+        return scriptItem
