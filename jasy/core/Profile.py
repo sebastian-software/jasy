@@ -842,7 +842,7 @@ class Profile():
                 fileName = fileName.replace("{{locale}}", locale)
 
         elif "{{id}}" in fileName:
-            fileName = fileName.replace("{{id}}", "none@%s" % (self.getMain().getRevision()))
+            fileName = fileName.replace("{{id}}", "none@%s" % (self.__session.getMain().getRevision()))
 
         return fileName
 
