@@ -165,6 +165,11 @@ class LocaleParser():
         Console.outdent()
 
 
+    def getData(self):
+        """ Returns a Python object with the parsed CLDR data """
+        return self.__data
+
+
     def export(self, path):
         Console.info("Writing result...")
         Console.info("Target directory: %s", path)
