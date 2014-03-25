@@ -36,7 +36,8 @@ if uses == "distribute":
       "polib>=1.0.3",
       "requests>=2.2",
       "CherryPy>=3.2.4",
-      "PyYAML>=3.10"
+      "PyYAML>=3.10",
+      "html5lib>=0.99"
     ],
 
     "extras_require" : {
