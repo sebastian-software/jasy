@@ -1,7 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/sebastian-software/jasy.png)](http://travis-ci.org/sebastian-software/jasy)
 [![PyPI Version](https://badge.fury.io/py/jasy.png)](http://badge.fury.io/py/jasy)
-[![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/wpbasti/)
-[![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/fastner/)
+[![Gittip](http://img.shields.io/gittip/wpbasti.png)](https://www.gittip.com/wpbasti/)
+[![Gittip](http://img.shields.io/gittip/fastner.png)](https://www.gittip.com/fastner/)
 
 
 Jasy - Web Tooling Framework
