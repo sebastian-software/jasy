@@ -19,10 +19,10 @@ __all__ = ["compile"]
 import jasy.template.Parser as Parser
 
 accessTags = [
-    "#",      # go into section / loop start
-    "?",      # if / has
-    "^",       # if not / has not
-    "$",       # insert variable
+    "#",     # go into section / loop start
+    "?",     # if / has
+    "^",     # if not / has not
+    "$",     # insert variable
     "="      # insert raw / non escaped
 ]
 
