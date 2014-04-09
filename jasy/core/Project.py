@@ -97,7 +97,7 @@ def getProjectFromPath(path, session, config=None, version=None):
 
 
 def getProjectDependencies(project, checkoutDirectory="external", updateRepositories=True):
-    """ Returns a sorted list of projects depending on the given project (including the given one) """
+    """Returns a sorted list of projects depending on the given project (including the given one)"""
 
     def __resolve(project):
 
@@ -177,6 +177,7 @@ class Project():
         - First param is the path of the project relative to the current working directory.
         - Config can be read from jasyproject.json or using constructor parameter @config
         - Parent is used for structural debug messages (dependency trees)
+
         """
 
         if not os.path.isdir(path):
@@ -361,7 +362,7 @@ class Project():
 
 
         def specificitySort(item):
-            """ Sorts for specificy of given scan path """
+            """Sorts for specificy of given scan path."""
             origPath = item["origpath"]
 
             if not "*" in origPath:
@@ -510,9 +511,7 @@ class Project():
 
 
     def getRequires(self, checkoutDirectory="external", updateRepositories=True):
-        """
-        Return the project requirements as project instances
-        """
+        """Return the project requirements as project instances."""
 
         global projects
 
@@ -594,11 +593,11 @@ class Project():
 
 
     def getFields(self):
-        """ Return the project defined fields which may be configured by the build script """
+        """Return the project defined fields which may be configured by the build script."""
         return self.__fields
 
     def getScriptByName(self, className):
-        """ Finds a class by its name."""
+        """Finds a class by its name."""
 
         try:
             return self.getScripts()[className]
@@ -630,9 +629,7 @@ class Project():
         return relpath.replace(os.sep, "/")
 
     def getRevision(self):
-        """
-        Returns the current revision of the project
-        """
+        """Returns the current revision of the project."""
 
         return Repository.getRevision(self.__path) or "unknown"
 
@@ -644,18 +641,18 @@ class Project():
     #
 
     def getCache(self):
-        """Returns the cache instance"""
+        """Returns the cache instance."""
 
         return self.__cache
 
     def clean(self):
-        """Clears the cache of the project"""
+        """Clears the cache of the project."""
 
         Console.info("Clearing cache of %s..." % self.__name)
         self.__cache.clear()
 
     def close(self):
-        """Closes the project which deletes the internal caches"""
+        """Closes the project which deletes the internal caches."""
 
         if self.__cache:
             self.__cache.close()
@@ -667,12 +664,12 @@ class Project():
         self.translations = None
 
     def pause(self):
-        """Pauses the project so that other processes could modify/access it"""
+        """Pauses the project so that other processes could modify/access it."""
 
         self.__cache.close()
 
     def resume(self):
-        """Resumes the paused project"""
+        """Resumes the paused project."""
 
         self.__cache.open()
 
@@ -687,7 +684,7 @@ class Project():
     #
 
     def getItems(self, type):
-        """ Returns all items of given type. """
+        """Returns all items of given type."""
 
         if not self.scanned:
             self.scan()
@@ -699,7 +696,7 @@ class Project():
 
 
     def getItem(self, type, name):
-        """ Return item of given type and name """
+        """Return item of given type and name."""
         items = self.getItems(type)
 
         if items and name in items:
@@ -709,7 +706,7 @@ class Project():
 
 
     def addItem(self, type, item):
-        """ Add item to item list of given type """
+        """Add item to item list of given type."""
 
         if not type in self.items:
             self.items[type] = {}
@@ -718,30 +715,40 @@ class Project():
 
 
     def getDocs(self):
-        """Returns all package docs"""
+        """Returns all package docs."""
 
         return self.getItems("jasy.Doc") or {}
 
 
     def getScripts(self):
-        """ Returns all project classes. Requires all files to have a "js" extension. """
+        """
+        Returns all project classes.
+
+        Requires all files to have a "js" extension.
+
+        """
 
         return self.getItems("jasy.Script") or {}
 
 
     def getStyles(self):
-        """ Returns all project style styles. Requires all files to have a "sht" extension. """
+        """
+        Returns all project style styles.
+
+        Requires all files to have a "sht" extension.
+
+        """
 
         return self.getItems("jasy.Style") or {}
 
 
     def getTranslations(self):
-        """ Returns all translation objects """
+        """Returns all translation objects."""
 
         return self.getItems("jasy.Translation") or {}
 
 
     def getAssets(self):
-        """ Returns all project asssets (images, stylesheets, static data, etc.). """
+        """Returns all project asssets (images, stylesheets, static data, etc.)."""
 
         return self.getItems("jasy.Asset") or {}

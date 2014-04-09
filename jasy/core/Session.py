@@ -26,9 +26,7 @@ from jasy import UserError
 
 class Session():
 
-    """
-    Manages all projects.
-    """
+    """Manages all projects."""
 
     # Environment object used for executing jasyscript.py.
     # Contains all items from the main projects jasyscript.py +
@@ -81,12 +79,13 @@ class Session():
 
     def init(self, autoInitialize=True, updateRepositories=True, scriptEnvironment=None):
         """
-        Initialize the actual session with projects
+        Initialize the actual session with projects.
 
         :param autoInitialize: Whether the projects should be automatically added when the current folder contains a valid Jasy project.
         :param updateRepositories: Whether to update repositories of all project dependencies.
         :param scriptEnvironment: API object as being used for loadLibrary to add Python features offered by projects.
         :param commandEnvironment: API object as being used for loadCommands to add Python features for any item nodes.
+
         """
 
         self.__scriptEnvironment = scriptEnvironment
@@ -133,7 +132,7 @@ class Session():
 
 
     def scan(self):
-        """ Scans all registered projects """
+        """Scans all registered projects."""
 
         # Check for whether session is still alive
         if not self.__projects:
@@ -152,7 +151,7 @@ class Session():
 
 
     def clean(self):
-        """Clears all caches of all registered projects"""
+        """Clears all caches of all registered projects."""
 
         if not self.__projects:
             return
@@ -195,8 +194,10 @@ class Session():
 
     def pause(self):
         """
-        Pauses the session. This release cache files etc. and makes
-        it possible to call other jasy processes on the same projects.
+        Pauses the session.
+
+        This release cache files etc. and makes it possible to call other jasy processes on the same projects.
+
         """
 
         Console.info("Pausing session...")
@@ -220,11 +221,12 @@ class Session():
 
     def getScriptByName(self, className):
         """
-        Queries all currently registered projects for the given class and returns the class item.
-        Returns None when no matching class item was found.
+        Queries all currently registered projects for the given class and returns the class item. Returns None when no
+        matching class item was found.
 
         :param className: Any valid classname from any of the projects.
         :type className: str
+
         """
 
         for project in self.__projects:
@@ -237,11 +239,12 @@ class Session():
 
     def getStyleByName(self, styleName):
         """
-        Queries all currently registered projects for the given style and returns the style item.
-        Returns None when no matching style item was found.
+        Queries all currently registered projects for the given style and returns the style item. Returns None when no
+        matching style item was found.
 
         :param styleName: Any valid styleName from any of the projects.
         :type styleName: str
+
         """
 
         for project in self.__projects:
@@ -275,12 +278,13 @@ class Session():
 
     def addProject(self, project):
         """
-        Adds the given project to the list of known projects. Projects should be added in order of
-        their priority. This adds the field configuration of each project to the session fields.
-        Fields must not conflict between different projects (same name).
+        Adds the given project to the list of known projects. Projects should be added in order of their priority. This
+        adds the field configuration of each project to the session fields. Fields must not conflict between different
+        projects (same name).
 
         :param project: Instance of Project to append to the list
         :type project: object
+
         """
 
         result = Project.getProjectDependencies(project, "external", self.__updateRepositories)
@@ -376,9 +380,7 @@ class Session():
 
 
     def loadCommands(self, objectName, fileName, encoding="utf-8"):
-        """
-        Loads new commands into the session wide command registry.
-        """
+        """Loads new commands into the session wide command registry."""
 
         counter = 0
         commands = self.__commands
@@ -409,7 +411,7 @@ class Session():
 
 
     def addCommand(self, name, func, resultType=None, globalName=False):
-        """ Registers the given function as a new command """
+        """Registers the given function as a new command."""
 
         if globalName and "." in name:
             raise Exception("Invalid global name: %s!" % name)
@@ -428,7 +430,7 @@ class Session():
 
 
     def getCommands(self):
-        """ Returns a dictionary of all commands """
+        """Returns a dictionary of all commands."""
 
         return self.__commands
 
@@ -451,15 +453,13 @@ class Session():
 
 
     def getProjects(self):
-        """
-        Returns all currently registered projects.
-        """
+        """Returns all currently registered projects."""
 
         return self.__projects
 
 
     def getProjectByName(self, name):
-        """Returns a project by its name"""
+        """Returns a project by its name."""
 
         for project in self.__projects:
             if project.getName() == name:
@@ -469,7 +469,7 @@ class Session():
 
 
     def getRelativePath(self, project):
-        """Returns the relative path of any project to the main project"""
+        """Returns the relative path of any project to the main project."""
 
         mainPath = self.__projects[0].getPath()
         projectPath = project.getPath()
@@ -478,10 +478,8 @@ class Session():
 
 
     def getMain(self):
-        """
-        Returns the main project which is the first project added to the
-        session and the one with the highest priority.
-        """
+        """Returns the main project which is the first project added to the session and the one with the highest
+        priority."""
 
         if self.__projects:
             return self.__projects[0]
@@ -491,9 +489,11 @@ class Session():
 
     def getVirtualProject(self):
         """
-        Returns the virtual project for this application. The project
-        offers storage for dynamically created JavaScript classes and
-        other files. Storage is kept intact between different Jasy sessions.
+        Returns the virtual project for this application.
+
+        The project offers storage for dynamically created JavaScript classes and other files. Storage is kept intact
+        between different Jasy sessions.
+
         """
 
         # Create only once per session
@@ -517,8 +517,10 @@ class Session():
     def getVirtualFilePathFromId(self, fileId, extension=None):
         """
         Returns a valid virtual path for the given file item ID.
-        Supports adding an optional extension for files where the extension
-        is not part of the idea (effectively this are most of them, but not assets)
+
+        Supports adding an optional extension for files where the extension is not part of the idea (effectively this
+        are most of them, but not assets)
+
         """
 
         virtualProject = self.getVirtualProject()
@@ -564,10 +566,10 @@ class Session():
 
     def getAvailableTranslations(self):
         """
-        Returns a set of all available translations
+        Returns a set of all available translations.
 
-        This is the sum of all projects so even if only one
-        project supports "fr_FR" then it will be included here.
+        This is the sum of all projects so even if only one project supports "fr_FR" then it will be included here.
+
         """
 
         supported = set()
@@ -578,10 +580,8 @@ class Session():
 
 
     def getTranslationBundle(self, language=None):
-        """
-        Returns a translation object for the given language containing
-        all relevant translation files for the current project set.
-        """
+        """Returns a translation object for the given language containing all relevant translation files for the current
+        project set."""
 
         if language is None:
             return None

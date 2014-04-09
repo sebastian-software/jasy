@@ -347,7 +347,7 @@ class Tokenizer(object):
 
 
     def lexUnit(self):
-        """Parses units like %, cm, inch, px, etc. """
+        """Parses units like %, cm, inch, px, etc."""
 
         start = self.cursor
         input = self.source
@@ -600,7 +600,7 @@ class Tokenizer(object):
 
 
     def unget(self):
-        """ Match depends on unget returning undefined."""
+        """Match depends on unget returning undefined."""
         self.lookahead += 1
 
         if self.lookahead == 4:

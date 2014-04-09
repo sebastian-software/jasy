@@ -13,9 +13,11 @@ import jasy.parse.ScopeData
 def scan(tree):
     """
     Scans the given tree and attaches variable data instances (core/ScopeData.py) to every scope (aka function).
+
     This data is being stored independently from the real tree so that if you modifiy the tree the
     data is not automatically updated. This means that every time you modify the tree heavily,
     it might make sense to re-execute this method to bring it in sync to the current tree structure.
+
     """
 
     return __scanScope(tree)
@@ -27,9 +29,7 @@ def scan(tree):
 #
 
 def __scanNode(node, data):
-    """
-    Scans nodes recursively and collects all variables which are declared and accessed.
-    """
+    """Scans nodes recursively and collects all variables which are declared and accessed."""
 
     if node.type == "mixin":
         data.declared.add(node.name)
@@ -90,9 +90,7 @@ def __scanNode(node, data):
 
 
 def __combinePackage(node):
-    """
-    Combines a package variable (e.g. foo.bar.baz) into one string
-    """
+    """Combines a package variable (e.g. foo.bar.baz) into one string."""
 
     result = [node.value]
     parent = node.parent
@@ -105,9 +103,7 @@ def __combinePackage(node):
 
 
 def __scanScope(node):
-    """
-    Scans a scope and collects statistics on variable declaration and usage
-    """
+    """Scans a scope and collects statistics on variable declaration and usage."""
 
     # Initialize statistics object for this scope
     data = jasy.parse.ScopeData.ScopeData()
@@ -147,9 +143,7 @@ def __scanScope(node):
 
 
 def __addParams(node, data):
-    """
-    Adds all param names from outer function to the definition list
-    """
+    """Adds all param names from outer function to the definition list."""
 
     rel = getattr(node, "rel", None)
     if rel == "rules" and node.parent.type == "mixin":

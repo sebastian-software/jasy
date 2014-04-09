@@ -10,10 +10,8 @@ import jasy.item.Abstract as AbstractItem
 
 class ResolverError(Exception):
 
-    """
-    Error which is throws when resolving items could be be finished because of
-    items which could not be found or are of an unexpected type.
-    """
+    """Error which is throws when resolving items could be be finished because of items which could not be found or are
+    of an unexpected type."""
 
     pass
 
@@ -22,7 +20,9 @@ class Resolver():
 
     """
     Resolves dependencies between items.
+
     This class is not type depended e.g. is used for both scripts and styles.
+
     """
 
     def __init__(self, profile):
@@ -47,9 +47,7 @@ class Resolver():
 
 
     def add(self, nameOrItem, prepend=False):
-        """
-        Adds an item by its name or via the item instance
-        """
+        """Adds an item by its name or via the item instance."""
 
         if isinstance(nameOrItem, str):
             if not nameOrItem in self.items:
@@ -73,9 +71,7 @@ class Resolver():
 
 
     def remove(self, nameOrItem):
-        """
-        Removes an item via its name or via the item instance
-        """
+        """Removes an item via its name or via the item instance."""
 
         for item in self.__required:
             if item is nameOrItem or item.getId() == nameOrItem:
@@ -108,7 +104,7 @@ class Resolver():
 
 
     def getIncluded(self):
-        """ Returns a final set of classes after resolving dependencies """
+        """Returns a final set of classes after resolving dependencies."""
 
         if self.__included:
             return self.__included
@@ -128,7 +124,7 @@ class Resolver():
 
 
     def __resolveDependencies(self, item, collection):
-        """ Internal resolver engine which works recursively through all dependencies """
+        """Internal resolver engine which works recursively through all dependencies."""
 
         collection.add(item)
         dependencies = self.getItemDependencies(item)

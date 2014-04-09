@@ -103,7 +103,9 @@ class Proxy(object):
     def default(self, *args, **query):
         """
         This method returns the content of existing files on the file system.
+
         Query string might be used for cache busting and are otherwise ignored.
+
         """
 
         url = self.config["host"] + "/".join(args)
@@ -200,7 +202,9 @@ class Static(object):
     def default(self, *args, **query):
         """
         This method returns the content of existing files on the file system.
+
         Query string might be used for cache busting and are otherwise ignored.
+
         """
 
         # Append special header to all responses
@@ -352,12 +356,12 @@ class Server:
 
     def setRoutes(self, routes):
         """
-        Adds the given routes to the server configuration. Routes can be used
-        to add special top level entries to the different features of the integrated
-        webserver either mirroring a remote server or delivering a local directory.
+        Adds the given routes to the server configuration. Routes can be used to add special top level entries to the
+        different features of the integrated webserver either mirroring a remote server or delivering a local directory.
 
-        The parameters is a dict where every key is the name of the route
-        and the value is the configuration of that route.
+        The parameters is a dict where every key is the name of the route and the value is the configuration of that
+        route.
+
         """
 
         Console.info("Adding routes...")
@@ -380,6 +384,7 @@ class Server:
         Starts the web server and blocks execution.
 
         Note: This stops further execution of the current task or method.
+
         """
 
         app = cherrypy.tree.mount(self.__root, "", self.__config)

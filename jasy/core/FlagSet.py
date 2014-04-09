@@ -8,8 +8,10 @@ class FlagSet:
 
     """
     Configures an formatting object which can be used to compress classes afterwards.
-    The optimization set is frozen after initialization which also generates the unique
-    key based on the given formatting options.
+
+    The optimization set is frozen after initialization which also generates the unique key based on the given
+    formatting options.
+
     """
 
     __key = None
@@ -25,9 +27,7 @@ class FlagSet:
 
 
     def has(self, key):
-        """
-        Whether the given formatting is enabled.
-        """
+        """Whether the given formatting is enabled."""
 
         return key in self.__data
 
@@ -43,9 +43,7 @@ class FlagSet:
 
 
     def getKey(self):
-        """
-        Returns a unique key to identify this formatting set
-        """
+        """Returns a unique key to identify this formatting set."""
 
         if self.__key is None:
             self.__key = "+".join(sorted(self.__data))

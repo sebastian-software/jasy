@@ -4,9 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-"""
-A module consisting of some often used file system actions in easy to use unix tradition.
-"""
+"""A module consisting of some often used file system actions in easy to use unix tradition."""
 
 import shutil
 import os
@@ -16,7 +14,7 @@ import jasy.core.Base62 as Base62
 
 
 def cp(src, dst):
-    """Copies a file"""
+    """Copies a file."""
 
     # First test for existance of destination directory
     mkdir(os.path.dirname(dst))
@@ -25,12 +23,12 @@ def cp(src, dst):
 
 
 def cpdir(src, dst):
-    """Copies a directory"""
+    """Copies a directory."""
     return shutil.copytree(src, dst)
 
 
 def exists(name):
-    """Returns whether the given file or folder exists"""
+    """Returns whether the given file or folder exists."""
     return os.path.exists(name)
 
 
@@ -46,12 +44,12 @@ def mkdir(name):
 
 
 def mv(src, dst):
-    """Moves files or directories"""
+    """Moves files or directories."""
     return shutil.move(src, dst)
 
 
 def rm(name):
-    """Removes the given file"""
+    """Removes the given file."""
     return os.remove(name)
 
 
@@ -61,7 +59,12 @@ def rmdir(name):
 
 
 def read(name, encoding="utf-8"):
-    """Read the given file. Returns None when file could not be found/opended"""
+    """
+    Read the given file.
+
+    Returns None when file could not be found/opended
+
+    """
 
     handle = open(name, mode="r", encoding=encoding)
     content = handle.read()
@@ -71,7 +74,7 @@ def read(name, encoding="utf-8"):
 
 
 def write(dst, content, encoding="utf-8"):
-    """Writes the content to the destination file name"""
+    """Writes the content to the destination file name."""
 
     # First test for existance of destination directory
     mkdir(os.path.dirname(dst))
@@ -83,7 +86,7 @@ def write(dst, content, encoding="utf-8"):
 
 
 def syncfile(src, dst):
-    """Same as cp() but only do copying when source file is newer than target file"""
+    """Same as cp() but only do copying when source file is newer than target file."""
 
     if not os.path.isfile(src):
         raise Exception("No such file: %s" % src)

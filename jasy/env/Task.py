@@ -4,9 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-"""
-Tasks are basically functions with some managment code allow them to run in jasyscript.py
-"""
+"""Tasks are basically functions with some managment code allow them to run in jasyscript.py."""
 
 import types
 import os
@@ -30,7 +28,7 @@ class Task:
 
 
     def __init__(self, func, **curry):
-        """Creates a task bound to the given function and currying in static parameters"""
+        """Creates a task bound to the given function and currying in static parameters."""
 
         self.func = func
         self.name = func.__name__
@@ -83,7 +81,7 @@ class Task:
 
 
 def task(*args, **kwargs):
-    """ Specifies that this function is a task. """
+    """Specifies that this function is a task."""
 
     if len(args) == 1:
 
@@ -116,7 +114,7 @@ __taskRegistry = {}
 
 
 def addTask(task):
-    """Registers the given task with its name"""
+    """Registers the given task with its name."""
 
     if task.name in __taskRegistry:
         Console.debug("Overriding task: %s" % task.name)
@@ -127,7 +125,7 @@ def addTask(task):
 
 
 def executeTask(taskname, **kwargs):
-    """Executes the given task by name with any optional named arguments"""
+    """Executes the given task by name with any optional named arguments."""
 
     if taskname in __taskRegistry:
         try:
@@ -143,7 +141,7 @@ def executeTask(taskname, **kwargs):
 
 
 def printTasks(indent=16):
-    """Prints out a list of all avaible tasks and their descriptions"""
+    """Prints out a list of all avaible tasks and their descriptions."""
 
     for name in sorted(__taskRegistry):
         obj = __taskRegistry[name]
@@ -189,14 +187,24 @@ def getCommand():
 
 
 def setOptions(options):
-    """Sets currently configured command line options. Mainly used for printing help screens."""
+    """
+    Sets currently configured command line options.
+
+    Mainly used for printing help screens.
+
+    """
 
     global __options
     __options = options
 
 
 def getOptions():
-    """Returns the options as passed to the jasy command. Useful for printing all command line arguments."""
+    """
+    Returns the options as passed to the jasy command.
+
+    Useful for printing all command line arguments.
+
+    """
 
     global __options
     return __options
@@ -206,8 +214,8 @@ def runTask(project, task, **kwargs):
     """
     Executes the given task of the given projects.
 
-    This happens inside a new sandboxed session during which the
-    current session is paused/resumed automatically.
+    This happens inside a new sandboxed session during which the current session is paused/resumed automatically.
+
     """
 
     remote = session.getProjectByName(project)

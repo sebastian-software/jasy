@@ -14,9 +14,7 @@ class OperationError(Exception):
 
 
 def castToBool(node):
-    """
-    Returns the boolean Python representation for the given Node
-    """
+    """Returns the boolean Python representation for the given Node."""
 
     if node.type == "false" or node.type == "null":
         return False
@@ -33,10 +31,10 @@ def castToBool(node):
 def compute(node, first=None, second=None, operator=None, session=None):
     """
     Recursively processes given operation node.
-    Consumes optional hints for the first/second child of an operation as
-    well as the operator itself (in cases where it could not be figured out
-    automatically). The session is useful for supporting commands
-    inside of operations.
+
+    Consumes optional hints for the first/second child of an operation as well as the operator itself (in cases where it
+    could not be figured out automatically). The session is useful for supporting commands inside of operations.
+
     """
 
     # Fill gaps in empty arguments

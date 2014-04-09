@@ -25,9 +25,7 @@ class Error(Exception):
 
 
 def optimize(node):
-    """
-    Node to optimize with the global variables to ignore as names
-    """
+    """Node to optimize with the global variables to ignore as names."""
 
     blocked = set(node.scope.shared.keys())
     blocked.update(node.scope.modified)

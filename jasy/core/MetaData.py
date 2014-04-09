@@ -15,6 +15,7 @@ class MetaData:
 
     Hint: Must be a clean data class without links to other
     systems for optiomal cachability using Pickle
+
     """
 
     __slots__ = ["requires", "optionals", "breaks", "assets"]
@@ -30,9 +31,7 @@ class MetaData:
 
 
     def parse(self, node):
-        """
-        The internal inspection routine to add relevant data from comments
-        """
+        """The internal inspection routine to add relevant data from comments."""
 
         # Parse meta
         if node.type == "meta":

@@ -26,7 +26,12 @@ class Tests(unittest.TestCase):
         return Compressor.Compressor().compress(node)
 
     def test_var_single(self):
-        """ y is unused. Removed whole var block. """
+        """
+        y is unused.
+
+        Removed whole var block.
+
+        """
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -39,7 +44,12 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_multi_last(self):
-        """ y is unused. Removes list entry. """
+        """
+        y is unused.
+
+        Removes list entry.
+
+        """
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -51,7 +61,12 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_multi_first(self):
-        """ y is unused. Removes list entry."""
+        """
+        y is unused.
+
+        Removes list entry.
+
+        """
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -63,7 +78,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_dep_closure(self):
-        """ Removes y first and in a second run removes x as well. """
+        """Removes y first and in a second run removes x as well."""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -78,7 +93,7 @@ class Tests(unittest.TestCase):
 
 
     def test_var_ief(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -91,7 +106,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_ief_middle(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -104,7 +119,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_ief_end(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -119,7 +134,7 @@ class Tests(unittest.TestCase):
 
 
     def test_var_ief_noparens(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -132,7 +147,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_ief_noparens_middle(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -145,7 +160,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_var_ief_noparens_end(self):
-        """  """
+        """"""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -160,7 +175,7 @@ class Tests(unittest.TestCase):
 
 
     def test_object(self):
-        """ Non expressions must be protected with parens. """
+        """Non expressions must be protected with parens."""
 
         self.assertEqual(self.process(
             '''
@@ -174,7 +189,7 @@ class Tests(unittest.TestCase):
             'function abc(){({x:1})};')
 
     def test_object_multi(self):
-        """ Non expressions must be protected with parens. """
+        """Non expressions must be protected with parens."""
 
         self.assertEqual(self.process(
             '''
@@ -190,7 +205,7 @@ class Tests(unittest.TestCase):
             'function abc(){({x:1});({x:2})};')
 
     def test_object_multi_others(self):
-        """ Non expressions must be protected with parens. """
+        """Non expressions must be protected with parens."""
 
         self.assertEqual(self.process(
             '''
@@ -207,7 +222,7 @@ class Tests(unittest.TestCase):
             'function abc(){({x:1});var str="hello";({x:2});return str};')
 
     def test_var_dep_blocks(self):
-        """ y contains operation so could not be removed and x is still in use. """
+        """y contains operation so could not be removed and x is still in use."""
         self.assertEqual(self.process(
             '''
             function wrapper() {
@@ -219,7 +234,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_params_first(self):
-        """ x is unused but could not be removed. """
+        """x is unused but could not be removed."""
         self.assertEqual(self.process(
             '''
             function a(x, y) {
@@ -230,7 +245,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_params_middle(self):
-        """ y is unused but could not be removed. """
+        """y is unused but could not be removed."""
         self.assertEqual(self.process(
             '''
             function a(x, y, z) {
@@ -241,7 +256,7 @@ class Tests(unittest.TestCase):
         )
 
     def test_params_last(self):
-        """ y is unused and can be removed """
+        """y is unused and can be removed."""
         self.assertEqual(self.process(
             '''
             function a(x, y) {

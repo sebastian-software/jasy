@@ -16,7 +16,7 @@ Contains image format detection classes. Once the format is detect it supports i
 
 class ImgFile(object):
 
-    """Abstract base class for all image types"""
+    """Abstract base class for all image types."""
 
     def __init__(self, filename):
         try:
@@ -47,7 +47,7 @@ class ImgFile(object):
 # http://www.w3.org/Graphics/GIF/spec-gif89a.txt
 class GifFile(ImgFile):
 
-    """Class for parsing GIF files"""
+    """Class for parsing GIF files."""
 
     def verify(self):
         self.fp.seek(0)
@@ -69,7 +69,7 @@ class GifFile(ImgFile):
 # http://www.libmng.com/pub/png/spec/1.2/png-1.2-pdg.html#Structure
 class PngFile(ImgFile):
 
-    """Class for parsing PNG files"""
+    """Class for parsing PNG files."""
 
     def type(self):
         return "png"
@@ -140,8 +140,10 @@ class ImgInfo(object):
 
     def getSize(self):
         """
-        Returns the image sizes of png, gif and jpeg files as
+        Returns the image sizes of png, gif and jpeg files as.
+
         (width, height) tuple
+
         """
 
         filename = self.__filename
@@ -159,7 +161,7 @@ class ImgInfo(object):
         return None
 
     def getInfo(self):
-        ''' Returns (width, height, "type") of the image'''
+        """Returns (width, height, "type") of the image."""
         filename = self.__filename
         classes = self.classes
 

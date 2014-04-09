@@ -193,9 +193,11 @@ def __optimize(node, compressor):
 
 def reworkElse(node, elsePart):
     """
-    If an if ends with a return/throw we are able to inline the content
-    of the else to the same parent as the if resides into. This method
-    deals with all the nasty details of this operation.
+    If an if ends with a return/throw we are able to inline the content of the else to the same parent as the if resides
+    into.
+
+    This method deals with all the nasty details of this operation.
+
     """
 
     target = node.parent
@@ -236,11 +238,8 @@ def reworkElse(node, elsePart):
 
 
 def endsWithReturnOrThrow(node):
-    """
-    Used by the automatic elsePart removal logic to find out whether
-    the given node ends with a return or throw which is bascially the allowance
-    to remove the else keyword as this is not required to keep the logic intact.
-    """
+    """Used by the automatic elsePart removal logic to find out whether the given node ends with a return or throw which
+    is bascially the allowance to remove the else keyword as this is not required to keep the logic intact."""
 
     if node.type in ("return", "throw"):
         return True
@@ -274,10 +273,8 @@ def mergeParts(node, thenPart, elsePart, condition, compressor):
 
 
 def cleanParens(node):
-    """
-    Automatically tries to remove superfluous parens which are sometimes added for more clearance
-    and readability but which are not required for parsing and just produce overhead.
-    """
+    """Automatically tries to remove superfluous parens which are sometimes added for more clearance and readability but
+    which are not required for parsing and just produce overhead."""
     parent = node.parent
 
     if node.type == "function":
@@ -337,9 +334,11 @@ def cleanParens(node):
 
 def fixParens(node):
     """
-    Automatically wraps the given node into parens when it was moved into
-    another block and is not parsed there in the same way as it was the case previously.
+    Automatically wraps the given node into parens when it was moved into another block and is not parsed there in the
+    same way as it was the case previously.
+
     The method needs to be called *after* the node has been moved to the target node.
+
     """
     parent = node.parent
 
@@ -355,14 +354,13 @@ def fixParens(node):
 
 def combineToCommaExpression(node):
     """
-    This method tries to combine a block with multiple statements into
-    one semicolon statement with a comma expression containing all expressions
-    from the previous block. This only works when the block exclusively consists
-    of expressions as this do not work with other statements. Still this conversion
-    reduces the size impact of many blocks and leads to the removal of a lot of
-    curly braces in the result code.
+    This method tries to combine a block with multiple statements into one semicolon statement with a comma expression
+    containing all expressions from the previous block. This only works when the block exclusively consists of
+    expressions as this do not work with other statements. Still this conversion reduces the size impact of many blocks
+    and leads to the removal of a lot of curly braces in the result code.
 
     Example: {x++;y+=3} => x++,x+=3
+
     """
 
     if node is None or node.type != "block":
@@ -403,12 +401,11 @@ def combineToCommaExpression(node):
 
 def compactIf(node, thenPart, condition):
     """
-    Reduces the size of a if statement (without elsePart) using boolean operators
-    instead of the typical keywords e.g.
-    "if(something)make()" is translated to "something&&make()"
-    which is two characters shorter. This however only works when the
-    thenPart is only based on expressions and does not contain other
-    statements.
+    Reduces the size of a if statement (without elsePart) using boolean operators instead of the typical keywords e.g.
+    "if(something)make()" is translated to "something&&make()" which is two characters shorter.
+
+    This however only works when the thenPart is only based on expressions and does not contain other statements.
+
     """
 
     thenExpression = getattr(thenPart, "expression", None)
@@ -489,10 +486,8 @@ def containsIf(node):
 
 
 def combineAssignments(condition, thenExpression, elseExpression, compressor):
-    """
-    Combines then and else expression to one assignment when they both assign
-    to the same target node and using the same operator.
-    """
+    """Combines then and else expression to one assignment when they both assign to the same target node and using the
+    same operator."""
 
     if thenExpression.type == "assign" and elseExpression.type == "assign":
         operator = getattr(thenExpression, "assignOp", None)
@@ -507,7 +502,7 @@ def combineAssignments(condition, thenExpression, elseExpression, compressor):
 
 
 def combineExpressions(condition, thenExpression, elseExpression):
-    """ Combines then and else expression using a hook statement. """
+    """Combines then and else expression using a hook statement."""
 
     hook = createHook(condition, thenExpression, elseExpression)
     semicolon = Node.Node(condition.tokenizer, "semicolon")
@@ -521,7 +516,7 @@ def combineExpressions(condition, thenExpression, elseExpression):
 
 
 def createReturn(value):
-    """ Creates a return statement with the given value """
+    """Creates a return statement with the given value."""
 
     ret = Node.Node(value.tokenizer, "return")
     ret.append(value, "value")
@@ -529,7 +524,7 @@ def createReturn(value):
 
 
 def createHook(condition, thenPart, elsePart):
-    """ Creates a hook expression with the given then/else parts """
+    """Creates a hook expression with the given then/else parts."""
 
     hook = Node.Node(condition.tokenizer, "hook")
     hook.append(condition, "condition")

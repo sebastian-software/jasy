@@ -61,9 +61,7 @@ class TranslationItem(AbstractItem.AbstractItem):
 
 
     def generateId(self, relpath, package):
-        """
-        Generates the fileId of this item as being used by other modules
-        """
+        """Generates the fileId of this item as being used by other modules."""
 
         if package:
             fileId = "%s/" % package
@@ -107,9 +105,7 @@ class TranslationItem(AbstractItem.AbstractItem):
 
 
     def export(self, classes, formatted=True):
-        """
-        Exports the translation table as JSON based on the given set of classes
-        """
+        """Exports the translation table as JSON based on the given set of classes."""
 
         # Based on the given class list figure out which translations are actually used
         relevantTranslations = set()
@@ -130,16 +126,12 @@ class TranslationItem(AbstractItem.AbstractItem):
 
 
     def getTable(self):
-        """
-        Returns the translation table
-        """
+        """Returns the translation table."""
 
         return self.table
 
 
     def getLanguage(self):
-        """
-        Returns the language of the translation file
-        """
+        """Returns the language of the translation file."""
 
         return self.language

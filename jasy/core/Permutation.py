@@ -16,8 +16,11 @@ registry = {}
 
 def getPermutation(combination):
     """
-    Small wrapper to omit double creation of identical permutations in filter() method
-    As these instances don't have any reference to session etc. they are actually cacheable globally.
+    Small wrapper to omit double creation of identical permutations in filter() method As these instances don't have any
+    reference to session etc.
+
+    they are actually cacheable globally.
+
     """
 
     key = str(combination)
@@ -30,7 +33,7 @@ def getPermutation(combination):
 
 class Permutation:
 
-    """Object to store a single kind of permutation"""
+    """Object to store a single kind of permutation."""
 
     def __init__(self, combination):
 
@@ -40,7 +43,7 @@ class Permutation:
 
 
     def __buildKey(self, combination):
-        """Computes the permutations' key based on the given combination"""
+        """Computes the permutations' key based on the given combination."""
 
         result = []
         for key in sorted(combination):
@@ -61,12 +64,12 @@ class Permutation:
 
 
     def has(self, key):
-        """Whether the permutation holds a value for the given key"""
+        """Whether the permutation holds a value for the given key."""
         return key in self.__combination
 
 
     def get(self, key):
-        """Returns the value of the given key in the permutation"""
+        """Returns the value of the given key in the permutation."""
 
         if key in self.__combination:
             return self.__combination[key]
@@ -75,12 +78,12 @@ class Permutation:
 
 
     def getKey(self):
-        """Returns the computed key from this permutation"""
+        """Returns the computed key from this permutation."""
         return self.__key
 
 
     def getChecksum(self):
-        """Returns the computed (SHA1) checksum based on the key of this permutation"""
+        """Returns the computed (SHA1) checksum based on the key of this permutation."""
         return self.__checksum
 
 

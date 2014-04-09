@@ -9,9 +9,7 @@ import jasy.abstract.Sorter as AbstractSorter
 
 class Sorter(AbstractSorter.AbstractSorter):
 
-    """
-    Sorter for Script items
-    """
+    """Sorter for Script items."""
 
     def __init__(self, resolver):
         super().__init__(resolver)

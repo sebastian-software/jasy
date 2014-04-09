@@ -13,20 +13,22 @@ import jasy.vcs.Svn as Svn
 
 def isUrl(url):
     """
-    Figures out whether the given string is a valid Git repository URL
+    Figures out whether the given string is a valid Git repository URL.
 
     :param url: URL to the repository
     :type url: string
+
     """
     return Git.isUrl(url)
 
 
 def getType(url):
     """
-    Returns repository type of the given URL
+    Returns repository type of the given URL.
 
     :param url: URL to the repository
     :type url: string
+
     """
     if Git.isUrl(url):
         return "git"
@@ -36,12 +38,13 @@ def getType(url):
 
 def getTargetFolder(url, version=None):
     """
-    Returns the target folder name based on the URL and version using SHA1 checksums
+    Returns the target folder name based on the URL and version using SHA1 checksums.
 
     :param url: URL to the repository
     :type url: string
     :param version: Version to use
     :type url: string
+
     """
 
     if Git.isUrl(url):
@@ -71,6 +74,7 @@ def update(url, version=None, path=None, update=True):
     :type url: string
     :param version: Eneable/disable update functionality
     :type url: string
+
     """
 
     revision = None
@@ -84,9 +88,7 @@ def update(url, version=None, path=None, update=True):
 
 
 def getRevision(path=None):
-    """
-    Returns the current revision of the repository in the given path
-    """
+    """Returns the current revision of the repository in the given path."""
 
     old = os.getcwd()
     revision = None
@@ -122,6 +124,7 @@ def clean(path=None):
 
     :param url: Path to the local repository
     :type url: string
+
     """
 
     old = os.getcwd()
@@ -141,12 +144,12 @@ def clean(path=None):
 
 def distclean(path=None):
     """
-    Cleans repository from untracked and ignored files. This method
-    is pretty agressive in a way that it deletes all non repository managed
-    files e.g. external folder, uncommitted changes, unstaged files, etc.
+    Cleans repository from untracked and ignored files. This method is pretty agressive in a way that it deletes all non
+    repository managed files e.g. external folder, uncommitted changes, unstaged files, etc.
 
     :param url: Path to the local repository
     :type url: string
+
     """
 
     old = os.getcwd()

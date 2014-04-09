@@ -32,7 +32,9 @@ def isConfigName(fileName, requiredBaseName=None):
 def findConfig(fileName):
     """
     Returns the name of a config file based on the given base file name (without extension).
+
     Returns either a filename which endswith .yaml, .json or None when no file was found.
+
     """
 
     fileExt = os.path.splitext(fileName)[1]
@@ -52,10 +54,7 @@ def findConfig(fileName):
 
 
 def loadConfig(fileName, encoding="utf-8"):
-    """
-    Loads the given configuration file (filename without extension) and
-    returns the parsed object structure
-    """
+    """Loads the given configuration file (filename without extension) and returns the parsed object structure."""
 
     configName = findConfig(fileName)
     if configName is None:
@@ -76,8 +75,10 @@ def loadConfig(fileName, encoding="utf-8"):
 
 def writeConfig(data, fileName, indent=2, encoding="utf-8"):
     """
-    Writes the given data structure to the given file name. Based on the given extension
-    a different file format is choosen. Currently use either .yaml or .json.
+    Writes the given data structure to the given file name.
+
+    Based on the given extension a different file format is choosen. Currently use either .yaml or .json.
+
     """
 
     fileHandle = open(fileName, mode="w", encoding=encoding)
@@ -100,8 +101,10 @@ def writeConfig(data, fileName, indent=2, encoding="utf-8"):
 def matchesType(value, expected):
     """
     Returns boolean for whether the given value matches the given type.
+
     Supports all basic JSON supported value types:
     primitive, integer/int, float, number/num, string/str, boolean/bool, dict/map, array/list, ...
+
     """
 
     result = type(value)
@@ -125,31 +128,22 @@ def matchesType(value, expected):
 
 class Config:
 
-    """
-    Wrapper around YAML/JSON with easy to use import tools for using question files,
-    command line arguments, etc.
-    """
+    """Wrapper around YAML/JSON with easy to use import tools for using question files, command line arguments, etc."""
 
     def __init__(self, data=None):
-        """
-        Initialized configuration object with destination file name.
-        """
+        """Initialized configuration object with destination file name."""
 
         self.__data = data or {}
 
 
     def debug(self):
-        """
-        Prints data to the console
-        """
+        """Prints data to the console."""
 
         print(self.__data)
 
 
     def export(self):
-        """
-        Returns a flat data structure of the internal data
-        """
+        """Returns a flat data structure of the internal data."""
 
         result = {}
 
@@ -170,9 +164,8 @@ class Config:
 
 
     def injectValues(self, parse=True, **argv):
-        """
-        Injects a list of arguments into the configuration file, typically used for injecting command line arguments
-        """
+        """Injects a list of arguments into the configuration file, typically used for injecting command line
+        arguments."""
 
         for key in argv:
             self.set(key, argv[key], parse=parse)
@@ -180,11 +173,11 @@ class Config:
 
     def loadValues(self, fileName, optional=False, encoding="utf-8"):
         """
-        Imports the values of the given config file
-        Returns True when the file was found and processed.
+        Imports the values of the given config file Returns True when the file was found and processed.
 
         Note: Supports dotted names to store into sub trees
         Note: This method overrides keys when they are already defined!
+
         """
 
         configFile = findConfig(fileName)
@@ -204,7 +197,9 @@ class Config:
     def readQuestions(self, fileName, force=False, autoDelete=True, optional=False, encoding="utf-8"):
         """
         Reads the given configuration file with questions and deletes the file afterwards (by default).
+
         Returns True when the file was found and processed.
+
         """
 
         configFile = findConfig(fileName)
@@ -235,7 +230,9 @@ class Config:
     def executeScript(self, fileName, autoDelete=True, optional=False, encoding="utf-8"):
         """
         Executes the given script for configuration proposes and deletes the file afterwards (by default).
+
         Returns True when the file was found and processed.
+
         """
 
         if not os.path.exists(fileName):
@@ -259,9 +256,7 @@ class Config:
 
 
     def has(self, name):
-        """
-        Returns whether there is a value for the given field name.
-        """
+        """Returns whether there is a value for the given field name."""
 
         if not "." in name:
             return name in self.__data
@@ -279,9 +274,7 @@ class Config:
 
 
     def get(self, name, default=None):
-        """
-        Returns the value of the given field or None when field is not set
-        """
+        """Returns the value of the given field or None when field is not set."""
 
         if not "." in name:
             return getKey(self.__data, name, default)
@@ -349,9 +342,7 @@ class Config:
 
 
     def set(self, name, value, accept=None, parse=False):
-        """
-        Saves the given value under the given field
-        """
+        """Saves the given value under the given field."""
 
         # Don't accept None value
         if value is None:
@@ -393,8 +384,6 @@ class Config:
 
 
     def write(self, fileName, indent=2, encoding="utf-8"):
-        """
-        Uses config writer to write the configuration file to the application
-        """
+        """Uses config writer to write the configuration file to the application."""
 
         writeConfig(self.__data, fileName, indent=indent, encoding=encoding)

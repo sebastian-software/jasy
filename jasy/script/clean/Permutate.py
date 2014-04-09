@@ -11,7 +11,7 @@ from jasy.script.util import *
 
 
 def __translateToJS(code):
-    """ Returns the code equivalent of the stored value for the given key """
+    """Returns the code equivalent of the stored value for the given key."""
 
     if code is None:
         pass
@@ -30,7 +30,7 @@ def __translateToJS(code):
 
 
 def patch(node, permutation):
-    """ Replaces all occourences with incoming values """
+    """Replaces all occourences with incoming values."""
 
     modified = False
 

@@ -27,9 +27,7 @@ import jasy.item.Script as ScriptItem
 
 class Profile():
 
-    """
-    Configuration object for the build profile of the current task
-    """
+    """Configuration object for the build profile of the current task."""
 
     #
     # CONFIGURATION DATA STRUCTURE
@@ -155,7 +153,9 @@ class Profile():
     def getProjects(self):
         """
         Returns all currently registered projects.
+
         Injects locale project when current permutation has configured a locale.
+
         """
 
         projects = self.__session.getProjects()
@@ -273,14 +273,14 @@ class Profile():
     #
 
     def getDestinationPath(self):
-        """ Relative or path of the destination folder """
+        """Relative or path of the destination folder."""
         return self.getValue("destination-path", self.__session.getCurrentTask())
 
     def setDestinationPath(self, path):
         self.setValue("destination-path", path)
 
     def getDestinationUrl(self):
-        """ The same as destination folder but from the URL/server perspective """
+        """The same as destination folder but from the URL/server perspective."""
         return self.getValue("destination-url")
 
     def setDestinationUrl(self, url):
@@ -299,28 +299,28 @@ class Profile():
     #
 
     def getCssOutputFolder(self):
-        """ Name of the folder inside the destination folder for storing generated style sheets """
+        """Name of the folder inside the destination folder for storing generated style sheets."""
         return self.getOutputFolder("css", "css")
 
     def setCssOutputFolder(self, folder):
         return self.setOutputFolder("css", folder)
 
     def getJsOutputFolder(self):
-        """ Name of the folder inside the destination folder for storing generated script files """
+        """Name of the folder inside the destination folder for storing generated script files."""
         return self.getOutputFolder("js", "js")
 
     def setJsOutputFolder(self, folder):
         return self.setOutputFolder("js", folder)
 
     def getAssetOutputFolder(self):
-        """ Name of the folder inside the destination folder for storing used assets """
+        """Name of the folder inside the destination folder for storing used assets."""
         return self.getOutputFolder("asset", "asset")
 
     def setAssetOutputFolder(self, folder):
         return self.setOutputFolder("asset", folder)
 
     def getTemplateOutputFolder(self):
-        """ Name of the folder inside the destination folder for storing compiled templates """
+        """Name of the folder inside the destination folder for storing compiled templates."""
         return self.getOutputFolder("template", "tmpl")
 
     def setTemplateOutputFolder(self, folder):
@@ -410,9 +410,7 @@ class Profile():
     #
 
     def __getEnvironmentId(self):
-        """
-        Returns a build ID based on environment variables and state
-        """
+        """Returns a build ID based on environment variables and state."""
 
         hostName = socket.gethostname()
         hostId = uuid.getnode()
@@ -422,9 +420,7 @@ class Profile():
 
 
     def getSetupScripts(self):
-        """
-        Returns a list of (virtual) classes which are relevant for initial setup.
-        """
+        """Returns a list of (virtual) classes which are relevant for initial setup."""
 
         setups = {}
 
@@ -485,9 +481,7 @@ class Profile():
 
 
     def setDefaultLocale(self, locale):
-        """
-        Sets the default locale
-        """
+        """Sets the default locale."""
 
         if not "locale" in self.__fields:
             raise UserError("Define locales first!")
@@ -497,7 +491,7 @@ class Profile():
 
 
     def getCurrentLocale(self):
-        """Returns the current locale as defined in current permutation"""
+        """Returns the current locale as defined in current permutation."""
 
         permutation = self.getCurrentPermutation()
         if permutation:
@@ -511,7 +505,9 @@ class Profile():
     def getCurrentLocaleProject(self, update=False):
         """
         Returns a locale project for the currently configured locale.
+
         Returns None if locale is not set to a valid value.
+
         """
 
         locale = self.getCurrentLocale()
@@ -536,8 +532,9 @@ class Profile():
         """
         Statically configure the value of the given field.
 
-        This field is just injected into Permutation data and used for permutations, but as
-        it only holds a single value all alternatives paths are removed/ignored.
+        This field is just injected into Permutation data and used for permutations, but as it only holds a single value
+        all alternatives paths are removed/ignored.
+
         """
 
         if not name in self.__fields:
@@ -560,9 +557,9 @@ class Profile():
         """
         Adds the given key/value pair to the session for permutation usage.
 
-        It supports an optional test. A test is required as soon as there is
-        more than one value available. The detection method and values are typically
-        already defined by the project declaring the key/value pair.
+        It supports an optional test. A test is required as soon as there is more than one value available. The
+        detection method and values are typically already defined by the project declaring the key/value pair.
+
         """
 
         if not name in self.__fields:
@@ -619,10 +616,8 @@ class Profile():
 
 
     def __exportFieldDetects(self):
-        """
-        Returns a dict where the field points to the detection class
-        which is being used to figure out the value on the client.
-        """
+        """Returns a dict where the field points to the detection class which is being used to figure out the value on
+        the client."""
 
         detects = {}
 
@@ -660,14 +655,15 @@ class Profile():
 
     def __exportField(self, field):
         """
-        Converts data for the given field into a compact data structure for being used to
-        compute a checksum in JavaScript.
+        Converts data for the given field into a compact data structure for being used to compute a checksum in
+        JavaScript.
 
         Export structures:
         1. [ name, 1, test, [value1, ...] ]
         2. [ name, 2, value ]
         3. [ name, 3, test, default? ]
         4. [ name, 4, value ] (just data - non permutated - generated internally only)
+
         """
 
         source = self.__fields[field]
@@ -733,7 +729,9 @@ class Profile():
     def __generatePermutations(self):
         """
         Combines all values to a set of permutations.
+
         These define all possible combinations of the configured settings
+
         """
 
         fields = self.__fields
@@ -753,7 +751,7 @@ class Profile():
 
 
     def permutate(self):
-        """ Generator method for permutations for improving output capabilities """
+        """Generator method for permutations for improving output capabilities."""
 
         Console.info("Processing permutations...")
         Console.indent()
@@ -793,10 +791,8 @@ class Profile():
 
 
     def setStaticPermutation(self, **argv):
-        """
-        Sets current permutation to a static permutation which contains all values hardly wired to
-        static values using setField() or given via additional named parameters.
-        """
+        """Sets current permutation to a static permutation which contains all values hardly wired to static values
+        using setField() or given via additional named parameters."""
 
         combi = {}
 
@@ -823,14 +819,15 @@ class Profile():
 
     def expandFileName(self, fileName):
         """
-        Replaces placeholders inside the given filename and returns the result.
-        The placeholders are based on the current state of the session.
+        Replaces placeholders inside the given filename and returns the result. The placeholders are based on the
+        current state of the session.
 
         These are the currently supported placeholders:
 
         - {{locale}}: Name of current locale e.g. de_DE
         - {{permutation}}: SHA1 checksum of current permutation
         - {{id}}: SHA1 checksum based on permutation and repository branch/revision
+
         """
 
         if "{{destination}}" in fileName:
@@ -860,9 +857,7 @@ class Profile():
 
 
     def addCommand(self, name, func, resultType=None, globalName=False):
-        """
-        Registers the given function as a new command
-        """
+        """Registers the given function as a new command."""
 
         if globalName and "." in name:
             raise Exception("Invalid global name: %s!" % name)
@@ -881,9 +876,7 @@ class Profile():
 
 
     def executeCommand(self, command, params=None):
-        """
-        Executes the given command and returns the result
-        """
+        """Executes the given command and returns the result."""
 
         commands = self.__commands
 

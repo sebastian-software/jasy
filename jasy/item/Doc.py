@@ -18,9 +18,7 @@ class DocItem(AbstractItem.AbstractItem):
     kind = "jasy.Doc"
 
     def generateId(self, relpath, package):
-        """
-        Generates the fileId of this item as being used by other modules
-        """
+        """Generates the fileId of this item as being used by other modules."""
 
         if package:
             fileId = "%s/" % package

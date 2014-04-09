@@ -338,6 +338,7 @@ def Property(tokenizer, staticContext):
 
     - background: red
     - font: 12px bold Arial;
+
     """
 
     node = Node.Node(tokenizer, "property")
@@ -691,6 +692,7 @@ def Selector(tokenizer, staticContext):
     #header
     h1::after
     h2:first-child
+
     """
 
     node = Node.Node(tokenizer, "selector")
@@ -878,7 +880,10 @@ def Variable(tokenizer, staticContext):
 
 def ParenExpression(tokenizer, staticContext):
     """
-    An expression in parens. Sometimes to force priority of math operations etc.
+    An expression in parens.
+
+    Sometimes to force priority of math operations etc.
+
     """
 
     tokenizer.mustMatch("left_paren")

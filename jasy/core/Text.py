@@ -32,8 +32,10 @@ except:
 
 def markdownToHtml(markdownStr):
     """
-    Converts Markdown to HTML. Supports GitHub's fenced code blocks,
-    auto linking and typographic features by SmartyPants.
+    Converts Markdown to HTML.
+
+    Supports GitHub's fenced code blocks, auto linking and typographic features by SmartyPants.
+
     """
 
     return hoedown.html(markdownStr, hoedownExt, hoedownRender)
@@ -60,8 +62,10 @@ except ImportError:
 
 def highlightCodeBlocks(html, tabsize=2, defaultlang="javascript"):
     """
-    Patches 'code' elements in HTML to apply HTML based syntax highlighting. Automatically
-    chooses the matching language detected via a CSS class of the 'code' element.
+    Patches 'code' elements in HTML to apply HTML based syntax highlighting.
+
+    Automatically chooses the matching language detected via a CSS class of the 'code' element.
+
     """
 
     def unescape(html):

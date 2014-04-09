@@ -9,9 +9,7 @@ import jasy.core.Console as Console
 
 class SorterError(Exception):
 
-    """
-    Error which is throws when sorting could not be done because of circular dependencies.
-    """
+    """Error which is throws when sorting could not be done because of circular dependencies."""
 
     pass
 
@@ -20,7 +18,9 @@ class AbstractSorter:
 
     """
     Sorts a final list of items according to their requirements.
+
     This class is not type depended e.g. is used for both scripts and styles.
+
     """
 
     def __init__(self, resolver):
@@ -41,9 +41,7 @@ class AbstractSorter:
 
 
     def getSorted(self):
-        """
-        Returns the sorted item list (caches result)
-        """
+        """Returns the sorted item list (caches result)"""
 
         if not self.__sorted:
             Console.debug("Sorting items...")
@@ -66,9 +64,7 @@ class AbstractSorter:
 
 
     def __addSorted(self, item, result, postponed=False):
-        """
-        Adds a single item and its dependencies to the sorted result list
-        """
+        """Adds a single item and its dependencies to the sorted result list."""
 
         loadDeps = self.__getLoadDeps(item)
 
@@ -91,9 +87,7 @@ class AbstractSorter:
 
 
     def __getLoadDeps(self, item):
-        """
-        Returns load time dependencies of given item
-        """
+        """Returns load time dependencies of given item."""
 
         if not item in self.__loadDeps:
             self.__getLoadDepsRecurser(item, [])
@@ -103,10 +97,9 @@ class AbstractSorter:
 
     def __getLoadDepsRecurser(self, item, stack):
         """
-        This is the main routine which tries to control over a system
-        of unsorted items. It directly tries to fullfil every dependency
-        a item have, but has some kind of exception based loop protection
-        to prevent circular dependencies from breaking the build.
+        This is the main routine which tries to control over a system of unsorted items. It directly tries to fullfil
+        every dependency a item have, but has some kind of exception based loop protection to prevent circular
+        dependencies from breaking the build.
 
         It respects break information given by file specific meta data, but
         also adds custom hints where it found recursions. This lead to a valid
@@ -115,6 +108,7 @@ class AbstractSorter:
         which of two each-other referencing items needs to be loaded first.
         This is basically only interesting in cases where one item needs another
         during the definition phase which is not the case that often.
+
         """
 
         if item in stack:

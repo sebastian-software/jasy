@@ -17,10 +17,7 @@ import jasy.style.Engine as Engine
 
 
 def includeGenerator(node):
-    """
-    A generator which yiels include names and the origin include nodes
-    for every include in the given root node
-    """
+    """A generator which yiels include names and the origin include nodes for every include in the given root node."""
 
     for child in node:
         if child:
@@ -42,8 +39,10 @@ def includeGenerator(node):
 
 def collectFields(node, keys=None, condition=False):
     """
-    Collects all fields accessed by the given root node
-    and all children. Returns a set of field names.
+    Collects all fields accessed by the given root node and all children.
+
+    Returns a set of field names.
+
     """
 
     if keys is None:
@@ -69,9 +68,7 @@ def collectFields(node, keys=None, condition=False):
 
 class StyleError(Exception):
 
-    """
-    Error class used for issues during style processing
-    """
+    """Error class used for issues during style processing."""
 
     def __init__(self, inst, msg):
         self.__msg = msg
@@ -87,9 +84,7 @@ class StyleItem(AbstractItem.AbstractItem):
     kind = "jasy.Style"
 
     def generateId(self, relpath, package):
-        """
-        Generates the fileId of this item as being used by other modules
-        """
+        """Generates the fileId of this item as being used by other modules."""
 
         if package:
             packageId = "%s/" % package
@@ -102,9 +97,7 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def __getTree(self):
-        """
-        Returns the abstract syntax tree of the stylesheet.
-        """
+        """Returns the abstract syntax tree of the stylesheet."""
 
         field = "style:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
@@ -150,10 +143,8 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
-        """
-        Returns a set of dependencies seen through the given list of known
-        items (ignoring all unknown items in original set).
-        """
+        """Returns a set of dependencies seen through the given list of known items (ignoring all unknown items in
+        original set)."""
 
         meta = self.getMetaData(permutation)
         result = set()
@@ -205,9 +196,7 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def getMetaData(self, permutation):
-        """
-        Returns the meta data of this stylesheet
-        """
+        """Returns the meta data of this stylesheet."""
 
         permutation = self.filterPermutation(permutation)
 
@@ -223,9 +212,7 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def getFields(self):
-        """
-        Returns the fields which are used by this stylesheet.
-        """
+        """Returns the fields which are used by this stylesheet."""
 
         field = "style:fields[%s]" % self.id
         fields = self.project.getCache().read(field, self.mtime)
@@ -239,9 +226,7 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def getIncludes(self, permutation):
-        """
-        Returns the includes which are referenced by this stylesheet.
-        """
+        """Returns the includes which are referenced by this stylesheet."""
 
         field = "style:includes[%s]" % self.id
         includes = self.project.getCache().read(field, self.mtime)
@@ -258,10 +243,8 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def filterPermutation(self, permutation):
-        """
-        Returns a new permutation which only contains information
-        about the fields actually accessed in this stylesheet.
-        """
+        """Returns a new permutation which only contains information about the fields actually accessed in this
+        stylesheet."""
 
         if permutation:
             fields = self.getFields()
@@ -274,8 +257,10 @@ class StyleItem(AbstractItem.AbstractItem):
 
     def getModificationTime(self, profile):
         """
-        Returns the modification date of the stylesheet
+        Returns the modification date of the stylesheet.
+
         (or the sum of modification dates when using includes)
+
         """
 
         mtime = self.mtime
@@ -295,8 +280,10 @@ class StyleItem(AbstractItem.AbstractItem):
 
     def getMergedTree(self, profile):
         """
-        Returns the merged (includes resolved) and optimized
+        Returns the merged (includes resolved) and optimized.
+
         (permutation values applied) tree.
+
         """
 
         session = profile.getSession()
@@ -328,9 +315,7 @@ class StyleItem(AbstractItem.AbstractItem):
 
 
     def getCompressed(self, profile):
-        """
-        Returns the compressed CSS code of this item.
-        """
+        """Returns the compressed CSS code of this item."""
 
         field = "style:compressed[%s]-%s" % (self.id, profile.getId())
         mtime = self.getModificationTime(profile)

@@ -10,6 +10,8 @@ class Formatting(FlagSet.FlagSet):
 
     """
     Configures an formatting object which can be used to compress stylesheets afterwards.
-    The optimization set is frozen after initialization which also generates the unique
-    key based on the given formatting options.
+
+    The optimization set is frozen after initialization which also generates the unique key based on the given
+    formatting options.
+
     """

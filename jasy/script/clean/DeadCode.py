@@ -5,10 +5,8 @@
 #
 
 """
-This module is used to detect dead code branches and remove them.
-This is escecially useful after injecting values from the outside
-which might lead to simple truish equations which can be easily
-resolved.
+This module is used to detect dead code branches and remove them. This is escecially useful after injecting values from
+the outside which might lead to simple truish equations which can be easily resolved.
 
 This module is directly used by Class after Permutations have been
 applied (code branches) but can be used more widely, too.
@@ -54,9 +52,7 @@ import jasy.core.Console as Console
 
 
 def cleanup(node):
-    """
-    Reprocesses JavaScript to remove dead paths
-    """
+    """Reprocesses JavaScript to remove dead paths."""
 
     Console.debug("Removing dead code branches...")
 
@@ -68,9 +64,7 @@ def cleanup(node):
 
 
 def __cleanup(node):
-    """
-    Reprocesses JavaScript to remove dead paths
-    """
+    """Reprocesses JavaScript to remove dead paths."""
 
     optimized = False
 
@@ -151,8 +145,10 @@ def __cleanup(node):
 
 def __checkCondition(node):
     """
-    Checks a comparison for equality. Returns None when
-    both, truely and falsy could not be deteted.
+    Checks a comparison for equality.
+
+    Returns None when both, truely and falsy could not be deteted.
+
     """
 
     if node.type == "false":
@@ -190,9 +186,7 @@ def __checkCondition(node):
 
 
 def __invertResult(result):
-    """
-    Used to support the NOT operator.
-    """
+    """Used to support the NOT operator."""
 
     if isinstance(result, bool):
         return not result
@@ -228,7 +222,9 @@ def __negateType(node):
 def __compareNodes(a, b):
     """
     This method compares two nodes from the tree regarding equality.
+
     It supports boolean, string and number type compares
+
     """
 
     firstType = a.type

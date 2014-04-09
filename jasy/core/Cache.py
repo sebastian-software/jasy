@@ -26,10 +26,13 @@ hostId = uuid.getnode()
 class Cache:
 
     """
-    A cache class based on shelve feature of Python. Supports transient in-memory
+    A cache class based on shelve feature of Python.
+
+    Supports transient in-memory
     storage, too. Uses memory storage for caching requests to DB as well for
     improved performance. Uses keys for identification of entries like a normal
     hash table / dictionary.
+
     """
 
     __shelve = None
@@ -46,7 +49,7 @@ class Cache:
 
 
     def open(self):
-        """Opens a cache file in the given path"""
+        """Opens a cache file in the given path."""
 
         try:
             self.__shelve = shelve.open(self.__file, flag="c")
@@ -91,9 +94,7 @@ class Cache:
 
 
     def clear(self):
-        """
-        Clears the cache file(s)
-        """
+        """Clears the cache file(s)"""
 
         if self.__shelve is not None:
             Console.debug("Closing cache file %s..." % self.__file)
@@ -109,8 +110,10 @@ class Cache:
     def read(self, key, timestamp=None, inMemory=True):
         """
         Reads the given value from cache.
-        Optionally support to check wether the value was stored after the given
-        time to be valid (useful for comparing with file modification times).
+
+        Optionally support to check wether the value was stored after the given time to be valid (useful for comparing
+        with file modification times).
+
         """
 
         if self.__hashkeys:
@@ -141,9 +144,11 @@ class Cache:
     def store(self, key, value, timestamp=None, transient=False, inMemory=True):
         """
         Stores the given value.
+
         Default timestamp goes to the current time. Can be modified
         to the time of an other files modification date etc.
         Transient enables in-memory cache for the given value
+
         """
 
         if self.__hashkeys:
@@ -166,14 +171,14 @@ class Cache:
 
 
     def sync(self):
-        """ Syncs the internal storage database """
+        """Syncs the internal storage database."""
 
         if self.__shelve is not None:
             self.__shelve.sync()
 
 
     def close(self):
-        """ Closes the internal storage database """
+        """Closes the internal storage database."""
 
         if self.__shelve is not None:
             self.__shelve.close()

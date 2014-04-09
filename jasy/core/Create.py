@@ -115,7 +115,8 @@ validProjectName = re.compile(r"^[a-z][a-z0-9]*$")
 
 def create(name="myproject", origin=None, originVersion=None, skeleton=None, destination=None, session=None, **argv):
     """
-    Creates a new project from a defined skeleton or an existing project's root directory (only if there is a jasycreate config file).
+    Creates a new project from a defined skeleton or an existing project's root directory (only if there is a jasycreate
+    config file).
 
     :param name: The name of the new created project
     :type name: string
@@ -129,6 +130,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
     :type destination: string
     :param session: An optional session to use as origin project
     :type session: object
+
     """
 
     if not validProjectName.match(name):

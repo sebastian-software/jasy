@@ -99,7 +99,7 @@ def pluralToJavaScript(expr):
 
 class LocaleParser():
 
-    """Parses CLDR locales into JavaScript files"""
+    """Parses CLDR locales into JavaScript files."""
 
     def __init__(self, locale):
         Console.info("Parsing CLDR files for %s..." % locale)
@@ -170,7 +170,7 @@ class LocaleParser():
 
 
     def getData(self):
-        """ Returns a Python object with the parsed CLDR data """
+        """Returns a Python object with the parsed CLDR data."""
         return self.__data
 
 
@@ -217,7 +217,7 @@ class LocaleParser():
 
 
     def __getStore(self, parent, name):
-        """ Manages data fields """
+        """Manages data fields."""
 
         if not name in parent:
             store = {}
@@ -229,7 +229,7 @@ class LocaleParser():
 
 
     def __addSupplementals(self, territory):
-        """ Converts data from supplemental folder """
+        """Converts data from supplemental folder."""
 
         supplemental = os.path.join(CLDR_DIR, "supplemental")
 
@@ -315,7 +315,7 @@ class LocaleParser():
 
 
     def __addDisplayNames(self, tree):
-        """ Adds CLDR display names section """
+        """Adds CLDR display names section."""
 
         display = self.__getStore(self.__data, "display")
 
@@ -337,7 +337,7 @@ class LocaleParser():
 
 
     def __addDelimiters(self, tree):
-        """ Adds CLDR delimiters """
+        """Adds CLDR delimiters."""
 
         delimiters = self.__getStore(self.__data, "delimiter")
 
@@ -349,7 +349,7 @@ class LocaleParser():
 
 
     def __addCalendars(self, tree, key="dates/calendars"):
-        """ Loops through all CLDR calendars and adds them """
+        """Loops through all CLDR calendars and adds them."""
 
         calendars = self.__getStore(self.__data, "calendar")
 
@@ -359,7 +359,7 @@ class LocaleParser():
 
 
     def __addCalendar(self, store, element):
-        """ Adds data from a CLDR calendar section """
+        """Adds data from a CLDR calendar section."""
 
         calendar = self.__getStore(store, element.get("type"))
 

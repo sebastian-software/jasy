@@ -25,8 +25,7 @@ class Error(Exception):
 
 
 def cleanup(node):
-    """
-    """
+    """"""
 
     if not hasattr(node, "variables"):
         ScopeScanner.scan(node)
@@ -60,7 +59,7 @@ def cleanup(node):
 #
 
 def __cleanup(node):
-    """ The scanner part which looks for scopes with unused variables/params """
+    """The scanner part which looks for scopes with unused variables/params."""
 
     cleaned = 0
 
@@ -85,10 +84,8 @@ def __cleanup(node):
 
 
 def __recurser(node, unused):
-    """
-    The cleanup part which always processes one scope and cleans up params and
-    variable definitions which are unused
-    """
+    """The cleanup part which always processes one scope and cleans up params and variable definitions which are
+    unused."""
 
     modified = 0
 

@@ -86,9 +86,7 @@ def executeCommand(node, profile):
 
 
 def assembleDot(node, result=None):
-    """
-    Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
-    """
+    """Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"."""
 
     if result is None:
         result = []

@@ -15,7 +15,9 @@ class ApiData():
 
     """
     Container for all relevant API data.
+
     Automatically generated, filled and cached by jasy.item.Script.getApiDocs().
+
     """
 
 
@@ -54,16 +56,12 @@ class ApiData():
 
 
     def addSize(self, size):
-        """
-        Adds the statistics on different size aspects
-        """
+        """Adds the statistics on different size aspects."""
 
         self.size = size
 
     def addAssets(self, assets):
-        """
-        Adds the info about used assets
-        """
+        """Adds the info about used assets."""
 
         self.assets = assets
 

@@ -76,7 +76,7 @@ optionals = [
 
 
 def doCompleteDoctor():
-    """Checks for uninstalled or too old versions of requirements and gives a complete output"""
+    """Checks for uninstalled or too old versions of requirements and gives a complete output."""
 
     Console.header("Doctor")
 
@@ -121,7 +121,7 @@ def doCompleteDoctor():
 
 
 def doInitializationDoctor():
-    """Checks for uninstalled or too old versions only of requirements and gives error output"""
+    """Checks for uninstalled or too old versions only of requirements and gives error output."""
 
     dists = [dist for dist in pip.get_installed_distributions()]
     keys = [dist.key for dist in pip.get_installed_distributions()]

@@ -29,6 +29,7 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     :raise Exception: Raises an exception whenever the shell command fails in execution
     :type wrapOutput: bool
     :param wrapOutput: Whether shell output should be wrapped and returned (and passed through to Console.debug())
+
     """
 
     if isinstance(args, str):
@@ -82,13 +83,13 @@ except:
 
 def generateChecksum(key, method="base62"):
     """
-    Generates a unique SHA1 based hash/checksum encoded
-    as Base62 or Hex depending on the given parameters.
+    Generates a unique SHA1 based hash/checksum encoded as Base62 or Hex depending on the given parameters.
 
     :param key:
     :type key: str
     :param method:
     :type method: str
+
     """
 
     # Alternative hashing method using SIP keys:
@@ -110,7 +111,7 @@ def generateChecksum(key, method="base62"):
 
 def getKey(data, key, default=None):
     """
-    Returns the key from the data if available or the given default
+    Returns the key from the data if available or the given default.
 
     :param data: Data structure to inspect
     :type data: dict
@@ -118,6 +119,7 @@ def getKey(data, key, default=None):
     :type key: str
     :param default: Default value to return when key is not set
     :type default: any
+
     """
 
     if key in data:

@@ -10,10 +10,8 @@ import jasy.core.Console as Console
 
 class Options:
 
-    """
-    More flexible alternative to the standard python option parser module
-    which solves the requirements to have arbirary tasks and custom parameters for each task.
-    """
+    """More flexible alternative to the standard python option parser module which solves the requirements to have
+    arbirary tasks and custom parameters for each task."""
 
     __slots__ = ["__tasks", "__options", "__defaults", "__types", "__shortcuts", "__help"]
 

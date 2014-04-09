@@ -29,27 +29,21 @@ import jasy.style.output.Compressor as Compressor
 
 
 def getTokenizer(text, fileId=None):
-    """
-    Returns a tokenizer for the given file content
-    """
+    """Returns a tokenizer for the given file content."""
 
     return Tokenizer.Tokenizer(text, fileId, 0)
 
 
 
 def getTree(text, fileId=None):
-    """
-    Returns a tree of nodes from the given text
-    """
+    """Returns a tree of nodes from the given text."""
 
     return Parser.parse(text, fileId)
 
 
 
 def permutateTree(tree, permutation=None):
-    """
-    Returns an optimized tree with permutations applied
-    """
+    """Returns an optimized tree with permutations applied."""
 
     if permutation:
         Permutate.patch(tree, permutation)
@@ -61,9 +55,7 @@ def permutateTree(tree, permutation=None):
 
 
 def reduceTree(tree, profile=None):
-    """
-    Applies all relevant modifications to the tree to allow compression to CSS
-    """
+    """Applies all relevant modifications to the tree to allow compression to CSS."""
 
     Console.info("Reducing tree: %s...", tree.fileId)
     Console.indent()
@@ -108,9 +100,7 @@ def reduceTree(tree, profile=None):
 
 
 def compressTree(tree, optimizationLevel=0, formattingLevel=0):
-    """
-    Returns the compressed result from the given tree
-    """
+    """Returns the compressed result from the given tree."""
 
     optimization = Optimization.Optimization()
     formatting = Formatting.Formatting()
@@ -130,9 +120,7 @@ def compressTree(tree, optimizationLevel=0, formattingLevel=0):
 
 
 def printTokens(text, fileId=None):
-    """
-    Prints out a structured list of tokens
-    """
+    """Prints out a structured list of tokens."""
 
     tokenizer = getTokenizer(text, fileId)
     indent = 0

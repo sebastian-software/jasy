@@ -25,7 +25,8 @@ __all__ = ["requestUrl", "uploadData"]
 #
 
 def requestUrl(url, content_type="text/plain", headers=None, method="GET", port=None, body="", user=None, password=None):
-    """Generic HTTP request wrapper with support for basic authentification and automatic parsing of response content"""
+    """Generic HTTP request wrapper with support for basic authentification and automatic parsing of response
+    content."""
 
     Console.info("Opening %s request to %s..." % (method, url))
 
@@ -103,7 +104,7 @@ def requestUrl(url, content_type="text/plain", headers=None, method="GET", port=
 #
 
 def uploadData(url, fields, files, user=None, password=None, method="POST"):
-    """Easy wrapper for uploading content via HTTP multi part"""
+    """Easy wrapper for uploading content via HTTP multi part."""
 
     content_type, body = encode_multipart_formdata(fields, files)
     return requestUrl(url, body=body, content_type=content_type, method=method, user=user, password=password)
@@ -118,13 +119,13 @@ def choose_boundary():
 
 
 def get_content_type(filename):
-    """Figures out the content type of the given file"""
+    """Figures out the content type of the given file."""
 
     return mimetypes.guess_type(filename)[0] or "application/octet-stream"
 
 
 def encode_multipart_formdata(fields, files):
-    """Encodes given fields and files to a multipart ready HTTP body"""
+    """Encodes given fields and files to a multipart ready HTTP body."""
 
     # Choose random boundary
     boundary = choose_boundary()

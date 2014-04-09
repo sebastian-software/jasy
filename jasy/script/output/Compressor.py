@@ -295,7 +295,7 @@ class Compressor:
         return node.value
 
     def type_generator(self, node):
-        """ Generator Expression """
+        """Generator Expression."""
         result = self.compress(getattr(node, "expression"))
         tail = getattr(node, "tail", None)
         if tail:
@@ -304,7 +304,7 @@ class Compressor:
         return result
 
     def type_comp_tail(self, node):
-        """  Comprehensions Tails """
+        """Comprehensions Tails."""
         result = self.compress(getattr(node, "for"))
         guard = getattr(node, "guard", None)
         if guard:
@@ -507,7 +507,7 @@ class Compressor:
     #
 
     def type_hook(self, node):
-        """aka ternary operator"""
+        """aka ternary operator."""
         condition = node.condition
         thenPart = node.thenPart
         elsePart = node.elsePart

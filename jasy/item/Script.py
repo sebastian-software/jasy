@@ -79,9 +79,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
     kind = "jasy.Script"
 
     def generateId(self, relpath, package):
-        """
-        Generates the fileId of this item as being used by other modules
-        """
+        """Generates the fileId of this item as being used by other modules."""
 
         if package:
             fileId = "%s/" % package
@@ -92,9 +90,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
 
 
     def __getTree(self):
-        """
-        Returns the abstract syntax tree
-        """
+        """Returns the abstract syntax tree."""
 
         field = "script:tree[%s]" % self.id
         tree = self.project.getCache().read(field, self.mtime)
@@ -112,9 +108,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
 
 
     def __getOptimizedTree(self, permutation=None):
-        """
-        Returns an optimized tree with permutations applied
-        """
+        """Returns an optimized tree with permutations applied."""
 
         field = "script:opt-tree[%s]-%s" % (self.id, permutation)
         tree = self.project.getCache().read(field, self.mtime)
@@ -174,10 +168,11 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
 
     def getDependencies(self, permutation=None, items=None, fields=None, warnings=True):
         """
-        Returns a set of dependencies seen through the given list of known
-        classes (ignoring all unknown items in original set) and configured fields
-        with their individual detection classes. This method also
-        makes use of the meta data and the variable data.
+        Returns a set of dependencies seen through the given list of known classes (ignoring all unknown items in
+        original set) and configured fields with their individual detection classes.
+
+        This method also makes use of the meta data and the variable data.
+
         """
 
         permutation = self.filterPermutation(permutation)
@@ -253,10 +248,8 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
 
 
     def getScopeData(self, permutation=None):
-        """
-        Returns the top level scope object which contains information about the
-        global variable and package usage/influence.
-        """
+        """Returns the top level scope object which contains information about the global variable and package
+        usage/influence."""
 
         permutation = self.filterPermutation(permutation)
 

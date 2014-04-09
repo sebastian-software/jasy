@@ -4,7 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-"""Global environment which is used by jasyscript.py files"""
+"""Global environment which is used by jasyscript.py files."""
 
 # Session Instance
 from jasy.env.State import session
@@ -42,7 +42,7 @@ config.loadValues("jasyscript", optional=True)
 
 @task
 def about():
-    """Print outs the Jasy about page"""
+    """Print outs the Jasy about page."""
 
     import jasy
 
@@ -56,7 +56,7 @@ def about():
 
 @task
 def help():
-    """Shows this help screen"""
+    """Shows this help screen."""
 
     import jasy
 
@@ -78,7 +78,7 @@ def help():
 
 @task
 def doctor():
-    """Checks Jasy environment and prints offers support for installing missing packages"""
+    """Checks Jasy environment and prints offers support for installing missing packages."""
 
     # This is a placeholder task to show up in the jasy task list
     # The handling itself is directly implemented in "bin/jasy"
@@ -87,7 +87,7 @@ def doctor():
 
 @task
 def create(name="myproject", origin=None, originVersion=None, skeleton=None, destination=None, **argv):
-    """Creates a new project based on a local or remote skeleton"""
+    """Creates a new project based on a local or remote skeleton."""
 
     import jasy.core.Create as Create
     return Create.create(name, origin, originVersion, skeleton, destination, session, **argv)
@@ -95,7 +95,7 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
 
 @task
 def showapi():
-    """Shows the official API available in jasyscript.py"""
+    """Shows the official API available in jasyscript.py."""
 
     from jasy.core.Inspect import generateApi
     Console.info(generateApi(__api__))

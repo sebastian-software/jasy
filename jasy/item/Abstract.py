@@ -26,7 +26,7 @@ class AbstractItem:
 
     @classmethod
     def fromPath(cls, project, relpath, package=None):
-        "Initialize MyData from a dict's items"
+        """Initialize MyData from a dict's items."""
         item = cls(project)
         item.setId(item.generateId(relpath, package))
         return item
@@ -67,7 +67,12 @@ class AbstractItem:
         return self
 
     def getId(self):
-        """Returns a unique identify of the class. Typically as it is stored inside the project."""
+        """
+        Returns a unique identify of the class.
+
+        Typically as it is stored inside the project.
+
+        """
         return self.id
 
     def setId(self, id):
@@ -75,7 +80,7 @@ class AbstractItem:
         return self
 
     def getProject(self):
-        """Returns the project which the class belongs to"""
+        """Returns the project which the class belongs to."""
         return self.project
 
     def getPath(self):
@@ -88,24 +93,25 @@ class AbstractItem:
         return self.__path
 
     def setPath(self, path):
-        """Sets the path for the item"""
+        """Sets the path for the item."""
         self.__path = path
 
     def getModificationTime(self):
-        """Returns last modification time of the class"""
+        """Returns last modification time of the class."""
         return self.mtime
 
     def setText(self, text):
-        """Stores text from custom reader"""
+        """Stores text from custom reader."""
         self.__text = text
 
 
     def saveText(self, text, path, encoding="utf-8"):
         """
-        Saves the given text under the given path and stores both for future access
+        Saves the given text under the given path and stores both for future access.
 
-        This is mainly useful for "virtual" files which are not edited by the developer
-        but which are created dynamically during runtime.
+        This is mainly useful for "virtual" files which are not edited by the developer but which are created
+        dynamically during runtime.
+
         """
 
         self.__text = text
@@ -149,16 +155,16 @@ class AbstractItem:
     def setTextFilter(self, filterCallback):
         """
         Sets text filter callback that is called on getText().
-        With this callback e.g. transformations from CoffeeScript to JavaScript are possible.
-        The callback gets two parameter (text, ItemClass)
+
+        With this callback e.g. transformations from CoffeeScript to JavaScript are possible. The callback gets two
+        parameter (text, ItemClass)
+
         """
         self.__textFilter = filterCallback
 
 
     def getChecksum(self, mode="rb"):
-        """
-        Returns the SHA1 checksum of the item
-        """
+        """Returns the SHA1 checksum of the item."""
 
         return File.sha1(open(self.getPath(), mode))
 

@@ -9,18 +9,14 @@ import jasy.style.parse.Node as Node
 
 
 def process(tree):
-    """
-    Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...`
-    """
+    """Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...`"""
 
     Console.info("Flattening selectors...")
     Console.indent()
 
     def __flatter(node, dest):
-        """
-        Moves all selectors to the top tree node while keeping media queries intact
-        and/or making them CSS2 compatible (regarding structure)
-        """
+        """Moves all selectors to the top tree node while keeping media queries intact and/or making them CSS2
+        compatible (regarding structure)"""
 
         process = node.type in ("selector", "mixin", "media", "supports")
 
@@ -160,9 +156,11 @@ def process(tree):
 
     def __clean(node):
         """
-        Removes all empty rules. Starting from inside out for a deep cleanup.
-        This is a required step for the next one where we combine media queries
-        and selectors and need to have an easy reference point to the previous node.
+        Removes all empty rules.
+
+        Starting from inside out for a deep cleanup. This is a required step for the next one where we combine media
+        queries and selectors and need to have an easy reference point to the previous node.
+
         """
 
         # Process children first
@@ -194,9 +192,7 @@ def process(tree):
 
 
     def __combine(tree, top=True):
-        """
-        Combines follow up selector/media/supports nodes with the same name.
-        """
+        """Combines follow up selector/media/supports nodes with the same name."""
 
         previousSelector = None
         previousMedia = None

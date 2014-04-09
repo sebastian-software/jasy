@@ -76,7 +76,7 @@ def extractType(value):
 
 
 def generateApi(api):
-    """Returns a stringified output for the given API set"""
+    """Returns a stringified output for the given API set."""
 
     import jasy.env.Task as Task
 

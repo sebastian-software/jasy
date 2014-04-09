@@ -23,6 +23,6 @@ class Resolver(AbstractResolver.Resolver):
 
 
     def getSorted(self):
-        """ Returns a list of sorted classes """
+        """Returns a list of sorted classes."""
 
         return Sorter.Sorter(self).getSorted()

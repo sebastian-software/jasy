@@ -12,9 +12,7 @@ import jasy.core.Console as Console
 
 class FileManager:
 
-    """
-    Summarizes utility methods for operations in filesystem.
-    """
+    """Summarizes utility methods for operations in filesystem."""
 
     def __init__(self, profile=None):
 
@@ -22,7 +20,7 @@ class FileManager:
 
 
     def removeDir(self, dirname):
-        """Removes the given directory"""
+        """Removes the given directory."""
 
         if self.__profile:
             dirname = self.__profile.expandFileName(dirname)
@@ -33,7 +31,7 @@ class FileManager:
 
 
     def removeFile(self, filename):
-        """Removes the given file"""
+        """Removes the given file."""
 
         if self.__profile:
             filename = self.__profile.expandFileName(filename)
@@ -44,7 +42,7 @@ class FileManager:
 
 
     def makeDir(self, dirname):
-        """Creates missing hierarchy levels for given directory"""
+        """Creates missing hierarchy levels for given directory."""
 
         if dirname == "":
             return
@@ -59,7 +57,9 @@ class FileManager:
     def copyDir(self, src, dst):
         """
         Copies a directory to a destination directory.
+
         Merges the existing directory structure with the folder to copy.
+
         """
 
         if self.__profile:
@@ -99,7 +99,12 @@ class FileManager:
 
 
     def copyFile(self, src, dst):
-        """Copy src file to dst file. Both should be filenames, not directories."""
+        """
+        Copy src file to dst file.
+
+        Both should be filenames, not directories.
+
+        """
 
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
@@ -120,7 +125,7 @@ class FileManager:
 
 
     def updateFile(self, src, dst):
-        """Same as copyFile() but only do copying when source file is newer than target file"""
+        """Same as copyFile() but only do copying when source file is newer than target file."""
 
         if not os.path.isfile(src):
             raise Exception("No such file: %s" % src)
@@ -145,7 +150,7 @@ class FileManager:
 
 
     def writeFile(self, dst, content):
-        """Writes the content to the destination file name"""
+        """Writes the content to the destination file name."""
 
         if self.__profile:
             dst = self.__profile.expandFileName(dst)

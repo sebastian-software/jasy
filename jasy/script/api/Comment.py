@@ -45,9 +45,7 @@ tickMatcher = re.compile(r"(`[^\n`]*?`)")
 
 class CommentException(Exception):
 
-    """
-    Thrown when errors during comment processing are detected.
-    """
+    """Thrown when errors during comment processing are detected."""
 
     def __init__(self, message, lineNo=0):
         Exception.__init__(self, "Comment error: %s (line: %s)" % (message, lineNo + 1))
@@ -60,7 +58,9 @@ class Comment():
     """
     Comment class is attached to parsed nodes and used to store all comment related information.
 
-    The class supports a new Markdown and TomDoc inspired dialect to make developers life easier and work less repeative.
+    The class supports a new Markdown and TomDoc inspired dialect to make developers life easier and work less
+    repeative.
+
     """
 
     # Relation to code
@@ -173,9 +173,9 @@ class Comment():
         """
         Splits up text and code blocks in comments.
 
-        This will try to use hoedown for Markdown parsing if available and will
-        fallback to a simpler implementation in order to allow processing of
-        doc parameters and links without hoedown being installed.
+        This will try to use hoedown for Markdown parsing if available and will fallback to a simpler implementation in
+        order to allow processing of doc parameters and links without hoedown being installed.
+
         """
 
         if not Text.supportsMarkdown:
@@ -255,7 +255,7 @@ class Comment():
 
 
     def __splitSimple(self, text):
-        """Splits comment text and code blocks by manually parsing a subset of markdown"""
+        """Splits comment text and code blocks by manually parsing a subset of markdown."""
 
         inCode = False
         oldIndent = 0
@@ -320,10 +320,11 @@ class Comment():
 
     def getHtml(self, highlight=True):
         """
-        Returns the comment text converted to HTML
+        Returns the comment text converted to HTML.
 
         :param highlight: Whether to highlight the code
         :type highlight: bool
+
         """
 
         if not Text.supportsMarkdown:
@@ -380,9 +381,7 @@ class Comment():
 
 
     def __outdent(self, text, indent, startLineNo):
-        """
-        Outdent multi line comment text and filtering empty lines
-        """
+        """Outdent multi line comment text and filtering empty lines."""
 
         lines = []
 
@@ -519,9 +518,7 @@ class Comment():
 
 
     def __extractReturns(self, text):
-        """
-        Extracts leading return defintion (when type is function)
-        """
+        """Extracts leading return defintion (when type is function)"""
 
         def collectReturn(match):
             self.returns = self.__splitTypeList(match.group(1))
@@ -532,9 +529,7 @@ class Comment():
 
 
     def __extractStaticType(self, text):
-        """
-        Extracts leading type defintion (when value is a static type)
-        """
+        """Extracts leading type defintion (when value is a static type)"""
 
         def collectType(match):
             self.type = match.group(1).strip()
@@ -546,8 +541,10 @@ class Comment():
 
     def __extractTags(self, text):
         """
-        Extract all tags inside the give doc comment. These are replaced from
-        the text and collected inside the "tags" key as a dict.
+        Extract all tags inside the give doc comment.
+
+        These are replaced from the text and collected inside the "tags" key as a dict.
+
         """
 
         def collectTags(match):

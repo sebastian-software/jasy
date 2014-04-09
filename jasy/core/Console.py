@@ -4,9 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-"""
-Centralized logging for complete Jasy environment.
-"""
+"""Centralized logging for complete Jasy environment."""
 
 import logging
 import sys
@@ -39,7 +37,7 @@ __colors = {
 
 
 def colorize(text, color="red"):
-    """Uses to colorize the given text for output on Unix terminals"""
+    """Uses to colorize the given text for output on Unix terminals."""
 
     # Not supported on console on Windows native
     # Note: Cygwin has a different platform value
@@ -71,10 +69,10 @@ def __format(text):
 
 def indent():
     """
-    Increments global indenting level. Prepends spaces to the next
-    logging messages until outdent() is called.
+    Increments global indenting level. Prepends spaces to the next logging messages until outdent() is called.
 
     Should be called whenever leaving a structural logging section.
+
     """
 
     global __level
@@ -84,7 +82,9 @@ def indent():
 def outdent(all=False):
     """
     Decrements global indenting level.
+
     Should be called whenever leaving a structural logging section.
+
     """
 
     global __level
@@ -120,7 +120,7 @@ def debug(text, *argv):
 
 
 def header(title):
-    """Outputs the given title with prominent formatting"""
+    """Outputs the given title with prominent formatting."""
 
     global __level
     __level = 0

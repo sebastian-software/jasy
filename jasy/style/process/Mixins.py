@@ -13,9 +13,7 @@ import jasy.style.Util as Util
 
 
 def processExtends(tree):
-    """
-    Processes all requests for mixin extends
-    """
+    """Processes all requests for mixin extends."""
 
     Console.info("Processing extend requests...")
     Console.indent()
@@ -28,9 +26,7 @@ def processExtends(tree):
 
 
 def processMixins(tree):
-    """
-    Processes all mixin includes inside mixins
-    """
+    """Processes all mixin includes inside mixins."""
 
     Console.info("Merging mixins with each other...")
     Console.indent()
@@ -43,9 +39,7 @@ def processMixins(tree):
 
 
 def processSelectors(tree):
-    """
-    Processes all mixin includes inside selectors
-    """
+    """Processes all mixin includes inside selectors."""
 
     Console.info("Merging mixins into selectors")
     Console.indent()
@@ -69,7 +63,7 @@ def isMixinCall(node):
 
 def __extend(node):
     """
-    Finds extend requests for mixins aka
+    Finds extend requests for mixins aka.
 
     - mixins calls without params
     - simple variables in a block
@@ -77,6 +71,7 @@ def __extend(node):
     For all found extend requests it detects the flattened selector and appends
     the selector section of the extendable mixin accordingly. After that it
     removes the original mixin request.
+
     """
 
     modified = 0
@@ -180,6 +175,7 @@ def __process(node, scanMixins=False, active=None):
 
     - scanMixins: Whether mixins or selectors should be processed (phase1 vs. phase2)
     - active: Whether replacements should happen
+
     """
 
     modified = 0
@@ -226,9 +222,7 @@ def __process(node, scanMixins=False, active=None):
 
 
 def __injectContent(node, call):
-    """
-    Inserts content section of call into prepared content area of mixin clone
-    """
+    """Inserts content section of call into prepared content area of mixin clone."""
 
     for child in reversed(list(node)):
         if child:
@@ -325,9 +319,7 @@ def __findMixin(node, name):
 
 
 def __resolveMixin(mixin, params):
-    """
-    Returns a clone of the given mixin and applies optional parameters to it
-    """
+    """Returns a clone of the given mixin and applies optional parameters to it."""
 
     # Generate random prefix for variables and parameters
     chars = string.ascii_letters + string.digits
@@ -367,8 +359,10 @@ def __resolveMixin(mixin, params):
 
 def __renameRecurser(node, variables, prefix):
     """
-    Resursive engine to rename all local variables to prefixed ones for protecting
-    the scope of the mixin vs. the place it is injected to.
+    Resursive engine to rename all local variables to prefixed ones for protecting the scope of the mixin vs.
+
+    the place it is injected to.
+
     """
 
     for child in node:

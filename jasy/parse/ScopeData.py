@@ -53,7 +53,7 @@ class ScopeData():
         raise KeyError("Unknown key: %s" % key)
 
     def export(self):
-        """Exports all data as a Python dict instance"""
+        """Exports all data as a Python dict instance."""
 
         return {
             "name": self.name,
@@ -67,7 +67,7 @@ class ScopeData():
         }
 
     def increment(self, name, by=1):
-        """ Small helper so simplify adding variables to "accessed" dict """
+        """Small helper so simplify adding variables to "accessed" dict."""
 
         if not name in self.accessed:
             self.accessed[name] = by

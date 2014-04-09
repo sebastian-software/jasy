@@ -70,9 +70,7 @@ class Compressor:
 
 
     def compress(self, node):
-        """
-        Compresses the given node and returns the compressed text result
-        """
+        """Compresses the given node and returns the compressed text result."""
 
         type = node.type
 
@@ -116,9 +114,7 @@ class Compressor:
 
 
     def indent(self, code):
-        """
-        Indents the given code by the current indenting setup
-        """
+        """Indents the given code by the current indenting setup."""
 
         if not self.__useIndenting:
             return code

@@ -59,9 +59,7 @@ class AbstractNode(list):
 
 
     def getFileName(self):
-        """
-        Traverses up the tree to find a node with a fileId and returns it
-        """
+        """Traverses up the tree to find a node with a fileId and returns it."""
 
         node = self
         while node:
@@ -73,7 +71,7 @@ class AbstractNode(list):
 
 
     def getUnrelatedChildren(self):
-        """Collects all unrelated children"""
+        """Collects all unrelated children."""
 
         collection = []
         for child in self:
@@ -84,7 +82,7 @@ class AbstractNode(list):
 
 
     def getChildrenLength(self, filter=True):
-        """Number of (per default unrelated) children"""
+        """Number of (per default unrelated) children."""
 
         count = 0
         for child in self:
@@ -94,7 +92,7 @@ class AbstractNode(list):
 
 
     def remove(self, kid):
-        """Removes the given kid"""
+        """Removes the given kid."""
 
         if not kid in self:
             raise Exception("Given node is no child!")
@@ -108,7 +106,7 @@ class AbstractNode(list):
 
 
     def insert(self, index, kid):
-        """Inserts the given kid at the given index"""
+        """Inserts the given kid at the given index."""
 
         if index is None:
             return self.append(kid)
@@ -122,7 +120,7 @@ class AbstractNode(list):
 
 
     def insertAll(self, index, kids):
-        """Inserts all kids starting with the given index"""
+        """Inserts all kids starting with the given index."""
 
         if index is None:
             for kid in list(kids):
@@ -143,7 +141,7 @@ class AbstractNode(list):
 
 
     def append(self, kid, rel=None):
-        """Appends the given kid with an optional relation hint"""
+        """Appends the given kid with an optional relation hint."""
 
         # kid can be null e.g. [1, , 2].
         if kid:
@@ -178,7 +176,7 @@ class AbstractNode(list):
 
 
     def replace(self, kid, repl):
-        """Replaces the given kid with a replacement kid"""
+        """Replaces the given kid with a replacement kid."""
 
         if repl in self:
             self.remove(repl)
@@ -203,7 +201,7 @@ class AbstractNode(list):
 
 
     def toXml(self, format=True, indent=0, tab="  "):
-        """Converts the node to XML"""
+        """Converts the node to XML."""
 
         lead = tab * indent if format else ""
         innerLead = tab * (indent + 1) if format else ""
@@ -290,7 +288,7 @@ class AbstractNode(list):
 
 
     def __deepcopy__(self, memo):
-        """Used by deepcopy function to clone AbstractNode instances"""
+        """Used by deepcopy function to clone AbstractNode instances."""
 
         CurrentClass = self.__class__
 
@@ -329,7 +327,7 @@ class AbstractNode(list):
 
 
     def getSource(self):
-        """Returns the source code of the node"""
+        """Returns the source code of the node."""
 
         if not self.tokenizer:
             raise Exception("Could not find source for node '%s'" % node.type)

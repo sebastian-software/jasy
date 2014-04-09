@@ -25,15 +25,14 @@ class Resolver(AbstractResolver.Resolver):
 
 
     def getSorted(self):
-        """ Returns a list of sorted classes """
+        """Returns a list of sorted classes."""
 
         return Sorter.Sorter(self).getSorted()
 
 
     def addVirtual(self, name, text):
         """
-        Adds a virtual aka generated class to the resolver with
-        the given name and text.
+        Adds a virtual aka generated class to the resolver with the given name and text.
 
         Please note: The file name is modified to
         contain a checksum of the content as a postfix. This keeps
@@ -42,6 +41,7 @@ class Resolver(AbstractResolver.Resolver):
         The classname itself (which is modified here as said) is not
         so much of relevance because of the situation that the virtual
         class object is automatically added to the resolver (and sorter).
+
         """
 
         ScriptItem = self.profile.getVirtualItem(name, ScriptItem.ScriptItem, text, ".js")

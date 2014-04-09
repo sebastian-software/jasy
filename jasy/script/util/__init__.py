@@ -85,9 +85,7 @@ nodeTypeToDocType = {
 
 
 def getVisibility(name):
-    """
-    Returns the visibility of the given name by convention
-    """
+    """Returns the visibility of the given name by convention."""
 
     if name.startswith("__"):
         return "private"
@@ -98,17 +96,13 @@ def getVisibility(name):
 
 
 def requiresDocumentation(name):
-    """
-    Whether the given name suggests that documentation is required
-    """
+    """Whether the given name suggests that documentation is required."""
 
     return not name.startswith("_")
 
 
 def getKeyValue(dict, key):
-    """
-    Returns the value node of the given key inside the given object initializer.
-    """
+    """Returns the value node of the given key inside the given object initializer."""
 
     for propertyInit in dict:
         if propertyInit[0].value == key:
@@ -116,9 +110,7 @@ def getKeyValue(dict, key):
 
 
 def findAssignments(name, node):
-    """
-    Returns a list of assignments which might have impact on the value used in the given node.
-    """
+    """Returns a list of assignments which might have impact on the value used in the given node."""
 
     # Looking for all script blocks
     scripts = []
@@ -163,17 +155,13 @@ def findAssignments(name, node):
 
 
 def findFunction(node):
-    """
-    Returns the first function inside the given node
-    """
+    """Returns the first function inside the given node."""
 
     return query(node, lambda node: node.type == "function")
 
 
 def findCommentNode(node):
-    """
-    Finds the first doc comment node inside the given node
-    """
+    """Finds the first doc comment node inside the given node."""
 
     def matcher(node):
         comments = getattr(node, "comments", None)
@@ -186,9 +174,7 @@ def findCommentNode(node):
 
 
 def getDocComment(node):
-    """
-    Returns the first doc comment of the given node.
-    """
+    """Returns the first doc comment of the given node."""
 
     comments = getattr(node, "comments", None)
     if comments:
@@ -200,18 +186,14 @@ def getDocComment(node):
 
 
 def findReturn(node):
-    """
-    Finds the first return inside the given node
-    """
+    """Finds the first return inside the given node."""
 
     return query(node, lambda node: node.type == "return", True)
 
 
 
 def valueToString(node):
-    """
-    Converts the value of the given node into something human friendly
-    """
+    """Converts the value of the given node into something human friendly."""
 
     if node.type in ("number", "string", "false", "true", "regexp", "null"):
         return compressor.compress(node)
@@ -229,14 +211,14 @@ def valueToString(node):
 
 def queryAll(node, matcher, deep=True, inner=False, result=None):
     """
-    Recurses the tree starting with the given node and returns a list of nodes
-    matched by the given matcher method
+    Recurses the tree starting with the given node and returns a list of nodes matched by the given matcher method.
 
     - node: any node
     - matcher: function which should return a truish value when node matches
     - deep: whether inner scopes should be scanned, too
     - inner: used internally to differentiate between current and inner nodes
     - result: can be used to extend an existing list, otherwise a new list is created and returned
+
     """
 
     if result is None:
@@ -258,13 +240,14 @@ def queryAll(node, matcher, deep=True, inner=False, result=None):
 
 def query(node, matcher, deep=True, inner=False):
     """
-    Recurses the tree starting with the given node and returns the first node
-    which is matched by the given matcher method.
+    Recurses the tree starting with the given node and returns the first node which is matched by the given matcher
+    method.
 
     - node: any node
     - matcher: function which should return a truish value when node matches
     - deep: whether inner scopes should be scanned, too
     - inner: used internally to differentiate between current and inner nodes
+
     """
 
     # Don't do in closure functions
@@ -283,10 +266,8 @@ def query(node, matcher, deep=True, inner=False):
 
 
 def findCall(node, methodName):
-    """
-    Recurses the tree starting with the given node and returns the first node
-    which calls the given method name (supports namespaces, too)
-    """
+    """Recurses the tree starting with the given node and returns the first node which calls the given method name
+    (supports namespaces, too)"""
 
     if isinstance(methodName, str):
         methodName = set([methodName])
@@ -310,9 +291,7 @@ def getCallName(node):
 
 
 def getParameterFromCall(call, index=0):
-    """
-    Returns a parameter node by index on the call node
-    """
+    """Returns a parameter node by index on the call node."""
 
     try:
         return call[1][index]
@@ -321,9 +300,7 @@ def getParameterFromCall(call, index=0):
 
 
 def getParamNamesFromFunction(func):
-    """
-    Returns a human readable list of parameter names (sorted by their order in the given function)
-    """
+    """Returns a human readable list of parameter names (sorted by their order in the given function)"""
 
     params = getattr(func, "params", None)
     if params:
@@ -333,9 +310,7 @@ def getParamNamesFromFunction(func):
 
 
 def detectPlusType(plusNode):
-    """
-    Analyses the given "plus" node and tries to figure out if a "string" or "number" result is produced.
-    """
+    """Analyses the given "plus" node and tries to figure out if a "string" or "number" result is produced."""
 
     if plusNode[0].type == "string" or plusNode[1].type == "string":
         return "String"
@@ -348,9 +323,7 @@ def detectPlusType(plusNode):
 
 
 def detectObjectType(objectNode):
-    """
-    Returns a human readable type information of the given node
-    """
+    """Returns a human readable type information of the given node."""
 
     if objectNode.type in ("new", "new_with_args"):
         construct = objectNode[0]
@@ -396,9 +369,7 @@ def resolveIdentifierNode(identifierNode):
 
 
 def assembleDot(node, result=None):
-    """
-    Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
-    """
+    """Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"."""
 
     if result is None:
         result = []

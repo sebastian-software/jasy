@@ -30,9 +30,7 @@ class TemplateItem(AbstractItem.AbstractItem):
     kind = "jasy.Template"
 
     def generateId(self, relpath, package):
-        """
-        Generates the fileId of this item as being used by other modules
-        """
+        """Generates the fileId of this item as being used by other modules."""
 
         if package:
             fileId = "%s/" % package
@@ -52,9 +50,7 @@ class TemplateItem(AbstractItem.AbstractItem):
 
 
     def getScriptItem(self):
-        """
-        Returns a class representation for the template instance
-        """
+        """Returns a class representation for the template instance."""
 
         classId = self.getId() + "Template"
 

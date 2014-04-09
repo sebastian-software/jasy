@@ -104,8 +104,10 @@ class Tests(unittest.TestCase):
     def test_access_same_named_external(self):
         """
         Is is somehow an unsupported edge case which is not supported correctly yet.
-        Normally one would expect that the access to __field on RemoteObj would raise an error.
-        At least it breaks this wrong access because this field is renamed based on file name as well.
+
+        Normally one would expect that the access to __field on RemoteObj would raise an error. At least it breaks this
+        wrong access because this field is renamed based on file name as well.
+
         """
         self.assertEqual(self.process(
             '''

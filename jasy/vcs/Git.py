@@ -133,7 +133,7 @@ def update(url, version, path, update=True, submodules=True):
 
 
 def getBranch(path=None):
-    """Returns the name of the git branch"""
+    """Returns the name of the git branch."""
 
     return executeCommand("git rev-parse --abbrev-ref HEAD", "Could not figure out git branch. Is there a valid Git repository?", path=path)
 
@@ -145,13 +145,13 @@ def getRevision(path=None):
 
 
 def getShortRevision(path=None):
-    """Returns the last shortened revision/hash of the git repository"""
+    """Returns the last shortened revision/hash of the git repository."""
 
     return executeCommand("git rev-parse --short HEAD", "Could not figure out git revision. Is there a valid Git repository?", path=path)
 
 
 def isUrl(url):
-    """Figures out whether the given string is a valid Git repository URL"""
+    """Figures out whether the given string is a valid Git repository URL."""
 
     parsed = urllib.parse.urlparse(url)
 
@@ -192,5 +192,10 @@ def cleanRepository():
 
 
 def distcleanRepository():
-    """Cleans git repository from untracked files. Ignores the files listed in ".gitignore"."""
+    """
+    Cleans git repository from untracked files.
+
+    Ignores the files listed in ".gitignore".
+
+    """
     return executeCommand(["git", "clean", "-d", "-f", "-x"], "Could not distclean GIT repository!")

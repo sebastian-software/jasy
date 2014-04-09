@@ -20,7 +20,7 @@ def getRevision(path=None):
 
 
 def getBranch(path=None):
-    """Returns the current branch name"""
+    """Returns the current branch name."""
 
     info = getInfo(path)
     parsedUrl = urllib.parse.urlparse(info["URL"])

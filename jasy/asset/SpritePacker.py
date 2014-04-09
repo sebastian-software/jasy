@@ -84,7 +84,7 @@ class PackerScore():
 
 class SpritePacker():
 
-    """Packs single images into sprite images automatically"""
+    """Packs single images into sprite images automatically."""
 
 
     def __init__(self, base, types=('png'), width=1024, height=1024):
@@ -95,9 +95,7 @@ class SpritePacker():
         self.dataFormat = 'yaml'
 
     def clear(self):
-        """
-        Removes all generated sprite files found in the base directory
-        """
+        """Removes all generated sprite files found in the base directory."""
 
         Console.info("Cleaning sprite files...")
         Console.indent()
@@ -345,7 +343,7 @@ class SpritePacker():
 
 
     def generate(self, path='', debug=False):
-        """Generate sheets/variants"""
+        """Generate sheets/variants."""
 
         Console.info('Generating sprite sheet variants...')
         Console.indent()
@@ -373,7 +371,7 @@ class SpritePacker():
 
 
     def packDir(self, path='', recursive=True, debug=False):
-        """Pack images inside a dir into sprite sheets"""
+        """Pack images inside a dir into sprite sheets."""
 
         Console.info('Packing sprites in: %s' % os.path.join(self.base, path))
         Console.indent()

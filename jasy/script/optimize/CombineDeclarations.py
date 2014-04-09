@@ -52,7 +52,7 @@ def __optimize(node):
 #
 
 def __combineSiblings(node):
-    """Backwards processing and insertion into previous sibling if both are declarations"""
+    """Backwards processing and insertion into previous sibling if both are declarations."""
     length = len(node)
     pos = length - 1
     while pos > 0:
@@ -88,7 +88,7 @@ def __combineSiblings(node):
 #
 
 def __combineVarStatements(node):
-    """Top level method called to optimize a script node"""
+    """Top level method called to optimize a script node."""
 
     if len(node.scope.declared) == 0:
         return
@@ -127,7 +127,12 @@ def __combineVarStatements(node):
 
 
 def __findFirstVarStatement(node):
-    """Returns the first var statement of the given node. Ignores inner functions."""
+    """
+    Returns the first var statement of the given node.
+
+    Ignores inner functions.
+
+    """
 
     if node.type == "var":
         # Ignore variable blocks which are used as an iterator in for-in loops
@@ -232,7 +237,8 @@ def __patchVarStatements(node, firstVarStatement):
 
 
 def __rebuildAsAssignment(node, firstVarStatement):
-    """Rebuilds the items of a var statement into a assignment list and moves declarations to the given var statement"""
+    """Rebuilds the items of a var statement into a assignment list and moves declarations to the given var
+    statement."""
     assignment = Node.Node(node.tokenizer, "semicolon")
     assignmentList = Node.Node(node.tokenizer, "comma")
     assignment.append(assignmentList, "expression")

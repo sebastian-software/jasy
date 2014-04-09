@@ -35,9 +35,7 @@ class AssetManager():
 
 
     def getAssetUrl(self, fileId):
-        """
-        Returns the asset URL for the given item relative to the current working path
-        """
+        """Returns the asset URL for the given item relative to the current working path."""
 
         matched = False
         if not fileId in self.__assets:
@@ -76,9 +74,7 @@ class AssetManager():
 
 
     def getAssetWidth(self, fileId):
-        """
-        Returns the width (image width) of the given item
-        """
+        """Returns the width (image width) of the given item."""
 
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
@@ -89,9 +85,7 @@ class AssetManager():
 
 
     def getAssetHeight(self, fileId):
-        """
-        Returns the width (image height) of the given item
-        """
+        """Returns the width (image height) of the given item."""
 
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
@@ -102,9 +96,7 @@ class AssetManager():
 
 
     def getSpriteId(self, fileId):
-        """
-        Returns the sprite asset which contains the image with the given ID
-        """
+        """Returns the sprite asset which contains the image with the given ID."""
 
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
@@ -121,33 +113,25 @@ class AssetManager():
 
 
     def getSpriteUrl(self, fileId):
-        """
-        Returns the url of the sprite sheet which contains the given single image
-        """
+        """Returns the url of the sprite sheet which contains the given single image."""
 
         return self.getAssetUrl(self.getSpriteId(fileId))
 
 
     def getSpriteWidth(self, fileId):
-        """
-        Returns the width of the sprite sheet which contains the given single image
-        """
+        """Returns the width of the sprite sheet which contains the given single image."""
 
         return self.getAssetWidth(self.getSpriteId(fileId))
 
 
     def getSpriteHeight(self, fileId):
-        """
-        Returns the height of the sprite sheet which contains the given single image
-        """
+        """Returns the height of the sprite sheet which contains the given single image."""
 
         return self.getAssetHeight(self.getSpriteId(fileId))
 
 
     def getSpriteLeft(self, fileId):
-        """
-        Returns the left position of the image on the sprite sheet
-        """
+        """Returns the left position of the image on the sprite sheet."""
 
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
@@ -163,9 +147,7 @@ class AssetManager():
 
 
     def getSpriteTop(self, fileId):
-        """
-        Returns the top position of the image on the sprite sheet
-        """
+        """Returns the top position of the image on the sprite sheet."""
 
         if not fileId in self.__assets:
             raise Exception("Did not found asset with ID %s" % fileId)
@@ -227,9 +209,7 @@ class AssetManager():
 
 
     def processSprites(self):
-        """
-        Processes jasysprite files to merge sprite data into asset registry
-        """
+        """Processes jasysprite files to merge sprite data into asset registry."""
 
         assets = self.__assets
         configs = [fileId for fileId in assets if assets[fileId].isImageSpriteConfig()]
@@ -290,7 +270,7 @@ class AssetManager():
 
 
     def processAnimations(self):
-        """Processes jasyanimation files to merge animation data into asset registry"""
+        """Processes jasyanimation files to merge animation data into asset registry."""
 
         assets = self.__assets
         configs = [fileId for fileId in assets if assets[fileId].isImageAnimationConfig()]
@@ -346,9 +326,7 @@ class AssetManager():
 
 
     def __computeDestinationPath(self, assetItem):
-        """
-        Returns the path of the given asset item including the asset folder path
-        """
+        """Returns the path of the given asset item including the asset folder path."""
 
         profile = self.__profile
         assetFolder = os.path.join(profile.getDestinationPath(), profile.getAssetOutputFolder())
@@ -363,9 +341,10 @@ class AssetManager():
 
     def copyAssets(self):
         """
-        Copies assets from their source folder to the configured
-        destination folder. Does apply file name transformations
-        during copying when requested.
+        Copies assets from their source folder to the configured destination folder.
+
+        Does apply file name transformations during copying when requested.
+
         """
 
         Console.info("Copying assets...")
@@ -383,8 +362,10 @@ class AssetManager():
 
     def exportToJson(self, items=None):
         """
-        Exports asset data for usage at the client side. Utilizes JavaScript
-        class jasy.Asset to inject data into the client at runtime.
+        Exports asset data for usage at the client side.
+
+        Utilizes JavaScript class jasy.Asset to inject data into the client at runtime.
+
         """
 
         # Processing assets
@@ -443,12 +424,14 @@ class AssetManager():
 
     def __structurize(self, data):
         """
-        This method structurizes the incoming data into a cascaded structure representing the
-        file system location (aka file IDs) as a tree. It further extracts the extensions and
-        merges files with the same name (but different extensions) into the same entry. This is
-        especially useful for alternative formats like audio files, videos and fonts. It only
-        respects the data of the first entry! So it is not a good idea to have different files
-        with different content stored with the same name e.g. content.css and content.png.
+        This method structurizes the incoming data into a cascaded structure representing the file system location (aka
+        file IDs) as a tree.
+
+        It further extracts the extensions and merges files with the same name (but different extensions) into the same
+        entry. This is especially useful for alternative formats like audio files, videos and fonts. It only respects
+        the data of the first entry! So it is not a good idea to have different files with different content stored with
+        the same name e.g. content.css and content.png.
+
         """
 
         root = {}
@@ -478,7 +461,7 @@ class AssetManager():
 
 
     def __compileFilterExpr(self, classes):
-        """Returns the regular expression object to use for filtering"""
+        """Returns the regular expression object to use for filtering."""
 
         # Merge asset hints from all classes and remove duplicates
         hints = set()
