@@ -312,7 +312,7 @@ class Session():
 
                 if "check" in entry:
                     check = entry["check"]
-                    if check in ["Boolean", "String", "Number"] or type(check) == list:
+                    if check in ["Boolean", "String", "Number"] or isinstance(check, list):
                         pass
                     else:
                         raise UserError("Unsupported check: '%s' for field '%s'" % (check, name))

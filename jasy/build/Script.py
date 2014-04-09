@@ -174,7 +174,7 @@ class ScriptBuilder:
 
             # Support for multi path items
             # (typically in projects with custom layout/structure e.g. 3rd party)
-            if type(path) is list:
+            if isinstance(path, list):
                 for singleFileName in path:
                     files.append(main.toRelativeUrl(singleFileName))
 

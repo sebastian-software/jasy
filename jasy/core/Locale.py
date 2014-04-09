@@ -66,7 +66,7 @@ def pluralToJavaScript(expr):
 
                 res += expr
 
-                if match.group(2) != None:
+                if match.group(2) is not None:
                     res += "!="
                 else:
                     res += "=="
@@ -80,7 +80,7 @@ def pluralToJavaScript(expr):
                 if " " in expr:
                     expr = "(%s)" % re.compile(r"\s+mod\s+").sub("%", expr)
 
-                if match.group(2) != None:
+                if match.group(2) is not None:
                     res += "!"
 
                 res += "("
@@ -198,7 +198,7 @@ class LocaleParser():
 
             firstIsDict = False
             for childKey in value:
-                if type(value[childKey]) == dict:
+                if isinstance(value[childKey], dict):
                     firstIsDict = True
                     break
 
@@ -240,7 +240,7 @@ class LocaleParser():
         self.__data["Plural"] = {}
         for item in tree.findall("plurals/pluralRules"):
             attr = item.get("locales")
-            if attr != None:
+            if attr is not None:
                 if self.__language in attr.split(" "):
                     for rule in item.findall("pluralRule"):
                         jsPlural = pluralToJavaScript(rule.text)
@@ -276,7 +276,7 @@ class LocaleParser():
         # :: Calendar Preference
         ordering = None
         for item in tree.findall("calendarPreferenceData/calendarPreference"):
-            if item.get("territories") == "001" and ordering == None:
+            if item.get("territories") == "001" and ordering is None:
                 ordering = item.get("ordering")
             elif territory in item.get("territories").split(" "):
                 ordering = item.get("ordering")
@@ -290,7 +290,7 @@ class LocaleParser():
         for key in ["firstDay", "weekendStart", "weekendEnd"]:
             day = None
             for item in weekData.findall(key):
-                if item.get("territories") == "001" and day == None:
+                if item.get("territories") == "001" and day is None:
                     day = item.get("day")
                 elif territory in item.get("territories").split(" "):
                     day = item.get("day")
@@ -304,7 +304,7 @@ class LocaleParser():
         for key in ["measurementSystem", "paperSize"]:
             mtype = None
             for item in measurementData.findall(key):
-                if item.get("territories") == "001" and mtype == None:
+                if item.get("territories") == "001" and mtype is None:
                     mtype = item.get("type")
                 elif territory in item.get("territories").split(" "):
                     mtype = item.get("type")

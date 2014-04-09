@@ -239,7 +239,7 @@ def queryAll(node, matcher, deep=True, inner=False, result=None):
     - result: can be used to extend an existing list, otherwise a new list is created and returned
     """
 
-    if result == None:
+    if result is None:
         result = []
 
     # Don't do in closure functions
@@ -288,7 +288,7 @@ def findCall(node, methodName):
     which calls the given method name (supports namespaces, too)
     """
 
-    if type(methodName) is str:
+    if isinstance(methodName, str):
         methodName = set([methodName])
 
     def matcher(node):
@@ -400,7 +400,7 @@ def assembleDot(node, result=None):
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
     """
 
-    if result == None:
+    if result is None:
         result = []
 
     for child in node:

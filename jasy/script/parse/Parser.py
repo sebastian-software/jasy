@@ -19,7 +19,7 @@ __all__ = ["parse", "parseExpression"]
 
 
 def parseExpression(source, fileId=None, line=1, builder=None):
-    if builder == None:
+    if builder is None:
         builder = jasy.script.parse.VanillaBuilder.VanillaBuilder()
 
     # Convert source into expression statement to be friendly to the Tokenizer
@@ -34,7 +34,7 @@ def parseExpression(source, fileId=None, line=1, builder=None):
 
 
 def parse(source, fileId=None, line=1, builder=None):
-    if builder == None:
+    if builder is None:
         builder = jasy.script.parse.VanillaBuilder.VanillaBuilder()
 
     tokenizer = jasy.script.tokenize.Tokenizer.Tokenizer(source, fileId, line)
@@ -860,7 +860,7 @@ def checkDestructuring(tokenizer, staticContext, node, simpleNamesOnly=None, dat
     builder = staticContext.builder
 
     for child in node:
-        if child == None:
+        if child is None:
             continue
 
         if child.type == "property_init":

@@ -64,7 +64,7 @@ def __cleanup(node):
     cleaned = False
 
     for child in list(node):
-        if child != None and __cleanup(child):
+        if child is not None and __cleanup(child):
             cleaned = True
 
     if node.type == "script" and node.scope.unused and hasattr(node, "parent"):
@@ -87,7 +87,7 @@ def __recurser(node, unused):
     if node.type != "function":
         for child in node:
             # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-            if child != None:
+            if child is not None:
                 if __recurser(child, unused):
                     retval = True
 
@@ -109,7 +109,7 @@ def __recurser(node, unused):
         # Remove function names which are unused
         if node.parent.functionForm == "expressed_form":
             funcName = getattr(node.parent, "name", None)
-            if funcName != None and funcName in unused:
+            if funcName is not None and funcName in unused:
                 Console.debug("Removing unused function name at line %s" % node.line)
                 del node.parent.name
                 retval = True
@@ -119,7 +119,7 @@ def __recurser(node, unused):
         # Remove full unused functions (when not in top-level scope)
         if node.functionForm == "declared_form" and getattr(node, "parent", None) and node.parent.type != "call":
             funcName = getattr(node, "name", None)
-            if funcName != None and funcName in unused:
+            if funcName is not None and funcName in unused:
                 Console.debug("Removing unused function declaration %s at line %s" % (funcName, node.line))
                 node.parent.remove(node)
                 retval = True

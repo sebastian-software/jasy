@@ -296,7 +296,7 @@ class ApiWriter():
         if not classFilter:
             return True
 
-        if type(classFilter) is tuple:
+        if isinstance(classFilter, tuple):
             if className.startswith(classFilter):
                 return True
 
@@ -413,7 +413,7 @@ class ApiWriter():
         for className in data:
             try:
                 classData = data[className]
-                if type(classData) is dict:
+                if isinstance(classData, dict):
                     classExport = classData
                 else:
                     classExport = classData.export()

@@ -156,17 +156,17 @@ class AbstractNode(list):
 
             if hasattr(kid, "tokenizer"):
                 if hasattr(kid, "start"):
-                    if not hasattr(self, "start") or self.start == None or kid.start < self.start:
+                    if not hasattr(self, "start") or self.start is None or kid.start < self.start:
                         self.start = kid.start
 
                 if hasattr(kid, "end"):
-                    if not hasattr(self, "end") or self.end == None or self.end < kid.end:
+                    if not hasattr(self, "end") or self.end is None or self.end < kid.end:
                         self.end = kid.end
 
             kid.parent = self
 
             # alias for function
-            if rel != None:
+            if rel is not None:
                 setattr(self, rel, kid)
                 setattr(kid, "rel", rel)
 
@@ -224,12 +224,12 @@ class AbstractNode(list):
                         relatedChildren.append(value)
 
                 elif type(value) in (bool, int, float, str, list, set, dict):
-                    if type(value) == bool:
+                    if isinstance(value, bool):
                         value = "true" if value else "false"
                     elif type(value) in (int, float):
                         value = str(value)
                     elif type(value) in (list, set, dict):
-                        if type(value) == dict:
+                        if isinstance(value, dict):
                             value = value.keys()
                         if len(value) == 0:
                             continue
@@ -259,10 +259,10 @@ class AbstractNode(list):
             if scope:
                 for statKey in scope:
                     statValue = scope[statKey]
-                    if statValue != None and len(statValue) > 0:
-                        if type(statValue) is set:
+                    if statValue is not None and len(statValue) > 0:
+                        if isinstance(statValue, set):
                             statValue = ",".join(statValue)
-                        elif type(statValue) is dict:
+                        elif isinstance(statValue, dict):
                             statValue = ",".join(statValue.keys())
 
                         result += '%s<stat name="%s">%s</stat>%s' % (innerLead, statKey, statValue, lineBreak)

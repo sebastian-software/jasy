@@ -173,11 +173,11 @@ class Compressor:
         value = node.value
 
         # Apply basic rounding to reduce size overhead of floating point
-        if type(value) is float and not hasattr(node, "precision"):
+        if isinstance(value, float) and not hasattr(node, "precision"):
             value = round(value, 4)
 
         # Special handling for protected float/exponential
-        if type(value) == str:
+        if isinstance(value, str):
             # Convert zero-prefix
             if value.startswith("0.") and len(value) > 2:
                 value = value[1:]

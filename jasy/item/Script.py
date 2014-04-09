@@ -56,7 +56,7 @@ def collectFields(node, keys=None):
 
     # Process children
     for child in reversed(node):
-        if child != None:
+        if child is not None:
             collectFields(child, keys)
 
     return keys
@@ -365,7 +365,7 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
     def getCompressed(self, profile):
         field = "script:compressed[%s]-%s" % (self.id, profile.getId())
         compressed = self.project.getCache().read(field, self.mtime)
-        if compressed == None:
+        if compressed is None:
             permutation = self.filterPermutation(profile.getCurrentPermutation())
             tree = self.__getOptimizedTree(permutation)
 

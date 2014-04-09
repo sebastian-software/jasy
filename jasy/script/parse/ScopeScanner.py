@@ -40,7 +40,7 @@ def __scanNode(node, data):
 
     elif node.type == "declaration":
         varName = getattr(node, "name", None)
-        if varName != None:
+        if varName is not None:
             data.declared.add(varName)
 
             if hasattr(node, "initializer"):
@@ -111,7 +111,7 @@ def __scanNode(node, data):
     else:
         for child in node:
             # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-            if child != None:
+            if child is not None:
                 __scanNode(child, data)
 
 

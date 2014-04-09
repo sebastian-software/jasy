@@ -156,7 +156,7 @@ class Config:
         def recurse(data, prefix):
             for key in data:
                 value = data[key]
-                if type(value) is dict:
+                if isinstance(value, dict):
                     if prefix:
                         recurse(value, prefix + key + ".")
                     else:

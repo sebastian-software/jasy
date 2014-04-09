@@ -290,7 +290,7 @@ class Project():
                 scan = self.__resolveScanConfig(self.__config.get("scan"))
 
             for config in scan:
-                if type(config["paths"]) == str:
+                if isinstance(config["paths"], str):
                     self.__addDir(config["paths"], config["regex"], config["type"], config["package"])
                 else:
                     for path in config["paths"]:
@@ -336,7 +336,7 @@ class Project():
         scan = []
 
         for path, config in configs.items():
-            if type(config) == str:
+            if isinstance(config, str):
                 config = {
                     "type": config,
                     "package": self.__package
@@ -411,7 +411,7 @@ class Project():
         Console.indent()
         for fileId in content:
             entry = content[fileId]
-            if type(entry) is not dict:
+            if not isinstance(entry, dict):
                 raise UserError("Invalid manual content section for file %s. Requires a dict with type and source definition!" % fileId)
 
             itemType = entry["type"]
@@ -520,7 +520,7 @@ class Project():
 
         for entry in self.__requires:
 
-            if type(entry) is dict:
+            if isinstance(entry, dict):
                 source = entry["source"]
                 config = Util.getKey(entry, "config")
                 version = Util.getKey(entry, "version")
@@ -575,7 +575,7 @@ class Project():
 
                 if revision is not None:
                     # Shorten typical long revisions as used by e.g. Git
-                    if type(revision) is str and len(revision) > 20:
+                    if isinstance(revision, str) and len(revision) > 20:
                         fullversion.append(revision[:10])
                     else:
                         fullversion.append(revision)

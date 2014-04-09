@@ -155,7 +155,7 @@ def __patch(node, blocked=None, enable=False, translate=None):
         # Update declarations (as part of a var statement)
         elif node.type == "declaration":
             varName = getattr(node, "name", None)
-            if varName != None:
+            if varName is not None:
                 if varName in translate:
                     node.name = varName = translate[varName]
             else:
@@ -170,5 +170,5 @@ def __patch(node, blocked=None, enable=False, translate=None):
     #
     for child in node:
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-        if child != None:
+        if child is not None:
             __patch(child, blocked, enable, translate)

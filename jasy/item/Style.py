@@ -60,7 +60,7 @@ def collectFields(node, keys=None, condition=False):
 
     # Process children
     for child in reversed(node):
-        if child != None:
+        if child is not None:
             collectFields(child, keys, condition)
 
     return keys

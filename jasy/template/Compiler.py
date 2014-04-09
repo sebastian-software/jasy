@@ -46,7 +46,7 @@ def walk(node, labels, nostrip):
     code = ""
 
     for current in node:
-        if type(current) == str:
+        if isinstance(current, str):
             code += 'buf+="' + escapeMatcher(current) + '";\n'
         elif current["tag"] == "\n":
             code += 'buf+="\\n";\n'

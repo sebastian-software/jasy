@@ -90,7 +90,7 @@ def assembleDot(node, result=None):
     Joins a dot node (cascaded supported, too) into a single string like "foo.bar.Baz"
     """
 
-    if result == None:
+    if result is None:
         result = []
 
     for child in node:

@@ -65,7 +65,7 @@ def __cleanup(node):
     cleaned = 0
 
     for child in list(node):
-        if child != None:
+        if child is not None:
             cleaned += __cleanup(child)
 
     # Process any selector separately.
@@ -96,7 +96,7 @@ def __recurser(node, unused):
     if node.type != "selector":
         for child in reversed(node):
             # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-            if child != None:
+            if child is not None:
                 modified += __recurser(child, unused)
 
     if node.type == "mixin":

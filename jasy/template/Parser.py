@@ -34,7 +34,7 @@ def buildTree(tokens, stack):
     while len(tokens) > 0:
         token = tokens.popleft()
 
-        if type(token) == str:
+        if isinstance(token, str):
             instructions.append(token)
         elif token["tag"] == "#" or token["tag"] == "^" or token["tag"] == "?":
             stack.append(token)

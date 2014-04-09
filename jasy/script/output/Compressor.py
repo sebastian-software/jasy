@@ -210,7 +210,7 @@ class Compressor:
 
     def type_array_init(self, node):
         def helper(child):
-            return self.compress(child) if child != None else ""
+            return self.compress(child) if child is not None else ""
 
         return "[%s]" % ",".join(map(helper, node))
 
@@ -230,7 +230,7 @@ class Compressor:
         value = node.value
 
         # Special handling for protected float/exponential
-        if type(value) == str:
+        if isinstance(value, str):
             # Convert zero-prefix
             if value.startswith("0.") and len(value) > 2:
                 value = value[1:]

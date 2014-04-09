@@ -161,7 +161,7 @@ def isUrl(url):
             return True
         elif parsed.scheme == "https" and parsed.path.endswith(".git"):
             return True
-        elif not parsed.scheme and parsed.path == url and __gitAccountUrl.match(url) != None:
+        elif not parsed.scheme and parsed.path == url and __gitAccountUrl.match(url) is not None:
             return True
 
     return False

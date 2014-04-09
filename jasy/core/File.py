@@ -107,7 +107,7 @@ def syncfile(src, dst):
 def sha1(fileOrPath, block_size=2 ** 20):
     """Returns a SHA 1 checksum (as hex digest) of the given file (handle)"""
 
-    if type(fileOrPath) is str:
+    if isinstance(fileOrPath, str):
         fileOrPath = open(fileOrPath, "rb")
 
     sha1res = hashlib.sha1()

@@ -89,7 +89,7 @@ def generateApi(api):
 
         value = api[key]
 
-        if type(value) is Task.Task:
+        if isinstance(value, Task.Task):
             continue
 
         msg = Console.colorize(key, "bold")

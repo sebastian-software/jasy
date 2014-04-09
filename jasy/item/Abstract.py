@@ -48,7 +48,7 @@ class AbstractItem:
         entry = None
 
         try:
-            if type(path) is list:
+            if isinstance(path, list):
                 mtime = 0
                 for entry in path:
                     entryTime = os.stat(entry).st_mtime
@@ -135,7 +135,7 @@ class AbstractItem:
         if self.__path is None:
             return None
 
-        if type(self.__path) == list:
+        if isinstance(self.__path, list):
             text = "".join([open(filename, mode="r", encoding=encoding).read() for filename in self.__path])
         else:
             text = open(self.__path, mode="r", encoding=encoding).read()

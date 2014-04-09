@@ -51,7 +51,7 @@ class Resolver():
         Adds an item by its name or via the item instance
         """
 
-        if type(nameOrItem) is str:
+        if isinstance(nameOrItem, str):
             if not nameOrItem in self.items:
                 raise ResolverError("Unknown item: %s" % nameOrItem)
 

@@ -77,7 +77,7 @@ def __cleanup(node):
     # Process from inside to outside
     for child in reversed(node):
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-        if child != None:
+        if child is not None:
             if __cleanup(child):
                 optimized = True
 
@@ -170,11 +170,11 @@ def __checkCondition(node):
 
     elif node.type == "and":
         first = __checkCondition(node[0])
-        if first != None and not first:
+        if first is not None and not first:
             return False
 
         second = __checkCondition(node[1])
-        if second != None and not second:
+        if second is not None and not second:
             return False
 
         if first and second:
@@ -183,7 +183,7 @@ def __checkCondition(node):
     elif node.type == "or":
         first = __checkCondition(node[0])
         second = __checkCondition(node[1])
-        if first != None and second != None:
+        if first is not None and second is not None:
             return first or second
 
     return None
@@ -194,7 +194,7 @@ def __invertResult(result):
     Used to support the NOT operator.
     """
 
-    if type(result) == bool:
+    if isinstance(result, bool):
         return not result
 
     return result

@@ -96,7 +96,7 @@ def task(*args, **kwargs):
             return Task(func)
 
         # Compat to old Jasy 0.7.x task declaration
-        elif type(func) is str:
+        elif isinstance(func, str):
             return task(**kwargs)
 
         else:

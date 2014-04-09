@@ -571,7 +571,7 @@ class Profile():
         entry = self.__fields[name]
 
         if values:
-            if type(values) != list:
+            if not isinstance(values, list):
                 values = [values]
 
             entry["values"] = values
@@ -581,10 +581,10 @@ class Profile():
                 check = entry["check"]
                 for value in values:
                     if check == "Boolean":
-                        if type(value) == bool:
+                        if isinstance(value, bool):
                             continue
                     elif check == "String":
-                        if type(value) == str:
+                        if isinstance(value, str):
                             continue
                     elif check == "Number":
                         if type(value) in (int, float):
@@ -601,7 +601,7 @@ class Profile():
         elif "check" in entry and entry["check"] == "Boolean":
             entry["values"] = [True, False]
 
-        elif "check" in entry and type(entry["check"]) == list:
+        elif "check" in entry and isinstance(entry["check"], list):
             entry["values"] = entry["check"]
 
         elif "default" in entry:

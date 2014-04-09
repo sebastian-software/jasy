@@ -52,7 +52,7 @@ class Permutation:
                 value = "true"
             elif value is False:
                 value = "false"
-            elif value == None:
+            elif value is None:
                 value = "null"
 
             result.append("%s:%s" % (key, value))

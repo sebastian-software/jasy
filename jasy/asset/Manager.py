@@ -465,7 +465,7 @@ class AssetManager():
             for split in splits:
                 if not split in current:
                     current[split] = {}
-                elif type(current[split]) != dict:
+                elif not isinstance(current[split], dict):
                     raise UserError("Invalid asset structure. Folder names must not be identical to any filename without extension: \"%s\" in %s" % (split, fileId))
 
                 current = current[split]

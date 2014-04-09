@@ -31,7 +31,7 @@ def __optimize(node, compressor):
     # on a copy of the node to prevent it from forgetting children when structure is modified
     for child in list(node):
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-        if child != None:
+        if child is not None:
             __optimize(child, compressor)
 
 
@@ -61,7 +61,7 @@ def __optimize(node, compressor):
         operator = node.type
 
         # Only do for real numeric values and not for protected strings (float differences between Python and JS)
-        if type(firstNumber.value) == str or type(secondNumber.value) == str:
+        if isinstance(firstNumber.value, str) or isinstance(secondNumber.value, str):
             pass
         elif operator == "plus":
             Console.debug("Precompute numeric %s operation at line: %s", operator, node.line)
@@ -365,7 +365,7 @@ def combineToCommaExpression(node):
     Example: {x++;y+=3} => x++,x+=3
     """
 
-    if node == None or node.type != "block":
+    if node is None or node.type != "block":
         return node
 
     counter = 0

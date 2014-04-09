@@ -35,7 +35,7 @@ def __optimize(node):
 
     for child in copy:
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
-        if child != None:
+        if child is not None:
             __optimize(child)
 
     if node.type in ("script", "block"):
@@ -161,7 +161,7 @@ def __cleanFirst(first):
     for child in first:
         if hasattr(child, "initializer"):
             varName = getattr(child, "name", None)
-            if varName != None:
+            if varName is not None:
                 known.add(varName)
             else:
                 # JS 1.7 Destructing Expression

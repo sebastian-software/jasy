@@ -19,9 +19,9 @@ def __translateToJS(code):
         code = "true"
     elif code is False:
         code = "false"
-    elif type(code) is str and code.startswith("{") and code.endswith("}"):
+    elif isinstance(code, str) and code.startswith("{") and code.endswith("}"):
         pass
-    elif type(code) is str and code.startswith("[") and code.endswith("]"):
+    elif isinstance(code, str) and code.startswith("[") and code.endswith("]"):
         pass
     else:
         code = "\"%s\"" % code
@@ -66,7 +66,7 @@ def patch(node, permutation):
 
             replacement = __translateToJS(permutation.get(name))
 
-            if replacement != None:
+            if replacement is not None:
                 # Auto-fill second parameter with boolean "true"
                 expected = params[1] if len(params) > 1 else Parser.parseExpression("true")
 
@@ -124,7 +124,7 @@ def patch(node, permutation):
 
     # Process children
     for child in reversed(node):
-        if child != None:
+        if child is not None:
             if patch(child, permutation):
                 modified = True
 

@@ -31,7 +31,7 @@ def executeCommand(args, failMessage=None, path=None, wrapOutput=True):
     :param wrapOutput: Whether shell output should be wrapped and returned (and passed through to Console.debug())
     """
 
-    if type(args) == str:
+    if isinstance(args, str):
         args = shlex.split(args)
 
     prevpath = os.getcwd()

@@ -95,7 +95,7 @@ class Cache:
         Clears the cache file(s)
         """
 
-        if self.__shelve != None:
+        if self.__shelve is not None:
             Console.debug("Closing cache file %s..." % self.__file)
 
             self.__shelve.close()

@@ -38,7 +38,7 @@ def hasText(node):
 
     # Process children
     for child in node:
-        if child != None:
+        if child is not None:
             ret = hasText(child)
             if ret:
                 return True
@@ -84,7 +84,7 @@ def __collectionRecurser(node, collection):
 
     # Process children
     for child in node:
-        if child != None:
+        if child is not None:
             __collectionRecurser(child, collection)
 
     return collection
