@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -177,4 +180,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

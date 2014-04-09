@@ -3,7 +3,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class FlagSet:
+
     """
     Configures an formatting object which can be used to compress classes afterwards.
     The optimization set is frozen after initialization which also generates the unique
@@ -54,5 +56,3 @@ class FlagSet:
     # Map Python built-ins
     __repr__ = getKey
     __str__ = getKey
-
-

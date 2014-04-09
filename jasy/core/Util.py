@@ -4,7 +4,13 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, os, hashlib, tempfile, subprocess, sys, shlex
+import re
+import os
+import hashlib
+import tempfile
+import subprocess
+import sys
+import shlex
 
 import jasy.core.Console as Console
 import jasy.core.Base62 as Base62
@@ -123,12 +129,15 @@ def getKey(data, key, default=None):
 __REGEXP_DASHES = re.compile(r"\-+([\S]+)?")
 __REGEXP_HYPHENATE = re.compile(r"([A-Z])")
 
+
 def __camelizeHelper(match):
     result = match.group(1)
     return result[0].upper() + result[1:].lower()
 
+
 def __hyphenateHelper(match):
     return "-%s" % match.group(1).lower()
+
 
 def camelize(str):
     """
@@ -138,6 +147,7 @@ def camelize(str):
     """
     return __REGEXP_DASHES.sub(__camelizeHelper, str)
 
+
 def hyphenate(str):
     """Returns a hyphenated version of the incoming string: fooBarBaz => foo-bar-baz
 
@@ -145,4 +155,3 @@ def hyphenate(str):
     """
 
     return __REGEXP_HYPHENATE.sub(__hyphenateHelper, str)
-

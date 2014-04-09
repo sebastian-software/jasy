@@ -15,6 +15,7 @@ newlineMatcher = re.compile(r"\n")
 # Used to remove markup sequences after doc processing of comment text
 stripMarkup = re.compile(r"<.*?>")
 
+
 def extractSummary(text):
     try:
         text = stripMarkup.sub("", newlineMatcher.sub(" ", text))
@@ -33,4 +34,3 @@ def extractSummary(text):
         Console.warn("Unable to extract summary for: %s", text)
 
     return None
-

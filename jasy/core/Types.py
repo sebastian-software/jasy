@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class CaseInsensitiveDict(dict):
+
     """
     A case-insensitive dict subclass.
     Each key is changed on entry to str(key).title().

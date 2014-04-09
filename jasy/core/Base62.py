@@ -15,6 +15,7 @@ while i < 62:
 # And mask for 6, 6, 6, 5, 4, 3, 2, 1 leading bits
 bitMask = [252, 252, 252, 248, 240, 224, 192, 128]
 
+
 def encodeArrayOfBytes(arr):
     # This works like a bit register. Take first 6 bits and append it to result. Take next 6 bits and so on.
     # A special case is if the 6 bits represents 60, 61, 62 or 63. In this case one more bit is used to
@@ -39,20 +40,20 @@ def encodeArrayOfBytes(arr):
             else:
                 moveRight = 8 - remainingBits
 
-            extractedBits = ( (arr[charOffset] << bitOffset) & 252 ) >> moveRight
+            extractedBits = ((arr[charOffset] << bitOffset) & 252) >> moveRight
 
         else:
             leftoverBits = bitOffset - 2
             # print("LEFT-OVER-BITS: %s" % leftoverBits)
 
-            if (8-leftoverBits) >= 0 and (8-leftoverBits) < 8:
-                bitMaskValue = bitMask[8-leftoverBits]
+            if (8 - leftoverBits) >= 0 and (8 - leftoverBits) < 8:
+                bitMaskValue = bitMask[8 - leftoverBits]
             else:
                 bitMaskValue = 0
 
             extractedBits = (
-                ( (arr[charOffset] << bitOffset) & bitMask[bitOffset] ) +
-                ( (arr[charOffset+1] & bitMaskValue) >> (6-leftoverBits) )
+                ((arr[charOffset] << bitOffset) & bitMask[bitOffset]) +
+                ((arr[charOffset + 1] & bitMaskValue) >> (6 - leftoverBits))
             ) >> 2
 
         if (extractedBits & 62) == 60:
@@ -76,7 +77,7 @@ def decodeToArrayOfBytes(arr):
     charOffset = 0
     charLength = len(arr)
 
-    charOffset=0
+    charOffset = 0
     while charOffset < charLength:
         char = arr[charOffset]
 
@@ -86,7 +87,7 @@ def decodeToArrayOfBytes(arr):
             correctBits = 30 if char == 60 else 31
 
             if bitsNeeded <= 5:
-                current = ((current << bitsNeeded) + (correctBits >> (5-bitsNeeded))) & 255
+                current = ((current << bitsNeeded) + (correctBits >> (5 - bitsNeeded))) & 255
                 result.append(current)
                 current = (((correctBits << bitsNeeded) & 255) >> bitsNeeded) & 63
                 bitOffset = 5 - bitsNeeded
@@ -99,10 +100,10 @@ def decodeToArrayOfBytes(arr):
                     current = 0
         else:
             if bitsNeeded <= 6:
-                last = charOffset == charLength -1
+                last = charOffset == charLength - 1
                 charShift = char
                 if not last:
-                    charShift = char >> (6-bitsNeeded)
+                    charShift = char >> (6 - bitsNeeded)
 
                 current = ((current << bitsNeeded) + charShift) & 255
                 result.append(current)
@@ -142,7 +143,7 @@ def decodeStringToArray(str):
     byteArray = []
 
     i = 0
-    while i<ii:
+    while i < ii:
         byteArray.append(base62InvertedTable[str[i]])
         i += 1
 
@@ -152,6 +153,6 @@ def decodeStringToArray(str):
 def encode(str):
     return encodeArrayToString(bytearray(str, "utf-8"))
 
+
 def decode(str):
     return bytearray(decodeStringToArray(str)).decode()
-

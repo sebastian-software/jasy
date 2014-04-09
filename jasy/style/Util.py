@@ -3,7 +3,8 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import itertools, re
+import itertools
+import re
 import jasy.style.parse.Node as Node
 
 RE_ENGINE_PROPERTY = re.compile(r"^(?:\-(apple|chrome|moz|ms|o|webkit)\-)?([a-z\-]+)$")
@@ -151,7 +152,7 @@ def combineSelectorList(selector, stop, root=None):
                         if "@(root)" in combined:
                             combined += currentRoot + part
                         else:
-                            combined = part.replace("&", currentRoot+combined)
+                            combined = part.replace("&", currentRoot + combined)
                     else:
                         combined = "%s %s" % (combined, part)
                 else:
@@ -232,7 +233,7 @@ def combineSelector(node, stop=None):
     current = node
     while current and current is not stop and (current.type is not "root" or stop):
         if current.type == "mixin" and hasattr(current, "selector") and current.selector:
-            selector.append(current.selector) # extend for this mixin
+            selector.append(current.selector)  # extend for this mixin
         elif hasattr(current, "name") and current.name:
             if current.type == "selector":
                 selector.append(current.name)
@@ -267,7 +268,6 @@ def combineSelector(node, stop=None):
         for pos, selector in enumerate(combinedSelectors):
             if "@(root)" in selector:
                 # Remove all before and including the @(root) placeholder
-                combinedSelectors[pos] = selector[selector.index("@(root) ")+8:]
+                combinedSelectors[pos] = selector[selector.index("@(root) ") + 8:]
 
     return combinedSelectors, combinedMedia, combinedSupports
-

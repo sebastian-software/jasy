@@ -4,7 +4,10 @@
 # Copyright 2012-2014 Sebastian Werner
 #
 
-import os, re, fnmatch, copy
+import os
+import re
+import fnmatch
+import copy
 
 import jasy.core.Cache
 import jasy.core.Config as Config
@@ -23,6 +26,7 @@ repositoryHashPostfix = re.compile(r"^(.*)-([a-zA-Z0-9]{27,28})$")
 
 projects = {}
 structures = {}
+
 
 def addStructure(name, structure):
     structures[name] = structure
@@ -316,10 +320,10 @@ class Project():
 
         start = path.index("{")
         end = path.index("}")
-        expanders = [p.strip() for p in path[start+1:end].split(",")]
+        expanders = [p.strip() for p in path[start + 1:end].split(",")]
 
         prefix = path[:start]
-        postfix = path[end+1:]
+        postfix = path[end + 1:]
 
         pathres = [self.__createPathRe(prefix + element + postfix) for element in expanders]
         regex = "|".join(["(" + pathel + ")" for pathel, path in pathres])
@@ -565,7 +569,7 @@ class Project():
 
                 if version is not None:
                     if "/" in version:
-                        fullversion.append(version[version.rindex("/")+1:])
+                        fullversion.append(version[version.rindex("/") + 1:])
                     else:
                         fullversion.append(version)
 
@@ -741,4 +745,3 @@ class Project():
         """ Returns all project asssets (images, stylesheets, static data, etc.). """
 
         return self.getItems("jasy.Asset") or {}
-

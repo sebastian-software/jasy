@@ -4,7 +4,17 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import shutil, json, base64, os, re, random, sys, mimetypes, http.client, urllib.parse, hashlib
+import shutil
+import json
+import base64
+import os
+import re
+import random
+import sys
+import mimetypes
+import http.client
+import urllib.parse
+import hashlib
 import jasy.core.Console as Console
 
 __all__ = ["requestUrl", "uploadData"]
@@ -21,9 +31,9 @@ def requestUrl(url, content_type="text/plain", headers=None, method="GET", port=
 
     parsed = urllib.parse.urlparse(url)
 
-    if parsed.scheme== "http":
+    if parsed.scheme == "http":
         request = http.client.HTTPConnection(parsed.netloc)
-    elif parsed.scheme== "https":
+    elif parsed.scheme == "https":
         request = http.client.HTTPSConnection(parsed.netloc)
     else:
         raise Exception("Unsupported url: %s" % url)
@@ -103,8 +113,8 @@ def choose_boundary():
     """Return a string usable as a multipart boundary."""
 
     # Follow IE and Firefox
-    nonce = "".join([str(random.randint(0, sys.maxsize-1)) for i in (0,1,2)])
-    return "-"*27 + nonce
+    nonce = "".join([str(random.randint(0, sys.maxsize - 1)) for i in (0, 1, 2)])
+    return "-" * 27 + nonce
 
 
 def get_content_type(filename):
@@ -146,4 +156,3 @@ def encode_multipart_formdata(fields, files):
     body = "\r\n".encode("ascii").join(bytelines)
 
     return content_type, body
-

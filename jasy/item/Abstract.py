@@ -9,6 +9,7 @@ import os
 from jasy import UserError
 import jasy.core.File as File
 
+
 class AbstractItem:
 
     id = None
@@ -39,7 +40,7 @@ class AbstractItem:
             self.setId(id)
 
     def generateId(self, relpath, package):
-        return "%s/%s" % (package,relpath)
+        return "%s/%s" % (package, relpath)
 
     def attach(self, path):
         self.__path = path
@@ -165,4 +166,3 @@ class AbstractItem:
     # Map Python built-ins
     __repr__ = getId
     __str__ = getId
-

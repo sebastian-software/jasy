@@ -13,7 +13,9 @@ import jasy.core.File as File
 Contains image format detection classes. Once the format is detect it supports image size detection, too.
 """
 
+
 class ImgFile(object):
+
     """Abstract base class for all image types"""
 
     def __init__(self, filename):
@@ -44,6 +46,7 @@ class ImgFile(object):
 
 # http://www.w3.org/Graphics/GIF/spec-gif89a.txt
 class GifFile(ImgFile):
+
     """Class for parsing GIF files"""
 
     def verify(self):
@@ -58,13 +61,14 @@ class GifFile(ImgFile):
 
     def size(self):
         self.fp.seek(0)
-        header = self.fp.read(6+6)
+        header = self.fp.read(6 + 6)
         (width, height) = struct.unpack("<HH", header[6:10])
         return width, height
 
 
 # http://www.libmng.com/pub/png/spec/1.2/png-1.2-pdg.html#Structure
 class PngFile(ImgFile):
+
     """Class for parsing PNG files"""
 
     def type(self):
@@ -79,7 +83,7 @@ class PngFile(ImgFile):
 
     def size(self):
         self.fp.seek(0)
-        header = self.fp.read(8+4+4+13+4)
+        header = self.fp.read(8 + 4 + 4 + 13 + 4)
         ihdr = struct.unpack("!I4s", header[8:16])
         data = struct.unpack("!II5B", header[16:29])
         (width, height, bitDepth, colorType, compressionMethod, filterMethod, interleaceMethod) = data
@@ -88,6 +92,7 @@ class PngFile(ImgFile):
 
 # http://www.obrador.com/essentialjpeg/HeaderInfo.htm
 class JpegFile(ImgFile):
+
     def verify(self):
         self.fp.seek(0)
         signature = struct.unpack("!H", self.fp.read(2))
@@ -105,14 +110,16 @@ class JpegFile(ImgFile):
         b = self.fp.read(1)
         try:
             while (b and ord(b) != 0xDA):
-                while (ord(b) != 0xFF): b = self.fp.read(1)
-                while (ord(b) == 0xFF): b = self.fp.read(1)
+                while (ord(b) != 0xFF):
+                    b = self.fp.read(1)
+                while (ord(b) == 0xFF):
+                    b = self.fp.read(1)
                 if (ord(b) >= 0xC0 and ord(b) <= 0xC3):
                     self.fp.read(3)
                     h, w = struct.unpack(">HH", self.fp.read(4))
                     break
                 else:
-                    self.fp.read(int(struct.unpack(">H", self.fp.read(2))[0])-2)
+                    self.fp.read(int(struct.unpack(">H", self.fp.read(2))[0]) - 2)
                 b = self.fp.read(1)
             width = int(w)
             height = int(h)
@@ -125,6 +132,7 @@ class JpegFile(ImgFile):
 
 
 class ImgInfo(object):
+
     def __init__(self, filename):
         self.__filename = filename
 
@@ -169,4 +177,3 @@ class ImgInfo(object):
         img.close()
 
         return checksum
-

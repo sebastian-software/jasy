@@ -4,6 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class Block():
 
     def __init__(self, w, h, image=False):
@@ -26,11 +27,10 @@ class Block():
             }
 
         else:
-            return  {
+            return {
                 "left": 0,
                 "top": 0,
                 "width": self.w,
                 "height": self.h,
                 "checksum": None
             }
-

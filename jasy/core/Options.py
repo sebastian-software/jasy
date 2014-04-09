@@ -7,7 +7,9 @@
 import sys
 import jasy.core.Console as Console
 
+
 class Options:
+
     """
     More flexible alternative to the standard python option parser module
     which solves the requirements to have arbirary tasks and custom parameters for each task.
@@ -46,13 +48,13 @@ class Options:
 
                 if "=" in name:
                     pos = name.find("=")
-                    value = name[pos+1:]
+                    value = name[pos + 1:]
                     name = name[0:pos]
 
                     if not inTaskMode and self.__types[name] is bool:
                         raise Exception("Invalid argument: %s. Boolean flag!" % name)
 
-                elif (not name in self.__types or not self.__types[name] is bool) and (index+1) < length and not args[index+1].startswith("-"):
+                elif (not name in self.__types or not self.__types[name] is bool) and (index + 1) < length and not args[index + 1].startswith("-"):
                     index += 1
                     value = args[index]
 
@@ -144,5 +146,3 @@ class Options:
 
     def getTasks(self):
         return self.__tasks
-
-

@@ -6,6 +6,7 @@
 
 
 class ScopeData():
+
     """
     Used by core/Variables.py to store the resulting statistics data efficiently. Contains information about:
 

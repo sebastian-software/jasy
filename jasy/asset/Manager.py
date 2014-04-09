@@ -3,7 +3,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, fnmatch, re, json
+import os
+import fnmatch
+import re
+import json
 
 from jasy import UserError
 
@@ -243,7 +246,7 @@ class AssetManager():
             spriteBase = os.path.dirname(fileId)
 
             try:
-                spriteConfig = asset.getParsedObject();
+                spriteConfig = asset.getParsedObject()
             except ValueError as err:
                 raise UserError("Could not parse jasysprite at %s: %s" % (fileId, err))
 
@@ -388,7 +391,7 @@ class AssetManager():
         assets = self.__assets
 
         # Destination folder for assets
-        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetOutputFolder());
+        assetPath = os.path.join(self.__profile.getDestinationPath(), self.__profile.getAssetOutputFolder())
 
         result = {}
         filterExpr = self.__compileFilterExpr(items) if items else None
@@ -487,9 +490,3 @@ class AssetManager():
         Console.debug("Compiled asset matcher: %s" % matcher)
 
         return re.compile(matcher)
-
-
-
-
-
-

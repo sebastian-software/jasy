@@ -4,7 +4,17 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import shelve, time, os, os.path, sys, pickle, dbm, uuid, hashlib, atexit, glob
+import shelve
+import time
+import os
+import os.path
+import sys
+import pickle
+import dbm
+import uuid
+import hashlib
+import atexit
+import glob
 
 import jasy
 import jasy.core.Util
@@ -12,7 +22,9 @@ import jasy.core.Console as Console
 
 hostId = uuid.getnode()
 
+
 class Cache:
+
     """
     A cache class based on shelve feature of Python. Supports transient in-memory
     storage, too. Uses memory storage for caching requests to DB as well for
@@ -147,7 +159,7 @@ class Cache:
             timestamp = time.time()
 
         try:
-            self.__shelve[key+"-timestamp"] = timestamp
+            self.__shelve[key + "-timestamp"] = timestamp
             self.__shelve[key] = value
         except pickle.PicklingError as err:
             Console.error("Failed to store enty: %s" % key)
@@ -166,5 +178,3 @@ class Cache:
         if self.__shelve is not None:
             self.__shelve.close()
             self.__shelve = None
-
-

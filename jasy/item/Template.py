@@ -12,6 +12,7 @@ import jasy.item.Abstract as AbstractItem
 import jasy.item.Script as ScriptItem
 import jasy.template.Compiler as Compiler
 
+
 def templateFilter(text, item):
     Console.info("Creating template class %s", item.getId())
     return 'core.Main.declareNamespace("%(name)s", %(content)s);' % {

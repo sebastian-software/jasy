@@ -151,5 +151,3 @@ def printTokens(text, fileId=None):
             Console.info("%s%s: %s" % (indent * "  ", tokenType, tokenValue))
         else:
             Console.info("%s%s" % (indent * "  ", tokenType))
-
-

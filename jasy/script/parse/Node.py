@@ -5,6 +5,7 @@
 
 import jasy.parse.AbstractNode as AbstractNode
 
+
 class Node(AbstractNode.AbstractNode):
 
     __slots__ = [
@@ -21,4 +22,3 @@ class Node(AbstractNode.AbstractNode):
         "block", "defaultIndex", "discriminant", "label", "statements", "finallyBlock",
         "statement", "variables", "names", "guard", "for", "tail", "expressionClosure"
     ]
-

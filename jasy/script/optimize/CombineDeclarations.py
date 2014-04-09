@@ -13,6 +13,7 @@ import jasy.core.Console as Console
 #
 
 class Error(Exception):
+
     def __init__(self, line):
         self.__line = line
 
@@ -53,10 +54,10 @@ def __optimize(node):
 def __combineSiblings(node):
     """Backwards processing and insertion into previous sibling if both are declarations"""
     length = len(node)
-    pos = length-1
+    pos = length - 1
     while pos > 0:
         child = node[pos]
-        prevChild = node[pos-1]
+        prevChild = node[pos - 1]
 
         # Special FOR loop optimization, emulate faked VAR
         if child.type == "for" and prevChild.type == "var":
@@ -119,8 +120,8 @@ def __combineVarStatements(node):
 
         firstVarParent = firstVar.parent
         firstVarPos = firstVarParent.index(firstVar)
-        if len(firstVarParent) > firstVarPos+1:
-            possibleForStatement = firstVarParent[firstVarPos+1]
+        if len(firstVarParent) > firstVarPos + 1:
+            possibleForStatement = firstVarParent[firstVarPos + 1]
             if possibleForStatement.type == "for" and not hasattr(possibleForStatement, "setup"):
                 possibleForStatement.append(firstVar, "setup")
 

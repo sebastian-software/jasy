@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -63,7 +66,7 @@ class Tests(unittest.TestCase):
 
     def test_remote(self):
         self.assertRaises(CryptPrivates.Error, self.process,
-            '''
+                          '''
             alert(RemoteObj.__x);
             ''')
 
@@ -140,5 +143,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-
-

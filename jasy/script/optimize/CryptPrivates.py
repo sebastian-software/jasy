@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import zlib, string, re
+import zlib
+import string
+import re
 import jasy.core.Console as Console
 
 
@@ -15,6 +17,7 @@ import jasy.core.Console as Console
 
 
 class Error(Exception):
+
     def __init__(self, name, line):
         self.__name = name
         self.__line = line
@@ -104,7 +107,7 @@ def __replace(node, repl):
 
 
 
-def __encode(value, alphabet=string.ascii_letters+string.digits):
+def __encode(value, alphabet=string.ascii_letters + string.digits):
 
     num = zlib.adler32(value.encode("utf-8"))
 

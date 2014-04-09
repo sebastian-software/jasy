@@ -3,7 +3,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import copy, random, string
+import copy
+import random
+import string
 
 import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
@@ -161,7 +163,7 @@ def __extend(node):
                     virtualTop = virtualSelector
 
                 pos = mixin.parent.index(mixin)
-                mixin.parent.insert(pos+1, virtualTop)
+                mixin.parent.insert(pos + 1, virtualTop)
 
         node.parent.remove(node)
         Console.outdent()
@@ -329,7 +331,7 @@ def __resolveMixin(mixin, params):
 
     # Generate random prefix for variables and parameters
     chars = string.ascii_letters + string.digits
-    prefix = ''.join(random.sample(chars*6, 6))
+    prefix = ''.join(random.sample(chars * 6, 6))
 
     # Data base of all local variable and parameter name mappings
     variables = {}
@@ -347,7 +349,7 @@ def __resolveMixin(mixin, params):
             elif param.type == "assign" and param[0].type == "variable":
                 paramAsDeclaration.name = param[0].name
             else:
-                raise Exception("Unsupported param structure for mixin resolver at line %s! Expected type variable or assignment and got: %s!" % (mixin.line, param.type));
+                raise Exception("Unsupported param structure for mixin resolver at line %s! Expected type variable or assignment and got: %s!" % (mixin.line, param.type))
 
             # Copy over actual param value
             if len(params) > pos:
@@ -384,5 +386,3 @@ def __renameRecurser(node, variables, prefix):
     # Access variable
     elif node.type == "variable" and node.name in variables:
         node.name = variables[node.name]
-
-

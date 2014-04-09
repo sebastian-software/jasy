@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, copy, fnmatch, re
+import os
+import copy
+import fnmatch
+import re
 
 import jasy.core.MetaData as MetaData
 import jasy.core.Console as Console
@@ -386,5 +389,3 @@ class ScriptItem(jasy.item.Abstract.AbstractItem):
             self.project.getCache().store(field, compressed, self.mtime)
 
         return compressed
-
-

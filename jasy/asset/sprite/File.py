@@ -4,6 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class SpriteFile():
 
     def __init__(self, width, height, relPath, fullPath, checksum):

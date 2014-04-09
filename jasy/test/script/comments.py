@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -889,10 +892,11 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(parsed.comments), 1)
         comment = parsed.comments[0]
 
-        #print('\\n'.join(comment.getHtml().split('\n')))
-        #print('\\n'.join(comment.text.split('\n')))
+        # print('\\n'.join(comment.getHtml().split('\n')))
+        # print('\\n'.join(comment.text.split('\n')))
 
-        self.assertEqual(comment.getHtml(), '<p>Some code:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>\n</pre></div>\n</td></tr></table>\n<p>A list of things below:</p>\n\n<ul>\n<li><p><strong>listItem</strong></p>\n\n<p>This is text and not code.</p></li>\n</ul>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n2</pre></div></td><td class="code"><div class="highlight"><pre>     <span class="c1">// Some code</span>\n     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"This actually is code in the list"</span><span class="p">)</span>\n</pre></div>\n</td></tr></table>\n<ul>\n<li><p><strong>anotherListItem</strong></p>\n\n<p>More text.</p></li>\n</ul>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"More code"</span><span class="p">)</span>\n</pre></div>\n</td></tr></table>\n')
+        self.assertEqual(comment.getHtml(
+        ), '<p>Some code:</p>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>\n</pre></div>\n</td></tr></table>\n<p>A list of things below:</p>\n\n<ul>\n<li><p><strong>listItem</strong></p>\n\n<p>This is text and not code.</p></li>\n</ul>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1\n2</pre></div></td><td class="code"><div class="highlight"><pre>     <span class="c1">// Some code</span>\n     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"This actually is code in the list"</span><span class="p">)</span>\n</pre></div>\n</td></tr></table>\n<ul>\n<li><p><strong>anotherListItem</strong></p>\n\n<p>More text.</p></li>\n</ul>\n\n<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"More code"</span><span class="p">)</span>\n</pre></div>\n</td></tr></table>\n')
         self.assertEqual(comment.text, 'Some code:\n\n    var e = 1;\n\nA list of things below:\n\n - __listItem__\n\n    This is text and not code.\n\n         // Some code\n         console.log("This actually is code in the list")\n\n- __anotherListItem__\n\n     More text.\n\n         console.log("More code")')
 
 
@@ -1516,4 +1520,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

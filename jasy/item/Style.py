@@ -3,7 +3,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, copy, fnmatch, re
+import os
+import copy
+import fnmatch
+import re
 
 import jasy.core.Console as Console
 import jasy.core.MetaData as MetaData
@@ -65,6 +68,7 @@ def collectFields(node, keys=None, condition=False):
 
 
 class StyleError(Exception):
+
     """
     Error class used for issues during style processing
     """
@@ -350,4 +354,3 @@ class StyleItem(AbstractItem.AbstractItem):
             self.project.getCache().store(field, compressed, mtime)
 
         return compressed
-

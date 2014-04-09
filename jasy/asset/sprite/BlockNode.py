@@ -4,6 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class BlockNode():
 
     def __init__(self, parent, x, y, w, h):
@@ -17,4 +18,3 @@ class BlockNode():
         self.down = None
         self.right = None
         self.used = False
-

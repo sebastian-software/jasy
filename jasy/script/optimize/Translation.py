@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, copy, polib
+import re
+import copy
+import polib
 
 import jasy.script.parse.Node as Node
 import jasy.item.Translation as Translation
@@ -94,7 +96,7 @@ def collectTranslations(node):
 
 
 def optimize(node, translation):
-  return __recurser(node, translation.getTable())
+    return __recurser(node, translation.getTable())
 
 
 
@@ -116,7 +118,7 @@ def __splitTemplate(value, valueParams):
 
     # Convert list with nodes into Python dict
     # [a, b, c] => {0:a, 1:b, 2:c}
-    mapper = { pos: value for pos, value in enumerate(valueParams) }
+    mapper = {pos: value for pos, value in enumerate(valueParams)}
 
     result = []
     splits = __replacer.split(value)

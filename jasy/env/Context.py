@@ -99,5 +99,3 @@ def showapi():
 
     from jasy.core.Inspect import generateApi
     Console.info(generateApi(__api__))
-
-

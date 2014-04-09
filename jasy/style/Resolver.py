@@ -26,4 +26,3 @@ class Resolver(AbstractResolver.Resolver):
         """ Returns a list of sorted classes """
 
         return Sorter.Sorter(self).getSorted()
-

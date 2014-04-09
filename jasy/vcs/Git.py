@@ -3,7 +3,10 @@
 # Copyright 2010-2012 Zynga Inc.
 #
 
-import os.path, re, urllib.parse, shutil
+import os.path
+import re
+import urllib.parse
+import shutil
 
 from jasy.core.Util import executeCommand
 import jasy.core.Console as Console
@@ -191,4 +194,3 @@ def cleanRepository():
 def distcleanRepository():
     """Cleans git repository from untracked files. Ignores the files listed in ".gitignore"."""
     return executeCommand(["git", "clean", "-d", "-f", "-x"], "Could not distclean GIT repository!")
-

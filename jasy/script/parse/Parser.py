@@ -15,7 +15,8 @@ import jasy.script.tokenize.Tokenizer
 import jasy.script.parse.VanillaBuilder
 import jasy.script.tokenize.Lang
 
-__all__ = [ "parse", "parseExpression" ]
+__all__ = ["parse", "parseExpression"]
+
 
 def parseExpression(source, fileId=None, line=1, builder=None):
     if builder == None:
@@ -60,6 +61,7 @@ def parse(source, fileId=None, line=1, builder=None):
 
 
 class SyntaxError(Exception):
+
     def __init__(self, message, tokenizer):
         Exception.__init__(self, "Syntax error: %s\n%s:%s" % (message, tokenizer.fileId, tokenizer.line))
 
@@ -67,6 +69,7 @@ class SyntaxError(Exception):
 # Used as a status container during tree-building for every def body and the global body
 class StaticContext(object):
     # inFunction is used to check if a return stm appears in a valid context.
+
     def __init__(self, inFunction, builder):
         # Whether this is inside a function, mostly True, only for top-level scope it's False
         self.inFunction = inFunction
@@ -142,10 +145,10 @@ def Statements(tokenizer, staticContext):
     builder.BLOCK_finish(node)
 
     # if getattr(node, "needsHoisting", False):
-    #     # TODO
+    # TODO
     #     raise Exception("Needs hoisting went true!!!")
     #     builder.setHoists(node.id, node.variables)
-    #     # Propagate up to the function.
+    # Propagate up to the function.
     #     staticContext.needsHoisting = True
 
     return node
@@ -218,12 +221,12 @@ def Statement(tokenizer, staticContext):
                     raise SyntaxError("More than one switch default", tokenizer)
 
                 childNode = builder.DEFAULT_build(tokenizer)
-                builder.SWITCH_setDefaultIndex(node, len(node)-1)
+                builder.SWITCH_setDefaultIndex(node, len(node) - 1)
                 tokenizer.mustMatch("colon")
                 builder.DEFAULT_initializeStatements(childNode, tokenizer)
 
                 while True:
-                    tokenType=tokenizer.peek(True)
+                    tokenType = tokenizer.peek(True)
                     if tokenType == "case" or tokenType == "default" or tokenType == "right_curly":
                         break
                     builder.DEFAULT_addStatement(childNode, Statement(tokenizer, staticContext))
@@ -237,7 +240,7 @@ def Statement(tokenizer, staticContext):
                 builder.CASE_initializeStatements(childNode, tokenizer)
 
                 while True:
-                    tokenType=tokenizer.peek(True)
+                    tokenType = tokenizer.peek(True)
                     if tokenType == "case" or tokenType == "default" or tokenType == "right_curly":
                         break
                     builder.CASE_addStatement(childNode, Statement(tokenizer, staticContext))
@@ -396,10 +399,10 @@ def Statement(tokenizer, staticContext):
             # nested so we skip all labels immediately enclosing the nearest
             # non-label statement.
             #
-            while i < len(statementStack) - 1 and statementStack[i+1].type == "label":
+            while i < len(statementStack) - 1 and statementStack[i + 1].type == "label":
                 i += 1
 
-            if i < len(statementStack) - 1 and getattr(statementStack[i+1], "isLoop", False):
+            if i < len(statementStack) - 1 and getattr(statementStack[i + 1], "isLoop", False):
                 i += 1
             elif tokenType == "continue":
                 raise SyntaxError("Invalid continue", tokenizer)
@@ -545,7 +548,7 @@ def Statement(tokenizer, staticContext):
                 label = tokenizer.token.value
                 statementStack = staticContext.statementStack
 
-                i = len(statementStack)-1
+                i = len(statementStack) - 1
                 while i >= 0:
                     if getattr(statementStack[i], "label", None) == label:
                         raise SyntaxError("Duplicate label", tokenizer)
@@ -1009,7 +1012,7 @@ def Expression(tokenizer, staticContext):
         builder.COMMA_addOperand(childNode, node)
         node = childNode
         while True:
-            childNode = node[len(node)-1]
+            childNode = node[len(node) - 1]
             if childNode.type == "yield" and not childNode.parenthesized:
                 raise SyntaxError("Yield expression must be parenthesized", tokenizer)
             builder.COMMA_addOperand(node, AssignExpression(tokenizer, staticContext))

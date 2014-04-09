@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import types, inspect, textwrap, re
+import types
+import inspect
+import textwrap
+import re
 import jasy.core.Console as Console
 
 
@@ -125,4 +128,3 @@ def generateApi(api):
         result.append("")
 
     return "\n".join(result)
-

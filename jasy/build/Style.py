@@ -16,6 +16,7 @@ import jasy.style.Resolver as StyleResolver
 import jasy.style.output.Optimization as StyleOptimization
 import jasy.style.output.Formatting as StyleFormatting
 
+
 class StyleBuilder:
 
     # --------------------------------------------------------------------------------------------

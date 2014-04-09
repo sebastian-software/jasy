@@ -11,6 +11,7 @@ import jasy.build.Style as StyleBuilder
 
 KERNEL_NAME = "kernel"
 
+
 def run(profile):
     session = profile.getSession()
     parts = profile.getParts()

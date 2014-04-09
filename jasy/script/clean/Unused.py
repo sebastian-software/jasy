@@ -15,6 +15,7 @@ import jasy.core.Console as Console
 #
 
 class Error(Exception):
+
     def __init__(self, name, line):
         self.__name = name
         self.__line = line
@@ -187,4 +188,3 @@ def __recurser(node, unused):
             node.parent.remove(node)
 
     return retval
-

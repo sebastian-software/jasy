@@ -3,7 +3,8 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, copy
+import re
+import copy
 
 import jasy.core.Console as Console
 import jasy.script.api.Comment as Comment
@@ -66,6 +67,7 @@ class Token:
 
 
 class TokenizerError(Exception):
+
     def __init__(self, message, fileId, line):
         self.message = "Tokenization Error: %s" % message
         self.fileId = fileId
@@ -78,6 +80,7 @@ class TokenizerError(Exception):
 
 
 class Tokenizer(object):
+
     def __init__(self, source, fileId="", line=1):
         # source: JavaScript source
         # fileId: Filename (for debugging proposes)
@@ -196,7 +199,7 @@ class Tokenizer(object):
                 commentStartLine = self.line
                 if startLine == self.line and not startOfFile:
                     mode = "inline"
-                elif (self.line-1) > startLine:
+                elif (self.line - 1) > startLine:
                     # distance before this comment means it is a comment block for a whole section (multiple lines of code)
                     mode = "section"
                 else:
@@ -238,7 +241,7 @@ class Tokenizer(object):
                 text = "//"
                 if startLine == self.line and not startOfFile:
                     mode = "inline"
-                elif (self.line-1) > startLine:
+                elif (self.line - 1) > startLine:
                     # distance before this comment means it is a comment block for a whole section (multiple lines of code)
                     mode = "section"
                 else:
@@ -260,7 +263,7 @@ class Tokenizer(object):
                     text += ch
 
                 try:
-                    self.comments.append(Comment.Comment(text, mode, self.line-1, "", self.fileId))
+                    self.comments.append(Comment.Comment(text, mode, self.line - 1, "", self.fileId))
                 except Comment.CommentException:
                     Console.error("Ignoring comment in %s: %s", self.fileId, commentError)
 
@@ -407,7 +410,7 @@ class Tokenizer(object):
             ch = input[self.cursor]
             self.cursor += 1
 
-        token.value = str(input[token.start+1:self.cursor-1])
+        token.value = str(input[token.start + 1:self.cursor - 1])
         token.quote = input[token.start]
 
 
@@ -486,7 +489,7 @@ class Tokenizer(object):
                 startOffset = 1
 
         # Extract identifier part
-        identifier = input[token.start+startOffset:self.cursor]
+        identifier = input[token.start + startOffset:self.cursor]
 
         # Support for variable blocks e.g. ${foo}
         if inVariableBlock:
@@ -630,4 +633,3 @@ class Tokenizer(object):
         self.skippedSpaces = point["skippedSpaces"]
         self.skippedComments = point["skippedComments"]
         self.skippedLineBreaks = point["skippedLineBreaks"]
-

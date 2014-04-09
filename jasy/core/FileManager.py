@@ -4,11 +4,14 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, shutil, json
+import os
+import shutil
+import json
 import jasy.core.Console as Console
 
 
 class FileManager:
+
     """
     Summarizes utility methods for operations in filesystem.
     """
@@ -67,7 +70,7 @@ class FileManager:
 
         visitedPaths = []
 
-        for rootFolder, dirs, files in os.walk(src,followlinks=True):
+        for rootFolder, dirs, files in os.walk(src, followlinks=True):
 
             # Prevent infinite loops by removing already visited subdirs
             # This only happens by using recursive links
@@ -154,4 +157,3 @@ class FileManager:
         handle = open(dst, mode="w", encoding="utf-8")
         handle.write(content)
         handle.close()
-

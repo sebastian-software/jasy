@@ -182,19 +182,19 @@ def __createOrder():
         ["or"],
         ["and"],
         ["bitwise_or"],
-        ["bitwise_xor",],
+        ["bitwise_xor", ],
         ["bitwise_and"],
-        ["eq","ne","strict_eq","strict_ne"],
-        ["lt","le","ge","gt","in","instanceof"],
-        ["lsh","rsh","ursh"],
-        ["plus","minus"],
-        ["mul","div","mod"],
-        ["unary_plus","unary_minus","delete","void","typeof","not","bitwise_not","increment","decrement"],
-        ["dot","call","index"],
-        ["new_with_args","new"],
-        ["null","this","true","false","identifier","number","string","regexp"],
+        ["eq", "ne", "strict_eq", "strict_ne"],
+        ["lt", "le", "ge", "gt", "in", "instanceof"],
+        ["lsh", "rsh", "ursh"],
+        ["plus", "minus"],
+        ["mul", "div", "mod"],
+        ["unary_plus", "unary_minus", "delete", "void", "typeof", "not", "bitwise_not", "increment", "decrement"],
+        ["dot", "call", "index"],
+        ["new_with_args", "new"],
+        ["null", "this", "true", "false", "identifier", "number", "string", "regexp"],
         ["let"],
-        ["object_init","array_init","array_comp"],
+        ["object_init", "array_init", "array_comp"],
         ["function"]
     ]
 
@@ -206,4 +206,3 @@ def __createOrder():
     return result
 
 expressionOrder = __createOrder()
-

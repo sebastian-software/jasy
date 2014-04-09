@@ -15,6 +15,7 @@ import jasy.core.Console as Console
 
 
 class ResolverError(Exception):
+
     def __init__(self, message, node=None):
         if node:
             Exception.__init__(self, "Resolver Error: %s in node \"%s\" in file \"%s\" at line %s!" % (message, node.type, node.getFileName(), node.line))
@@ -110,4 +111,3 @@ def __recurser(node, permutation, inCondition=False):
         repl = Operation.compute(node)
         if repl is not None:
             node.parent.replace(node, repl)
-

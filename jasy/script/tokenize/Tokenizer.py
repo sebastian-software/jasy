@@ -11,7 +11,8 @@
 #   - Sebastian Werner <info@sebastian-werner.net> (Python Port) (2010)
 #
 
-import re, copy
+import re
+import copy
 
 import jasy.script.tokenize.Lang as Lang
 import jasy.script.api.Comment as Comment
@@ -84,11 +85,13 @@ class Token:
 
 
 class ParseError(Exception):
+
     def __init__(self, message, fileId, line):
         Exception.__init__(self, "Syntax error: %s\n%s:%s" % (message, fileId, line))
 
 
 class Tokenizer(object):
+
     def __init__(self, source, fileId="", line=1):
         # source: JavaScript source
         # fileId: Filename (for debugging proposes)
@@ -188,7 +191,7 @@ class Tokenizer(object):
                 commentStartLine = self.line
                 if startLine == self.line and not startOfFile:
                     mode = "inline"
-                elif (self.line-1) > startLine:
+                elif (self.line - 1) > startLine:
                     # distance before this comment means it is a comment block for a whole section (multiple lines of code)
                     mode = "section"
                 else:
@@ -229,7 +232,7 @@ class Tokenizer(object):
                 text = "//"
                 if startLine == self.line and not startOfFile:
                     mode = "inline"
-                elif (self.line-1) > startLine:
+                elif (self.line - 1) > startLine:
                     # distance before this comment means it is a comment block for a whole section (multiple lines of code)
                     mode = "section"
                 else:
@@ -251,7 +254,7 @@ class Tokenizer(object):
                     text += ch
 
                 try:
-                    self.comments.append(Comment.Comment(text, mode, self.line-1, "", self.fileId))
+                    self.comments.append(Comment.Comment(text, mode, self.line - 1, "", self.fileId))
                 except Comment.CommentException:
                     Console.error("Ignoring comment in %s: %s", self.fileId, commentError)
 
@@ -408,7 +411,7 @@ class Tokenizer(object):
         if hasEscapes:
             token.value = eval(input[token.start:self.cursor])
         else:
-            token.value = input[token.start+1:self.cursor-1]
+            token.value = input[token.start + 1:self.cursor - 1]
 
 
     def lexRegExp(self, ch):
@@ -584,4 +587,3 @@ class Tokenizer(object):
             raise ParseError("PANIC: too much lookahead!", self.fileId, self.line)
 
         self.tokenIndex = (self.tokenIndex - 1) & 3
-

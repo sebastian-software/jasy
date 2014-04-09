@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -160,7 +163,7 @@ class Tests(unittest.TestCase):
         """ Non expressions must be protected with parens. """
 
         self.assertEqual(self.process(
-        '''
+            '''
         function abc() {
            var obj = {
                x:1
@@ -168,13 +171,13 @@ class Tests(unittest.TestCase):
         };
         '''
         ),
-        'function abc(){({x:1})};')
+            'function abc(){({x:1})};')
 
     def test_object_multi(self):
         """ Non expressions must be protected with parens. """
 
         self.assertEqual(self.process(
-        '''
+            '''
         function abc() {
            var obj1 = {
                x:1
@@ -184,13 +187,13 @@ class Tests(unittest.TestCase):
         };
         '''
         ),
-        'function abc(){({x:1});({x:2})};')
+            'function abc(){({x:1});({x:2})};')
 
     def test_object_multi_others(self):
         """ Non expressions must be protected with parens. """
 
         self.assertEqual(self.process(
-        '''
+            '''
         function abc() {
            var obj1 = {
                x:1
@@ -201,7 +204,7 @@ class Tests(unittest.TestCase):
         };
         '''
         ),
-        'function abc(){({x:1});var str="hello";({x:2});return str};')
+            'function abc(){({x:1});var str="hello";({x:2});return str};')
 
     def test_var_dep_blocks(self):
         """ y contains operation so could not be removed and x is still in use. """
@@ -445,4 +448,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

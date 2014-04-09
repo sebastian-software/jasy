@@ -13,7 +13,9 @@
 
 import jasy.script.parse.Node
 
+
 class VanillaBuilder:
+
     """The vanilla AST builder."""
 
     def COMMENTS_add(self, currNode, prevNode, comments):
@@ -342,7 +344,7 @@ class VanillaBuilder:
     def FUNCTION_setBody(self, node, statement):
         # copy over function parameters to function body
         params = getattr(node, "params", None)
-        #if params:
+        # if params:
         #    statement.params = [param.value for param in params]
 
         node.append(statement, "body")

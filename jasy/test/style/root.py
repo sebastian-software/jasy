@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, inspect
+import sys
+import os
+import unittest
+import logging
+import inspect
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -22,6 +26,7 @@ h1{
 }
 
 """
+
 
 class Tests(unittest.TestCase):
 
@@ -362,4 +367,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

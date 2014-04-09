@@ -52,6 +52,7 @@ __all__ = ["cleanup"]
 
 import jasy.core.Console as Console
 
+
 def cleanup(node):
     """
     Reprocesses JavaScript to remove dead paths
@@ -118,8 +119,8 @@ def __cleanup(node):
         for child in node:
             # Require that every case block ends with a break (no fall-throughs)
             if child.type == "case":
-                block = child[len(child)-1]
-                if len(block) == 0 or block[len(block)-1].type != "break":
+                block = child[len(child) - 1]
+                if len(block) == 0 or block[len(block) - 1].type != "break":
                     Console.warn("Could not optimize switch statement (at line %s) because of fallthrough break statement.", node.line)
                     return False
 
@@ -250,4 +251,3 @@ def __compareNodes(a, b):
         return False
 
     return None
-

@@ -6,7 +6,9 @@
 
 import jasy.abstract.Sorter as AbstractSorter
 
+
 class Sorter(AbstractSorter.AbstractSorter):
+
     """
     Sorter for Script items
     """
@@ -23,4 +25,3 @@ class Sorter(AbstractSorter.AbstractSorter):
 
     def getItemBreaks(self, item):
         return item.getBreaks(self.permutation, items=self.items)
-

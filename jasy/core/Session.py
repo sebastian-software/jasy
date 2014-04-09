@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import atexit, os, zlib, shutil
+import atexit
+import os
+import zlib
+import shutil
 
 import jasy.core.Config as Config
 import jasy.core.Project as Project
@@ -22,6 +25,7 @@ from jasy import UserError
 
 
 class Session():
+
     """
     Manages all projects.
     """
@@ -329,7 +333,8 @@ class Session():
             raise UserError("Could not import library %s as the object name %s is already used." % (fileName, objectName))
 
         # Create internal class object for storing shared methods
-        class Shared(object): pass
+        class Shared(object):
+            pass
         exportedModule = Shared()
         exportedModule.__doc__ = doc or "Imported from %s" % os.path.relpath(fileName, os.getcwd())
         counter = 0
@@ -619,5 +624,3 @@ class Session():
         all.append("C")
 
         return all
-
-

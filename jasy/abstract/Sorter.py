@@ -6,7 +6,9 @@
 
 import jasy.core.Console as Console
 
+
 class SorterError(Exception):
+
     """
     Error which is throws when sorting could not be done because of circular dependencies.
     """
@@ -15,6 +17,7 @@ class SorterError(Exception):
 
 
 class AbstractSorter:
+
     """
     Sorts a final list of items according to their requirements.
     This class is not type depended e.g. is used for both scripts and styles.

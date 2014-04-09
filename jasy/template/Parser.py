@@ -62,15 +62,15 @@ def tokenize(text, nostrip=False):
     if not nostrip:
         text = "".join([line.strip() for line in text.split("\n")])
 
-    tokens=[]
-    splitted=re.split(tagSplitter, text)
+    tokens = []
+    splitted = re.split(tagSplitter, text)
 
     for segment in splitted:
         if len(segment) > 0:
             if segment[0] == "{":
                 matched = re.match(tagMatcher, segment)
                 if matched:
-                    tag = matched.group(1) # || "$"
+                    tag = matched.group(1)  # || "$"
                     if not tag:
                         tag = "$"
                     if tag != "!":

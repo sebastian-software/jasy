@@ -19,6 +19,7 @@ except ImportError as err1:
     ImageDraw = None
     Console.debug("No support for Pillow (PIL)!")
 
+
 class SpriteSheet():
 
     def __init__(self, packer, blocks):
@@ -79,4 +80,3 @@ class SpriteSheet():
                 draw.rectangle((x, y , x + w , y + h), fill=(255, 255, 0, 255))
 
         img.save(filename)
-

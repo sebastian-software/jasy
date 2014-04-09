@@ -29,6 +29,7 @@ try:
 except:
     supportsMarkdown = False
 
+
 def markdownToHtml(markdownStr):
     """
     Converts Markdown to HTML. Supports GitHub's fenced code blocks,
@@ -55,6 +56,7 @@ try:
 except ImportError:
 
     supportsHighlighting = False
+
 
 def highlightCodeBlocks(html, tabsize=2, defaultlang="javascript"):
     """

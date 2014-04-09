@@ -13,6 +13,7 @@ __all__ = ["Permutation", "getPermutation"]
 """Central cache for all permutations"""
 registry = {}
 
+
 def getPermutation(combination):
     """
     Small wrapper to omit double creation of identical permutations in filter() method
@@ -28,6 +29,7 @@ def getPermutation(combination):
 
 
 class Permutation:
+
     """Object to store a single kind of permutation"""
 
     def __init__(self, combination):
@@ -99,4 +101,3 @@ class Permutation:
     # Map Python built-ins
     __repr__ = getKey
     __str__ = getKey
-

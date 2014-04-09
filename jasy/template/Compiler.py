@@ -33,6 +33,7 @@ innerTags = [
     "^"
 ]
 
+
 def escapeContent(content):
     return content.replace("\"", "\\\"").replace("\n", "\\n")
 
@@ -76,13 +77,13 @@ def walk(node, labels, nostrip):
                 elif tag == "=":
                     code += 'buf+=this._data(' + accessorCode + ');\n'
                 elif tag == "$":
-                    code += 'buf+=this._variable(' + accessorCode + ');\n';
+                    code += 'buf+=this._variable(' + accessorCode + ');\n'
 
             elif tag == ">":
                 code += 'buf+=this._partial("' + escaped + '",data,partials,labels);\n'
             elif tag == "_":
                 if labels and escaped in labels:
-                    code += walk(Parser.parse(labels[escaped], True), labels);
+                    code += walk(Parser.parse(labels[escaped], True), labels)
                 else:
                     code += 'buf+=this._label("' + escaped + '",data,partials,labels);\n'
 
@@ -97,4 +98,3 @@ def compile(text, labels=[], nostrip=False, name=None):
         name = "null"
 
     return "new core.template.Template(function(data, partials, labels){%s}, null, %s)" % (wrapped, name)
-

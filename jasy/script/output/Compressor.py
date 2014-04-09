@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, sys, json
+import re
+import sys
+import json
 
 from jasy.script.tokenize.Lang import keywords
 from jasy.script.parse.Lang import expressions, futureReserved
@@ -16,6 +18,7 @@ unicode_encoder = json.JSONEncoder(ensure_ascii=False)
 #
 # Class
 #
+
 
 class Compressor:
     __semicolonSymbol = ";"
@@ -406,7 +409,7 @@ class Compressor:
             valueCode = self.compress(node.value)
 
             # Micro optimization: Don't need a space when a block/map/array/group/strings are returned
-            if not valueCode.startswith(("(","[","{","'",'"',"!","-","/")):
+            if not valueCode.startswith(("(", "[", "{", "'", '"', "!", "-", "/")):
                 result += " "
 
             result += valueCode
@@ -510,7 +513,7 @@ class Compressor:
         elsePart = node.elsePart
 
         if condition.type == "not":
-            [thenPart,elsePart] = [elsePart,thenPart]
+            [thenPart, elsePart] = [elsePart, thenPart]
             condition = condition[0]
 
         return "%s?%s:%s" % (self.compress(condition), self.compress(thenPart), self.compress(elsePart))
@@ -557,6 +560,3 @@ class Compressor:
                     result += self.__addSemicolon(temp)
 
         return "%s}" % self.__removeSemicolon(result)
-
-
-

@@ -12,6 +12,7 @@ from jasy import UserError
 
 
 class ApiData():
+
     """
     Container for all relevant API data.
     Automatically generated, filled and cached by jasy.item.Script.getApiDocs().
@@ -777,4 +778,3 @@ class ApiData():
                                 entry["params"][paramName].update(comment.params[paramName])
                             else:
                                 entry["params"][paramName]["errornous"] = True
-

@@ -3,7 +3,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import json, copy
+import json
+import copy
+
 
 class AbstractNode(list):
 
@@ -127,7 +129,7 @@ class AbstractNode(list):
                 self.append(kid)
         else:
             for pos, kid in enumerate(list(kids)):
-                self.insert(index+pos, kid)
+                self.insert(index + pos, kid)
 
 
     def insertAllReplace(self, orig, kids):
@@ -135,7 +137,7 @@ class AbstractNode(list):
 
         index = self.index(orig)
         for pos, kid in enumerate(list(kids)):
-            self.insert(index+pos, kid)
+            self.insert(index + pos, kid)
 
         self.remove(orig)
 
@@ -204,7 +206,7 @@ class AbstractNode(list):
         """Converts the node to XML"""
 
         lead = tab * indent if format else ""
-        innerLead = tab * (indent+1) if format else ""
+        innerLead = tab * (indent + 1) if format else ""
         lineBreak = "\n" if format else ""
 
         relatedChildren = []
@@ -273,13 +275,13 @@ class AbstractNode(list):
                 if not child:
                     result += "%s<none/>%s" % (innerLead, lineBreak)
                 elif not hasattr(child, "rel"):
-                    result += child.toXml(format, indent+1)
+                    result += child.toXml(format, indent + 1)
                 elif not child in relatedChildren:
                     raise Exception("Oops, irritated by non related: %s in %s - child says it is related as %s" % (child.type, self.type, child.rel))
 
             for child in relatedChildren:
                 result += "%s<%s>%s" % (innerLead, child.rel, lineBreak)
-                result += child.toXml(format, indent+2)
+                result += child.toXml(format, indent + 2)
                 result += "%s</%s>%s" % (innerLead, child.rel, lineBreak)
 
             result += "%s</%s>%s" % (lead, self.type, lineBreak)

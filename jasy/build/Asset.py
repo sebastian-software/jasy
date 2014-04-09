@@ -8,6 +8,7 @@ import os
 
 import jasy.core.Console as Console
 
+
 class AssetBuilder:
 
     # --------------------------------------------------------------------------------------------

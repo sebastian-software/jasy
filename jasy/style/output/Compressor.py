@@ -3,13 +3,16 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import json, re, sys
+import json
+import re
+import sys
 import jasy.style.Util as Util
 
 ascii_encoder = json.JSONEncoder(ensure_ascii=True)
 
 
 class CompressorError(Exception):
+
     def __init__(self, message, node):
         Exception.__init__(self, "Compressor Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
@@ -214,7 +217,7 @@ class Compressor:
 
 
     def type_list(self, node):
-        return " ".join([ self.compress(child) for child in node ])
+        return " ".join([self.compress(child) for child in node])
 
 
     def type_comma(self, node):
@@ -299,7 +302,7 @@ class Compressor:
         else:
             separator = ","
 
-        return "%s(%s)" % (name, separator.join([ self.compress(child) for child in node.params ]))
+        return "%s(%s)" % (name, separator.join([self.compress(child) for child in node.params]))
 
 
     def type_keyframes(self, node):
@@ -316,7 +319,7 @@ class Compressor:
 
         self.__indentLevel += 1
 
-        frames = "".join([ self.compress(child) for child in node ])
+        frames = "".join([self.compress(child) for child in node])
         result += self.indent(frames)
 
         self.__indentLevel -= 1
@@ -409,7 +412,3 @@ class Compressor:
             result.append(str(self.compress(child)))
 
         return " ".join(result)
-
-
-
-

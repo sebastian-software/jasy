@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -32,8 +35,8 @@ class Tests(unittest.TestCase):
             "Chat[C:Chat (noum)]": "Unterhaltung",
             "Chat %1[C:Chat (noum) %1]": "Unterhaltung %1",
 
-            "You have got a new mail[N:You have got new mails]": {0:"Du hast eine neue E-Mail", 1:"Du hast neue E-Mails"},
-            "You have got a new mail[N:You have got %1 new mails]": {0:"Du hast eine neue E-Mail", 1:"Du hast %1 neue E-Mail erhalten"}
+            "You have got a new mail[N:You have got new mails]": {0: "Du hast eine neue E-Mail", 1: "Du hast neue E-Mails"},
+            "You have got a new mail[N:You have got %1 new mails]": {0: "Du hast eine neue E-Mail", 1: "Du hast %1 neue E-Mail erhalten"}
 
         })
 
@@ -177,5 +180,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-
-

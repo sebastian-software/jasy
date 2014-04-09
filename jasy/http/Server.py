@@ -4,7 +4,13 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, logging, base64, json, requests, cherrypy, locale
+import os
+import logging
+import base64
+import json
+import requests
+import cherrypy
+import locale
 from collections import namedtuple
 
 import jasy.core.Cache as Cache
@@ -48,6 +54,7 @@ def findIndex(path):
             return candidate
 
     return None
+
 
 def noBodyProcess():
     cherrypy.request.process_request_body = False
@@ -105,7 +112,7 @@ class Proxy(object):
 
         # Try using offline mirror if feasible
         if self.enableMirror and cherrypy.request.method == "GET":
-            mirrorId = "%s[%s]" % (url, json.dumps(query, separators=(',',':'), sort_keys=True))
+            mirrorId = "%s[%s]" % (url, json.dumps(query, separators=(',', ':'), sort_keys=True))
             result = self.mirror.read(mirrorId)
             if result is not None and self.enableDebug:
                 Console.info("Mirrored: %s" % url)
@@ -287,6 +294,7 @@ additionalContentTypes = {
 #
 
 class Server:
+
     """Starts the built-in HTTP server inside the project's root directory"""
 
     def __init__(self, port=8080, host="127.0.0.1", mimeTypes=None):
@@ -324,7 +332,9 @@ class Server:
 
         # Somehow this screen disabling does not work
         # This hack to disable all access/error logging works
-        def empty(*param, **args): pass
+        def empty(*param, **args):
+            pass
+
         def inspect(*param, **args):
             if args["severity"] > 20:
                 Console.error("Critical error occoured:")
@@ -382,4 +392,3 @@ class Server:
 
         Console.outdent()
         Console.info("Stopped HTTP server at port %s.", self.__port)
-

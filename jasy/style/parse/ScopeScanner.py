@@ -162,6 +162,3 @@ def __addParams(node, data):
                     data.params.add(variable.name)
                 elif variable.type == "assign" and variable[0].type == "variable":
                     data.params.add(variable[0].name)
-
-
-

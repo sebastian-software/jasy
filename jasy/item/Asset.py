@@ -172,4 +172,3 @@ class AssetItem(AbstractItem.AbstractItem):
         # TODO: audio length, video codec, etc.?
 
         return None
-

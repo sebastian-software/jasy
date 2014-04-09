@@ -188,4 +188,3 @@ def __addParams(node, data):
         if paramList:
             for paramIdentifier in paramList:
                 data.params.add(paramIdentifier.value)
-

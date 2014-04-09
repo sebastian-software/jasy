@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import sys, os, yaml, json
+import sys
+import os
+import yaml
+import json
 
 import jasy.core.Console as Console
 import jasy.core.File as File
@@ -13,7 +16,7 @@ from jasy import UserError
 from jasy.core.Util import getKey
 
 
-__all__ = [ "Config", "findConfig", "isConfigName", "loadConfig", "writeConfig" ]
+__all__ = ["Config", "findConfig", "isConfigName", "loadConfig", "writeConfig"]
 
 
 def isConfigName(fileName, requiredBaseName=None):
@@ -121,6 +124,7 @@ def matchesType(value, expected):
 
 
 class Config:
+
     """
     Wrapper around YAML/JSON with easy to use import tools for using question files,
     command line arguments, etc.

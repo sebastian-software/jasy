@@ -5,8 +5,14 @@
 
 import jasy
 
-import time, socket, uuid, getpass, copy
-import itertools, json, os
+import time
+import socket
+import uuid
+import getpass
+import copy
+import itertools
+import json
+import os
 
 import jasy.core.Console as Console
 import jasy.core.FileManager as FileManager
@@ -18,7 +24,9 @@ import jasy.core.Project as Project
 import jasy.asset.Manager as AssetManager
 import jasy.item.Script as ScriptItem
 
+
 class Profile():
+
     """
     Configuration object for the build profile of the current task
     """
@@ -754,7 +762,7 @@ class Profile():
         length = len(permutations)
 
         for pos, current in enumerate(permutations):
-            Console.info("Permutation %s/%s:" % (pos+1, length))
+            Console.info("Permutation %s/%s:" % (pos + 1, length))
             Console.indent()
 
             self.__permutation = current

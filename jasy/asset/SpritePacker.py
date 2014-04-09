@@ -13,7 +13,9 @@ from jasy.core.Config import writeConfig
 
 import jasy.core.Console as Console
 
-import os, itertools, math
+import os
+import itertools
+import math
 
 
 class PackerScore():
@@ -81,15 +83,16 @@ class PackerScore():
 
 
 class SpritePacker():
+
     """Packs single images into sprite images automatically"""
 
 
-    def __init__(self, base, types = ('png'), width=1024, height=1024):
+    def __init__(self, base, types=('png'), width=1024, height=1024):
 
         self.base = base
         self.files = []
         self.types = types
-        self.dataFormat = 'yaml';
+        self.dataFormat = 'yaml'
 
     def clear(self):
         """
@@ -203,7 +206,7 @@ class SpritePacker():
 
         # try to skip senseless generation of way to small sprites
         baseArea = sum([minWidth * minHeight for i in self.files])
-        while baseArea / (minWidth * minHeight) >= 20: # basically an estimate of the number of sheets needed
+        while baseArea / (minWidth * minHeight) >= 20:  # basically an estimate of the number of sheets needed
             minWidth *= 2
             minHeight *= 2
 
@@ -338,7 +341,7 @@ class SpritePacker():
 
     def setDataFormat(self, format='yaml'):
         """Sets format for metadata output - for format support take a look at jasy.core.Config."""
-        self.dataFormat = format;
+        self.dataFormat = format
 
 
     def generate(self, path='', debug=False):
@@ -383,5 +386,3 @@ class SpritePacker():
             self.generate(path, debug)
 
         Console.outdent()
-
-

@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import os, json, re, xml.etree.ElementTree
+import os
+import json
+import re
+import xml.etree.ElementTree
 
 import jasy.core.Console as Console
 from jasy import datadir, __version__
@@ -95,6 +98,7 @@ def pluralToJavaScript(expr):
 
 
 class LocaleParser():
+
     """Parses CLDR locales into JavaScript files"""
 
     def __init__(self, locale):
@@ -129,8 +133,8 @@ class LocaleParser():
             tree = xml.etree.ElementTree.parse(path)
 
         self.__data["key"] = {
-            "Short" : { key.get("type"): key.text for key in tree.findall("./keys/short/key") },
-            "Full" : { key.get("type"): key.text for key in tree.findall("./keys/full/key") }
+            "Short" : {key.get("type"): key.text for key in tree.findall("./keys/short/key")},
+            "Full" : {key.get("type"): key.text for key in tree.findall("./keys/full/key")}
         }
 
         # Add main CLDR data: Fallback chain for locales
@@ -250,7 +254,7 @@ class LocaleParser():
             territoryId = item.get("territory")
             if territoryId == territory:
                 for rule in item.findall("telephoneCountryCode"):
-                    self.__data["PhoneCode"] = {"CODE":int(rule.get("code"))}
+                    self.__data["PhoneCode"] = {"CODE": int(rule.get("code"))}
                     # Respect first only
                     break
 
@@ -261,7 +265,7 @@ class LocaleParser():
         for item in tree.findall("postalCodeData/postCodeRegex"):
             territoryId = item.get("territoryId")
             if territory == territoryId:
-                self.__data["PostalCode"] = {"CODE":item.text}
+                self.__data["PostalCode"] = {"CODE": item.text}
                 break
 
         # Supplemental Data
@@ -278,7 +282,7 @@ class LocaleParser():
                 ordering = item.get("ordering")
                 break
 
-        self.__data["CalendarPref"] = { "ORDERING" : ordering.split(" ") }
+        self.__data["CalendarPref"] = {"ORDERING" : ordering.split(" ")}
 
         # :: Week Data
         self.__data["Week"] = {}
@@ -507,5 +511,3 @@ class LocaleParser():
 
                 for symbolChild in child.findall("symbol"):
                     currenciesSymbols[short] = symbolChild.text
-
-

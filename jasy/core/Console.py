@@ -8,7 +8,8 @@
 Centralized logging for complete Jasy environment.
 """
 
-import logging, sys
+import logging
+import sys
 
 __all__ = ["colorize", "header", "error", "warn", "info", "debug", "indent", "outdent"]
 
@@ -19,10 +20,10 @@ __all__ = ["colorize", "header", "error", "warn", "info", "debug", "indent", "ou
 # ---------------------------------------------
 
 __colors = {
-    'bold'      : ['\033[1m',  '\033[22m'],
-    'italic'    : ['\033[3m',  '\033[23m'],
-    'underline' : ['\033[4m',  '\033[24m'],
-    'inverse'   : ['\033[7m',  '\033[27m'],
+    'bold'      : ['\033[1m', '\033[22m'],
+    'italic'    : ['\033[3m', '\033[23m'],
+    'underline' : ['\033[4m', '\033[24m'],
+    'inverse'   : ['\033[7m', '\033[27m'],
 
     'white'     : ['\033[37m', '\033[39m'],
     'grey'      : ['\033[90m', '\033[39m'],
@@ -35,6 +36,7 @@ __colors = {
     'red'       : ['\033[31m', '\033[39m'],
     'yellow'    : ['\033[33m', '\033[39m']
 }
+
 
 def colorize(text, color="red"):
     """Uses to colorize the given text for output on Unix terminals"""
@@ -55,6 +57,7 @@ def colorize(text, color="red"):
 
 __level = 0
 
+
 def __format(text):
     global __level
 
@@ -63,7 +66,8 @@ def __format(text):
     elif __level == 1:
         return "- %s" % text
     else:
-        return "%s- %s" % ("  " * (__level-1), text)
+        return "%s- %s" % ("  " * (__level - 1), text)
+
 
 def indent():
     """
@@ -75,6 +79,7 @@ def indent():
 
     global __level
     __level += 1
+
 
 def outdent(all=False):
     """
@@ -89,25 +94,30 @@ def outdent(all=False):
     else:
         __level -= 1
 
+
 def error(text, *argv):
     """Outputs an error message (visible by default)"""
 
     logging.warn(__format(colorize(colorize(text, "red"), "bold")), *argv)
+
 
 def warn(text, *argv):
     """Outputs an warning (visible by default)"""
 
     logging.warn(__format(colorize(text, "red")), *argv)
 
+
 def info(text, *argv):
     """Outputs an info message (visible by default, disable via --quiet option)"""
 
     logging.info(__format(text), *argv)
 
+
 def debug(text, *argv):
     """Output a debug message (hidden by default, enable via --verbose option)"""
 
     logging.debug(__format(text), *argv)
+
 
 def header(title):
     """Outputs the given title with prominent formatting"""

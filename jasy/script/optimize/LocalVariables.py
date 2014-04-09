@@ -15,6 +15,7 @@ import jasy.script.tokenize.Lang
 
 
 class Error(Exception):
+
     def __init__(self, name, line):
         self.__name = name
         self.__line = line
@@ -171,5 +172,3 @@ def __patch(node, blocked=None, enable=False, translate=None):
         # None children are allowed sometimes e.g. during array_init like [1,2,,,7,8]
         if child != None:
             __patch(child, blocked, enable, translate)
-
-

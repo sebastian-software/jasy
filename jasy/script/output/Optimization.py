@@ -14,6 +14,7 @@ import jasy.script.optimize.ClosureWrapper as ClosureWrapper
 
 
 class Error(Exception):
+
     """
     Error object which is raised whenever an optimization could not be applied correctly.
     """
@@ -27,6 +28,7 @@ class Error(Exception):
 
 
 class Optimization(FlagSet.FlagSet):
+
     """
     Configures an optimization object which can be used to compress classes afterwards.
     The optimization set is frozen after initialization which also generates the unique

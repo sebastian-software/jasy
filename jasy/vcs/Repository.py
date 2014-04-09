@@ -48,12 +48,12 @@ def getTargetFolder(url, version=None):
 
         version = Git.expandVersion(version)
 
-        folder = url[url.rindex("/")+1:]
+        folder = url[url.rindex("/") + 1:]
         if folder.endswith(".git"):
             folder = folder[:-4]
 
         identifier = "%s@%s" % (url, version)
-        version = version[version.rindex("/")+1:]
+        version = version[version.rindex("/") + 1:]
 
     hash = Util.generateChecksum(identifier)
     return "%s-%s-%s" % (folder, version, hash)
@@ -162,4 +162,3 @@ def distclean(path=None):
 
     os.chdir(old)
     Console.outdent()
-

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging
+import sys
+import os
+import unittest
+import logging
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -41,7 +44,7 @@ class Tests(unittest.TestCase):
 
     def test_accessor_names(self):
         self.assertEqual(self.process(
-          '''
+            '''
           function outer(alpha, beta, gamma)
           {
             function inner() {}
@@ -50,7 +53,7 @@ class Tests(unittest.TestCase):
             return result * outer(alpha, beta, gamma);
           }
           '''),
-          'function outer(d,c,b){function e(){}var a=d*c+b;var f=a.alpha.beta.gamma;return a*outer(d,c,b)}'
+            'function outer(d,c,b){function e(){}var a=d*c+b;var f=a.alpha.beta.gamma;return a*outer(d,c,b)}'
         )
 
     def test_bind(self):

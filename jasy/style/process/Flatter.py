@@ -7,6 +7,7 @@ import jasy.style.Util as Util
 import jasy.core.Console as Console
 import jasy.style.parse.Node as Node
 
+
 def process(tree):
     """
     Flattens selectors to that `h1{ span{ ...` is merged into `h1 span{ ...`
@@ -274,5 +275,3 @@ def process(tree):
     Console.outdent()
 
     return
-
-

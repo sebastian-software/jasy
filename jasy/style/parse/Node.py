@@ -5,6 +5,7 @@
 
 import jasy.parse.AbstractNode as AbstractNode
 
+
 class Node(AbstractNode.AbstractNode):
 
     __slots__ = [
@@ -23,4 +24,3 @@ class Node(AbstractNode.AbstractNode):
         # style specific
         "rules", "token", "unit", "selector", "dynamic", "vendor", "quote", "noscope"
     ]
-

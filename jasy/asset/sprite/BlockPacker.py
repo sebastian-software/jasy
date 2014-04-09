@@ -6,9 +6,10 @@
 
 from jasy.asset.sprite.BlockNode import BlockNode
 
+
 class BlockPacker():
 
-    def __init__(self, w = 0, h = 0):
+    def __init__(self, w=0, h=0):
 
         self.nodes = []
         self.autogrow = False
@@ -67,11 +68,11 @@ class BlockPacker():
 
     def growNode(self, w, h):
 
-        canGrowDown  = w <= self.root.w
+        canGrowDown = w <= self.root.w
         canGrowRight = h <= self.root.h
 
         shouldGrowRight = canGrowRight and self.root.h >= self.root.w + w
-        shouldGrowDown  = canGrowDown  and self.root.w >= self.root.h + h
+        shouldGrowDown = canGrowDown and self.root.w >= self.root.h + h
 
         if shouldGrowRight:
             return self.growRight(w, h)
@@ -115,4 +116,3 @@ class BlockPacker():
             return self.splitNode(node, w, h)
         else:
             return None
-

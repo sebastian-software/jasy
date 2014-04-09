@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, tempfile
+import sys
+import os
+import unittest
+import logging
+import tempfile
 
 # Extend PYTHONPATH with local 'lib' folder
 jasyroot = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]), os.pardir, os.pardir, os.pardir))
@@ -39,7 +43,7 @@ content: {
 """)
 
     def createCaseOne(self):
-        #manual
+        # manual
 
         path = os.path.join(tempfile.TemporaryDirectory().name, "myproject")
         os.makedirs(path)
@@ -65,7 +69,7 @@ content: {
 
 
     def createCaseTwo(self):
-        #application
+        # application
 
         path = os.path.join(tempfile.TemporaryDirectory().name, "myproject")
         os.makedirs(path)
@@ -96,7 +100,7 @@ content: {
 
 
     def createCaseThree(self):
-        #src
+        # src
 
         path = os.path.join(tempfile.TemporaryDirectory().name, "myproject")
         os.makedirs(path)
@@ -120,7 +124,7 @@ content: {
 
 
     def createCaseFour(self):
-        #resource
+        # resource
 
         path = os.path.join(tempfile.TemporaryDirectory().name, "myproject")
         os.makedirs(path)
@@ -150,7 +154,7 @@ content: {
 
 
     def getProjects(self):
-        return [self.createCaseOne(),self.createCaseTwo(),self.createCaseThree(),self.createCaseFour()]
+        return [self.createCaseOne(), self.createCaseTwo(), self.createCaseThree(), self.createCaseFour()]
 
     def test_get_project(self):
         for project in self.getProjects():

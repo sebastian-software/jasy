@@ -17,6 +17,7 @@ from jasy.script.Resolver import Resolver
 import jasy.script.output.Optimization as ScriptOptimization
 import jasy.script.output.Formatting as ScriptFormatting
 
+
 class ScriptBuilder:
 
     # --------------------------------------------------------------------------------------------

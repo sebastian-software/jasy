@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, tempfile
+import sys
+import os
+import unittest
+import logging
+import tempfile
 
 # Extend PYTHONPATH with local 'lib' folder
 jasyroot = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]), os.pardir, os.pardir, os.pardir))
@@ -25,8 +29,8 @@ class Tests(unittest.TestCase):
 requires:"""
         for r in requirements:
             content += r
-        self.writeFile(path, "jasyproject.yaml",  content)
-        #print(content)
+        self.writeFile(path, "jasyproject.yaml", content)
+        # print(content)
 
     def createRequirement(self, name, subrequirements=None, manPath=None):
         if manPath is not None:
@@ -49,7 +53,7 @@ requires:"""
             requirement += """
     requires:"""
             for s in subrequirements:
-                requirement += s;
+                requirement += s
 
         return requirement
 

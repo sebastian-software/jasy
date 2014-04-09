@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, tempfile
+import sys
+import os
+import unittest
+import logging
+import tempfile
 
 # Extend PYTHONPATH with local 'lib' folder
 jasyroot = os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]), os.pardir, os.pardir, os.pardir))
 sys.path.insert(0, jasyroot)
 
 import jasy.core.Cache as Cache
+
 
 class Tests(unittest.TestCase):
 
@@ -90,4 +95,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

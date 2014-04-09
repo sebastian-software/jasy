@@ -157,6 +157,3 @@ def doInitializationDoctor():
             allOk = False
 
     return allOk
-
-
-

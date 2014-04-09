@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, inspect
+import sys
+import os
+import unittest
+import logging
+import inspect
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -21,6 +25,7 @@ profile = Profile.Profile(session)
 profile.addCommand("jasy.asset", lambda fileId: "resolved/%s" % fileId, "url")
 profile.addCommand("jasy.width", lambda fileId: 42, "px")
 profile.addCommand("jasy.height", lambda fileId: 38, "px")
+
 
 class Tests(unittest.TestCase):
 
@@ -589,4 +594,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

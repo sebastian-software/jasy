@@ -4,7 +4,11 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, os, os.path, shutil, tempfile
+import re
+import os
+import os.path
+import shutil
+import tempfile
 
 import jasy
 
@@ -29,6 +33,7 @@ def getFirstSubFolder(start):
 
 
 fieldPattern = re.compile(r"\$\${([_a-z][_a-z0-9\.]*)}", re.IGNORECASE | re.VERBOSE)
+
 
 def massFilePatcher(path, data):
 
@@ -107,6 +112,7 @@ def massFilePatcher(path, data):
 
 validProjectName = re.compile(r"^[a-z][a-z0-9]*$")
 
+
 def create(name="myproject", origin=None, originVersion=None, skeleton=None, destination=None, session=None, **argv):
     """
     Creates a new project from a defined skeleton or an existing project's root directory (only if there is a jasycreate config file).
@@ -147,8 +153,8 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
     # 3) A project name known inside the current session
     # 4) Relative or absolute folder path
 
-    originPath = None;
-    originName = None;
+    originPath = None
+    originName = None
 
     if origin is None:
         originProject = session and session.getMain()
@@ -270,4 +276,3 @@ def create(name="myproject", origin=None, originVersion=None, skeleton=None, des
 
     # Done
     Console.info('Your application %s was created successfully!', Console.colorize(name, "bold"))
-

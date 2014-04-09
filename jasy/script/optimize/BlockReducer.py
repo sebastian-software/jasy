@@ -13,6 +13,7 @@ import jasy.core.Console as Console
 
 
 class Error(Exception):
+
     def __init__(self, line):
         self.__line = line
 
@@ -198,7 +199,7 @@ def reworkElse(node, elsePart):
     """
 
     target = node.parent
-    targetIndex = target.index(node)+1
+    targetIndex = target.index(node) + 1
 
     # A workaround for compact if-else blocks
     # We are a elsePart of the if where we want to move our
@@ -246,7 +247,7 @@ def endsWithReturnOrThrow(node):
 
     elif node.type == "block":
         length = len(node)
-        return length > 0 and node[length-1].type in ("return", "throw")
+        return length > 0 and node[length - 1].type in ("return", "throw")
 
     return False
 
@@ -535,4 +536,3 @@ def createHook(condition, thenPart, elsePart):
     hook.append(thenPart, "thenPart")
     hook.append(elsePart, "elsePart")
     return hook
-

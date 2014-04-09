@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import polib, json, os
+import polib
+import json
+import os
 
 import jasy.item.Abstract as AbstractItem
 import jasy.core.Console as Console
@@ -53,7 +55,7 @@ class TranslationItem(AbstractItem.AbstractItem):
         # Thinking of that all files are named like de.po, de.txt, de.properties, etc.
         lang = self.id
         if "." in lang:
-            lang = lang[lang.rfind(".")+1:]
+            lang = lang[lang.rfind(".") + 1:]
 
         self.language = lang
 
@@ -118,7 +120,7 @@ class TranslationItem(AbstractItem.AbstractItem):
 
         # Produce new table which is filtered by relevant translations
         table = self.table
-        result = { translationId: table[translationId] for translationId in relevantTranslations if translationId in table }
+        result = {translationId: table[translationId] for translationId in relevantTranslations if translationId in table}
 
         if result:
             if formatted:
@@ -141,4 +143,3 @@ class TranslationItem(AbstractItem.AbstractItem):
         """
 
         return self.language
-

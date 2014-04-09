@@ -18,6 +18,7 @@ __author__ = "Sebastian Werner <info@sebastian-werner.net>"
 import os.path
 datadir = os.path.join(os.path.dirname(__file__), "data")
 
+
 def info():
     """
     Prints information about Jasy to the console.
@@ -31,6 +32,7 @@ def info():
 
 
 class UserError(Exception):
+
     """
     Standard Jasy error class raised whenever something happens which the system understands (somehow excepected)
     """

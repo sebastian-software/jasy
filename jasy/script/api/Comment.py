@@ -44,17 +44,19 @@ tickMatcher = re.compile(r"(`[^\n`]*?`)")
 
 
 class CommentException(Exception):
+
     """
     Thrown when errors during comment processing are detected.
     """
 
     def __init__(self, message, lineNo=0):
-        Exception.__init__(self, "Comment error: %s (line: %s)" % (message, lineNo+1))
+        Exception.__init__(self, "Comment error: %s (line: %s)" % (message, lineNo + 1))
 
 
 
 
 class Comment():
+
     """
     Comment class is attached to parsed nodes and used to store all comment related information.
 
@@ -146,7 +148,7 @@ class Comment():
             self.__blocks = self.__splitBlocks(text)
 
             # Re-combine everything and apply processing and formatting
-            plainText = '' # text without annotations but with markdown
+            plainText = ''  # text without annotations but with markdown
             for b in self.__blocks:
 
                 if b["type"] == "comment":
@@ -385,7 +387,7 @@ class Comment():
         lines = []
 
         # First, split up the comments lines and remove the leading indentation
-        for lineNo, line in enumerate((indent+text).split("\n")):
+        for lineNo, line in enumerate((indent + text).split("\n")):
 
             if line.startswith(indent):
                 lines.append(line[len(indent):].rstrip())
@@ -397,7 +399,7 @@ class Comment():
                 # Only warn for doc comments, otherwise it might just be code commented out
                 # which is sometimes formatted pretty crazy when commented out
                 if self.variant == "doc":
-                    Console.warn("Could not outdent doc comment at line %s in %s", startLineNo+lineNo, self.fileId)
+                    Console.warn("Could not outdent doc comment at line %s in %s", startLineNo + lineNo, self.fileId)
 
                 return text
 
@@ -437,7 +439,7 @@ class Comment():
                         # Only warn for doc comments, otherwise it might just be code commented out
                         # which is sometimes formatted pretty crazy when commented out
                         if self.variant == "doc":
-                            Console.warn("Invalid indentation in doc comment at line %s in %s", startLineNo+lineNo, self.fileId)
+                            Console.warn("Invalid indentation in doc comment at line %s in %s", startLineNo + lineNo, self.fileId)
 
                     else:
                         lines[lineNo] = line[outdentStringLen:]
@@ -459,6 +461,7 @@ class Comment():
 
         # Now parse only the text outside of backticks
         last = 0
+
         def split(match):
 
             # Grab the text before the back tick and process any parameters in it
@@ -548,20 +551,20 @@ class Comment():
         """
 
         def collectTags(match):
-             if not self.tags:
-                 self.tags = {}
+            if not self.tags:
+                self.tags = {}
 
-             name = match.group(1)
-             param = match.group(3)
+            name = match.group(1)
+            param = match.group(3)
 
-             if name in self.tags:
-                 self.tags[name].add(param)
-             elif param:
-                 self.tags[name] = set([param])
-             else:
-                 self.tags[name] = True
+            if name in self.tags:
+                self.tags[name].add(param)
+            elif param:
+                self.tags[name] = set([param])
+            else:
+                self.tags[name] = True
 
-             return ""
+            return ""
 
         return tagMatcher.sub(collectTags, text)
 
@@ -672,4 +675,3 @@ class Comment():
             return '<a%s><code>%s</code></a>' % (attr, label)
 
         return linkMatcher.sub(formatTypes, text)
-

@@ -7,7 +7,9 @@
 import jasy.core.Console as Console
 import jasy.item.Abstract as AbstractItem
 
+
 class ResolverError(Exception):
+
     """
     Error which is throws when resolving items could be be finished because of
     items which could not be found or are of an unexpected type.
@@ -17,6 +19,7 @@ class ResolverError(Exception):
 
 
 class Resolver():
+
     """
     Resolves dependencies between items.
     This class is not type depended e.g. is used for both scripts and styles.
@@ -133,5 +136,3 @@ class Resolver():
         for depObj in dependencies:
             if not depObj in collection:
                 self.__resolveDependencies(depObj, collection)
-
-

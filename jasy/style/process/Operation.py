@@ -8,6 +8,7 @@ import jasy.style.parse.Node as Node
 
 
 class OperationError(Exception):
+
     def __init__(self, message, node):
         Exception.__init__(self, "Variable Error: %s for node type=%s in %s at line %s!" % (message, node.type, node.getFileName(), node.line))
 
@@ -265,4 +266,3 @@ def compute(node, first=None, second=None, operator=None, session=None):
 
     else:
         raise OperationError("Different types in operation: %s vs %s" % (first.type, second.type), node)
-

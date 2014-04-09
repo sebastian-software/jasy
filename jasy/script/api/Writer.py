@@ -4,7 +4,10 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import copy, re, os, json
+import copy
+import re
+import os
+import json
 
 import jasy.script.api.Data as Data
 import jasy.script.api.Text as Text
@@ -34,6 +37,7 @@ linkMap = {
 linkExtract = re.compile(r" href=(\"|')([a-zA-Z0-9#\:\.\~]+)(\"|')", re.M)
 internalLinkParse = re.compile(r"^((static|member|property|event)\:)?([a-zA-Z0-9_\.]+)?(\~([a-zA-Z0-9_]+))?$")
 
+
 def convertFunction(item):
     item["isFunction"] = True
     if "params" in item:
@@ -54,7 +58,7 @@ def convertTags(item):
         tagsNew = []
         if tags:
             for tagName in sorted(tags):
-                tag = { "name" : tagName }
+                tag = {"name" : tagName}
                 if tags[tagName] is not True:
                     tag["value"] = "+".join(tags[tagName])
                 tagsNew.append(tag)
@@ -274,6 +278,7 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
 
 
 class ApiWriter():
+
     """
     Processes JavaScript classes into data for API documentation. Exports plain data which can be used
     by a wide varity of tools for further processing or for displaying documentation. A good
@@ -381,6 +386,7 @@ class ApiWriter():
 
 
         class JsonEncoder(json.JSONEncoder):
+
             def default(self, obj):
                 if isinstance(obj, set):
                     return list(obj)
@@ -391,7 +397,7 @@ class ApiWriter():
         def encode(content, name):
 
             if compress:
-                jsonContent = json.dumps(content, sort_keys=True, cls=JsonEncoder, separators=(',',':'))
+                jsonContent = json.dumps(content, sort_keys=True, cls=JsonEncoder, separators=(',', ':'))
             else:
                 jsonContent = json.dumps(content, sort_keys=True, cls=JsonEncoder, indent=2)
 
@@ -638,7 +644,7 @@ class ApiWriter():
 
                 if section is not None:
                     for name in section:
-                         checkLinksInItem(section[name])
+                        checkLinksInItem(section[name])
 
         Console.outdent()
 
@@ -900,8 +906,8 @@ class ApiWriter():
                 # debug("- Registering class %s in parent %s", className, packageName)
 
                 entry = {
-                    "name" : splits[-1],
-                    "link" : className,
+                    "name": splits[-1],
+                    "link": className,
                 }
 
                 classMain = apiData[className].main
@@ -956,6 +962,3 @@ class ApiWriter():
         #
 
         return apiData, index, search
-
-
-

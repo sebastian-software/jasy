@@ -8,7 +8,11 @@
 Tasks are basically functions with some managment code allow them to run in jasyscript.py
 """
 
-import types, os, sys, inspect, subprocess
+import types
+import os
+import sys
+import inspect
+import subprocess
 
 import jasy.core.Console as Console
 import jasy.core.Util as Util
@@ -110,6 +114,7 @@ def task(*args, **kwargs):
 # Local task managment
 __taskRegistry = {}
 
+
 def addTask(task):
     """Registers the given task with its name"""
 
@@ -120,12 +125,13 @@ def addTask(task):
 
     __taskRegistry[task.name] = task
 
+
 def executeTask(taskname, **kwargs):
     """Executes the given task by name with any optional named arguments"""
 
     if taskname in __taskRegistry:
         try:
-            camelCaseArgs = { Util.camelize(key) : kwargs[key] for key in kwargs }
+            camelCaseArgs = {Util.camelize(key) : kwargs[key] for key in kwargs}
             return __taskRegistry[taskname](**camelCaseArgs)
         except UserError as err:
             raise
@@ -134,6 +140,7 @@ def executeTask(taskname, **kwargs):
             raise
     else:
         raise UserError("No such task: %s" % taskname)
+
 
 def printTasks(indent=16):
     """Prints out a list of all avaible tasks and their descriptions"""
@@ -166,11 +173,13 @@ def printTasks(indent=16):
 __command = None
 __options = None
 
+
 def setCommand(cmd):
     """Sets the jasy command which should be used to execute tasks with runTask()"""
 
     global __command
     __command = cmd
+
 
 def getCommand():
     """Returns the "jasy" command which is currently executed."""
@@ -178,17 +187,20 @@ def getCommand():
     global __command
     return __command
 
+
 def setOptions(options):
     """Sets currently configured command line options. Mainly used for printing help screens."""
 
     global __options
     __options = options
 
+
 def getOptions():
     """Returns the options as passed to the jasy command. Useful for printing all command line arguments."""
 
     global __options
     return __options
+
 
 def runTask(project, task, **kwargs):
     """
@@ -233,6 +245,3 @@ def runTask(project, task, **kwargs):
     # Error handling
     if returnValue != 0:
         raise UserError("Executing of sub task %s from project %s failed" % (task, project))
-
-
-

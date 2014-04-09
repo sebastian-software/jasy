@@ -4,7 +4,9 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+
 class MetaData:
+
     """
     Data structure to hold all meta information.
 
@@ -15,7 +17,7 @@ class MetaData:
     systems for optiomal cachability using Pickle
     """
 
-    __slots__ = [ "requires", "optionals", "breaks", "assets" ]
+    __slots__ = ["requires", "optionals", "breaks", "assets"]
 
 
     def __init__(self, tree):
@@ -84,4 +86,3 @@ class MetaData:
         for child in node:
             if child is not None:
                 self.parse(child)
-

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import sys, os, unittest, logging, inspect
+import sys
+import os
+import unittest
+import logging
+import inspect
 
 # Extend PYTHONPATH with local 'lib' folder
 if __name__ == "__main__":
@@ -38,18 +42,18 @@ class Tests(unittest.TestCase):
 
 
     def test_charset_invalid(self):
-      def wrapper():
-        self.process(r'''
+        def wrapper():
+            self.process(r'''
 /* Set the encoding of the style sheet to Latin-9 (Western European languages, with euro sign) - throws error */
 @charset 'iso-8859-15';
         ''')
 
-      self.assertRaises(Parser.ParseError, wrapper)
+        self.assertRaises(Parser.ParseError, wrapper)
 
 
     def test_charset_wrong_syntax(self):
         def wrapper():
-          self.process(r'''
+            self.process(r'''
 /* Invalid as it requires quotes */
 @charset iso-8859-15;
           ''')
@@ -98,4 +102,3 @@ if __name__ == '__main__':
     logging.getLogger().setLevel(logging.ERROR)
     suite = unittest.TestLoader().loadTestsFromTestCase(Tests)
     unittest.TextTestRunner(verbosity=2).run(suite)
-

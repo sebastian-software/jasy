@@ -3,7 +3,8 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
-import re, json
+import re
+import json
 
 import jasy.style.tokenize.Tokenizer as Tokenizer
 import jasy.style.parse.Node as Node
@@ -59,6 +60,7 @@ def parse(source, fileId=None, line=1):
 
 
 class ParseError(Exception):
+
     def __init__(self, message, tokenizer):
         self.message = "Parse Error: %s" % message
         self.fileId = tokenizer.fileId
@@ -73,6 +75,7 @@ class ParseError(Exception):
 
 # Used as a status container during tree-building for every def body and the global body
 class StaticContext(object):
+
     def __init__(self):
         self.blockId = 0
         self.statementStack = []
@@ -898,7 +901,7 @@ def ValueExpression(tokenizer, staticContext):
         node = childNode
 
         while True:
-            childNode = node[len(node)-1]
+            childNode = node[len(node) - 1]
             node.append(UnaryExpression(tokenizer, staticContext))
 
             if not tokenizer.match("comma"):
@@ -920,7 +923,7 @@ def Expression(tokenizer, staticContext):
         node = childNode
 
         while True:
-            childNode = node[len(node)-1]
+            childNode = node[len(node) - 1]
             node.append(AssignExpression(tokenizer, staticContext))
 
             if not tokenizer.match("comma"):
@@ -1319,5 +1322,3 @@ def addComments(currNode, prevNode, comments):
     else:
         # Don't loose the comment in tree (if not previous node is there, attach it to this node)
         currNode.comments.extend(prevComments)
-
-
