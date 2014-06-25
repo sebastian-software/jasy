@@ -36,13 +36,13 @@ needs = [
     {
         "packageName": "CherryPy",
         "minVersion": "3.2.4",
-        "installPath": "'pip install CherryPy'",
+        "installPath": "'pip3 install CherryPy'",
         "updatePath": "'pip3 install --upgrade CherryPy'"
     },
     {
         "packageName": "PyYAML",
         "minVersion": "3.10",
-        "installPath": "'pip install PyYAML'",
+        "installPath": "'pip3 install PyYAML'",
         "updatePath": "'pip3 install --upgrade PyYAML'"
     }
 ]
