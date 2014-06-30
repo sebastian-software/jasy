@@ -29,13 +29,13 @@ needs = [
     },
     {
         "packageName": "requests",
-        "minVersion": "2.2",
+        "minVersion": "2.3",
         "installPath": "'pip3 install requests'",
         "updatePath": "'pip3 install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
-        "minVersion": "3.2.4",
+        "minVersion": "3.3",
         "installPath": "'pip3 install CherryPy'",
         "updatePath": "'pip3 install --upgrade CherryPy'"
     },
