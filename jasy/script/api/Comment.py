@@ -173,8 +173,8 @@ class Comment():
         """
         Splits up text and code blocks in comments.
 
-        This will try to use hoedown for Markdown parsing if available and will fallback to a simpler implementation in
-        order to allow processing of doc parameters and links without hoedown being installed.
+        This will try to use Misaka for Markdown parsing if available and will fallback to a simpler implementation in
+        order to allow processing of doc parameters and links without Misaka being installed.
 
         """
 

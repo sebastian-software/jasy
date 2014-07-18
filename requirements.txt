@@ -4,7 +4,5 @@ requests
 cherrypy
 pyyaml
 Sphinx
-hoedown
 misaka
 Pillow
-html5lib

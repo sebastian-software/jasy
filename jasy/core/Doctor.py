@@ -29,13 +29,13 @@ needs = [
     },
     {
         "packageName": "requests",
-        "minVersion": "2.3",
+        "minVersion": "2.3.0",
         "installPath": "'pip3 install requests'",
         "updatePath": "'pip3 install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
-        "minVersion": "3.3",
+        "minVersion": "3.3.0",
         "installPath": "'pip3 install CherryPy'",
         "updatePath": "'pip3 install --upgrade CherryPy'"
     },
@@ -48,12 +48,6 @@ needs = [
 ]
 
 optionals = [
-    {
-        "packageName": "hoedown",
-        "minVersion": "0.2",
-        "installPath": "'pip3 install hoedown'",
-        "updatePath": "'pip3 install --upgrade hoedown'"
-    },
     {
         "packageName": "misaka",
         "minVersion": "1.0",
@@ -68,7 +62,7 @@ optionals = [
     },
     {
         "packageName": "pillow",
-        "minVersion": "2.3.0",
+        "minVersion": "2.5.0",
         "installPath": "'pip3 install Pillow'",
         "updatePath": "'pip3 install --upgrade Pillow'"
     }
