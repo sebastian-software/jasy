@@ -18,32 +18,32 @@ needs = [
     {
         "packageName": "Pygments",
         "minVersion": "1.6",
-        "installPath": "'pip3 install Pygments'",
-        "updatePath": "'pip3 install --upgrade pygments'"
+        "installPath": "'pip install Pygments'",
+        "updatePath": "'pip install --upgrade pygments'"
     },
     {
         "packageName": "polib",
         "minVersion": "1.0.3",
-        "installPath": "'pip3 install polib'",
-        "updatePath": "'pip3 install --upgrade polib'"
+        "installPath": "'pip install polib'",
+        "updatePath": "'pip install --upgrade polib'"
     },
     {
         "packageName": "requests",
         "minVersion": "2.3.0",
-        "installPath": "'pip3 install requests'",
-        "updatePath": "'pip3 install --upgrade requests'"
+        "installPath": "'pip install requests'",
+        "updatePath": "'pip install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
         "minVersion": "3.3.0",
-        "installPath": "'pip3 install CherryPy'",
-        "updatePath": "'pip3 install --upgrade CherryPy'"
+        "installPath": "'pip install CherryPy'",
+        "updatePath": "'pip install --upgrade CherryPy'"
     },
     {
         "packageName": "PyYAML",
         "minVersion": "3.10",
-        "installPath": "'pip3 install PyYAML'",
-        "updatePath": "'pip3 install --upgrade PyYAML'"
+        "installPath": "'pip install PyYAML'",
+        "updatePath": "'pip install --upgrade PyYAML'"
     }
 ]
 
@@ -51,26 +51,26 @@ optionals = [
     {
         "packageName": "misaka",
         "minVersion": "1.0",
-        "installPath": "'pip3 install misaka'",
-        "updatePath": "'pip3 install --upgrade misaka'"
+        "installPath": "'pip install misaka'",
+        "updatePath": "'pip install --upgrade misaka'"
     },
     {
         "packageName": "sphinx",
         "minVersion": "1.2",
-        "installPath": "'pip3 install sphinx'",
-        "updatePath": "'pip3 install --upgrade sphinx'"
+        "installPath": "'pip install sphinx'",
+        "updatePath": "'pip install --upgrade sphinx'"
     },
     {
         "packageName": "pillow",
         "minVersion": "2.5.0",
-        "installPath": "'pip3 install Pillow'",
-        "updatePath": "'pip3 install --upgrade Pillow'"
+        "installPath": "'pip install Pillow'",
+        "updatePath": "'pip install --upgrade Pillow'"
     },
     {
         "packageName": "python-dateutil",
         "minVersion": "2.2",
-        "installPath": "'pip3 install python-dateutil'",
-        "updatePath": "'pip3 install --upgrade python-dateutil'"
+        "installPath": "'pip install python-dateutil'",
+        "updatePath": "'pip install --upgrade python-dateutil'"
     }
 ]
 
