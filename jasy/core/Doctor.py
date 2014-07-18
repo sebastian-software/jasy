@@ -89,6 +89,12 @@ optionals = [
         "minVersion": "4.3",
         "installPath": "'pip install beautifulsoup4'",
         "updatePath": "'pip install --upgrade beautifulsoup4'"
+    },
+    {
+        "packageName": "unidecode",
+        "minVersion": "0.04",
+        "installPath": "'pip install unidecode'",
+        "updatePath": "'pip install --upgrade unidecode'"
     }
 
 
