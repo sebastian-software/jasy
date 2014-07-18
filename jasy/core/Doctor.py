@@ -71,7 +71,27 @@ optionals = [
         "minVersion": "2.2",
         "installPath": "'pip install python-dateutil'",
         "updatePath": "'pip install --upgrade python-dateutil'"
+    },
+    {
+        "packageName": "pystache",
+        "minVersion": "0.5",
+        "installPath": "'pip install pystache'",
+        "updatePath": "'pip install --upgrade pystache'"
+    },
+    {
+        "packageName": "pathtools",
+        "minVersion": "0.1.2",
+        "installPath": "'pip install pathtools'",
+        "updatePath": "'pip install --upgrade pathtools'"
+    },
+    {
+        "packageName": "beautifulsoup4",
+        "minVersion": "4.3",
+        "installPath": "'pip install beautifulsoup4'",
+        "updatePath": "'pip install --upgrade beautifulsoup4'"
     }
+
+
 ]
 
 
@@ -91,13 +111,14 @@ def doCompleteDoctor():
         Console.info('%s:' % packageName)
         Console.indent()
         if packageName.lower() in keys:
-            Console.info(Console.colorize('Found installation', "green"))
             if LooseVersion(minVersion) > LooseVersion("0.0"):
                 if LooseVersion(versions[packageName.lower()]) >= LooseVersion(minVersion):
                     Console.info(Console.colorize('Version is OK (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "green"))
                 else:
                     Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
                     Console.info('Update to the newest version of %s using %s' % (packageName, updatePath))
+            else:
+                Console.info(Console.colorize('Found installation', "green"))
         else:
             Console.info(Console.colorize(Console.colorize('Did NOT find installation', "red"), "bold"))
             Console.info('Install the newest version of %s using %s' % (packageName, installPath))
