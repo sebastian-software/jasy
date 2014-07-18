@@ -65,6 +65,12 @@ optionals = [
         "minVersion": "2.5.0",
         "installPath": "'pip3 install Pillow'",
         "updatePath": "'pip3 install --upgrade Pillow'"
+    },
+    {
+        "packageName": "python-dateutil",
+        "minVersion": "2.2",
+        "installPath": "'pip3 install python-dateutil'",
+        "updatePath": "'pip3 install --upgrade python-dateutil'"
     }
 ]
 
