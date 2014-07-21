@@ -286,7 +286,7 @@ class Config:
             if split in current:
                 current = current[split]
             else:
-                return None
+                return default
 
         return getKey(current, splits[-1], default)
 
