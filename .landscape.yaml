@@ -1,12 +1,8 @@
 doc-warnings: true
 max-line-length: 120
-strictness: high
 ignore-paths:
   - bin
   - dist
   - docs
   - util
-ignore-patterns:
-  - N802
-  - N806
 
