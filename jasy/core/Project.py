@@ -511,8 +511,6 @@ class Project():
     def getRequires(self, checkoutDirectory="external", updateRepositories=True):
         """Return the project requirements as project instances."""
 
-        global projects
-
         result = []
 
         for entry in self.__requires:
