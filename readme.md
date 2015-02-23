@@ -2,8 +2,7 @@
 [![PyPI Version](https://badge.fury.io/py/jasy.png)](http://badge.fury.io/py/jasy)
 [![Gittip](http://img.shields.io/gittip/wpbasti.png)](https://www.gittip.com/wpbasti/)
 [![Gittip](http://img.shields.io/gittip/fastner.png)](https://www.gittip.com/fastner/)
-[![Code Health](https://landscape.io/github/sebastian-software/jasy/master/landscape.svg?style=flat)](https://landscape.io/github/sebastian-software/jasy/master)
-
+[![Codacy Badge](https://www.codacy.com/project/badge/a0b8f78cd25f47659ee4f1c2e8d86398)](https://www.codacy.com/public/info_6/jasy)
 
 Jasy - Web Tooling Framework
 ============================
