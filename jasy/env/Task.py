@@ -190,6 +190,7 @@ def setOptions(options):
     Sets currently configured command line options.
 
     Mainly used for printing help screens.
+
     """
 
     global __options
@@ -201,6 +202,7 @@ def getOptions():
     Returns the options as passed to the jasy command.
 
     Useful for printing all command line arguments.
+
     """
 
     return __options
