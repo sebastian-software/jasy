@@ -167,7 +167,7 @@ class Tokenizer(object):
 
         indent = ""
 
-        while (True):
+        while True:
             if len(input) > self.cursor:
                 ch = input[self.cursor]
             else:
@@ -198,7 +198,7 @@ class Tokenizer(object):
                     # comment for maybe multiple following lines of code, but not that important (no visual white space divider)
                     mode = "block"
 
-                while (True):
+                while True:
                     try:
                         ch = input[self.cursor]
                         self.cursor += 1
@@ -239,7 +239,7 @@ class Tokenizer(object):
                     # comment for maybe multiple following lines of code, but not that important (no visual white space divider)
                     mode = "block"
 
-                while (True):
+                while True:
                     try:
                         ch = input[self.cursor]
                         self.cursor += 1
@@ -375,7 +375,7 @@ class Tokenizer(object):
         next = input[self.cursor]
 
         if next >= "0" and next <= "9":
-            while (True):
+            while True:
                 ch = input[self.cursor]
                 self.cursor += 1
                 if not (ch >= "0" and ch <= "9"):
@@ -419,7 +419,7 @@ class Tokenizer(object):
         input = self.source
         token.type = "regexp"
 
-        while (True):
+        while True:
             try:
                 ch = input[self.cursor]
                 self.cursor += 1
@@ -430,7 +430,7 @@ class Tokenizer(object):
                 self.cursor += 1
 
             elif ch == "[":
-                while (True):
+                while True:
                     if ch == "\\":
                         self.cursor += 1
 
