@@ -6,3 +6,7 @@ ignore-paths:
   - dist
   - docs
   - util
+ignore-patterns:
+  - N802
+  - N806
+
