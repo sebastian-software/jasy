@@ -154,7 +154,7 @@ class AssetItem(AbstractItem.AbstractItem):
             else:
                 info = ImageInfo.ImgInfo(self.getPath()).getInfo()
                 if info is None:
-                    raise Exception("Invalid image: %s" % fileId)
+                    raise Exception("Invalid image: %s" % self.id)
 
                 image = [info[0], info[1]]
 
