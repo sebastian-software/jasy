@@ -20,7 +20,7 @@ import jasy.vcs.Repository as Repository
 from jasy import UserError
 
 
-__all__ = ["Project", "getProjectFromPath", "getProjectDependencies"]
+__all__ = ("Project", "getProjectFromPath", "getProjectDependencies")
 
 repositoryHashPostfix = re.compile(r"^(.*)-([a-zA-Z0-9]{27,28})$")
 

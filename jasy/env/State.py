@@ -8,7 +8,7 @@
 
 import jasy.core.Session as Session
 
-__all__ = ["session"]
+__all__ = ("session")
 
 session = Session.Session()
 session.__doc__ = """Auto initialized session object based on jasy.core.Session"""

@@ -17,7 +17,7 @@ import urllib.parse
 import hashlib
 import jasy.core.Console as Console
 
-__all__ = ["requestUrl", "uploadData"]
+__all__ = ("requestUrl", "uploadData")
 
 
 #

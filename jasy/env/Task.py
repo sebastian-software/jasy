@@ -19,7 +19,7 @@ from jasy.env.State import session
 from jasy import UserError
 
 
-__all__ = ["task", "executeTask", "runTask", "printTasks", "setCommand", "setOptions", "getOptions"]
+__all__ = ("task", "executeTask", "runTask", "printTasks", "setCommand", "setOptions", "getOptions")
 
 
 class Task:

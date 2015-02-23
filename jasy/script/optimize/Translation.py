@@ -19,7 +19,7 @@ import jasy.core.Console as Console
 # Public API
 #
 
-__all__ = ["hasText", "optimize", "collectTranslations"]
+__all__ = ("hasText", "optimize", "collectTranslations")
 
 translationFunctions = ("tr", "trc", "trn", "marktr")
 

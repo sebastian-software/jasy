@@ -14,7 +14,7 @@
 # Licensed under the Apache License, Version 2.0
 #
 
-__all__ = ["tokenize", "parse"]
+__all__ = ("tokenize", "parse")
 
 import re
 import collections

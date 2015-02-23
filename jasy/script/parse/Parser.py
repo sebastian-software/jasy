@@ -15,7 +15,7 @@ import jasy.script.tokenize.Tokenizer
 import jasy.script.parse.VanillaBuilder
 import jasy.script.tokenize.Lang
 
-__all__ = ["parse", "parseExpression"]
+__all__ = ("parse", "parseExpression")
 
 
 def parseExpression(source, fileId=None, line=1, builder=None):

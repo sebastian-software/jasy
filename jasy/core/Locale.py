@@ -14,7 +14,7 @@ from jasy import datadir, __version__
 
 import jasy.core.File
 
-__all__ = ["LocaleParser"]
+__all__ = ("LocaleParser")
 
 
 # Here we load our CLDR data from

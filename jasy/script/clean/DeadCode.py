@@ -46,7 +46,7 @@ It can figure out combined expressions as well like:
 
 """
 
-__all__ = ["cleanup"]
+__all__ = ("cleanup")
 
 import jasy.core.Console as Console
 

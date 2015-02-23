@@ -16,7 +16,7 @@ from jasy import UserError
 from jasy.core.Util import getKey
 
 
-__all__ = ["Config", "findConfig", "isConfigName", "loadConfig", "writeConfig"]
+__all__ = ("Config", "findConfig", "isConfigName", "loadConfig", "writeConfig")
 
 
 def isConfigName(fileName, requiredBaseName=None):

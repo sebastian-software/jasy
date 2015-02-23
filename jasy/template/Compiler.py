@@ -14,7 +14,7 @@
 # Licensed under the Apache License, Version 2.0
 #
 
-__all__ = ["compile"]
+__all__ = ("compile")
 
 import jasy.template.Parser as Parser
 

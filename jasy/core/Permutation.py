@@ -7,7 +7,7 @@
 import jasy
 import jasy.core.Util as Util
 
-__all__ = ["Permutation", "getPermutation"]
+__all__ = ("Permutation", "getPermutation")
 
 
 """Central cache for all permutations"""

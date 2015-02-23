@@ -9,7 +9,7 @@
 import logging
 import sys
 
-__all__ = ["colorize", "header", "error", "warn", "info", "debug", "indent", "outdent"]
+__all__ = ("colorize", "header", "error", "warn", "info", "debug", "indent", "outdent")
 
 
 
