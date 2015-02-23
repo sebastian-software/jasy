@@ -88,8 +88,6 @@ addStructure("flat", {
 
 
 def getProjectFromPath(path, session, config=None, version=None):
-    global projects
-
     if not path in projects:
         projects[path] = Project(path, session, config, version)
 

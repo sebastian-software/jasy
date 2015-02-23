@@ -3,8 +3,7 @@
 # Copyright 2014 Sebastian Werner
 #
 
+import os
 
 class TemplateBuilder:
-    pass
-
     templateOutputPath = os.path.join(destinationFolder, profile.getTemplateOutputFolder())

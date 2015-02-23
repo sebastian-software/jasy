@@ -57,8 +57,6 @@ __level = 0
 
 
 def __format(text):
-    global __level
-
     if __level == 0 or text == "":
         return text
     elif __level == 1:

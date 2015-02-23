@@ -239,7 +239,7 @@ class Config:
             if optional:
                 return False
             else:
-                raise UserError("Could not find configuration script: %s" % configFile)
+                raise UserError("Could not find configuration script: %s" % fileName)
 
         env = {
             "config" : self,
