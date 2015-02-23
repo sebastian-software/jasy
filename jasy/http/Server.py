@@ -153,7 +153,7 @@ class Proxy(object):
                     if self.auth["method"] == "basic":
                         headers["Authorization"] = b"Basic " + base64.b64encode(("%s:%s" % (self.auth["user"], self.auth["password"])).encode("ascii"))
 
-                # We disable verifícation of SSL certificates to be more tolerant on test servers
+                # We disable verification of SSL certificates to be more tolerant on test servers
                 result = requests.request(cherrypy.request.method, url, params=query, headers=headers, data=body, verify=False)
 
             except Exception as err:
