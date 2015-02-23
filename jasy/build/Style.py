@@ -6,7 +6,7 @@
 
 import os
 
-import jasy.UserError
+import jasy
 import jasy.core.Console as Console
 
 from jasy.item.Style import StyleError
