@@ -237,7 +237,7 @@ def __recurser(node, table):
             # Signature trn(msgSingular, msgPlural, int, arg1, ...)
             elif funcName == "trn":
                 key = "%s[N:%s]" % (params[0].value, params[1].value)
-                if not key in table:
+                if key not in table:
                     Console.outdent()
                     return counter
 

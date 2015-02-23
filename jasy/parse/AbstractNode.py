@@ -94,7 +94,7 @@ class AbstractNode(list):
     def remove(self, kid):
         """Removes the given kid."""
 
-        if not kid in self:
+        if kid not in self:
             raise Exception("Given node is no child!")
 
         if hasattr(kid, "rel"):

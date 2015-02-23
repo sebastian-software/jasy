@@ -122,7 +122,7 @@ def doCompleteDoctor():
                 if LooseVersion(versions[packageName.lower()]) >= LooseVersion(minVersion):
                     Console.info(Console.colorize('Version is OK (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "green"))
                 else:
-                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
+                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "red"), "bold"))
                     Console.info('Update to the newest version of %s using %s' % (packageName, updatePath))
             else:
                 Console.info(Console.colorize('Found installation', "green"))
@@ -164,7 +164,7 @@ def doInitializationDoctor():
                 if LooseVersion(versions[packageName.lower()]) < LooseVersion(minVersion):
                     Console.info(Console.colorize(Console.colorize('Jasy requirement error: "%s"' % packageName, "red"), "bold"))
                     Console.indent()
-                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]) , "red"), "bold"))
+                    Console.info(Console.colorize(Console.colorize('Version installed is too old (required: %s installed: %s)' % (minVersion, versions[packageName.lower()]), "red"), "bold"))
                     Console.info('Update to the newest version of %s using %s' % (packageName, updatePath))
                     Console.outdent()
                     return False

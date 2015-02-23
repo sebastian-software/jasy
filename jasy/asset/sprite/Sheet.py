@@ -72,11 +72,11 @@ class SpriteSheet():
 
             if debug:
                 x, y, w, h = block.fit.x, block.fit.y, block.w, block.h
-                draw.rectangle((x, y , x + w , y + h), outline=(255, 0, 0, 255))
+                draw.rectangle((x, y, x + w, y + h), outline=(255, 0, 0, 255))
 
         if debug:
             for i, block in enumerate(self.packer.getUnused()):
                 x, y, w, h = block.x, block.y, block.w, block.h
-                draw.rectangle((x, y , x + w , y + h), fill=(255, 255, 0, 255))
+                draw.rectangle((x, y, x + w, y + h), fill=(255, 255, 0, 255))
 
         img.save(filename)

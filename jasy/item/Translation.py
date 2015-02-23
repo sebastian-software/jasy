@@ -89,7 +89,7 @@ class TranslationItem(AbstractItem.AbstractItem):
 
         for entry in po.translated_entries():
             entryId = generateMessageId(entry.msgid, entry.msgid_plural, entry.msgctxt)
-            if not entryId in table:
+            if entryId not in table:
                 if entry.msgstr != "":
                     table[entryId] = entry.msgstr
                 elif entry.msgstr_plural:

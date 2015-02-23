@@ -53,7 +53,7 @@ class AbstractSorter:
             result = []
             required = self.resolver.getRequired()
             for item in required:
-                if not item in result:
+                if item not in result:
                     # Console.debug("Start adding with: %s", item)
                     self.__addSorted(item, result)
 
@@ -69,7 +69,7 @@ class AbstractSorter:
         loadDeps = self.__getLoadDeps(item)
 
         for depObj in loadDeps:
-            if not depObj in result:
+            if depObj not in result:
                 self.__addSorted(depObj, result)
 
         if item in result:
@@ -82,7 +82,7 @@ class AbstractSorter:
         if item in self.__circularDeps:
             circularDeps = self.__circularDeps[item]
             for depObj in circularDeps:
-                if not depObj in result:
+                if depObj not in result:
                     self.__addSorted(depObj, result, True)
 
 

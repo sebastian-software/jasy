@@ -5,4 +5,3 @@
 
 class TemplateBuilder:
     pass
-

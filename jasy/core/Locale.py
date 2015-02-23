@@ -219,7 +219,7 @@ class LocaleParser():
     def __getStore(self, parent, name):
         """Manages data fields."""
 
-        if not name in parent:
+        if name not in parent:
             store = {}
             parent[name] = store
         else:
@@ -332,7 +332,7 @@ class LocaleParser():
             for element in tree.findall("./localeDisplayNames/%s/*" % key):
                 if not element.get("draft"):
                     field = element.get("type")
-                    if not field in store:
+                    if field not in store:
                         store[camelCaseToUpper(field)] = element.text
 
 
@@ -344,7 +344,7 @@ class LocaleParser():
         for element in tree.findall("./delimiters/*"):
             if not element.get("draft"):
                 field = element.tag
-                if not field in delimiters:
+                if field not in delimiters:
                     delimiters[camelCaseToUpper(field)] = element.text
 
 
@@ -369,7 +369,7 @@ class LocaleParser():
             for child in element.findall("months/monthContext/monthWidth"):
                 if not child.get("draft"):
                     format = child.get("type")
-                    if not format in months:
+                    if format not in months:
                         months[format] = {}
 
                     for month in child.findall("month"):
@@ -385,7 +385,7 @@ class LocaleParser():
             for child in element.findall("days/dayContext/dayWidth"):
                 if not child.get("draft"):
                     format = child.get("type")
-                    if not format in days:
+                    if format not in days:
                         days[format] = {}
 
                     for day in child.findall("day"):
@@ -401,7 +401,7 @@ class LocaleParser():
             for child in element.findall("quarters/quarterContext/quarterWidth"):
                 if not child.get("draft"):
                     format = child.get("type")
-                    if not format in quarters:
+                    if format not in quarters:
                         quarters[format] = {}
 
                     for quarter in child.findall("quarter"):
@@ -418,7 +418,7 @@ class LocaleParser():
                 if not child.get("draft"):
                     format = child.get("type").upper()
                     text = child.find("dateFormat/pattern").text
-                    if not format in dateFormats:
+                    if format not in dateFormats:
                         dateFormats[format] = text
 
 
@@ -429,7 +429,7 @@ class LocaleParser():
                 if not child.get("draft"):
                     format = child.get("type").upper()
                     text = child.find("timeFormat/pattern").text
-                    if not format in timeFormats:
+                    if format not in timeFormats:
                         timeFormats[format] = text
 
 
@@ -441,7 +441,7 @@ class LocaleParser():
                     # no uppercase here, because of intentianal camelcase
                     format = child.get("id")
                     text = child.text
-                    if not format in datetime:
+                    if format not in datetime:
                         datetime[format] = text
 
 
@@ -454,7 +454,7 @@ class LocaleParser():
                     for nameChild in child.findall("displayName"):
                         if not nameChild.get("draft"):
                             text = nameChild.text
-                            if not format in fields:
+                            if format not in fields:
                                 fields[format] = text
                             break
 
@@ -471,7 +471,7 @@ class LocaleParser():
                             if not relChild.get("draft"):
                                 pos = relChild.get("type")
                                 text = relChild.text
-                                if not pos in relativeField:
+                                if pos not in relativeField:
                                     relativeField[pos] = text
 
 
@@ -483,7 +483,7 @@ class LocaleParser():
         for element in tree.findall("numbers/symbols/*"):
             if not element.get("draft"):
                 field = camelCaseToUpper(element.tag)
-                if not field in store:
+                if field not in store:
                     symbols[field] = element.text
 
         # Formats
@@ -505,7 +505,7 @@ class LocaleParser():
                 for nameChild in child.findall("displayName"):
                     if not nameChild.get("draft"):
                         text = nameChild.text
-                        if not format in currencies:
+                        if format not in currencies:
                             currencies[short] = text
                         break
 

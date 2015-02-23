@@ -130,5 +130,5 @@ class Resolver():
         dependencies = self.getItemDependencies(item)
 
         for depObj in dependencies:
-            if not depObj in collection:
+            if depObj not in collection:
                 self.__resolveDependencies(depObj, collection)

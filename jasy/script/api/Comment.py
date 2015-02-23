@@ -589,7 +589,7 @@ class Comment():
             for i, mapName in enumerate(names):
 
                 # Ensure we have the map object in the params
-                if not mapName in params:
+                if mapName not in params:
                     params[mapName] = {}
 
                 # Add new entries and overwrite if a type is defined in this entry

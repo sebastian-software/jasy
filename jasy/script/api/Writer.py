@@ -222,7 +222,7 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
     if interfaceMembers:
         classMembers = getattr(classApi, "members", {})
         for name in interfaceMembers:
-            if not name in classMembers:
+            if name not in classMembers:
                 Console.warn("Class %s is missing implementation for member %s of interface %s!", className, name, interfaceName)
 
             else:
@@ -503,7 +503,7 @@ class ApiWriter():
             classIncludes = getattr(classApi, "includes", None)
             if classIncludes:
                 for mixinName in classIncludes:
-                    if not mixinName in apiData:
+                    if mixinName not in apiData:
                         Console.error("Invalid mixin %s in class %s", className, mixinName)
                         continue
 
@@ -546,7 +546,7 @@ class ApiWriter():
 
             # Accept all section/item values for named classes,
             # as it might be pretty complicated to verify this here.
-            if not className in apiData:
+            if className not in apiData:
                 return True
 
             classApi = apiData[className]
@@ -557,7 +557,7 @@ class ApiWriter():
                 return True
 
             if sectionName is not None:
-                if not sectionName in linkMap:
+                if sectionName not in linkMap:
                     return 'Invalid section in link "#%s"' % link
 
                 section = getattr(classApi, linkMap[sectionName], None)
@@ -818,7 +818,7 @@ class ApiWriter():
             data = getattr(classApi, field, None)
             if data:
                 for name in data:
-                    if not name in search:
+                    if name not in search:
                         search[name] = set()
 
                     search[name].add(className)
@@ -890,7 +890,7 @@ class ApiWriter():
             splits = className.split(".")
             packageName = splits[0]
             for split in splits[1:]:
-                if not packageName in apiData:
+                if packageName not in apiData:
                     Console.warn("Missing package documentation %s", packageName)
                     apiData[packageName] = Data.ApiData(packageName, highlight=highlightCode)
                     apiData[packageName].main = {

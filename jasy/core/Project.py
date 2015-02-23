@@ -88,7 +88,7 @@ addStructure("flat", {
 
 
 def getProjectFromPath(path, session, config=None, version=None):
-    if not path in projects:
+    if path not in projects:
         projects[path] = Project(path, session, config, version)
 
     return projects[path]
@@ -118,7 +118,7 @@ def getProjectDependencies(project, checkoutDirectory="external", updateReposito
         childProjects = []
         for requiredProject in reversed(requires):
             requiredName = requiredProject.getName()
-            if not requiredName in names:
+            if requiredName not in names:
                 Console.debug("Adding: %s %s (via %s)", requiredName, requiredProject.version, project.getName())
                 names[requiredName] = True
                 result.append(requiredProject)
@@ -538,7 +538,7 @@ class Project():
 
                 # Only clone and update when the folder is unique in this session
                 # This reduces git/hg/svn calls which are typically quite expensive
-                if not path in projects:
+                if path not in projects:
                     revision = Repository.update(source, version, path, updateRepositories)
                     if revision is None:
                         raise UserError("Could not update repository %s" % source)

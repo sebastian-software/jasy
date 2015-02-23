@@ -438,7 +438,7 @@ class Session():
     def executeCommand(self, name, params):
         commands = self.__commands
 
-        if not name in commands:
+        if name not in commands:
             raise Exception("Unknown command %s!" % name)
 
         entry = commands[name]

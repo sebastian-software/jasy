@@ -36,7 +36,7 @@ def __recurser(node, scope, values, profile):
     # Replace variable with actual value
     if node.type == "variable" and not (node.parent.type == "assign" and node.parent[0] is node):
         name = node.name
-        if not name in values:
+        if name not in values:
             raise ExecuterError("Could not resolve variable %s! Missing value!" % name, node)
 
         value = values[name]
@@ -121,7 +121,7 @@ def __recurser(node, scope, values, profile):
 
         # Modify value instead of replace when assign operator is set
         if hasattr(node, "assignOp") and node.assignOp is not None:
-            if not name in values:
+            if name not in values:
                 raise ExecuterError("Assign operator is not supported as left hand variable is missing: %s" % name, node)
 
             repl = Operation.compute(node, values[name], init, node.assignOp)
@@ -142,7 +142,7 @@ def __recurser(node, scope, values, profile):
         def replacer(matchObj):
             name = matchObj.group(1)
 
-            if not name in values:
+            if name not in values:
                 raise ExecuterError("Could not resolve variable %s! Missing value!" % name, node)
 
             value = values[name]

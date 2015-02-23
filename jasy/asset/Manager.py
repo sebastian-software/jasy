@@ -250,7 +250,7 @@ class AssetManager():
                     if storedChecksum != fileChecksum:
                         raise UserError("Sprite Sheet is not up-to-date. Checksum of %s differs." % singleId)
 
-                    if not spriteImageId in sprites:
+                    if spriteImageId not in sprites:
                         spriteImageIndex = len(sprites)
                         sprites.append(spriteImageId)
                     else:
@@ -294,7 +294,7 @@ class AssetManager():
                 imageId = "%s/%s" % (base, relPath)
                 data = config[relPath]
 
-                if not imageId in assets:
+                if imageId not in assets:
                     raise UserError("Unknown asset %s in %s" % (imageId, fileId))
 
                 animationAsset = assets[imageId]
@@ -446,7 +446,7 @@ class AssetManager():
 
             # Find the current node to store info on
             for split in splits:
-                if not split in current:
+                if split not in current:
                     current[split] = {}
                 elif not isinstance(current[split], dict):
                     raise UserError("Invalid asset structure. Folder names must not be identical to any filename without extension: \"%s\" in %s" % (split, fileId))

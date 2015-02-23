@@ -370,7 +370,7 @@ class Config:
             splits = name.split(".")
             current = self.__data
             for split in splits[:-1]:
-                if not split in current:
+                if split not in current:
                     current[split] = {}
 
                 current = current[split]

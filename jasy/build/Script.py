@@ -106,7 +106,7 @@ class ScriptBuilder:
         if filterBy:
             filteredScripts = []
             for item in sortedScripts:
-                if not item in filterBy:
+                if item not in filterBy:
                     filteredScripts.append(item)
 
             sortedScripts = filteredScripts

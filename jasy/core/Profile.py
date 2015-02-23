@@ -881,7 +881,7 @@ class Profile():
         commands = self.__commands
 
         # Delegate unknown commands to the Session instance
-        if not command in commands:
+        if command not in commands:
             return self.__session.executeCommand(command, params)
 
             raise jasy.UserError("Unsupported command %s" % command)
