@@ -87,7 +87,7 @@ class BlockPacker():
 
 
     def growRight(self, w, h):
-        root = Node(self, 0, 0, self.root.w + w, self.root.h)
+        root = BlockNode(self, 0, 0, self.root.w + w, self.root.h)
         root.used = True
         root.down = self.root
         root.right = BlockNode(self, self.root.w, 0, w, self.root.h)
