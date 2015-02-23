@@ -158,7 +158,7 @@ class ImgInfo(object):
                     return size
             img.close()
 
-        return None
+        return 0, 0
 
     def getInfo(self):
         """Returns (width, height, "type") of the image."""
