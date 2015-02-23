@@ -10,7 +10,7 @@ from jasy import UserError
 import jasy.core.File as File
 
 
-class AbstractItem:
+class AbstractItem(object):
 
     id = None
     project = None
