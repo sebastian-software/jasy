@@ -22,7 +22,7 @@ from jasy import UserError
 __all__ = ("task", "executeTask", "runTask", "printTasks", "setCommand", "setOptions", "getOptions")
 
 
-class Task:
+class Task(object):
 
     __slots__ = ["func", "name", "curry", "availableArgs", "hasFlexArgs", "__doc__", "__name__"]
 
@@ -182,7 +182,6 @@ def setCommand(cmd):
 def getCommand():
     """Returns the "jasy" command which is currently executed."""
 
-    global __command
     return __command
 
 
@@ -191,7 +190,6 @@ def setOptions(options):
     Sets currently configured command line options.
 
     Mainly used for printing help screens.
-
     """
 
     global __options
@@ -203,10 +201,8 @@ def getOptions():
     Returns the options as passed to the jasy command.
 
     Useful for printing all command line arguments.
-
     """
 
-    global __options
     return __options
 
 
