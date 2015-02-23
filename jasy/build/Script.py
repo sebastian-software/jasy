@@ -6,6 +6,7 @@
 
 import os
 
+import jasy.UserError
 import jasy.core.Console as Console
 
 from jasy.item.Script import ScriptError
@@ -129,7 +130,7 @@ class ScriptBuilder:
                     result.append(compressed)
 
         except ScriptError as error:
-            raise UserError("Error during script compression! %s" % error)
+            raise jasy.UserError("Error during script compression! %s" % error)
 
         return "".join(result)
 

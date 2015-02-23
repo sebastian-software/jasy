@@ -6,6 +6,7 @@
 
 import os
 
+import jasy.UserError
 import jasy.core.Console as Console
 
 from jasy.item.Style import StyleError
@@ -45,7 +46,7 @@ class StyleBuilder:
                     result.append(compressed)
 
         except StyleError as error:
-            raise UserError("Error during stylesheet compression! %s" % error)
+            raise jasy.UserError("Error during stylesheet compression! %s" % error)
 
         return "".join(result)
 

@@ -484,7 +484,7 @@ class Profile():
         """Sets the default locale."""
 
         if not "locale" in self.__fields:
-            raise UserError("Define locales first!")
+            raise jasy.UserError("Define locales first!")
 
         self.__fields["locale"]["default"] = locale
 
@@ -884,7 +884,7 @@ class Profile():
         if not command in commands:
             return self.__session.executeCommand(command, params)
 
-            raise UserError("Unsupported command %s" % command)
+            raise jasy.UserError("Unsupported command %s" % command)
 
         entry = commands[command]
         resultType = entry["type"]
