@@ -70,7 +70,7 @@ def safeUpdate(dest, origin):
     """Like update() but only never overwrites."""
 
     for key in origin:
-        if not key in dest:
+        if key not in dest:
             dest[key] = origin[dest]
 
 
@@ -114,7 +114,7 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
 
                     # Otherwise add it to the overridden list
                     else:
-                        if not "overridden" in ScriptItems[name]:
+                        if "overridden" not in ScriptItems[name]:
                             ScriptItems[name]["overridden"] = []
 
                         ScriptItems[name]["overridden"].append({
@@ -126,7 +126,7 @@ def mergeMixin(className, mixinName, classApi, mixinApi):
                 else:
                     ScriptItems[name] = {}
                     ScriptItems[name].update(mixinItems[name])
-                    if not "origin" in ScriptItems[name]:
+                    if "origin" not in ScriptItems[name]:
                         ScriptItems[name]["origin"] = []
 
                     ScriptItems[name]["origin"].append({
@@ -146,12 +146,12 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
     if interfaceProperties:
         classProperties = getattr(classApi, "properties", {})
         for name in interfaceProperties:
-            if not name in classProperties:
+            if name not in classProperties:
                 Console.warn("Class %s is missing implementation for property %s of interface %s!", className, name, interfaceName)
 
             else:
                 # Add reference to interface
-                if not "interface" in classProperties[name]:
+                if "interface" not in classProperties[name]:
                     classProperties[name]["defined"] = []
 
                 classProperties[name]["defined"].append({
@@ -160,18 +160,18 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                 })
 
                 # Copy over documentation
-                if not "doc" in classProperties[name] and "doc" in interfaceProperties[name]:
+                if "doc" not in classProperties[name] and "doc" in interfaceProperties[name]:
                     classProperties[name]["doc"] = interfaceProperties[name]["doc"]
 
-                if not "summary" in classProperties[name] and "summary" in interfaceProperties[name]:
+                if "summary" not in classProperties[name] and "summary" in interfaceProperties[name]:
                     classProperties[name]["summary"] = interfaceProperties[name]["summary"]
 
-                if "errornous" in classProperties[name] and not "errornous" in interfaceProperties[name]:
+                if "errornous" in classProperties[name] and "errornous" not in interfaceProperties[name]:
                     del classProperties[name]["errornous"]
 
                 # Update tags with data from interface
                 if "tags" in interfaceProperties[name]:
-                    if not "tags" in classProperties[name]:
+                    if "tags" not in classProperties[name]:
                         classProperties[name]["tags"] = {}
 
                     safeUpdate(classProperties[name]["tags"], interfaceProperties[name]["tags"])
@@ -183,11 +183,11 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
     if interfaceEvents:
         classEvents = getattr(classApi, "events", {})
         for name in interfaceEvents:
-            if not name in classEvents:
+            if name not in classEvents:
                 Console.warn("Class %s is missing implementation for event %s of interface %s!", className, name, interfaceName)
             else:
                 # Add reference to interface
-                if not "interface" in classEvents[name]:
+                if "interface" not in classEvents[name]:
                     classEvents[name]["defined"] = []
 
                 classEvents[name]["defined"].append({
@@ -196,13 +196,13 @@ def connectInterface(className, interfaceName, classApi, interfaceApi):
                 })
 
                 # Copy user event type and documentation from interface
-                if not "doc" in classEvents[name] and "doc" in interfaceEvents[name]:
+                if "doc" not in classEvents[name] and "doc" in interfaceEvents[name]:
                     classEvents[name]["doc"] = interfaceEvents[name]["doc"]
 
-                if not "summary" in classEvents[name] and "summary" in interfaceEvents[name]:
+                if "summary" not in classEvents[name] and "summary" in interfaceEvents[name]:
                     classEvents[name]["summary"] = interfaceEvents[name]["summary"]
 
-                if not "type" in classEvents[name] and "type" in interfaceEvents[name]:
+                if "type" not in classEvents[name] and "type" in interfaceEvents[name]:
                     classEvents[name]["type"] = interfaceEvents[name]["type"]
 
                 if "errornous" in classEvents[name] and not "errornous" in interfaceEvents[name]:
@@ -947,7 +947,7 @@ class ApiWriter():
             # Create structure for className
             current = index
             for split in className.split("."):
-                if not split in current:
+                if split not in current:
                     current[split] = {}
 
                 current = current[split]
