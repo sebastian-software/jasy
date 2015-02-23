@@ -8,7 +8,7 @@ import sys
 import jasy.core.Console as Console
 
 
-class Options:
+class Options(object):
 
     """More flexible alternative to the standard python option parser module which solves the requirements to have
     arbirary tasks and custom parameters for each task."""

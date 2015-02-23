@@ -5,7 +5,7 @@
 #
 
 
-class MetaData:
+class MetaData(object):
 
     """
     Data structure to hold all meta information.

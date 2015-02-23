@@ -4,6 +4,7 @@
 # Copyright 2013-2014 Sebastian Werner
 #
 
+import sys
 import jasy.core.Console as Console
 from distutils.version import StrictVersion, LooseVersion
 
