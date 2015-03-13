@@ -20,7 +20,7 @@ import re
 import collections
 
 tagSplitter = r"(\{\{[^\{\}}]*\}\})"
-tagMatcher = r"^\{\{\s*([#\^\/\?\!\<\>\$\=_]?)\s*([^\{\}}]*?)\s*\}\}$"
+tagMatcher = r"^\{\{\s*([#\^\/\?\!\<\>\$\=_@]?)\s*([^\{\}}]*?)\s*\}\}$"
 
 
 def buildTree(tokens, stack):
@@ -36,7 +36,7 @@ def buildTree(tokens, stack):
 
         if isinstance(token, str):
             instructions.append(token)
-        elif token["tag"] == "#" or token["tag"] == "^" or token["tag"] == "?":
+        elif token["tag"] == "#" or token["tag"] == "^" or token["tag"] == "?" or token["tag"] == "@":
             stack.append(token)
             token["nodes"] = buildTree(tokens, stack)
             instructions.append(token)
