@@ -23,14 +23,16 @@ accessTags = [
     "?",     # if / has
     "^",     # if not / has not
     "$",     # insert variable
-    "="      # insert raw / non escaped
+    "=",     # insert raw / non escaped
+    "@"
 ]
 
 # Tags which support children
 innerTags = [
     "#",
     "?",
-    "^"
+    "^",
+    "@"
 ]
 
 
@@ -63,29 +65,34 @@ def walk(node, labels, nostrip):
                 else:
                     accessor = 0
 
-                accessorCode = '"' + escaped + '",' + str(accessor) + ',data'
-
                 if tag in innerTags:
                     innerCode = walk(current["nodes"], labels, nostrip)
 
-                if tag == "?":
-                    code += 'if(this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
-                elif tag == "^":
-                    code += 'if(!this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
-                elif tag == "#":
-                    code += 'this._section(' + accessorCode + ',partials,labels,function(data,partials,labels){\n' + innerCode + '\n});\n'
-                elif tag == "=":
-                    code += 'buf+=this._data(' + accessorCode + ');\n'
-                elif tag == "$":
-                    code += 'buf+=this._variable(' + accessorCode + ');\n'
+                if tag == "@":
+                    cmds = escaped.split(" ")
+                    params = ['"' + escapeContent(item) + '"' for item in cmds[1:]]
+                    code += 'buf+=this._command("' + cmds[0] + '",function(){buf="";\n' + innerCode + '\nreturn buf;},[' + ",".join(params) +'],data,partials,labels,commands);\n'
+                else:
+                    accessorCode = '"' + escaped + '",' + str(accessor) + ',data'
+
+                    if tag == "?":
+                        code += 'if(this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
+                    elif tag == "^":
+                        code += 'if(!this._has(' + accessorCode + ')){\n' + innerCode + '}\n'
+                    elif tag == "#":
+                        code += 'this._section(' + accessorCode + ',partials,labels,commands,function(data,partials,labels){\n' + innerCode + '\n});\n'
+                    elif tag == "=":
+                        code += 'buf+=this._data(' + accessorCode + ');\n'
+                    elif tag == "$":
+                        code += 'buf+=this._variable(' + accessorCode + ');\n'
 
             elif tag == ">":
-                code += 'buf+=this._partial("' + escaped + '",data,partials,labels);\n'
+                code += 'buf+=this._partial("' + escaped + '",data,partials,labels,commands);\n'
             elif tag == "_":
                 if labels and escaped in labels:
                     code += walk(Parser.parse(labels[escaped], True), labels)
                 else:
-                    code += 'buf+=this._label("' + escaped + '",data,partials,labels);\n'
+                    code += 'buf+=this._label("' + escaped + '",data,partials,labels,commands);\n'
 
     return code
 
@@ -97,4 +104,4 @@ def compile(text, labels=[], nostrip=False, name=None):
     if name is None:
         name = "null"
 
-    return "new core.template.Template(function(data, partials, labels){%s}, null, %s)" % (wrapped, name)
+    return "new core.template.Template(function(data, partials, labels, commands){%s}, null, %s, null)" % (wrapped, name)
