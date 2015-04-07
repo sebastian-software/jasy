@@ -1284,8 +1284,16 @@ def MemberExpression(tokenizer, staticContext, allowCallSyntax):
         if tokenType == "dot":
             childNode = builder.MEMBER_build(tokenizer)
             builder.MEMBER_addOperand(childNode, node)
-            tokenizer.mustMatch("identifier")
-            builder.MEMBER_addOperand(childNode, builder.MEMBER_build(tokenizer))
+            if tokenizer.peek() == "identifier":
+                tokenizer.mustMatch("identifier")
+                builder.MEMBER_addOperand(childNode, builder.MEMBER_build(tokenizer))
+            else:
+                # ES6 Promises
+                tokenizer.mustMatch("catch")
+                patched = builder.MEMBER_build(tokenizer)
+                patched.type = "identifier"
+                patched.value = "catch"
+                builder.MEMBER_addOperand(childNode, patched)
 
         elif tokenType == "left_bracket":
             childNode = builder.MEMBER_build(tokenizer, "index")
