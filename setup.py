@@ -32,17 +32,15 @@ if uses == "distribute":
     "test_suite" : "jasy.test",
 
     "install_requires" : [
-      "Pygments>=1.6",
+      "Pygments>=2.0",
       "polib>=1.0.3",
-      "requests>=2.2",
-      "CherryPy>=3.2.4",
-      "PyYAML>=3.10",
-      "html5lib>=0.99"
+      "requests>=2.5",
+      "CherryPy>=3.6",
+      "PyYAML>=3.10"
     ],
 
     "extras_require" : {
       "jsdoc" : ["misaka"],
-      "daemon" : ["watchdog"],
       "sprites" : ["Pillow"],
       "doc" : ["sphinx"]
     }

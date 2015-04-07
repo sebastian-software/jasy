@@ -18,7 +18,7 @@ except ImportError:
 needs = [
     {
         "packageName": "Pygments",
-        "minVersion": "1.6",
+        "minVersion": "2.0",
         "installPath": "'pip install Pygments'",
         "updatePath": "'pip install --upgrade pygments'"
     },
@@ -30,13 +30,13 @@ needs = [
     },
     {
         "packageName": "requests",
-        "minVersion": "2.3.0",
+        "minVersion": "2.5.0",
         "installPath": "'pip install requests'",
         "updatePath": "'pip install --upgrade requests'"
     },
     {
         "packageName": "CherryPy",
-        "minVersion": "3.3.0",
+        "minVersion": "3.6.0",
         "installPath": "'pip install CherryPy'",
         "updatePath": "'pip install --upgrade CherryPy'"
     },
@@ -57,19 +57,19 @@ optionals = [
     },
     {
         "packageName": "sphinx",
-        "minVersion": "1.2",
+        "minVersion": "1.3",
         "installPath": "'pip install sphinx'",
         "updatePath": "'pip install --upgrade sphinx'"
     },
     {
         "packageName": "pillow",
-        "minVersion": "2.5.0",
+        "minVersion": "2.8.0",
         "installPath": "'pip install Pillow'",
         "updatePath": "'pip install --upgrade Pillow'"
     },
     {
         "packageName": "python-dateutil",
-        "minVersion": "2.2",
+        "minVersion": "2.4",
         "installPath": "'pip install python-dateutil'",
         "updatePath": "'pip install --upgrade python-dateutil'"
     },
@@ -93,7 +93,7 @@ optionals = [
     },
     {
         "packageName": "unidecode",
-        "minVersion": "0.04",
+        "minVersion": "0.4",
         "installPath": "'pip install unidecode'",
         "updatePath": "'pip install --upgrade unidecode'"
     }
