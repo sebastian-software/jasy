@@ -350,14 +350,15 @@ class AssetManager():
         Console.info("Copying assets...")
 
         counter = 0
-        for assetItem in self.__copylist:
-            srcFile = assetItem.getPath()
-            dstFile = self.__computeDestinationPath(assetItem)
-
+        for (srcFile, dstFile) in self.getAssetList():
             if File.syncfile(srcFile, dstFile):
                 counter += 1
 
         Console.info("Copied %s assets.", counter)
+
+
+    def getAssetList(self):
+        return [(assetItem.getPath(), self.__computeDestinationPath(assetItem)) for assetItem in self.__copylist]
 
 
     def exportToJson(self, items=None):
