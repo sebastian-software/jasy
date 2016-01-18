@@ -11,13 +11,14 @@ import jasy.core.Console as Console
 import jasy.item.Abstract as AbstractItem
 import jasy.item.Script as ScriptItem
 import jasy.template.Compiler as Compiler
+import jasy.template.virtualdom.Compiler as VDCompiler
 
 
 def templateFilter(text, item):
     Console.info("Creating template class %s", item.getId())
     return 'core.Main.declareNamespace("%(name)s", %(content)s);' % {
         "name": item.getId(),
-        "content" : Compiler.compile(text)
+        "content" : VDCompiler.compile(text)
     }
 
 
