@@ -1,3 +1,7 @@
+[unmaintained-url]: .github/ISSUE_TEMPLATE.md
+[unmaintained-image]: https://img.shields.io/badge/project-unmaintained-red.svg
+
+[![Project unmaintained][unmaintained-image]][unmaintained-url]
 [![Build Status](https://secure.travis-ci.org/sebastian-software/jasy.png)](http://travis-ci.org/sebastian-software/jasy)
 [![PyPI Version](https://badge.fury.io/py/jasy.png)](http://badge.fury.io/py/jasy)
 [![Gittip](http://img.shields.io/gittip/wpbasti.png)](https://www.gittip.com/wpbasti/)
